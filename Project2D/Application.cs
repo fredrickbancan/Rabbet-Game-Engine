@@ -8,13 +8,13 @@ using static Raylib.Raylib;
 
 namespace Project2D
 {
-    class Program
+    class Application
     {
         static void Main(string[] args)
         {
             Game game = new Game();
 
-            InitWindow(640, 480, "Hello World");
+            Raylib.Raylib.InitWindow(1440, 850, "Fredrick Math Library Tech Demo");
 
             game.Init();
 
@@ -26,7 +26,7 @@ namespace Project2D
 
             game.Shutdown();
 
-            CloseWindow();
+            Raylib.Raylib.CloseWindow();
         }
     }
 }
