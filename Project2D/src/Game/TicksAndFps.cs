@@ -10,7 +10,6 @@ namespace FredrickTechDemo
     class TicksAndFps
     {
         Stopwatch stopwatch = new Stopwatch();
-        public static int itteratior;//a static int dedicated to being used in a for loop to itterate the game to catch up after lag.
         private long currentTime = 0;
         private long lastTime = 0;
         private double timer = 0;
@@ -20,9 +19,7 @@ namespace FredrickTechDemo
         private double ticksPerSecond = 0;
         private int ticksElapsed = 0;
         private double timePerTick;
-        private double partialTicks;
-        private double partialTicksIncreasing;
-        
+        private double percentToNextTick; //a decimal value between 0 and 1 which can be used as a percentage of progress towards next tick, usefull for interpolation.
 
         public TicksAndFps(double ticksPerSecond)
         {
@@ -58,22 +55,23 @@ namespace FredrickTechDemo
             if (ticksElapsed > 0)
             {
                 ticksElapsed = 0;
-                partialTicks = 0;
+                percentToNextTick = 0;
             }
 
 
             /*increase partialTicks by the time passed divided by time per tick. Time per tick is calulcated in constructor and is a constant.
             In other words, How many "time per ticks"'s has passed since the last update? Each time the time of one tick is passed (30 tps is 0.0333333 seconds)
             parialTicks is increased by 1.*/
-            partialTicks += deltaTime / timePerTick;
-            partialTicksIncreasing += deltaTime / timePerTick;
+            percentToNextTick += deltaTime / timePerTick;
             /*ticksElapsed is equal to the number of times the passed time has reached the full duration of one tick (at 30 ticks per second, thats 0.0333333)*/
-            ticksElapsed = (int)partialTicks;
+            ticksElapsed = (int)percentToNextTick;
 
-            /*limit ticks elapsed to 10 so the game does not speed out of control in some circumstances*/
-            if (ticksElapsed > 10)
+            /*limit ticks elapsed to Half a second's worth, so the game does not speed out of control in some laggy circumstances
+              In other words, the game will only "catch up" by half a second at a time. Any hangs more than half a second will not 
+              be corrected for.*/
+            if (ticksElapsed > ticksPerSecond/2)
             {
-                ticksElapsed = 10;
+                ticksElapsed = (int)ticksPerSecond / 2;
             }
         }
 
@@ -83,7 +81,7 @@ namespace FredrickTechDemo
         }
         public double getPartialTicks()
         {
-            return this.partialTicks;
+            return this.percentToNextTick;
         }
 
         public int getFps()

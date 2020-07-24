@@ -35,8 +35,11 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="OpenTK, Version=3.2.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.3.2\lib\net20\OpenTK.dll</HintPath>
+    <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK.GLControl, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.GLControl.3.0.1\lib\net20\OpenTK.GLControl.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -48,12 +51,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="src\FredsMath\Colour.cs" />
+    <Compile Include="src\FredsMath\MathUtil.cs" />
+    <Compile Include="src\FredsMath\Matrix3F.cs" />
+    <Compile Include="src\FredsMath\Matrix4F.cs" />
+    <Compile Include="src\FredsMath\Vector3F.cs" />
+    <Compile Include="src\FredsMath\Vector4F.cs" />
     <Compile Include="src\Game\GameInstance.cs" />
     <Compile Include="src\Application.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Game\Input.cs" />
     <Compile Include="src\Game\TicksAndFps.cs" />
+    <Compile Include="src\Rendering\Models\JaredsQuadModel.cs" />
     <Compile Include="src\Rendering\Renderer.cs" />
+    <Compile Include="src\Rendering\Vertex.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -62,7 +73,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\Entity\" />
-    <Folder Include="src\FredsMath\" />
+    <Folder Include="src\Rendering\Shaders\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
