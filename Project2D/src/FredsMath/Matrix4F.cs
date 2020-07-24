@@ -68,5 +68,10 @@ namespace FredsMath
             this.m13 = 0; this.m14 = 0; this.m15 = 0; this.m16 = 1;*/
         }
 
+        public void translate(Vector3F vec)
+        {
+            this.m13 = this.m1 * vec.x + this.m5 * vec.y + this.m9 * vec.z + this.m13;
+        }
+
     }
 }

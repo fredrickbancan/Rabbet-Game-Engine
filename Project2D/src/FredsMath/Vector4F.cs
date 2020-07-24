@@ -40,6 +40,13 @@ namespace FredsMath
             this.z = copyVector.z;
             this.w = copyVector.w;
         }
+        public Vector4F(Vector3F copyVector)
+        {
+            this.x = copyVector.x;
+            this.y = copyVector.y;
+            this.z = copyVector.z;
+            this.w = 1;
+        }
 
         //matrix vector operators
         public static Vector4F operator *(Matrix4F mat, Vector4F vec) // column major vector multiplication

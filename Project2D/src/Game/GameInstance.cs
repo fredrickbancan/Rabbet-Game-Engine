@@ -15,16 +15,25 @@ namespace FredrickTechDemo
         private TicksAndFps tickFps;
         private Input input;
         private Renderer renderer;
+        public EntityPlayer thePlayer;
 
         public GameInstance(int width, int height, String title) : base(width, height, GraphicsMode.Default, title)
         {
             tickFps = new TicksAndFps(30.0D);
             input = new Input(this);
             renderer = new Renderer(this);
+            thePlayer = new EntityPlayer("Steve", new Vector3F(0.0F, 0.0F, 0.0F));
             tickFps.update();
         }
 
         #region overriding OpenTk base game methods
+        protected override void OnLoad(EventArgs e)
+        {
+            tickFps.init();
+            renderer.init();
+            base.OnLoad(e);
+        }
+
         protected override void OnUpdateFrame(FrameEventArgs args)//overriding OpenTk game update function, called every frame.
         {
             base.OnUpdateFrame(args);
@@ -42,13 +51,6 @@ namespace FredrickTechDemo
             renderer.renderJaredsQuad();
             renderer.postRender();
             base.OnRenderFrame(args);
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            tickFps.init();
-            renderer.init();
-            base.OnLoad(e);
         }
         #endregion
 

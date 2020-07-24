@@ -16,6 +16,8 @@ namespace FredrickTechDemo
     {
         private GameInstance gameInstance;
         private Shader shader;
+        private Matrix4F projectionMatrix;
+        private Matrix4F modelMatrix;
         public Renderer(GameInstance gameInstance)
         {
             this.gameInstance = gameInstance;
@@ -25,7 +27,10 @@ namespace FredrickTechDemo
         {
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             JaredsQuadModel.genBuffers();
-            shader = new Shader("..\\..\\src\\Rendering\\Shaders\\ColourShader.shader");
+            shader = new Shader("..\\..\\src\\Rendering\\Shaders\\ColourShader3D.shader");
+            projectionMatrix = MathUtil.perspectiveMatrix((float)MathUtil.radians(GameSettings.fov), (float)gameInstance.Width / (float)gameInstance.Height, 0.001F, 1000.0F);
+            modelMatrix = new Matrix4F();
+            modelMatrix.translate(new Vector3F(0.0F, 0.0F, -2.0F));
         }
         public void preRender(float r = 0, float g = 0, float b = 0)
         {
@@ -35,7 +40,11 @@ namespace FredrickTechDemo
         }
         public void renderJaredsQuad()
         {
-            JaredsQuadModel.draw(shader);
+            shader.Use();
+            shader.setUniformMat4F("projectionMatrix", projectionMatrix);
+            shader.setUniformMat4F("viewMatrix", gameInstance.thePlayer.getCamera().getViewMatrix());
+            shader.setUniformMat4F("modelMatrix", modelMatrix);
+            JaredsQuadModel.draw();
         }
 
         public void postRender()

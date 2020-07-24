@@ -15,10 +15,10 @@ namespace FredrickTechDemo.src.Rendering.Models
 
         public static float[] jaredsQuadVertices = new float[]
         {   //*x*/  /*y*/  /*R*/  /*G*/  /*B*//*
-           -0.5F, -0.5F, 1.0F, 0.0F,   0.0F, //*vertex 0 bottom left*//*
-            0.5F, -0.5F, 0.0F, 1.0F,   0.0F, //*vertex 1 bottom right*//*
-           -0.5F,  0.5F, 0.0F,   0.0F, 1.0F, //*vertex 2 top left*//*
-            0.5F,  0.5F, 0.0F,   0.0F,   0.0F    //*vertex 3 top right*//*
+           -0.5F, -0.5F, 1.0F, 0.0F, 0.0F, //*vertex 0 bottom left*//*
+            0.5F, -0.5F, 0.0F, 1.0F, 0.0F, //*vertex 1 bottom right*//*
+           -0.5F,  0.5F, 0.0F, 0.0F, 1.0F, //*vertex 2 top left*//*
+            0.5F,  0.5F, 1.0F, 1.0F, 1.0F  //*vertex 3 top right*//*
 
         };
         public static UInt32[] jaredsQuadIndices = new UInt32[] //order of vertices in counter clockwise direction for both triangles of quad. counter clock wise is opengl default for front facing.
@@ -51,11 +51,10 @@ namespace FredrickTechDemo.src.Rendering.Models
             GL.BindBuffer(BufferTarget.ArrayBuffer, jaredsQuadVBO);
         }
 
-        public static void draw(Shader shader)
+        public static void draw()
         {
             bindBuffers();
             GL.BindVertexArray(jaredsQuadVAO);
-            shader.Use();
             GL.DrawElements(PrimitiveType.Triangles,jaredsQuadIndices.Length,DrawElementsType.UnsignedInt, 0);
         }
         

@@ -9,7 +9,6 @@ namespace FredrickTechDemo
 {
     class Application
     {
-        
         static void Main(string[] args)
         {
             GameInstance game = new GameInstance(1440, 860, "Fredrick Math Library OpenGL Tech Demo (Using OpenTk library, excluding maths)");

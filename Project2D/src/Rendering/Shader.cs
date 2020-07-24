@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FredsMath;
 using OpenTK.Graphics.OpenGL;
 
 namespace FredrickTechDemo.src.Rendering
@@ -111,6 +112,16 @@ namespace FredrickTechDemo.src.Rendering
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public void setUniformMat4F(String name, Matrix4F matrix)
+        {
+            GL.UniformMatrix4(getUniformLocation(name), 1, false, ref matrix.m1);
+        }
+
+        private int getUniformLocation(String name)// later will cache uniforms
+        {
+            return GL.GetUniformLocation(id, name);
         }
     }
 }
