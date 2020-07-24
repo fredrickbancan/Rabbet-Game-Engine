@@ -8,12 +8,14 @@ using FredsMath;
 using System.Security.AccessControl;
 using OpenTK.Graphics.OpenGL;
 using FredrickTechDemo.src.Rendering.Models;
+using FredrickTechDemo.src.Rendering;
 
 namespace FredrickTechDemo
 {
     class Renderer
     {
         private GameInstance gameInstance;
+        private Shader shader;
         public Renderer(GameInstance gameInstance)
         {
             this.gameInstance = gameInstance;
@@ -23,18 +25,17 @@ namespace FredrickTechDemo
         {
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             JaredsQuadModel.genBuffers();
-            GL.FrontFace(FrontFaceDirection.Ccw);
+            shader = new Shader("..\\..\\src\\Rendering\\Shaders\\ColourShader.shader");
         }
-        public void preRender(Colour clearColour)
+        public void preRender(float r = 0, float g = 0, float b = 0)
         {
-            /*opengl requires a value between 0 and 1 for its colors, so i use my normalize function to convert the values.*/
-           // GL.ClearColor(MathUtil.normalize(0, 255, clearColour.GetRed()), MathUtil.normalize(0, 255, clearColour.GetGreen()), MathUtil.normalize(0, 255, clearColour.GetBlue()), MathUtil.normalize(0, 255, clearColour.GetAlpha()));
+            GL.ClearColor(r, g, b, 1);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             
         }
         public void renderJaredsQuad()
         {
-            JaredsQuadModel.draw();
+            JaredsQuadModel.draw(shader);
         }
 
         public void postRender()

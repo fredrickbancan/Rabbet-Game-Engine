@@ -64,16 +64,18 @@
     <Compile Include="src\Game\TicksAndFps.cs" />
     <Compile Include="src\Rendering\Models\JaredsQuadModel.cs" />
     <Compile Include="src\Rendering\Renderer.cs" />
+    <Compile Include="src\Rendering\Shader.cs" />
     <Compile Include="src\Rendering\Vertex.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
+    <None Include="src\Rendering\Shaders\ColourShader.shader" />
+    <None Include="src\Rendering\Shaders\TextureShader.shader" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src\Entity\" />
-    <Folder Include="src\Rendering\Shaders\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

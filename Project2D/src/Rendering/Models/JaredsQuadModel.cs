@@ -15,16 +15,16 @@ namespace FredrickTechDemo.src.Rendering.Models
 
         public static float[] jaredsQuadVertices = new float[]
         {   //*x*/  /*y*/  /*R*/  /*G*/  /*B*//*
-           -0.5F, -0.5F, 255.0F, 0.0F,   0.0F, //*vertex 0 bottom left*//*
-            0.5F, -0.5F, 0.0F, 255.0F,   0.0F, //*vertex 1 bottom right*//*
-           -0.5F,  0.5F, 0.0F,   0.0F, 255.0F, //*vertex 2 top left*//*
+           -0.5F, -0.5F, 1.0F, 0.0F,   0.0F, //*vertex 0 bottom left*//*
+            0.5F, -0.5F, 0.0F, 1.0F,   0.0F, //*vertex 1 bottom right*//*
+           -0.5F,  0.5F, 0.0F,   0.0F, 1.0F, //*vertex 2 top left*//*
             0.5F,  0.5F, 0.0F,   0.0F,   0.0F    //*vertex 3 top right*//*
 
         };
         public static UInt32[] jaredsQuadIndices = new UInt32[] //order of vertices in counter clockwise direction for both triangles of quad. counter clock wise is opengl default for front facing.
         {
             0, 1, 2,//first triangle    
-            1, 3, 2//second triangle
+            1, 3, 2 //second triangle
         };
         public static void genBuffers()
         {
@@ -40,6 +40,8 @@ namespace FredrickTechDemo.src.Rendering.Models
 
             GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, true, 5 * sizeof(float), 0);//stride is bytes from start of 1 vertex to the next
             GL.EnableVertexAttribArray(0);
+            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, true, 5 * sizeof(float), 0);//stride is bytes from start of 1 vertex to the next
+            GL.EnableVertexAttribArray(1);
         }
 
         public static void bindBuffers()
@@ -49,10 +51,11 @@ namespace FredrickTechDemo.src.Rendering.Models
             GL.BindBuffer(BufferTarget.ArrayBuffer, jaredsQuadVBO);
         }
 
-        public static void draw()
+        public static void draw(Shader shader)
         {
             bindBuffers();
             GL.BindVertexArray(jaredsQuadVAO);
+            shader.Use();
             GL.DrawElements(PrimitiveType.Triangles,jaredsQuadIndices.Length,DrawElementsType.UnsignedInt, 0);
         }
         

@@ -38,7 +38,7 @@ namespace FredrickTechDemo
 
         protected override void OnRenderFrame(FrameEventArgs args)//overriding OpenTk render update function, called every frame.
         {
-            renderer.preRender(Colour.facility);
+            renderer.preRender();
             renderer.renderJaredsQuad();
             renderer.postRender();
             base.OnRenderFrame(args);
@@ -56,8 +56,6 @@ namespace FredrickTechDemo
         private void onTick()//insert game logic here
         {
             input.updateInput();
-
-            Application.warn("Tick!");
         }
         #endregion
 

@@ -61,6 +61,11 @@ namespace FredsMath
             return (byte)(colour);
         }
 
+        public float[] getNormalisedFloats()//returns colours as an array of floats with values 0 - 1 relative to the current values from 0 to 255, for opengl
+        {
+            return new float[] {MathUtil.normalize(0, 255, (float)this.GetRed()), MathUtil.normalize(0, 255, (float)this.GetGreen()), MathUtil.normalize(0, 255, (float)this.GetBlue()), MathUtil.normalize(0, 255, (float)this.GetAlpha())};
+        }
+
         //set functions
         public void SetRed(byte red)
         {
