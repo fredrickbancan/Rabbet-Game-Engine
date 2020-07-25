@@ -8,6 +8,8 @@ using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Input;
 using FredsMath;
+using FredrickTechDemo.src.Rendering.Models;
+
 namespace FredrickTechDemo
 {
     class GameInstance : GameWindow
@@ -22,7 +24,7 @@ namespace FredrickTechDemo
             tickFps = new TicksAndFps(30.0D);
             input = new Input(this);
             renderer = new Renderer(this);
-            thePlayer = new EntityPlayer("Steve", new Vector3F(0.0F, 0.0F, 0.0F));
+            thePlayer = new EntityPlayer("Steve", new Vector3(0.0F, 0.0F, 1.0F));
             tickFps.update();
         }
 
@@ -52,12 +54,19 @@ namespace FredrickTechDemo
             renderer.postRender();
             base.OnRenderFrame(args);
         }
+
+        protected override void OnResize(EventArgs e)
+        {
+            renderer.onResize();
+            base.OnResize(e);
+        }
         #endregion
 
         #region Every tick
         private void onTick()//insert game logic here
         {
             input.updateInput();
+            JaredsQuadModel.rotateQuad();
         }
         #endregion
 

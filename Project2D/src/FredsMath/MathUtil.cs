@@ -15,7 +15,7 @@ namespace FredsMath
         }
         public static Vector3F normalize(Vector3F vec)
         {
-            Vector3F result = new Vector3F();
+            Vector3F result = new Vector3F(vec);
             result.Normalize();
             return result;
         }

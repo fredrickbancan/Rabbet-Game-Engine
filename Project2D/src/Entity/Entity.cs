@@ -9,20 +9,20 @@ namespace FredrickTechDemo
 {
     class Entity
     {
-        protected Vector3F pos;
+        protected Vector3 pos;
         protected float pitch, yaw, roll = 0;
 
         public Entity()
         {
-            this.pos = new Vector3F();
+            this.pos = new Vector3();
         }
         
-        public Entity(Vector3F spawnPosition)
+        public Entity(Vector3 spawnPosition)
         {
             this.pos = spawnPosition;
         }
 
-        public Vector3F getPosition()
+        public Vector3 getPosition()
         {
             return this.pos;
         }

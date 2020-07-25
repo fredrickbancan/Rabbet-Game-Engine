@@ -1,4 +1,5 @@
 ﻿using FredsMath;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,21 +15,28 @@ namespace FredrickTechDemo
         private double mPosY;
         private double oldMouseX;
         private double oldMouseY;
-        private Matrix4F viewMatrix;
-        private Vector3F camUpVector;
-        private Vector3F camFrontVector;
+        private Matrix4 viewMatrix;
+        private Vector3 camUpVector;
+        private Vector3 up;
+        private Vector3 camFrontVector;
+        private Vector3 camRightVector;
+        private Vector3 camTarget;
+        private Vector3 camDirection;
         private EntityPlayer parent;
 
         public Camera(EntityPlayer parentEntity)
         {
             this.parent = parentEntity;
-            viewMatrix = new Matrix4F();
-            camUpVector = new Vector3F(0.0F, 1.0F, 0.0F);
-            camFrontVector = new Vector3F(0.0F, 0.0F, -1.0F);
-            viewMatrix = MathUtil.lookAt(parentEntity.getPosition(), parentEntity.getPosition() + camFrontVector, camUpVector);
+            camTarget = Vector3.Zero;
+            camDirection = Vector3.Normalize(parentEntity.getPosition() - camTarget);
+            up = Vector3.UnitY;
+            camRightVector = Vector3.Normalize(Vector3.Cross(up, camDirection));
+            camFrontVector = new Vector3(0.0F, 0.0F, -1.0F);
+            camUpVector = Vector3.Cross(camDirection, camRightVector);
+            viewMatrix = Matrix4.LookAt(parentEntity.getPosition(), camTarget, up);
         }
 
-        public Matrix4F getViewMatrix()
+        public Matrix4 getViewMatrix()
         {
             return this.viewMatrix;
         }

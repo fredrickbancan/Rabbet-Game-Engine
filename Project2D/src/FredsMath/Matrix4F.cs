@@ -11,7 +11,7 @@ namespace FredsMath
         public float m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15, m16;
 
         //constructors
-        public Matrix4F()
+        public Matrix4F() //this setup for matrices is WRONG in opengl (this is row order)
         {
             this.m1 = 1; this.m2 = 0; this.m3 = 0; this.m4 = 0;
             this.m5 = 0; this.m6 = 1; this.m7 = 0; this.m8 = 0;
@@ -27,7 +27,7 @@ namespace FredsMath
         }
 
         //matrix matrix operators
-        public static Matrix4F operator * (Matrix4F matA, Matrix4F matB) // 4 columns of A for each row of B 
+        public static Matrix4F operator * (Matrix4F matA, Matrix4F matB) // 4 columns of A for each row of B TREATING MATRICES IN NEED OF TRANSPOSING
         {
             return new Matrix4F(
  /*m1*/matA.m1 * matB.m1 + matA.m5 * matB.m2 + matA.m9 * matB.m3 + matA.m13 * matB.m4,  /*m2*/matA.m2 * matB.m1 + matA.m6 * matB.m2 + matA.m10 * matB.m3 + matA.m14 * matB.m4,  /*m3*/matA.m3 * matB.m1 + matA.m7 * matB.m2 + matA.m11 * matB.m3 + matA.m15 * matB.m4,  /*m4*/matA.m4 * matB.m1 + matA.m8 * matB.m2 + matA.m12 * matB.m3 + matA.m16 * matB.m4,
@@ -67,11 +67,5 @@ namespace FredsMath
             /*this.m9 = 0; this.m10 = 0; this.m11 = 1; this.m12 = 0;
             this.m13 = 0; this.m14 = 0; this.m15 = 0; this.m16 = 1;*/
         }
-
-        public void translate(Vector3F vec)
-        {
-            this.m13 = this.m1 * vec.x + this.m5 * vec.y + this.m9 * vec.z + this.m13;
-        }
-
     }
 }

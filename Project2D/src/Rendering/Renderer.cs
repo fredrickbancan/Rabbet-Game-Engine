@@ -16,8 +16,7 @@ namespace FredrickTechDemo
     {
         private GameInstance gameInstance;
         private Shader shader;
-        private Matrix4F projectionMatrix;
-        private Matrix4F modelMatrix;
+        private Matrix4 projectionMatrix;
         public Renderer(GameInstance gameInstance)
         {
             this.gameInstance = gameInstance;
@@ -25,12 +24,13 @@ namespace FredrickTechDemo
         
         public void init()
         {
+            GL.Enable(EnableCap.DepthTest);
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-            JaredsQuadModel.genBuffers();
-            shader = new Shader("..\\..\\src\\Rendering\\Shaders\\ColourShader3D.shader");
-            projectionMatrix = MathUtil.perspectiveMatrix((float)MathUtil.radians(GameSettings.fov), (float)gameInstance.Width / (float)gameInstance.Height, 0.001F, 1000.0F);
-            modelMatrix = new Matrix4F();
-            modelMatrix.translate(new Vector3F(0.0F, 0.0F, -2.0F));
+            JaredsQuadModel.init();
+            shader = new Shader(@"..\..\src\Rendering\Shaders\ColourTextureShader3D.shader");
+            GL.Viewport(gameInstance.ClientRectangle);
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov), (float)gameInstance.Width / (float)gameInstance.Height, 0.001F, 1000.0F);
+            
         }
         public void preRender(float r = 0, float g = 0, float b = 0)
         {
@@ -43,13 +43,19 @@ namespace FredrickTechDemo
             shader.Use();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformMat4F("viewMatrix", gameInstance.thePlayer.getCamera().getViewMatrix());
-            shader.setUniformMat4F("modelMatrix", modelMatrix);
+            shader.setUniformMat4F("modelMatrix", JaredsQuadModel.modelMatrix);
             JaredsQuadModel.draw();
         }
 
         public void postRender()
         {
             gameInstance.SwapBuffers();
+        }
+
+        public void onResize()
+        {
+            GL.Viewport(gameInstance.ClientRectangle);
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov), (float)gameInstance.Width / (float)gameInstance.Height, 0.001F, 1000.0F);
         }
     }
 }

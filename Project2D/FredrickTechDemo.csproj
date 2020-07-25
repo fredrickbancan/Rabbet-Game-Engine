@@ -38,17 +38,11 @@
     <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
     </Reference>
-    <Reference Include="OpenTK.GLControl, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.GLControl.3.0.1\lib\net20\OpenTK.GLControl.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="src\Entity\Entity.cs" />
@@ -69,6 +63,7 @@
     <Compile Include="src\Rendering\Models\JaredsQuadModel.cs" />
     <Compile Include="src\Rendering\Renderer.cs" />
     <Compile Include="src\Rendering\Shader.cs" />
+    <Compile Include="src\Rendering\Texture.cs" />
     <Compile Include="src\Rendering\Vertex.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -77,8 +72,12 @@
     <None Include="packages.config" />
     <None Include="src\Rendering\Shaders\ColourShader.shader" />
     <None Include="src\Rendering\Shaders\ColourShader3D.shader" />
+    <None Include="src\Rendering\Shaders\ColourTextureShader3D.shader" />
     <None Include="src\Rendering\Shaders\TextureShader.shader" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Content Include="res\aie.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
