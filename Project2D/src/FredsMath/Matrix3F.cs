@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FredsMath
 {
-    public class Matrix3F
+    public struct Matrix3F
     {
         public Vector3F row0;
         public Vector3F row1;
@@ -79,9 +73,9 @@ namespace FredsMath
 
 
         #region matrix matrix operators
-        /*public static Matrix3F operator * (Matrix3F matA, Matrix3F matB) //row left column right (Standard)
+        public static Matrix3F operator * (Matrix3F matA, Matrix3F matB) //row left column right (Standard)
         {
-            Matrix3F result = new Matrix3F();
+            Matrix3F result = new Matrix3F(1.0F);
 
             result.row0.x = (matA.m1 * matB.m1) + (matA.m2 * matB.m4) + (matA.m3 * matB.m7);
             result.row0.y = (matA.m1 * matB.m2) + (matA.m2 * matB.m5) + (matA.m3 * matB.m8);
@@ -94,8 +88,14 @@ namespace FredsMath
             result.row2.z = (matA.m7 * matB.m3) + (matA.m8 * matB.m6) + (matA.m9 * matB.m9);
 
             return result;
-        }*/
-        public static Matrix3F operator * (Matrix3F matA, Matrix3F matB) //column left row right
+        }
+        /// <summary>
+        /// column left row right, for use with provided unit tests. using & as symbol because * is used by opengl compatable multiplication function.
+        /// </summary>
+        /// <param name="matA"></param>
+        /// <param name="matB"></param>
+        /// <returns></returns>
+        public static Matrix3F operator & (Matrix3F matA, Matrix3F matB) //column left row right
         {
             Matrix3F result = new Matrix3F(1.0F);
 
@@ -119,6 +119,7 @@ namespace FredsMath
         {
             float cos = (float)Math.Cos(rads);
             float sin = (float)Math.Sin(rads);
+            this.row0 = new Vector3F(1.0F, 0.0F, 0.0F);
             this.row1 = new Vector3F(0.0F, cos, sin);
             this.row2 = new Vector3F(0.0F, -sin, cos);
         }
@@ -128,6 +129,7 @@ namespace FredsMath
             float cos = (float)Math.Cos(rads);
             float sin = (float)Math.Sin(rads);
             this.row0 = new Vector3F(cos, 0.0F, -sin);
+            this.row1 = new Vector3F(0.0F, 1.0F, 0.0F);
             this.row2 = new Vector3F(sin, 0.0F, cos);
         }
 
@@ -137,6 +139,7 @@ namespace FredsMath
             float sin = (float)Math.Sin(rads);
             this.row0 = new Vector3F(cos, sin, 0.0F);
             this.row1 = new Vector3F(-sin, cos, 0.0F);
+            this.row2 = new Vector3F(0.0F, 0.0F, 1.0F);
         }
         #endregion
     }

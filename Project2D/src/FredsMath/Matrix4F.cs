@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FredsMath
 {
@@ -150,7 +145,13 @@ namespace FredsMath
             return result;
         }
 
-     /*   public static Matrix4F operator * (Matrix4F matA, Matrix4F matB) // Column left row right 
+        /// <summary>
+        ///  Column left row right For use with provided unit tests. using & as symbol because * is used by opengl compatable multiplication function.
+        /// </summary>
+        /// <param name="matA"></param>
+        /// <param name="matB"></param>
+        /// <returns></returns>
+        public static Matrix4F operator & (Matrix4F matA, Matrix4F matB) // Column left row right For use with provided unit tests. 
         {
             Matrix4F result = new Matrix4F();
             result.row0.x = (matA.m1 * matB.m1) + (matA.m5 * matB.m2) + (matA.m9  * matB.m3) + (matA.m13 * matB.m4);
@@ -171,7 +172,7 @@ namespace FredsMath
             result.row3.w = (matA.m4 * matB.m13) + (matA.m8 * matB.m14) + (matA.m12 * matB.m15) + (matA.m16 * matB.m16);
 
             return result;
-        }*/
+        }
         public static Matrix4F operator + (Matrix4F matA, Matrix4F matB)
         {
             return new Matrix4F(matA.row0 + matB.row0, matA.row1 + matB.row1, matA.row2 + matB.row2, matA.row3 + matB.row3);
@@ -191,26 +192,32 @@ namespace FredsMath
         {
             float cos = (float)Math.Cos(rads);
             float sin = (float)Math.Sin(rads);
+            this.row0 = new Vector4F(1.0F, 0.0F, 0.0F, 0.0F);
             this.row1 = new Vector4F(0.0F, cos, sin, 0.0F);
             this.row2 = new Vector4F(0.0F, -sin, cos, 0.0F);
+            this.row3 = new Vector4F(0.0F, 0.0F, 0.0F, 1.0F);
         }
         public void SetRotateY(float rads)
         {
             float cos = (float)Math.Cos(rads);
             float sin = (float)Math.Sin(rads);
             this.row0 = new Vector4F(cos, 0.0F, -sin, 0.0F);
+            this.row1 = new Vector4F(0.0F, 1.0F, -0.0F, 0.0F);
             this.row2 = new Vector4F(sin, 0.0F, cos, 0.0F);
+            this.row3 = new Vector4F(0.0F, 0.0F, -0.0F, 1.0F);
         }
 
         public void SetRotateZ(float rads)
         {
             float cos = (float)Math.Cos(rads);
             float sin = (float)Math.Sin(rads);
-            this.row0 = new Vector4F(cos, sin,0.0F, 0.0F);
-            this.row1 = new Vector4F(-sin, cos,0.0F, 0.0F);
+            this.row0 = new Vector4F(cos, sin, 0.0F, 0.0F);
+            this.row1 = new Vector4F(-sin, cos, 0.0F, 0.0F);
+            this.row2 = new Vector4F(0.0F, 0.0F, 1.0F, 0.0F);
+            this.row3 = new Vector4F(0.0F, 0.0F, 0.0F, 1.0F);
         }
 
-         public static Matrix4F lookAt(Vector3F eye, Vector3F target, Vector3F up)
+        public static Matrix4F lookAt(Vector3F eye, Vector3F target, Vector3F up)
          {
              Vector3F front = new Vector3F(Vector3F.normalize(eye - target));
              Vector3F side = new Vector3F(Vector3F.cross(up, front));
