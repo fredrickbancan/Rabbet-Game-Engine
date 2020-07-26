@@ -14,7 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Project2D\FredrickTechDemo.csproj" />
+    <ProjectReference Include="..\FredrickTechDemo\FredrickTechDemo.csproj" />
+    <ProjectReference Include="..\Project2D\FredrickMathLibraryTechDemoOpenGL.csproj" />
   </ItemGroup>
 
 </Project>

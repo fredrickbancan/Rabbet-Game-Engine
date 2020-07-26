@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C24AC51D-CF9D-439A-8303-99706B312D78}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>FredrickMathLibraryTechDemoOpenGL</RootNamespace>
+    <AssemblyName>FredrickMathLibraryTechDemoOpenGL</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\Entity\Entity.cs" />
+    <Compile Include="src\Entity\EntityPlayer.cs" />
+    <Compile Include="src\FredsMath\Colour.cs" />
+    <Compile Include="src\FredsMath\MathUtil.cs" />
+    <Compile Include="src\FredsMath\Matrix3F.cs" />
+    <Compile Include="src\FredsMath\Matrix4F.cs" />
+    <Compile Include="src\FredsMath\Vector3F.cs" />
+    <Compile Include="src\FredsMath\Vector4F.cs" />
+    <Compile Include="src\Game\GameInstance.cs" />
+    <Compile Include="src\Application.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\Game\GameSettings.cs" />
+    <Compile Include="src\Game\Input.cs" />
+    <Compile Include="src\Game\TicksAndFps.cs" />
+    <Compile Include="src\Rendering\Camera.cs" />
+    <Compile Include="src\Rendering\Models\JaredsQuadModel.cs" />
+    <Compile Include="src\Rendering\Renderer.cs" />
+    <Compile Include="src\Rendering\Shader.cs" />
+    <Compile Include="src\Rendering\Texture.cs" />
+    <Compile Include="src\Rendering\Vertex.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="OpenTK.dll.config" />
+    <None Include="packages.config" />
+    <None Include="src\Rendering\Shaders\ColourShader.shader" />
+    <None Include="src\Rendering\Shaders\ColourShader3D.shader" />
+    <None Include="src\Rendering\Shaders\ColourTextureShader3D.shader" />
+    <None Include="src\Rendering\Shaders\TextureShader.shader" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Content Include="res\aie.jpg" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
