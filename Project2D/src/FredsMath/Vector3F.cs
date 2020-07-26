@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -8,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace FredsMath
 {
-    public class Vector3F
+    public struct Vector3F
     {
         public float x, y, z;
 
         //constructors
-        public Vector3F()
+        /*public Vector3F()
         {
             this.x = 0;
             this.y = 0;
             this.z = 0;
-        }
+        }*/
         public Vector3F(float x, float y, float z)
         {
             this.x = x;
@@ -27,7 +28,7 @@ namespace FredsMath
         }
         public Vector3F(float w)
         {
-            this.x = y = this.z = w;
+            this.x = this.y = this.z = w;
         }
         public Vector3F(Vector3F copyVector)
         {
@@ -118,9 +119,37 @@ namespace FredsMath
             }
         }
         
+        public static float magnitude(Vector3F vec)
+        {
+            return (float)Math.Sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
+        }
         public Vector3F Cross(Vector3F vec)
         {
             return new Vector3F(this.y * vec.z - this.z * vec.y, this.z * vec.x - this.x * vec.z, this.x * vec.y - this.y * vec.x);
+        }
+        public static Vector3F normalize(Vector3F vec)
+        {
+            float length = magnitude(vec);
+            if (length != 0)
+            {
+                vec.x /= length;
+                vec.y /= length;
+                vec.z /= length;
+            }
+            else
+            {
+                vec.x = vec.y = vec.z = 0;
+            }
+            return vec;
+        }
+
+        public static Vector3F cross(Vector3F vecA, Vector3F vecB)
+        {
+            return new Vector3F(vecA.y * vecB.z - vecA.z * vecB.y, vecA.z * vecB.x - vecA.x * vecB.z, vecA.x * vecB.y - vecA.y * vecB.x);
+        }
+        public static float dot(Vector3F vecA, Vector3F vecB)
+        {
+            return vecA.x * vecB.x + vecA.y * vecB.y + vecA.z * vecB.z;
         }
     }
 }

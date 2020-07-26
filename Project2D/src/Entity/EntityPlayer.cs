@@ -22,7 +22,7 @@ namespace FredrickTechDemo
             frontVector = new Vector3F(0.0F, 0.0F, -1.0F);
             upVector = new Vector3F(0.0F, 1.0F, 0.0F);
         }
-        public EntityPlayer(String name, Vector3 spawnPosition) : base(spawnPosition)
+        public EntityPlayer(String name, Vector3F spawnPosition) : base(spawnPosition)
         {
             this.playerName = name;
             camera = new Camera(this);

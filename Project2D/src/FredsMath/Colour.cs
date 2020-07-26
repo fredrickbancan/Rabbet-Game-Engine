@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FredsMath
 {
-    public class Colour
+    public struct Colour
     {
         #region pre-set colours;
         public static Colour blue = new Colour(0, 0, 255);
@@ -28,10 +28,10 @@ namespace FredsMath
         public UInt32 colour;
 
         //constructors
-        public Colour()
+        /*public Colour()
         {
             colour = 0;
-        }
+        }*/
         public Colour(UInt32 color)
         {
             this.colour = color;

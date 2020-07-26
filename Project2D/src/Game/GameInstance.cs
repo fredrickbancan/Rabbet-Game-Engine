@@ -9,6 +9,7 @@ using OpenTK.Graphics;
 using OpenTK.Input;
 using FredsMath;
 using FredrickTechDemo.src.Rendering.Models;
+using System.Runtime.CompilerServices;
 
 namespace FredrickTechDemo
 {
@@ -24,8 +25,16 @@ namespace FredrickTechDemo
             tickFps = new TicksAndFps(30.0D);
             input = new Input(this);
             renderer = new Renderer(this);
-            thePlayer = new EntityPlayer("Steve", new Vector3(0.0F, 0.0F, 1.0F));
+            thePlayer = new EntityPlayer("Steve", new Vector3F(0.0F, 0.0F, 2.0F));
             tickFps.update();
+            if (GameSettings.vsync)
+            {
+                this.VSync = VSyncMode.On;
+            }
+            else
+            {
+                this.VSync = VSyncMode.Off;
+            }
         }
 
         #region overriding OpenTk base game methods
@@ -38,13 +47,12 @@ namespace FredrickTechDemo
 
         protected override void OnUpdateFrame(FrameEventArgs args)//overriding OpenTk game update function, called every frame.
         {
-            base.OnUpdateFrame(args);
-
-            for(int i = 0; i< tickFps.getTicksElapsed(); i++)//for each tick that has elapsed since the start of last update, run the games logic enough times to catch up. 
+            for (int i = 0; i < tickFps.getTicksElapsed(); i++)//for each tick that has elapsed since the start of last update, run the games logic enough times to catch up. 
             {
                 onTick();
             }
             tickFps.update();
+            base.OnUpdateFrame(args);
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)//overriding OpenTk render update function, called every frame.
@@ -52,6 +60,7 @@ namespace FredrickTechDemo
             renderer.preRender();
             renderer.renderJaredsQuad();
             renderer.postRender();
+            
             base.OnRenderFrame(args);
         }
 
@@ -64,11 +73,16 @@ namespace FredrickTechDemo
 
         #region Every tick
         private void onTick()//insert game logic here
-        {
+        { 
             input.updateInput();
-            JaredsQuadModel.rotateQuad();
+            JaredsQuadModel.onTick();
         }
         #endregion
+
+        public float getPercentageNextTick()
+        {
+            return (float) tickFps.getPartialTicks();
+        }
 
     }
 }

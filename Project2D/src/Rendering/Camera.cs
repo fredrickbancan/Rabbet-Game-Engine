@@ -15,28 +15,28 @@ namespace FredrickTechDemo
         private double mPosY;
         private double oldMouseX;
         private double oldMouseY;
-        private Matrix4 viewMatrix;
-        private Vector3 camUpVector;
-        private Vector3 up;
-        private Vector3 camFrontVector;
-        private Vector3 camRightVector;
-        private Vector3 camTarget;
-        private Vector3 camDirection;
+        private Matrix4F viewMatrix;
+        private Vector3F camUpVector;
+        private Vector3F up;
+        private Vector3F camFrontVector;
+        private Vector3F camRightVector;
+        private Vector3F camTargetVector;
+        private Vector3F camDirectionVector;
         private EntityPlayer parent;
 
         public Camera(EntityPlayer parentEntity)
         {
             this.parent = parentEntity;
-            camTarget = Vector3.Zero;
-            camDirection = Vector3.Normalize(parentEntity.getPosition() - camTarget);
-            up = Vector3.UnitY;
-            camRightVector = Vector3.Normalize(Vector3.Cross(up, camDirection));
-            camFrontVector = new Vector3(0.0F, 0.0F, -1.0F);
-            camUpVector = Vector3.Cross(camDirection, camRightVector);
-            viewMatrix = Matrix4.LookAt(parentEntity.getPosition(), camTarget, up);
+            camTargetVector = new Vector3F(0.0F);
+            camDirectionVector = Vector3F.normalize(parentEntity.getPosition() - camTargetVector);
+            up = new Vector3F(0.0F, 1.0F, 0.0F);
+            camRightVector = Vector3F.normalize(Vector3F.cross(up, camDirectionVector));
+            camFrontVector = new Vector3F(0.0F, 0.0F, -1.0F);
+            camUpVector = Vector3F.cross(camDirectionVector, camRightVector);
+            viewMatrix = Matrix4F.lookAt(parentEntity.getPosition(), camTargetVector, up);
         }
 
-        public Matrix4 getViewMatrix()
+        public Matrix4F getViewMatrix()
         {
             return this.viewMatrix;
         }

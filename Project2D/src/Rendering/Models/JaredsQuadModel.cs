@@ -14,8 +14,9 @@ namespace FredrickTechDemo.src.Rendering.Models
         public static int jaredsQuadIBO;
         public static int jaredsQuadVBO;
         public static int jaredsQuadVAO;
-        public static Matrix4 modelMatrix;
-        public static Matrix4 rotationMatrix;
+        public static Matrix4F modelMatrix;
+        public static Matrix4F prevModelMatrix;
+        public static Matrix4F rotationMatrix;
         public static Texture quadTexture;
 
         public static float[] jaredsQuadVertices = new float[]
@@ -34,8 +35,10 @@ namespace FredrickTechDemo.src.Rendering.Models
 
         public static void init()
         {
-            modelMatrix = Matrix4.Identity;
-            rotationMatrix = Matrix4.CreateRotationY((float)MathUtil.radians(5.0D));
+            modelMatrix = new Matrix4F(1.0F);
+            prevModelMatrix = new Matrix4F(1.0F);
+            rotationMatrix = new Matrix4F(1.0F);
+            rotationMatrix.SetRotateY((float)MathUtil.radians(2.0D));
             quadTexture = new Texture(@"..\..\res\aie.png", true);
             genBuffers();
         }
@@ -74,8 +77,10 @@ namespace FredrickTechDemo.src.Rendering.Models
             GL.DrawElements(PrimitiveType.Triangles,jaredsQuadIndices.Length,DrawElementsType.UnsignedInt, 0);
         }
         
-        public static void rotateQuad()
+        public static void onTick()
         {
+            prevModelMatrix = modelMatrix;
+
             modelMatrix *= rotationMatrix;
         }
 

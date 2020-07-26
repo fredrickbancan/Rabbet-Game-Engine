@@ -1,24 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace FredsMath
 {
-    public class Vector4F
+    public struct Vector4F
     {
-        public float x, y, z, w;
+        public float x;
+        public float y;
+        public float z;
+        public float w;
 
         //constructors
 
-        public Vector4F()
+        /*public Vector4F()
         {
             this.x = 0;
             this.y = 0;
             this.z = 0;
             this.w = 0;
-        }
+        }*/
 
         public Vector4F(float x, float y, float z, float w)
         {
@@ -40,16 +44,9 @@ namespace FredsMath
             this.z = copyVector.z;
             this.w = copyVector.w;
         }
-        public Vector4F(Vector3F copyVector)
-        {
-            this.x = copyVector.x;
-            this.y = copyVector.y;
-            this.z = copyVector.z;
-            this.w = 1;
-        }
 
         //matrix vector operators
-        public static Vector4F operator *(Matrix4F mat, Vector4F vec) // column major vector multiplication
+        public static Vector4F operator * (Matrix4F mat, Vector4F vec) // column major vector multiplication
         {
             return new Vector4F(
                     /*X*/mat.m1 * vec.x + mat.m5 * vec.y + mat.m9 * vec.z + mat.m13 * vec.w,
@@ -135,5 +132,6 @@ namespace FredsMath
         {
             return new Vector4F(this.y * vec.z - this.z * vec.y, this.z * vec.x - this.x * vec.z, this.x * vec.y - this.y * vec.x, 0);
         }
+
     }
 }
