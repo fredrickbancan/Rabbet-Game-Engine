@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C24AC51D-CF9D-439A-8303-99706B312D78}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>FredrickMathLibraryTechDemoOpenGL</RootNamespace>
-    <AssemblyName>FredrickMathLibraryTechDemoOpenGL</AssemblyName>
+    <RootNamespace>FredrickTechDemo</RootNamespace>
+    <AssemblyName>FredrickTechDemo</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -60,6 +60,7 @@
     <Compile Include="src\Game\Input.cs" />
     <Compile Include="src\Game\TicksAndFps.cs" />
     <Compile Include="src\Rendering\Camera.cs" />
+    <Compile Include="src\Rendering\Text\TextRenderer.cs" />
     <Compile Include="src\Rendering\Models\JaredsQuadModel.cs" />
     <Compile Include="src\Rendering\Renderer.cs" />
     <Compile Include="src\Rendering\Shader.cs" />
@@ -70,14 +71,21 @@
     <None Include="App.config" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
+    <None Include="res\font\consolasFreeType.fnt" />
+    <None Include="res\font\consolasJava.fnt" />
+    <None Include="res\font\consolasNative.fnt" />
     <None Include="src\Rendering\Shaders\ColourShader.shader" />
     <None Include="src\Rendering\Shaders\ColourShader3D.shader" />
     <None Include="src\Rendering\Shaders\ColourTextureShader3D.shader" />
+    <None Include="src\Rendering\Shaders\TextShader.shader" />
     <None Include="src\Rendering\Shaders\TextureShader.shader" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="res\aie.jpg" />
+    <Content Include="res\font\consolasFreeType.png" />
+    <Content Include="res\font\consolasJava.png" />
+    <Content Include="res\font\consolasNative.png" />
+    <Content Include="res\texture\aie.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using OpenTK;
 using OpenTK.Graphics;
 using OpenTK.Input;
-using FredsMath;
+using FredrickTechDemo.FredsMath;
 using FredrickTechDemo.src.Rendering.Models;
 using System.Runtime.CompilerServices;
 

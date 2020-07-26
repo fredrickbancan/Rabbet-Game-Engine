@@ -1,6 +1,6 @@
-using System;
-using FredsMath;
+using FredrickTechDemo.FredsMath;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 namespace UnitTestProject
 {
     [TestClass]

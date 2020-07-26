@@ -1,4 +1,4 @@
-﻿using FredsMath;
+﻿using FredrickTechDemo.FredsMath;
 using System;
 
 namespace FredrickTechDemo

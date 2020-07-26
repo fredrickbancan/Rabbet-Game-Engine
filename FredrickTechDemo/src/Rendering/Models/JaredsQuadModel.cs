@@ -1,11 +1,6 @@
 ﻿using FredsMath;
-using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FredrickTechDemo.src.Rendering.Models
 {
@@ -39,7 +34,7 @@ namespace FredrickTechDemo.src.Rendering.Models
             prevModelMatrix = new Matrix4F(1.0F);
             rotationMatrix = new Matrix4F(1.0F);
             rotationMatrix.SetRotateY((float)MathUtil.radians(2.0D));
-            quadTexture = new Texture(@"..\..\res\aie.png", true);
+            quadTexture = new Texture(@"..\..\res\texture\aie.png", true);
             genBuffers();
         }
         public static void genBuffers()

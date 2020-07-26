@@ -1,4 +1,4 @@
-﻿using FredsMath;
+﻿using FredrickTechDemo.FredsMath;
 namespace FredrickTechDemo
 {
     class Entity
