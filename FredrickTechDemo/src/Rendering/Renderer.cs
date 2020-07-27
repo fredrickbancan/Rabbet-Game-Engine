@@ -49,10 +49,11 @@ namespace FredrickTechDemo
         }
 
         /*render jareds quad*/
-        public void renderJaredsQuad()
+        public void renderJaredsQuad() 
         {
             preRender();
-            gameInstance.jaredsQuad.draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, gameInstance.getPercentageNextTick());
+            gameInstance.thePlayer.onCameraUpdate();
+            gameInstance.jaredsQuad.draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix);
             postRender();
         }
 

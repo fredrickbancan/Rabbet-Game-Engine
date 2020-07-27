@@ -4,19 +4,14 @@ using System;
 namespace FredrickTechDemo
 {
     /*Class for the player. Contains the players name, inventory etc.*/
-    class EntityPlayer : Entity// a middle "alive" entity class needs to be created with the vectors, health , movement speed etc.
+    class EntityPlayer : EntityLiving
     {
         private String playerName;
-        private Vector3F frontVector;
-        private Vector3F upVector;
-        private Vector3F movementVector;
         private Camera camera;
-        public EntityPlayer(String name)
+        public EntityPlayer(String name) : base()
         {
             this.playerName = name;
             camera = new Camera(this);
-            frontVector = new Vector3F(0.0F, 0.0F, -1.0F);
-            upVector = new Vector3F(0.0F, 1.0F, 0.0F);
         }
         public EntityPlayer(String name, Vector3F spawnPosition) : base(spawnPosition)
         {
@@ -24,14 +19,15 @@ namespace FredrickTechDemo
             camera = new Camera(this);
         }
 
-        public Vector3F getFrontVector()
+        public override void onTick()
         {
-            return this.frontVector;
+            base.onTick();//do first
         }
 
-        public Vector3F GetVector()
+        /*Called before game renders, each frame.*/
+        public void onCameraUpdate()
         {
-            return this.upVector;
+            this.camera.onUpdate();
         }
         public Camera getCamera()
         {

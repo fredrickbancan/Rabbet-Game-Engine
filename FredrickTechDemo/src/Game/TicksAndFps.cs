@@ -1,35 +1,32 @@
 ﻿using System.Diagnostics;
+
 namespace FredrickTechDemo
 {
     /*This class is responasble for providing game loop timings so that the game runs
       at a consistant rate over multiple fps rates and refresh rates.*/
-    class TicksAndFps
+    public static class TicksAndFps
     {
-        Stopwatch stopwatch = new Stopwatch();
-        private long currentTime = 0;
-        private long lastTime = 0;
-        private double timer = 0;
-        private int fps = 1;
-        private int frames;
-        private double deltaTime = 0.005D;
-        private double ticksPerSecond = 0;
-        private int ticksElapsed = 0;
-        private double timePerTick;
-        private double percentToNextTick; //a decimal value between 0 and 1 which can be used as a percentage of progress towards next tick, usefull for interpolation.
+        private static Stopwatch stopwatch = new Stopwatch();
+        private static long currentTime = 0;
+        private static long lastTime = 0;
+        private static double timer = 0;
+        private static int fps = 1;
+        private static int frames;
+        private static double deltaTime = 0.005D;
+        private static double ticksPerSecond = 0;
+        private static int ticksElapsed = 0;
+        private static double timePerTick;
+        private static double percentToNextTick; //a decimal value between 0 and 1 which can be used as a percentage of progress towards next tick, usefull for interpolation.
 
-        public TicksAndFps(double ticksPerSecond)
+        public static void init(double tps)
         {
-            this.ticksPerSecond = ticksPerSecond;
+            ticksPerSecond = tps;
             timePerTick = 1 / ticksPerSecond;
-        }
-
-        public void init()
-        {
             stopwatch.Start();
             lastTime = stopwatch.ElapsedMilliseconds;
         }
 
-        public void update()
+        public static void update()
         {
             /*updating FPS*/
             lastTime = currentTime;
@@ -71,16 +68,16 @@ namespace FredrickTechDemo
             }
         }
 
-        public int getTicksElapsed()
+        public static int getTicksElapsed()
         {
-            return this.ticksElapsed;
+            return ticksElapsed;
         }
-        public double getPartialTicks()
+        public static float getPercentageToNextTick()
         {
-            return this.percentToNextTick;
+            return (float)percentToNextTick;
         }
 
-        public int getFps()
+        public static int getFps()
         {
             return fps;
         }

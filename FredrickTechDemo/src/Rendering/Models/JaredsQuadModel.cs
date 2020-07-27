@@ -7,10 +7,10 @@ namespace FredrickTechDemo.Models
     {
         private static float[] jaredsQuadVerticesXYZ = new float[]
         {/*   x      y      z   */
-            -0.5F, -0.5F, 0.0F,//*vertex 0 bottom left*//*
-             0.5F, -0.5F, 0.0F,//*vertex 1 bottom right*//*
-            -0.5F,  0.5F, 0.0F,//*vertex 2 top left*//*
-             0.5F,  0.5F, 0.0F//*vertex 3 top right*//*
+            -1.0F, -1.0F, 0.0F,//*vertex 0 bottom left*//*
+             1.0F, -1.0F, 0.0F,//*vertex 1 bottom right*//*
+            -1.0F,  1.0F, 0.0F,//*vertex 2 top left*//*
+             1.0F,  1.0F, 0.0F//*vertex 3 top right*//*
         };
 
         private static float[] jaredsQuadVerticesRGB = new float[]
@@ -39,16 +39,14 @@ namespace FredrickTechDemo.Models
         protected override void init()
         {
             base.init();
-            rotationMatrix.SetRotateY((float)MathUtil.radians(2.0D));
-            translationMatrix = Matrix4F.createTranslationMatrix(0.0F, 0.0F, -0.01F);
-            onTick(); // this is done in init so the model is correctly transformed on the first few frames of display
+            //translationMatrix = Matrix4F.createTranslationMatrix(0.2F, -1.0F, -2.0F);
+            onTick(new Vector3F(), new Vector3F()); // this is done in init so the model is correctly transformed on the first few frames of display
         }
         
-        public void onTick()
+        public void onTick(Vector3F translate, Vector3F rotate)
         {
             prevModelMatrix = modelMatrix;//store current state in previous model matrix for interpolation
-
-            modelMatrix *= rotationMatrix * translationMatrix * scaleMatrix;// transform model
+            modelMatrix = Matrix4F.rotate(rotate) * Matrix4F.translate(translate);
         }
 
     }

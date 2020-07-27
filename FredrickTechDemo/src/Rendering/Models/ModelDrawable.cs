@@ -15,10 +15,7 @@ namespace FredrickTechDemo.Models
         protected Texture texture;
         protected Shader shader;
         protected Matrix4F prevModelMatrix;
-        protected Matrix4F modelMatrix = new Matrix4F(1.0F);
-        protected Matrix4F rotationMatrix = new Matrix4F(1.0F);
-        protected Matrix4F translationMatrix = new Matrix4F(1.0F);
-        protected Matrix4F scaleMatrix = new Matrix4F(1.0F);
+        protected Matrix4F modelMatrix;
 
 
         /*takes in directory for the shader and texture for this model*/
@@ -61,12 +58,12 @@ namespace FredrickTechDemo.Models
         }
 
         /*Draws this model. If its the first draw call, and firtst bind call, the model will be initialized.*/
-        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, float percentageNextTick)
+        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix)
         {
             bind();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
-            shader.setUniformMat4F("modelMatrix", prevModelMatrix + (modelMatrix - prevModelMatrix) * percentageNextTick);//interpolating model matrix between ticks
+            shader.setUniformMat4F("modelMatrix", prevModelMatrix + (modelMatrix - prevModelMatrix) * TicksAndFps.getPercentageToNextTick());//interpolating model matrix between ticks
 
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();

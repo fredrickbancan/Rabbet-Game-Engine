@@ -1,4 +1,5 @@
 ﻿using FredrickTechDemo.FredsMath;
+using System;
 
 namespace FredrickTechDemo
 {
@@ -22,6 +23,7 @@ namespace FredrickTechDemo
         public Camera(EntityPlayer parentEntity)
         {
             this.parent = parentEntity;
+            yaw = -90.0F;
             camTargetVector = new Vector3F(0.0F);
             camDirectionVector = Vector3F.normalize(parentEntity.getPosition() - camTargetVector);
             up = new Vector3F(0.0F, 1.0F, 0.0F);
@@ -29,6 +31,15 @@ namespace FredrickTechDemo
             camFrontVector = new Vector3F(0.0F, 0.0F, -1.0F);
             camUpVector = Vector3F.cross(camDirectionVector, camRightVector);
             viewMatrix = Matrix4F.lookAt(parentEntity.getPosition(), camTargetVector, up);
+        }
+
+        public void onUpdate()
+        {
+            camDirectionVector.x =(float) (Math.Cos(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
+            camDirectionVector.y =(float) Math.Sin(MathUtil.radians(pitch));
+            camDirectionVector.z =(float) (Math.Sin(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
+            camFrontVector = Vector3F.normalize(camDirectionVector);
+            viewMatrix = Matrix4F.lookAt(parent.getLerpPos(), parent.getLerpPos() + camFrontVector, camUpVector);
         }
 
         public Matrix4F getViewMatrix()

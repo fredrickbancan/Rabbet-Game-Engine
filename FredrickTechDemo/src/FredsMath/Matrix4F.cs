@@ -2,6 +2,12 @@
 
 namespace FredrickTechDemo.FredsMath
 {
+    public enum Axis// simple enum for chosing axis to rotate on
+    {
+        x,
+        y,
+        z
+    }
     public struct Matrix4F
     {
         public Vector4F row0;
@@ -185,36 +191,68 @@ namespace FredrickTechDemo.FredsMath
         {
             return new Matrix4F(matA.row0 * value, matA.row1 * value, matA.row2 * value, matA.row3 * value);
         }
+
         #endregion
+
 
         #region functions
         public void SetRotateX(float rads)
         {
             float cos = (float)Math.Cos(rads);
             float sin = (float)Math.Sin(rads);
-            this.row0 = new Vector4F(1.0F, 0.0F, 0.0F, 0.0F);
-            this.row1 = new Vector4F(0.0F, cos, sin, 0.0F);
-            this.row2 = new Vector4F(0.0F, -sin, cos, 0.0F);
-            this.row3 = new Vector4F(0.0F, 0.0F, 0.0F, 1.0F);
+            this.row1.y = cos;
+            this.row1.z = sin;
+            this.row2.y = -sin;
+            this.row2.z = cos;
         }
+
         public void SetRotateY(float rads)
         {
             float cos = (float)Math.Cos(rads);
             float sin = (float)Math.Sin(rads);
-            this.row0 = new Vector4F(cos, 0.0F, -sin, 0.0F);
-            this.row1 = new Vector4F(0.0F, 1.0F, -0.0F, 0.0F);
-            this.row2 = new Vector4F(sin, 0.0F, cos, 0.0F);
-            this.row3 = new Vector4F(0.0F, 0.0F, -0.0F, 1.0F);
+            this.row0.x = cos;
+            this.row0.z = -sin;
+            this.row2.x = sin;
+            this.row2.z = cos;
         }
 
         public void SetRotateZ(float rads)
         {
             float cos = (float)Math.Cos(rads);
             float sin = (float)Math.Sin(rads);
-            this.row0 = new Vector4F(cos, sin, 0.0F, 0.0F);
-            this.row1 = new Vector4F(-sin, cos, 0.0F, 0.0F);
-            this.row2 = new Vector4F(0.0F, 0.0F, 1.0F, 0.0F);
-            this.row3 = new Vector4F(0.0F, 0.0F, 0.0F, 1.0F);
+            this.row0.x = cos;
+            this.row0.y = sin;
+            this.row1.x = -sin;
+            this.row1.y = cos;
+        }
+
+        public static Matrix4F rotate(float degrees, Axis axis)
+        {
+            float rads = (float)MathUtil.radians(degrees);
+            Matrix4F result = new Matrix4F(1.0F);
+            if(axis == Axis.x)
+            {
+                result.SetRotateX(rads);
+            }
+            else if(axis == Axis.y)
+            {
+                result.SetRotateY(rads);
+            }
+            else if(axis == Axis.z)
+            {
+                result.SetRotateZ(rads);
+            }
+            return result; 
+        }
+        public static Matrix4F rotate(Vector3F rotationVector)
+        {
+            return rotate(rotationVector.x, Axis.x) * rotate(rotationVector.y, Axis.y) * rotate(rotationVector.z, Axis.z);
+        }
+        public static Matrix4F translate(Vector3F vec)
+        {
+            Matrix4F result = new Matrix4F(1.0F);
+            result.row3 = new Vector4F(vec.x, vec.y, vec.z, 1.0F);
+            return result;
         }
 
         public static Matrix4F lookAt(Vector3F eye, Vector3F target, Vector3F up)
@@ -233,6 +271,12 @@ namespace FredrickTechDemo.FredsMath
         {
             Matrix4F result = new Matrix4F(1.0F);
             result.row3 = new Vector4F(x, y, z, 1.0F);
+            return result;
+        }
+        public static Matrix4F createTranslationMatrix(Vector3F vec)
+        {
+            Matrix4F result = new Matrix4F(1.0F);
+            result.row3 = new Vector4F(vec.x, vec.y, vec.z, 1.0F);
             return result;
         }
 
