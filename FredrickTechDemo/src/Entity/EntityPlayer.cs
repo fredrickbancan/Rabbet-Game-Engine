@@ -3,7 +3,8 @@ using System;
 
 namespace FredrickTechDemo
 {
-    class EntityPlayer : Entity
+    /*Class for the player. Contains the players name, inventory etc.*/
+    class EntityPlayer : Entity// a middle "alive" entity class needs to be created with the vectors, health , movement speed etc.
     {
         private String playerName;
         private Vector3F frontVector;

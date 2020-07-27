@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FredsMath
+namespace FredrickTechDemo.FredsMath
 {
     static class MathUtil
     {

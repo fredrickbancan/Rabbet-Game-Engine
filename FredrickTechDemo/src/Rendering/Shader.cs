@@ -1,14 +1,20 @@
-﻿using System;
-using System.IO;
-using FredsMath;
+﻿using FredrickTechDemo.FredsMath;
 using OpenTK.Graphics.OpenGL;
+using System;
+using System.IO;
 
-namespace FredrickTechDemo.src.Rendering
+namespace FredrickTechDemo
 {
     struct shaderProgramSource // simple struct for reading both shaders from one file
     {
         public String vertexSource;
         public String fragmentSource;
+    };
+    enum Type // simple enum for sorting lines of shader code
+    {
+        NONE,
+        VERTEX,
+        FRAGMENT
     };
 
     class Shader : IDisposable
@@ -24,7 +30,7 @@ namespace FredrickTechDemo.src.Rendering
 
         private shaderProgramSource parseShaderFile(String path)
         {
-            byte type = 0;//vertex = 1, fragment - 2, none = 0
+            Type type = Type.NONE;
             String currentLine = "";
             String vertexSource = "";
             String fragmentSource = "";
@@ -36,18 +42,18 @@ namespace FredrickTechDemo.src.Rendering
                 {
                     if (currentLine.Contains("vertex"))
                     {
-                        type = 1;
+                        type = Type.VERTEX;
                     }
                     else if (currentLine.Contains("fragment"))
                     {
-                        type = 2;
+                        type = Type.FRAGMENT;
                     }
                 }
-                else if (type == 1)//vertex shader
+                else if (type == Type.VERTEX)
                 {
                     vertexSource += (currentLine + "\n");
                 }
-                else if (type == 2)//fragment shader
+                else if (type == Type.FRAGMENT)
                 {
                     fragmentSource += (currentLine + "\n");
                 }
@@ -91,9 +97,29 @@ namespace FredrickTechDemo.src.Rendering
 
             return id;
         }
-        public void Use()
+        public void use()
         {
             GL.UseProgram(id);
+        }
+
+        public void setUniformMat4F(String name, Matrix4F matrix)
+        {
+            GL.UniformMatrix4(getUniformLocation(name), 1, false, ref matrix.row0.x );
+        }
+
+        public void setUniformVec3F(String name, Vector3F vec)
+        {
+            GL.Uniform3(getUniformLocation(name), (double)vec.x, (double)vec.y, (double)vec.z);
+        }
+
+        public void setUniformVec2F(String name, Vector2F vec)
+        {
+            GL.Uniform2(getUniformLocation(name), (double)vec.x, (double)vec.y);
+        }
+
+        private int getUniformLocation(String name)// later will cache uniforms
+        {
+            return GL.GetUniformLocation(id, name);
         }
         protected virtual void Dispose(bool disposing)
         {
@@ -108,16 +134,6 @@ namespace FredrickTechDemo.src.Rendering
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }
-
-        public void setUniformMat4F(String name, Matrix4F matrix)
-        {
-            GL.UniformMatrix4(getUniformLocation(name), 1, false, ref matrix.row0.x );
-        }
-
-        private int getUniformLocation(String name)// later will cache uniforms
-        {
-            return GL.GetUniformLocation(id, name);
         }
     }
 }

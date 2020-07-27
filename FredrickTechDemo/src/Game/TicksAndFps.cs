@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 namespace FredrickTechDemo
 {
+    /*This class is responasble for providing game loop timings so that the game runs
+      at a consistant rate over multiple fps rates and refresh rates.*/
     class TicksAndFps
     {
         Stopwatch stopwatch = new Stopwatch();

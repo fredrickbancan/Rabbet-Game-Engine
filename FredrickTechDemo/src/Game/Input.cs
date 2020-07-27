@@ -1,25 +1,20 @@
 ﻿using OpenTK.Input;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FredrickTechDemo
 {
+    /*This class is responsable for checking the input of the mouse and keyboard,
+      and manipulating the games logic respectively. Checking is done each tick.*/
     class Input
     {
         private GameInstance gameInstance;
         private KeyboardState keyboardState;
-        public Input(GameInstance theGame)
+        public Input(GameInstance game)
         {
-            this.gameInstance = theGame;
+            this.gameInstance = game;
             this.keyboardState = Keyboard.GetState();
         }
 
-        /// <summary>
-        /// called every frame to check which keys are being pressed and manipulates the provided game instance reference's logic and entities 
-        /// </summary>
+        /*called every tick to check which keys are being pressed and manipulates the provided game instance reference's logic and entities */
         public void updateInput()
         {
             this.keyboardState = Keyboard.GetState();

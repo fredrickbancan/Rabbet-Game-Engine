@@ -1,18 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FredrickTechDemo.FredsMath;
+using FredrickTechDemo.Model;
 using OpenTK;
 using OpenTK.Graphics;
-using OpenTK.Input;
-using FredrickTechDemo.FredsMath;
-using FredrickTechDemo.src.Rendering.Models;
-using System.Runtime.CompilerServices;
+using System;
 
 namespace FredrickTechDemo
 {
+    /*This class is the main game class. It contains all the execution code for rendering, logic loops and loading.*/
     class GameInstance : GameWindow
     {
         private TicksAndFps tickFps;
@@ -25,60 +19,52 @@ namespace FredrickTechDemo
             tickFps = new TicksAndFps(30.0D);
             input = new Input(this);
             renderer = new Renderer(this);
-            thePlayer = new EntityPlayer("Steve", new Vector3F(0.0F, 0.0F, 2.0F));
-            tickFps.update();
-            if (GameSettings.vsync)
-            {
-                this.VSync = VSyncMode.On;
-            }
-            else
-            {
-                this.VSync = VSyncMode.Off;
-            }
+            thePlayer = new EntityPlayer("Steve", new Vector3F(0.0F, 0.0F, 1.5F));
+            GameSettings.loadSettings(this);
         }
 
-        #region overriding OpenTk base game methods
-        protected override void OnLoad(EventArgs e)
+        /*Called before game runs*/
+        public void init()
         {
             tickFps.init();
             renderer.init();
-            base.OnLoad(e);
         }
 
-        protected override void OnUpdateFrame(FrameEventArgs args)//overriding OpenTk game update function, called every frame.
+        /*overriding OpenTk game update function, called every frame.*/
+        protected override void OnUpdateFrame(FrameEventArgs args)
         {
             for (int i = 0; i < tickFps.getTicksElapsed(); i++)//for each tick that has elapsed since the start of last update, run the games logic enough times to catch up. 
             {
                 onTick();
             }
             tickFps.update();
+
             base.OnUpdateFrame(args);
         }
 
-        protected override void OnRenderFrame(FrameEventArgs args)//overriding OpenTk render update function, called every frame.
+        /*overriding OpenTk render update function, called every frame.*/
+        protected override void OnRenderFrame(FrameEventArgs args)
         {
-            renderer.preRender();
             renderer.renderJaredsQuad();
-            renderer.postRender();
-            
+
             base.OnRenderFrame(args);
         }
 
+        /*Overriding OpenTK resize function, called every time the game window is resized*/
         protected override void OnResize(EventArgs e)
         {
             renderer.onResize();
             base.OnResize(e);
         }
-        #endregion
 
-        #region Every tick
-        private void onTick()//insert game logic here
+        /*Each itteration of game logic is done here*/
+        private void onTick()
         { 
             input.updateInput();
             JaredsQuadModel.onTick();
         }
-        #endregion
 
+        /*Returns a percentage of progress from current tick to the next tick, used for interpolation*/
         public float getPercentageNextTick()
         {
             return (float) tickFps.getPartialTicks();

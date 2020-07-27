@@ -1,5 +1,5 @@
 ﻿using System;
-namespace FredsMath
+namespace FredrickTechDemo.FredsMath
 {
     public struct Vector3F
     {

@@ -1,4 +1,4 @@
-﻿using FredsMath;
+﻿using FredrickTechDemo.FredsMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +10,8 @@ namespace FredrickTechDemo
     class Vertex
     {
         public Vector3F pos;
-        public Colour colour;
-        public Vertex(Vector3F pos, Colour colour)
+        public ColourF colour;
+        public Vertex(Vector3F pos, ColourF colour)
         {
             this.pos = pos;
             this.colour = colour;

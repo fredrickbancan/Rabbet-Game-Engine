@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FredrickTechDemo\FredrickTechDemo.csproj" />
-    <ProjectReference Include="..\Project2D\FredrickMathLibraryTechDemoOpenGL.csproj" />
   </ItemGroup>
 
 </Project>

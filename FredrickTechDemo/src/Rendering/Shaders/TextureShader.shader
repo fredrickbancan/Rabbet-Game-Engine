@@ -7,7 +7,7 @@ layout(location = 1) in vec2 texCoord;
 
 out vec2 fTexCoord;
 
-uniform vec2 translation;
+
 
 void main()
 {

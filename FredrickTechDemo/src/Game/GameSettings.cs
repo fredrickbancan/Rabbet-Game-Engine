@@ -1,9 +1,4 @@
 ﻿using OpenTK;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FredrickTechDemo
 {
@@ -11,5 +6,17 @@ namespace FredrickTechDemo
     {
         public static float fov = 80; //fov of player camera
         public static bool vsync = false;// DO NOT set to true for now, causes game loop speed to be limited by screen refresh rate.
+
+        public static void loadSettings(GameInstance game)
+        {
+            if(vsync)
+            {
+                game.VSync = VSyncMode.Adaptive;
+            }
+            else
+            {
+                game.VSync = VSyncMode.Off;
+            }
+        }
     }
 }

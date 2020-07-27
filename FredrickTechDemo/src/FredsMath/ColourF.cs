@@ -1,24 +1,24 @@
 ﻿using System;
 
-namespace FredsMath
+namespace FredrickTechDemo.FredsMath
 {
-    public struct Colour
+    public struct ColourF
     {
         #region pre-set colours;
-        public static Colour blue = new Colour(0, 0, 255);
-        public static Colour darkBlue = new Colour(0, 0, 100);
-        public static Colour red = new Colour(255, 0, 0);
-        public static Colour darkRed = new Colour(100, 0, 0);
-        public static Colour green = new Colour(0, 255, 0);
-        public static Colour darkGreen = new Colour(0, 100, 0);
-        public static Colour white = new Colour(255, 255, 255);
-        public static Colour black = new Colour(0, 0, 0);
-        public static Colour lightGrey = new Colour(100, 100, 100);
-        public static Colour darkGrey = new Colour(50, 50, 50);
-        public static Colour yellow = new Colour(255, 255, 0);
-        public static Colour darkYellow = new Colour(153, 153, 0);
-        public static Colour facility = new Colour(35, 75, 75);
-        public static Colour steelBlue = new Colour(70, 130, 180);
+        public static ColourF blue = new ColourF(0, 0, 255);
+        public static ColourF darkBlue = new ColourF(0, 0, 100);
+        public static ColourF red = new ColourF(255, 0, 0);
+        public static ColourF darkRed = new ColourF(100, 0, 0);
+        public static ColourF green = new ColourF(0, 255, 0);
+        public static ColourF darkGreen = new ColourF(0, 100, 0);
+        public static ColourF white = new ColourF(255, 255, 255);
+        public static ColourF black = new ColourF(0, 0, 0);
+        public static ColourF lightGrey = new ColourF(100, 100, 100);
+        public static ColourF darkGrey = new ColourF(50, 50, 50);
+        public static ColourF yellow = new ColourF(255, 255, 0);
+        public static ColourF darkYellow = new ColourF(153, 153, 0);
+        public static ColourF facility = new ColourF(35, 75, 75);
+        public static ColourF steelBlue = new ColourF(70, 130, 180);
         #endregion
 
         public UInt32 colour;
@@ -28,12 +28,12 @@ namespace FredsMath
         {
             colour = 0;
         }*/
-        public Colour(UInt32 color)
+        public ColourF(UInt32 color)
         {
             this.colour = color;
         }
 
-        public Colour(byte r, byte g, byte b, byte a = 255)
+        public ColourF(byte r, byte g, byte b, byte a = 255)
         {
             colour = (UInt32)(r << 24 | g << 16 | b << 8 | a);
         }

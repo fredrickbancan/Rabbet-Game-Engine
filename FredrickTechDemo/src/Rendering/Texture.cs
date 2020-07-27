@@ -1,12 +1,14 @@
-﻿using System;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 
 namespace FredrickTechDemo
 {
-    class Texture
+    /*this class provides a handle on any image the game wants to load as a texture.*/
+    class Texture : IDisposable
     {
+        private bool disposed = false;
         private int id;
         public Texture(String path, bool enableFiltering)
         {
@@ -49,6 +51,22 @@ namespace FredrickTechDemo
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToEdge);
 
             return tex;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposed)
+            {
+                GL.DeleteTexture(id);
+
+                disposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }
