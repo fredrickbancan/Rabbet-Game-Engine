@@ -1,6 +1,6 @@
 ﻿using FredrickTechDemo.FredsMath;
 
-namespace FredrickTechDemo.Text
+namespace FredrickTechDemo.SubRendering
 {
     /*this class will be responsable for batch rendering text quads on the 2d screen space*/
     class TextRenderer2D

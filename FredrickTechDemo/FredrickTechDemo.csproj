@@ -61,6 +61,8 @@
     <Compile Include="src\Game\Input.cs" />
     <Compile Include="src\Game\TicksAndFps.cs" />
     <Compile Include="src\Rendering\Camera.cs" />
+    <Compile Include="src\Rendering\Models\Model.cs" />
+    <Compile Include="src\Rendering\Models\ModelDrawable.cs" />
     <Compile Include="src\Rendering\SubRenderers\BatchRenderer.cs" />
     <Compile Include="src\Rendering\SubRenderers\Text\FontFile.cs" />
     <Compile Include="src\Rendering\SubRenderers\Text\GuiTextObject.cs" />

@@ -2,6 +2,7 @@
 
 namespace FredrickTechDemo
 {
+    /*Class for loading settings from file, applying settings and containing settings.*/
     static class GameSettings
     {
         public static float fov = 80; //fov of player camera

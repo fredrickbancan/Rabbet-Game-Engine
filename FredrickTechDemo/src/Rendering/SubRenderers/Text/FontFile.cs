@@ -7,7 +7,7 @@ using System.IO;
 * @author Karl
 *
 */
-namespace FredrickTechDemo.Text
+namespace FredrickTechDemo.SubRendering
 {
     public class FontFile
 	{

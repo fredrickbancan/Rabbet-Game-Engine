@@ -1,5 +1,5 @@
 ﻿using FredrickTechDemo.FredsMath;
-using FredrickTechDemo.Model;
+using FredrickTechDemo.Models;
 using OpenTK;
 using OpenTK.Graphics;
 using System;
@@ -13,6 +13,7 @@ namespace FredrickTechDemo
         private Input input;
         private Renderer renderer;
         public EntityPlayer thePlayer;
+        public JaredsQuadModel jaredsQuad;
 
         public GameInstance(int width, int height, String title) : base(width, height, GraphicsMode.Default, title)
         {
@@ -20,6 +21,7 @@ namespace FredrickTechDemo
             input = new Input(this);
             renderer = new Renderer(this);
             thePlayer = new EntityPlayer("Steve", new Vector3F(0.0F, 0.0F, 1.5F));
+            jaredsQuad = new JaredsQuadModel();
             GameSettings.loadSettings(this);
         }
 
@@ -38,16 +40,12 @@ namespace FredrickTechDemo
                 onTick();
             }
             tickFps.update();
-
-            base.OnUpdateFrame(args);
         }
 
         /*overriding OpenTk render update function, called every frame.*/
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             renderer.renderJaredsQuad();
-
-            base.OnRenderFrame(args);
         }
 
         /*Overriding OpenTK resize function, called every time the game window is resized*/
@@ -61,7 +59,7 @@ namespace FredrickTechDemo
         private void onTick()
         { 
             input.updateInput();
-            JaredsQuadModel.onTick();
+            jaredsQuad.onTick();
         }
 
         /*Returns a percentage of progress from current tick to the next tick, used for interpolation*/

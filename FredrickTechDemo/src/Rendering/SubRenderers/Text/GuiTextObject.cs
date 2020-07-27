@@ -6,7 +6,7 @@ using System;
 * @author Karl
 *
 */
-namespace FredrickTechDemo.Text
+namespace FredrickTechDemo.SubRendering
 {
     public class GuiTextObject
 	{

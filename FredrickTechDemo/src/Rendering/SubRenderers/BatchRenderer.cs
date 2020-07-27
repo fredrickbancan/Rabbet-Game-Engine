@@ -1,8 +1,10 @@
-﻿namespace FredrickTechDemo
+﻿namespace FredrickTechDemo.SubRendering
 {
 
-    /*This class will take in multiple arrays of vertices, colours, uv's ect and combine them into one draw call.*/
+    /*This class will take in multiple Models (containing multiple xyz, rgb, uv and indicies arrays) and combine them into one*
+     *Model for one draw call.*/
     class BatchRenderer
     {
+
     }
 }

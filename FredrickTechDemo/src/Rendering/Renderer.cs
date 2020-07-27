@@ -1,14 +1,17 @@
 ﻿using FredrickTechDemo.FredsMath;
-using FredrickTechDemo.Model;
+using FredrickTechDemo.SubRendering;
 using OpenTK.Graphics.OpenGL;
 
 namespace FredrickTechDemo
 {
     /*This class will be responsable for most of the games rendering requests. It will then send the requests to the suitable sub renderers.
       e.g, when the game requests text to be rendered on the screen, the renderer will send a request to the TextRenderer2D.
+      e.g, when the game requests entity models to be rendered in the world, the renderer will send a request to the model draw function.
       This class also contains the projection matrix.*/
     class Renderer
     {
+        private BatchRenderer batchRenderer;
+        private TextRenderer2D textRenderer2D;
         private GameInstance gameInstance;
         private Matrix4F projectionMatrix;
         public Renderer(GameInstance game)
@@ -49,7 +52,7 @@ namespace FredrickTechDemo
         public void renderJaredsQuad()
         {
             preRender();
-            JaredsQuadModel.draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, gameInstance.getPercentageNextTick());
+            gameInstance.jaredsQuad.draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, gameInstance.getPercentageNextTick());
             postRender();
         }
 
