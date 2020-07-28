@@ -21,9 +21,10 @@ namespace FredrickTechDemo
     {
         private bool disposed = false;
         private int id;
-
+        private String debugShaderPath;
         public Shader(String filePath)
         {
+            debugShaderPath = filePath;
             shaderProgramSource source = parseShaderFile(filePath);
             this.id = createShader(source);
         }
@@ -91,7 +92,7 @@ namespace FredrickTechDemo
             String infoLog = GL.GetShaderInfoLog(id);
             if (infoLog != System.String.Empty)
             {
-                Application.error(infoLog);
+                Application.error("Error when compiling shader!\ntype: " + (type == ShaderType.VertexShader ? "vertex shader" : "fragment shader") + "\nmessage log: " + infoLog + "\nShader File Path: " + debugShaderPath);
                 return 0;
             }
 

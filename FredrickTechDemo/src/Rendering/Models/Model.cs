@@ -15,6 +15,7 @@
             this.vertexUV = vertexUV;
         }
 
+        /*returns number of vertices in this model based on xyz coordinates*/
         public int getVertexCount()
         {
             return vertexXYZ.Length / 3;

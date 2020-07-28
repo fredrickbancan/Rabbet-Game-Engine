@@ -1,4 +1,6 @@
 ﻿using FredrickTechDemo.FredsMath;
+using FredrickTechDemo.Models;
+using FredrickTechDemo.SubRendering;
 using OpenTK.Graphics.OpenGL;
 
 namespace FredrickTechDemo
@@ -11,6 +13,8 @@ namespace FredrickTechDemo
     {
         private GameInstance gameInstance;
         private Matrix4F projectionMatrix;
+        private Model[] test;
+        private ModelGuiDrawableQuads test2;
         public Renderer(GameInstance game)
         {
             this.gameInstance = game;
@@ -23,6 +27,8 @@ namespace FredrickTechDemo
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             GL.Viewport(gameInstance.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), (float)gameInstance.Width / (float)gameInstance.Height, 0.001F, 1000.0F);
+            test = new Model[] { new JaredsQuadModel(), new JaredsQuadModel(), new JaredsQuadModel(), new JaredsQuadModel(), new JaredsQuadModel(), new JaredsQuadModel(), new JaredsQuadModel(), new JaredsQuadModel() };
+            test2 = QuadBatcher.batchQuadModelsGui(test, ResourceHelper.getShaderFileDir("GuiShader.shader"), ResourceHelper.getTextureFileDir("aie.png"));
         }
 
         /*Called each time the game window is resized*/
@@ -51,6 +57,7 @@ namespace FredrickTechDemo
             preRender();
             gameInstance.thePlayer.onCameraUpdate();
             gameInstance.jaredsQuad.draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix);
+            test2.draw((float)gameInstance.Width / (float)gameInstance.Height);
             postRender();
         }
 

@@ -1,6 +1,4 @@
-﻿/*This shader is for rendering transparent gui components with colour. For example, text, crosshair etc*/
-
-#shader vertex
+﻿#shader vertex
 #version 330 core
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 colour;
@@ -14,21 +12,19 @@ uniform mat4 scaleMatrix;
 void main()
 {
 	gl_Position = scaleMatrix * position;
-	fcolour = colour;
+	vcolour = colour;
 	fTexCoord = texCoord;
 }
 
-/*#############################################################################################################################################################################################*/
-//Out variables from vertex shader are passed into the fragment shaders in variables, part of glsl language.
 #shader fragment
 #version 330 core
+out vec4 color;
 in vec4 vcolour;
 in vec2 fTexCoord;
-out vec4 color;
 
 uniform sampler2D uTexture;
 
 void main()
 {
-	color = vec4(fcolour, texture(uTexture, fTexCoord).a)
+	color = vec4(vcolour.rgb, texture(uTexture, fTexCoord).a);
 }

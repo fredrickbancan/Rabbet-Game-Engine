@@ -18,7 +18,7 @@ namespace FredrickTechDemo.Models
 
 
         /*takes in directory for the shader and texture for this model*/
-        protected ModelGuiDrawableQuads(String shaderFile, String textureFile, float[] vertexPositions, float[] vertexColour, float[] vertexUV, UInt32[] indices) : base(vertexPositions, vertexColour, vertexUV)
+        public ModelGuiDrawableQuads(String shaderFile, String textureFile, float[] vertexPositions, float[] vertexColour, float[] vertexUV, UInt32[] indices) : base(vertexPositions, vertexColour, vertexUV)
         {
             this.indices = indices;
             texture = new Texture(textureFile, true);
@@ -61,7 +61,7 @@ namespace FredrickTechDemo.Models
         public virtual void draw(float aspectRatio)
         {
             bind();
-            shader.setUniformMat4F("scaleMatrix", Matrix4F.scale(new Vector3F(aspectRatio)));
+            shader.setUniformMat4F("scaleMatrix", Matrix4F.scale(new Vector3F(1.0F)));
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
