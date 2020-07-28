@@ -28,8 +28,10 @@ namespace FredrickTechDemo
         /*Called before game renders, each frame.*/
         public void onCameraUpdate()
         {
-            if(!menuOpen)
-            this.camera.onUpdate();
+            if (!menuOpen)
+            {
+                this.camera.onUpdate();
+            }
         }
 
         public void toggleOpenMenu()

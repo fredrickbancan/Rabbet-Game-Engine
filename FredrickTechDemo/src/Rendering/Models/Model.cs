@@ -1,22 +1,38 @@
-﻿using System;
-
-namespace FredrickTechDemo.Models
+﻿namespace FredrickTechDemo.Models
 {
     /*Model base class. This class is intended to hold the vertex, color, uv etc data for a mesh to be
-      rendered. The batch renderer will make a model to store data. */
+      rendered.*/
     class Model
     {
         protected float[] vertexXYZ;
         protected float[] vertexRGB;
         protected float[] vertexUV;
-        protected UInt32[] indices;
 
-        public Model(float[] vertexPositions, float[] vertexColour, float[] vertexUV, UInt32[] indices)
+        public Model(float[] vertexPositions, float[] vertexColour, float[] vertexUV)
         {
             this.vertexXYZ = vertexPositions;
             this.vertexRGB = vertexColour;
             this.vertexUV = vertexUV;
-            this.indices = indices;
+        }
+
+        public int getVertexCount()
+        {
+            return vertexXYZ.Length / 3;
+        }
+
+        public float[] getVertexXYZ()
+        {
+            return vertexXYZ;
+        }
+
+        public float[] getVertexRGB()
+        {
+            return vertexRGB;
+        }
+
+        public float[] getVertexUV()
+        {
+            return vertexUV;
         }
     }
 }

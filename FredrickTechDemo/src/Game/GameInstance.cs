@@ -16,8 +16,6 @@ namespace FredrickTechDemo
         private Renderer renderer;
         public EntityPlayer thePlayer;
         public JaredsQuadModel jaredsQuad;
-        public Vector3F jaredsQuadPos = new Vector3F();
-        public Vector3F jaredsQuadRot = new Vector3F();
         public GameInstance(int width, int height, String title) : base(width, height, GraphicsMode.Default, title)
         {
             GameInstance.windowWidth = width;
@@ -70,9 +68,8 @@ namespace FredrickTechDemo
 
         /*Each itteration of game logic is done here*/
         private void onTick()
-        { 
+        {
             Input.updateInput();
-            jaredsQuad.onTick(jaredsQuadPos, jaredsQuadRot);
             thePlayer.onTick();
         }
 

@@ -5,24 +5,20 @@ using System.Collections.Generic;
 
 namespace FredrickTechDemo.Models
 {
-    /*Base class for models that wont be batched and can be drawn individually with additional draw calls and have
-     *individual VAO's.*/
-    class ModelDrawable : Model
+    /*This class represents a 2D GUI Model consisting of quads which have been batched together.*/
+    class ModelGuiDrawableQuads : Model 
     {
         protected bool hasInitialized = false;
         private int indicesBufferObject;
         private List<int> VBOS = new List<int>();
         private int VAO;
-
         protected Texture texture;
         protected Shader shader;
-        protected Matrix4F prevModelMatrix;
-        protected Matrix4F modelMatrix = new Matrix4F(1.0F);
         protected UInt32[] indices;
 
 
         /*takes in directory for the shader and texture for this model*/
-        protected ModelDrawable(String shaderFile, String textureFile, float[] vertexPositions, float[] vertexColour, float[] vertexUV, UInt32[] indices) : base(vertexPositions, vertexColour, vertexUV)
+        protected ModelGuiDrawableQuads(String shaderFile, String textureFile, float[] vertexPositions, float[] vertexColour, float[] vertexUV, UInt32[] indices) : base(vertexPositions, vertexColour, vertexUV)
         {
             this.indices = indices;
             texture = new Texture(textureFile, true);
@@ -41,7 +37,7 @@ namespace FredrickTechDemo.Models
         {
             VAO = GL.GenVertexArray();
             GL.BindVertexArray(VAO);
-            
+
             bindIndicesBuffer(); //for indices
             storeDataInAttributeList(0, 3, vertexXYZ);//for X,y,z coords
             storeDataInAttributeList(1, 3, vertexRGB);//for rgb
@@ -51,9 +47,9 @@ namespace FredrickTechDemo.Models
         /*Binds the models texture and shader, can be used for more*/
         protected virtual void bind()
         {
-            if (!hasInitialized) 
-            { 
-               init();
+            if (!hasInitialized)
+            {
+                init();
             }
             GL.BindVertexArray(VAO);//must be bound first before indices
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBufferObject);
@@ -62,13 +58,10 @@ namespace FredrickTechDemo.Models
         }
 
         /*Draws this model. If its the first draw call, and firtst bind call, the model will be initialized.*/
-        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix)
+        public virtual void draw(float aspectRatio)
         {
             bind();
-            shader.setUniformMat4F("projectionMatrix", projectionMatrix);
-            shader.setUniformMat4F("viewMatrix", viewMatrix);
-            shader.setUniformMat4F("modelMatrix", prevModelMatrix + (modelMatrix - prevModelMatrix) * TicksAndFps.getPercentageToNextTick());//interpolating model matrix between ticks
-
+            shader.setUniformMat4F("scaleMatrix", Matrix4F.scale(new Vector3F(aspectRatio)));
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
@@ -108,7 +101,7 @@ namespace FredrickTechDemo.Models
         public void delete()
         {
             GL.DeleteVertexArray(VAO);
-            foreach (int vbo in VBOS)
+            foreach(int vbo in VBOS)
             {
                 GL.DeleteBuffer(vbo);
             }

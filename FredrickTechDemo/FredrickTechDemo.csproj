@@ -61,17 +61,15 @@
     <Compile Include="src\Game\GameSettings.cs" />
     <Compile Include="src\Game\Input.cs" />
     <Compile Include="src\Game\PlayerController.cs" />
+    <Compile Include="src\Game\ResourceHelper.cs" />
     <Compile Include="src\Game\TicksAndFps.cs" />
     <Compile Include="src\Rendering\Camera.cs" />
     <Compile Include="src\Rendering\Models\Model.cs" />
     <Compile Include="src\Rendering\Models\ModelDrawable.cs" />
-    <Compile Include="src\Rendering\SubRenderers\BatchRenderer.cs" />
-    <Compile Include="src\Rendering\SubRenderers\Text\FontFile.cs" />
-    <Compile Include="src\Rendering\SubRenderers\Text\GuiTextObject.cs" />
-    <Compile Include="src\Rendering\SubRenderers\Text\FontFileCharacter.cs" />
-    <Compile Include="src\Rendering\SubRenderers\Text\FontFileLine.cs" />
-    <Compile Include="src\Rendering\SubRenderers\Text\FontFileWord.cs" />
-    <Compile Include="src\Rendering\SubRenderers\Text\TextMeshData.cs" />
+    <Compile Include="src\Rendering\Models\ModelGuiDrawableQuads.cs" />
+    <Compile Include="src\Rendering\SubRenderers\QuadBatcher.cs" />
+    <Compile Include="src\Rendering\SubRenderers\Text\TextPanelTextLine2D.cs" />
+    <Compile Include="src\Rendering\SubRenderers\Text\TextPanel2D.cs" />
     <Compile Include="src\Rendering\SubRenderers\Text\TextRenderer2D.cs" />
     <Compile Include="src\Rendering\Models\JaredsQuadModel.cs" />
     <Compile Include="src\Rendering\Renderer.cs" />
@@ -86,11 +84,9 @@
     <None Include="res\font\consolasFreeType.fnt" />
     <None Include="res\font\consolasJava.fnt" />
     <None Include="res\font\consolasNative.fnt" />
-    <None Include="src\Rendering\Shaders\ColourShader.shader" />
-    <None Include="src\Rendering\Shaders\ColourShader3D.shader" />
-    <None Include="src\Rendering\Shaders\ColourTextureShader3D.shader" />
-    <None Include="src\Rendering\Shaders\TextShader2D.shader" />
-    <None Include="src\Rendering\Shaders\TextureShader.shader" />
+    <None Include="res\shaders\GuiShader.shader" />
+    <None Include="res\shaders\ColourTextureShader3D.shader" />
+    <None Include="res\shaders\GuiTransparentShader.shader" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

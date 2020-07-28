@@ -69,6 +69,10 @@ namespace FredrickTechDemo
             pitch = amount;
         }
 
+        public float getYaw()
+        {
+            return yaw;
+        }
         public Vector3F getPosition()
         {
             return this.pos;

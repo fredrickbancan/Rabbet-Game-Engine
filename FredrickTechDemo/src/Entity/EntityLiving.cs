@@ -68,6 +68,10 @@ namespace FredrickTechDemo
         {
             this.headPitch = pitch;
         }
+        public float getheadPitch()
+        {
+            return this.headPitch;
+        }
         public Vector3F getFrontVector()
         {
             return this.frontVector;

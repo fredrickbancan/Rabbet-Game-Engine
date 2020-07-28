@@ -1,5 +1,4 @@
-﻿using FredrickTechDemo.FredsMath;
-using System;
+﻿using System;
 
 namespace FredrickTechDemo.Models
 {
@@ -34,20 +33,8 @@ namespace FredrickTechDemo.Models
             1, 3, 2 //second triangle
         };
 
-        public JaredsQuadModel() : base(@"..\..\src\Rendering\Shaders\ColourTextureShader3D.shader", @"..\..\res\texture\aie.png", jaredsQuadVerticesXYZ, jaredsQuadVerticesRGB, jaredsQuadVerticesUV, jaredsQuadIndices) { }
+        public JaredsQuadModel() : base(ResourceHelper.getShaderFileDir("ColourTextureShader3D.shader"), ResourceHelper.getTextureFileDir("aie.png"), jaredsQuadVerticesXYZ, jaredsQuadVerticesRGB, jaredsQuadVerticesUV, jaredsQuadIndices) { }
         
-        protected override void init()
-        {
-            base.init();
-            //translationMatrix = Matrix4F.createTranslationMatrix(0.2F, -1.0F, -2.0F);
-            onTick(new Vector3F(), new Vector3F()); // this is done in init so the model is correctly transformed on the first few frames of display
-        }
-        
-        public void onTick(Vector3F translate, Vector3F rotate)
-        {
-            prevModelMatrix = modelMatrix;//store current state in previous model matrix for interpolation
-            modelMatrix = Matrix4F.rotate(rotate) * Matrix4F.translate(translate);
-        }
 
     }
 }

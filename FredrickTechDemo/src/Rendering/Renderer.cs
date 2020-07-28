@@ -1,5 +1,4 @@
 ﻿using FredrickTechDemo.FredsMath;
-using FredrickTechDemo.SubRendering;
 using OpenTK.Graphics.OpenGL;
 
 namespace FredrickTechDemo
@@ -10,8 +9,6 @@ namespace FredrickTechDemo
       This class also contains the projection matrix.*/
     class Renderer
     {
-        private BatchRenderer batchRenderer;
-        private TextRenderer2D textRenderer2D;
         private GameInstance gameInstance;
         private Matrix4F projectionMatrix;
         public Renderer(GameInstance game)
@@ -28,13 +25,6 @@ namespace FredrickTechDemo
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), (float)gameInstance.Width / (float)gameInstance.Height, 0.001F, 1000.0F);
         }
 
-        /*Called before each draw call*/
-        public void preRender(float r = 0, float g = 0, float b = 0)
-        {
-            GL.ClearColor(r, g, b, 1);
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        }
-
         /*Called each time the game window is resized*/
         public void onResize()
         {
@@ -42,6 +32,13 @@ namespace FredrickTechDemo
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), (float)gameInstance.Width / (float)gameInstance.Height, 0.001F, 1000.0F);
         }
 
+        /*Called before each draw call*/
+        public void preRender(float r = 0, float g = 0, float b = 0)
+        {
+            GL.ClearColor(r, g, b, 1);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+        }
+        
         /*Called after each draw call*/
         public void postRender()
         {

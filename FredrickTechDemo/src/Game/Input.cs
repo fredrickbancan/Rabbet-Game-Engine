@@ -1,4 +1,5 @@
 ﻿using OpenTK.Input;
+using System;
 
 namespace FredrickTechDemo
 {
@@ -31,22 +32,7 @@ namespace FredrickTechDemo
                 playerController.updateInput(keyboardState);//do player input
 
                 #region constant input
-                if (keyboardState.IsKeyDown(Key.Right))
-                {
-                    gameInstance.jaredsQuadRot.y -= 3.0F;
-                }
-                if (keyboardState.IsKeyDown(Key.Left))
-                {
-                    gameInstance.jaredsQuadRot.y += 3.0F;
-                }
-                if (keyboardState.IsKeyDown(Key.Up))
-                {
-                    gameInstance.jaredsQuadRot.x -= 3.0F;
-                }
-                if (keyboardState.IsKeyDown(Key.Down))
-                {
-                    gameInstance.jaredsQuadRot.x += 3.0F;
-                }
+                
 
                 #endregion
 
@@ -58,6 +44,19 @@ namespace FredrickTechDemo
                     if (keyboardState.IsKeyDown(Key.Escape))
                     {
                         gameInstance.Exit();
+                    }
+
+                    if (keyboardState.IsKeyDown(Key.F3))
+                    {
+                        Console.WriteLine();
+                        Application.debug("F3 was pressed, printing debug info.");
+                        Application.debug("Player position X: " + gameInstance.thePlayer.getPosition().x);
+                        Application.debug("Player position Y: " + gameInstance.thePlayer.getPosition().y);
+                        Application.debug("Player position Z: " + gameInstance.thePlayer.getPosition().z);
+                        Application.debug("Player Head Pitch: " + gameInstance.thePlayer.getheadPitch());
+                        Application.debug("Player Yaw       : " + gameInstance.thePlayer.getYaw());
+                        Application.debug("Vsync enabled    : " + GameSettings.vsync);
+                        Application.debug("Frames per second: " + TicksAndFps.getFps());
                     }
                 }
                 #endregion
