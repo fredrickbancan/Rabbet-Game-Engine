@@ -1,4 +1,6 @@
-﻿namespace FredrickTechDemo.Models
+﻿using FredrickTechDemo.FredsMath;
+
+namespace FredrickTechDemo.Models
 {
     /*Model base class. This class is intended to hold the vertex, color, uv etc data for a mesh to be
       rendered.*/
@@ -35,5 +37,19 @@
         {
             return vertexUV;
         }
+        
+        /*Changes the vertices in the float arrays before rendering. Usefull for copying an already layed out model
+          and batch rendering it in multiple different locations with different transformations.*/
+        public Model transformVertices(Vector3F scale, Vector3F rotate, Vector3F translate)
+        {
+            for(int i = 2; i < vertexXYZ.Length; i += 3)
+            {
+                Matrix4F.translateXYZFloats(translate, vertexXYZ[i - 2], vertexXYZ[i - 1], vertexXYZ[i   ], out vertexXYZ[i - 2], out vertexXYZ[i - 1], out vertexXYZ[i   ]);
+                Matrix4F.rotateXYZFloats(rotate, vertexXYZ[i - 2], vertexXYZ[i - 1], vertexXYZ[i   ], out vertexXYZ[i - 2], out vertexXYZ[i - 1], out vertexXYZ[i   ]);
+                Matrix4F.scaleXYZFloats(scale, vertexXYZ[i - 2], vertexXYZ[i - 1], vertexXYZ[i   ], out vertexXYZ[i - 2], out vertexXYZ[i - 1], out vertexXYZ[i   ]);
+            }
+            return this;
+        }
+
     }
 }

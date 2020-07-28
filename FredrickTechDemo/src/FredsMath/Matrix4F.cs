@@ -191,6 +191,7 @@ namespace FredrickTechDemo.FredsMath
         {
             return new Matrix4F(matA.row0 * value, matA.row1 * value, matA.row2 * value, matA.row3 * value);
         }
+        
 
         #endregion
 
@@ -277,13 +278,17 @@ namespace FredrickTechDemo.FredsMath
         public static Matrix4F createTranslationMatrix(float x, float y, float z)
         {
             Matrix4F result = new Matrix4F(1.0F);
-            result.row3 = new Vector4F(x, y, z, 1.0F);
+            result.m13 = x;
+            result.m14 = y;
+            result.m15 = z;
             return result;
         }
         public static Matrix4F createTranslationMatrix(Vector3F vec)
         {
             Matrix4F result = new Matrix4F(1.0F);
-            result.row3 = new Vector4F(vec.x, vec.y, vec.z, 1.0F);
+            result.m13 = vec.x;
+            result.m14 = vec.y;
+            result.m15 = vec.z;
             return result;
         }
 
@@ -320,7 +325,29 @@ namespace FredrickTechDemo.FredsMath
 
             return result; 
         }
-      
+
+        public static void translateXYZFloats(Vector3F newPosition, float x, float y, float z, out float newX, out float newY, out float newZ)
+        {
+            Matrix4F transMat = createTranslationMatrix(newPosition);
+            newX = x + transMat.m13;
+            newY = y + transMat.m14;
+            newZ = z + transMat.m15;
+        }
+        public static void rotateXYZFloats(Vector3F newRotation, float x, float y, float z, out float newX, out float newY, out float newZ)
+        {
+            Matrix4F rotMat = rotate(newRotation);
+            newX = MathUtil.dotFloats(rotMat.m1, rotMat.m2, rotMat.m3, x, y, z) + rotMat.m4;
+            newY = MathUtil.dotFloats(rotMat.m5, rotMat.m6, rotMat.m7, x, y, z) + rotMat.m8;
+            newZ = MathUtil.dotFloats(rotMat.m9, rotMat.m10, rotMat.m11, x, y, z) + rotMat.m12;
+        }
+        public static void scaleXYZFloats(Vector3F newScale, float x, float y, float z, out float newX, out float newY, out float newZ)
+        {
+            Matrix4F scaleMat = scale(newScale);
+            newX = x * scaleMat.m1;
+            newY = y * scaleMat.m6;
+            newZ = z * scaleMat.m11;
+        }
+
         #endregion
     }
 }

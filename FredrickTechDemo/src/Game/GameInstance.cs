@@ -15,7 +15,7 @@ namespace FredrickTechDemo
         public static int mouseCenterY;//the y position of the center of the game winwow
         private Renderer renderer;
         public EntityPlayer thePlayer;
-        public JaredsQuadModel jaredsQuad;
+        public ModelDrawable jaredsQuad;
         public GameInstance(int width, int height, String title) : base(width, height, GraphicsMode.Default, title)
         {
             GameInstance.windowWidth = width;
@@ -24,7 +24,7 @@ namespace FredrickTechDemo
             GameInstance.mouseCenterY = this.Y + this.Height / 2;
             renderer = new Renderer(this);
             thePlayer = new EntityPlayer("Steve", new Vector3F(0.0F, 0.0F, 1.5F));
-            jaredsQuad = new JaredsQuadModel();
+            jaredsQuad = new ModelDrawable(ResourceHelper.getShaderFileDir("ColourTextureShader3D.shader"), ResourceHelper.getTextureFileDir("aie.png"), JaredsQuadModelData.jaredsQuadVerticesXYZ, JaredsQuadModelData.jaredsQuadVerticesRGB, JaredsQuadModelData.jaredsQuadVerticesUV, JaredsQuadModelData.jaredsQuadIndices);
             GameSettings.loadSettings(this);
         }
 

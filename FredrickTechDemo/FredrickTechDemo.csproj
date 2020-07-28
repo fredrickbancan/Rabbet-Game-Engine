@@ -66,7 +66,7 @@
     <Compile Include="src\Rendering\Camera.cs" />
     <Compile Include="src\Rendering\Models\Model.cs" />
     <Compile Include="src\Rendering\Models\ModelDrawable.cs" />
-    <Compile Include="src\Rendering\Models\ModelGuiDrawableQuads.cs" />
+    <Compile Include="src\Rendering\Models\ModelDrawableGUI.cs" />
     <Compile Include="src\Rendering\SubRenderers\QuadBatcher.cs" />
     <Compile Include="src\Rendering\SubRenderers\Text\TextPanelTextLine2D.cs" />
     <Compile Include="src\Rendering\SubRenderers\Text\TextPanel2D.cs" />

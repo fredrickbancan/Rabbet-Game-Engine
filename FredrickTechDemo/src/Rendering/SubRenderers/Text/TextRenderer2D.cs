@@ -14,7 +14,7 @@ namespace FredrickTechDemo.SubRendering
         private bool screenTextModelExists = false;
         private ColourF defaultColour;
         private Renderer gameRenderer;
-        private ModelGuiDrawableQuads screenTextModel;
+        private ModelDrawableGUI screenTextModel;
 
         private Dictionary<String, TextPanel2D> currentScreenTextPanels = new Dictionary<String, TextPanel2D>();
 

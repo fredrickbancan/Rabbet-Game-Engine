@@ -22,7 +22,7 @@ namespace FredrickTechDemo.Models
 
 
         /*takes in directory for the shader and texture for this model*/
-        protected ModelDrawable(String shaderFile, String textureFile, float[] vertexPositions, float[] vertexColour, float[] vertexUV, UInt32[] indices) : base(vertexPositions, vertexColour, vertexUV)
+        public ModelDrawable(String shaderFile, String textureFile, float[] vertexPositions, float[] vertexColour, float[] vertexUV, UInt32[] indices) : base(vertexPositions, vertexColour, vertexUV)
         {
             this.indices = indices;
             texture = new Texture(textureFile, true);

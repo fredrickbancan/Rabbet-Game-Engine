@@ -33,54 +33,77 @@ namespace FredrickTechDemo.SubRendering
             }
         }
 
-        public static ModelGuiDrawableQuads batchQuadModelsGui(Model[] quadModels, String shaderFile, String textureFile)
+        public static ModelDrawableGUI batchQuadModelsGui(Model[] quadModels, String shaderFile, String textureFile)
+        {
+            float[] newVertexXYZ;
+            float[] newVertexRGB;
+            float[] newVertexUV;
+            combineData(quadModels, out newVertexXYZ, out newVertexRGB, out newVertexUV);
+
+            return new ModelDrawableGUI(shaderFile, textureFile, newVertexXYZ, newVertexRGB, newVertexUV, indices);
+        }
+
+        public static ModelDrawable batchQuadModels3D(Model[] quadModels, String shaderFile, String textureFile)
+        {
+            float[] newVertexXYZ;
+            float[] newVertexRGB;
+            float[] newVertexUV;
+            combineData(quadModels, out newVertexXYZ, out newVertexRGB, out newVertexUV);
+
+            return new ModelDrawable(shaderFile, textureFile, newVertexXYZ, newVertexRGB, newVertexUV, indices);
+        }
+
+        private static void combineData(Model[] modelsToCombine, out float[] newVertexXYZ, out float[] newVertexRGB, out float[] newVertexUV)
         {
             int totalVertexCount = 0;
-            for(int i = 0; i < quadModels.Length; i++)
+            for (int i = 0; i < modelsToCombine.Length; i++)
             {
-                totalVertexCount += quadModels[i].getVertexCount(); //count vertices based on position
+                totalVertexCount += modelsToCombine[i].getVertexCount(); //count vertices based on position
             }
-            if(totalVertexCount % 4 != 0)
+            if (totalVertexCount % 4 != 0)
             {
-                Application.warn("QuadBatcher attempting to batch an un-even number of vertices! at batchQuadModelsGui().");
+                Application.warn("QuadBatcher attempting to batch an un-even number of vertices! at combineData().");
             }
 
-            float[] newVertexXYZ = new float[totalVertexCount * 3];//create new arrays based on total vertex count
-            float[] newVertexRGB = new float[totalVertexCount * 3];
-            float[] newVertexUV = new float[totalVertexCount * 2];
+            newVertexXYZ = new float[totalVertexCount * 3];//create new arrays based on total vertex count
+            newVertexRGB = new float[totalVertexCount * 3];
+            newVertexUV = new float[totalVertexCount * 2];
 
             //itterate over each array and combine their data in new array
-            for (int i = 0; i < quadModels.Length; i++)
+            for (int i = 0; i < modelsToCombine.Length; i++)
             {
-                for(int j = 2; j < quadModels[i].getVertexXYZ().Length; j+= 3) //we can itterate over xyz and do rgb at the same time because they have the same count
+                for (int j = 2; j < modelsToCombine[i].getVertexXYZ().Length; j += 3) //we can itterate over xyz and do rgb at the same time because they have the same count
                 {
-                    float[] currentXYZ = quadModels[i].getVertexXYZ();
-                    float[] currentRGB = quadModels[i].getVertexRGB();
+                    float[] currentXYZ = modelsToCombine[i].getVertexXYZ();
+                    float[] currentRGB = modelsToCombine[i].getVertexRGB();
                     float x = currentXYZ[j - 2];
                     float y = currentXYZ[j - 1];
-                    float z = currentXYZ[j    ];
+                    float z = currentXYZ[j];
                     float r = currentRGB[j - 2];
                     float g = currentRGB[j - 1];
-                    float b = currentRGB[j    ];
+                    float b = currentRGB[j];
                     newVertexXYZ[j - 2] = x;
                     newVertexXYZ[j - 1] = y;
-                    newVertexXYZ[j    ] = z;
+                    newVertexXYZ[j] = z;
                     newVertexRGB[j - 2] = r;
                     newVertexRGB[j - 1] = g;
-                    newVertexRGB[j    ] = b;
+                    newVertexRGB[j] = b;
                 }
 
-                for(int j = 1; j < quadModels[i].getVertexUV().Length; j+= 2)// do same for UV
+                for (int j = 1; j < modelsToCombine[i].getVertexUV().Length; j += 2)// do same for UV
                 {
-                    float[] currentUV = quadModels[i].getVertexUV();
+                    float[] currentUV = modelsToCombine[i].getVertexUV();
                     float u = currentUV[j - 1];
-                    float v = currentUV[j    ];
+                    float v = currentUV[j];
                     newVertexUV[j - 1] = u;
-                    newVertexUV[j    ] = v;
+                    newVertexUV[j] = v;
+
+                    if(modelsToCombine[i] is ModelDrawable md)//lastly, delete original model info opengl buffers and programs (if it is an instance of a modeldrawable)
+                    {
+                        md.delete();
+                    }
                 }
             }
-
-            return new ModelGuiDrawableQuads(shaderFile, textureFile, newVertexXYZ, newVertexRGB, newVertexUV, indices);
         }
     }
 }

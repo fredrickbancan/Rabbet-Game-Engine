@@ -77,7 +77,7 @@ namespace FredrickTechDemo.FredsMath
         }
 
         //matrix vector operators
-        public static Vector3F operator * (Matrix3F mat, Vector3F vec) // column major vector multiplication
+        public static Vector3F operator * (Matrix3F mat, Vector3F vec)//row major? (originates from aie tests)
         {
             return new Vector3F(
                     /*X*/mat.m1 * vec.x + mat.m4 * vec.y + mat.m7 * vec.z,
@@ -85,6 +85,13 @@ namespace FredrickTechDemo.FredsMath
                     /*Z*/mat.m3 * vec.x + mat.m6 * vec.y + mat.m9 * vec.z);
         }
 
+        public static Vector3F operator *(Vector3F vec, Matrix4F mat)//row major? (originates from aie tests)
+        {
+            return new Vector3F(
+                    /*X*/mat.m1 * vec.x + mat.m5 * vec.y + mat.m9 * vec.z,
+                    /*Y*/mat.m2 * vec.x + mat.m6 * vec.y + mat.m10 * vec.z,
+                    /*Z*/mat.m3 * vec.x + mat.m7 * vec.y + mat.m11 * vec.z);
+        }
         //funcs
         public float Dot(Vector3F vec)
         {

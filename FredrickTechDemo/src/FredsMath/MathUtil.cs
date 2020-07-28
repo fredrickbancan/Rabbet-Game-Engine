@@ -12,5 +12,11 @@
         {
             return degrees * 0.01745329251994329576923690768489D;
         }
+
+        /*gives the dot product of the two provided coordinates*/
+        public static float dotFloats(float xA, float yA, float zA, float xB, float yB, float zB)
+        {
+            return xA * xB + yA * yB + zA * zB;
+        }
     }
 }
