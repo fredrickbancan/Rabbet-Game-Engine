@@ -8,6 +8,7 @@ namespace FredrickTechDemo
     {
         private String playerName;
         private Camera camera;
+        public bool menuOpen = false;
         public EntityPlayer(String name) : base()
         {
             this.playerName = name;
@@ -27,7 +28,20 @@ namespace FredrickTechDemo
         /*Called before game renders, each frame.*/
         public void onCameraUpdate()
         {
+            if(!menuOpen)
             this.camera.onUpdate();
+        }
+
+        public void toggleOpenMenu()
+        {
+            if(!menuOpen)
+            {
+                menuOpen = true;
+            }
+            else
+            {
+                menuOpen = false;
+            }
         }
         public Camera getCamera()
         {

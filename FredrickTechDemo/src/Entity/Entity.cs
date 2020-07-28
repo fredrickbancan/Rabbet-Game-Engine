@@ -9,11 +9,12 @@ namespace FredrickTechDemo
         protected Vector3F previousTickPos;
         protected Vector3F pos;
         protected Vector3F velocity;
-        protected float airResistanceFactor = 0.93572F;
+        protected float airResistanceFactor = 0.73572F;
 
         protected float pitch;
         protected float yaw;
         protected float roll;
+        public bool hasDoneFirstUpdate = false;
         public Entity()
         {
             this.pos = new Vector3F();
@@ -31,13 +32,21 @@ namespace FredrickTechDemo
         /*Called every tick*/
         public virtual void onTick()
         {
-            /*do this first. Used for interpolation.*/
+            /*do this first. Used for interpolation.*///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             previousTickPos = pos;
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
             /*decelerate velocity by air resistance (not accurate to real life)*/
             velocity *= airResistanceFactor;
 
-            /*do this last*/
+
+
+            /*do this last*///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             pos += velocity;
+            if (!hasDoneFirstUpdate)
+            {
+                hasDoneFirstUpdate = true;
+            }
         }
 
         public void rotateYaw(float amount)

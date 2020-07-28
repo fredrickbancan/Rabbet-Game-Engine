@@ -9,7 +9,7 @@ namespace FredrickTechDemo
         protected Vector3F upVector;
         protected Vector3F movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
         protected float headPitch; // pitch of the living entity head
-        protected float walkSpeed = 0.03572F;
+        protected float walkSpeed = 0.13572F;
         public EntityLiving() : base()
         {
             frontVector = new Vector3F(0.0F, 0.0F, -1.0F);
@@ -63,6 +63,10 @@ namespace FredrickTechDemo
         public void strafeLeft()
         {
             --movementVector.x;
+        }
+        public void setheadPitch(float pitch)
+        {
+            this.headPitch = pitch;
         }
         public Vector3F getFrontVector()
         {

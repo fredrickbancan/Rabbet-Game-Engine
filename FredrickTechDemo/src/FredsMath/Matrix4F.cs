@@ -282,6 +282,7 @@ namespace FredrickTechDemo.FredsMath
 
         public static Matrix4F createPerspectiveMatrix(float fov, float aspectRatio, float zNear, float zFar)
         {
+            Matrix4F result = new Matrix4F(1.0F);
             float yMax = zNear * (float)Math.Tan(0.5F * fov);
             float yMin = -yMax;
             float xMin = yMin * aspectRatio;
@@ -292,7 +293,25 @@ namespace FredrickTechDemo.FredsMath
             float b = (yMax + yMin) / (yMax - yMin);
             float c = -(zFar + zNear) / (zFar - zNear);
             float d = -(2.0F * zFar * zNear) / (zFar - zNear);
-            return new Matrix4F(new Vector4F(x, 0, 0, 0), new Vector4F(0, y, 0, 0), new Vector4F(a, b, c, -1), new Vector4F(0, 0, d, 0));
+
+            result.row0.x = x;
+            result.row0.y = 0;
+            result.row0.z = 0;
+            result.row0.w = 0;
+            result.row1.x = 0;
+            result.row1.y = y;
+            result.row1.z = 0;
+            result.row1.w = 0;
+            result.row2.x = a;
+            result.row2.y = b;
+            result.row2.z = c;
+            result.row2.w = -1;
+            result.row3.x = 0;
+            result.row3.y = 0;
+            result.row3.z = d;
+            result.row3.w = 0;
+
+            return result; 
         }
       
         #endregion

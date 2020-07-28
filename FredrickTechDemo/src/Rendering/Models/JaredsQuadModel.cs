@@ -7,10 +7,10 @@ namespace FredrickTechDemo.Models
     {
         private static float[] jaredsQuadVerticesXYZ = new float[]
         {/*   x      y      z   */
-            -1.0F, -1.0F, 0.0F,//*vertex 0 bottom left*//*
-             1.0F, -1.0F, 0.0F,//*vertex 1 bottom right*//*
-            -1.0F,  1.0F, 0.0F,//*vertex 2 top left*//*
-             1.0F,  1.0F, 0.0F//*vertex 3 top right*//*
+            -0.5F, -0.5F, 0.0F,//*vertex 0 bottom left*//*
+             0.5F, -0.5F, 0.0F,//*vertex 1 bottom right*//*
+            -0.5F,  0.5F, 0.0F,//*vertex 2 top left*//*
+             0.5F,  0.5F, 0.0F//*vertex 3 top right*//*
         };
 
         private static float[] jaredsQuadVerticesRGB = new float[]

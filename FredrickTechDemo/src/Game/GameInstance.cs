@@ -9,7 +9,10 @@ namespace FredrickTechDemo
     /*This class is the main game class. It contains all the execution code for rendering, logic loops and loading.*/
     class GameInstance : GameWindow
     {
-        private Input input;
+        public static int windowWidth; 
+        public static int windowHeight;
+        public static int mouseCenterX;//the x position of the center of the game window
+        public static int mouseCenterY;//the y position of the center of the game winwow
         private Renderer renderer;
         public EntityPlayer thePlayer;
         public JaredsQuadModel jaredsQuad;
@@ -17,9 +20,12 @@ namespace FredrickTechDemo
         public Vector3F jaredsQuadRot = new Vector3F();
         public GameInstance(int width, int height, String title) : base(width, height, GraphicsMode.Default, title)
         {
+            GameInstance.windowWidth = width;
+            GameInstance.windowHeight = height;
+            GameInstance.mouseCenterX = this.X + this.Width / 2;
+            GameInstance.mouseCenterY = this.Y + this.Height / 2;
             renderer = new Renderer(this);
             thePlayer = new EntityPlayer("Steve", new Vector3F(0.0F, 0.0F, 1.5F));
-            input = new Input(this);
             jaredsQuad = new JaredsQuadModel();
             GameSettings.loadSettings(this);
         }
@@ -29,11 +35,17 @@ namespace FredrickTechDemo
         {
             TicksAndFps.init(30.0D);
             renderer.init();
+            Input.setGameInstance(this);
+            Input.centerMouse();
+            Input.toggleHideMouse();
         }
 
         /*overriding OpenTk game update function, called every frame.*/
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
+            GameInstance.mouseCenterX = this.X + this.Width / 2;
+            GameInstance.mouseCenterY = this.Y + this.Height / 2;
+
             for (int i = 0; i < TicksAndFps.getTicksElapsed(); i++)//for each tick that has elapsed since the start of last update, run the games logic enough times to catch up. 
             {
                 onTick();
@@ -50,6 +62,8 @@ namespace FredrickTechDemo
         /*Overriding OpenTK resize function, called every time the game window is resized*/
         protected override void OnResize(EventArgs e)
         {
+            GameInstance.windowWidth = Width;
+            GameInstance.windowHeight = Height;
             renderer.onResize();
             base.OnResize(e);
         }
@@ -57,7 +71,7 @@ namespace FredrickTechDemo
         /*Each itteration of game logic is done here*/
         private void onTick()
         { 
-            input.updateInput();
+            Input.updateInput();
             jaredsQuad.onTick(jaredsQuadPos, jaredsQuadRot);
             thePlayer.onTick();
         }
