@@ -67,10 +67,12 @@
     <Compile Include="Src\Rendering\Models\Model.cs" />
     <Compile Include="Src\Rendering\Models\ModelDrawable.cs" />
     <Compile Include="Src\Rendering\Models\ModelDrawableGUI.cs" />
-    <Compile Include="Src\Rendering\SubRenderers\QuadBatcher.cs" />
-    <Compile Include="Src\Rendering\SubRenderers\Text\TextPanelTextLine2D.cs" />
-    <Compile Include="Src\Rendering\SubRenderers\Text\TextPanel2D.cs" />
-    <Compile Include="Src\Rendering\SubRenderers\Text\TextRenderer2D.cs" />
+    <Compile Include="Src\Rendering\SubRendering\QuadBatcher.cs" />
+    <Compile Include="Src\Rendering\SubRendering\Text\TextPanelTextLine2D.cs" />
+    <Compile Include="Src\Rendering\SubRendering\Text\TextPanel2D.cs" />
+    <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\Character.cs" />
+    <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\FontFile.cs" />
+    <Compile Include="Src\Rendering\SubRendering\Text\TextRenderer2D.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\JaredsQuadPrefab.cs" />
     <Compile Include="Src\Rendering\Renderer.cs" />
     <Compile Include="Src\Rendering\Shader.cs" />

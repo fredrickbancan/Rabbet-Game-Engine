@@ -59,7 +59,7 @@ namespace FredrickTechDemo
                     fragmentSource += (currentLine + "\n");
                 }
             }
-
+            reader.Close();
             shaderProgramSource result;
             result.vertexSource = vertexSource;
             result.fragmentSource = fragmentSource;

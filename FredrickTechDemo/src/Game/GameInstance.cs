@@ -51,7 +51,6 @@ namespace FredrickTechDemo
         /*overriding OpenTk render update function, called every frame.*/
         protected override void OnRenderFrame(FrameEventArgs args)
         {
-            renderer.renderJaredsQuad();
         }
 
         /*Overriding OpenTK resize function, called every time the game window is resized*/

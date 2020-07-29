@@ -14,7 +14,7 @@ namespace FredrickTechDemo.SubRendering
         private static readonly byte vertexXYZComponentCount = 3;//number of floats per XYZ component of vertex
         private static readonly byte vertexRGBAComponentCount = 3;//number of floats per RGBA component of vertex
         private static readonly byte vertexUVComponentCount = 2;//number of floats per UV component of vertex
-        public static readonly byte floatCountOfVertex = 8; //number of floats per vertex, including xyz rgb and uv
+        public static readonly int floatCountOfVertex = vertexXYZComponentCount + vertexRGBAComponentCount + vertexUVComponentCount; //number of floats per vertex, including xyz rgb and uv
         private static UInt32[] indices = new UInt32[maxIndexCount];
         private static UInt32 offset = 0;
 
@@ -36,26 +36,27 @@ namespace FredrickTechDemo.SubRendering
             }
         }
 
+        /*Batches together models made of quads for being rendered on GUI*/
         public static ModelDrawableGUI batchQuadModelsGui(Model[] quadModels, String shaderFile, String textureFile)
         {
             float[] newVertexXYZ;
             float[] newVertexRGBA;
             float[] newVertexUV;
             combineData(quadModels, out newVertexXYZ, out newVertexRGBA, out newVertexUV);
-
             return new ModelDrawableGUI(shaderFile, textureFile, newVertexXYZ, newVertexRGBA, newVertexUV, indices);
         }
 
+        /*Batches together models made of quads for being rendered in 3D*/
         public static ModelDrawable batchQuadModels3D(Model[] quadModels, String shaderFile, String textureFile)
         {
             float[] newVertexXYZ;
             float[] newVertexRGBA;
             float[] newVertexUV;
             combineData(quadModels, out newVertexXYZ, out newVertexRGBA, out newVertexUV);
-
             return new ModelDrawable(shaderFile, textureFile, newVertexXYZ, newVertexRGBA, newVertexUV, indices);
         }
 
+        /*Combines all the data in the model array and outputs the combined ordered arrays.*/
         private static void combineData(Model[] modelsToCombine, out float[] newVertexXYZ, out float[] newVertexRGBA, out float[] newVertexUV)
         {
             int totalVertexCount = 0;
@@ -73,7 +74,7 @@ namespace FredrickTechDemo.SubRendering
             newVertexUV = new float[totalVertexCount * vertexUVComponentCount];
 
             //itterate over each array and combine their data in new array
-            int prevModelXYZindex = 0;
+            int prevModelXYZIndex = 0;
             int prevModelRGBAIndex = 0;
             int prevModelUVIndex = 0;
             for (int i = 0; i < modelsToCombine.Length; i++)
@@ -84,11 +85,13 @@ namespace FredrickTechDemo.SubRendering
                     float x = currentXYZ[j - 2];
                     float y = currentXYZ[j - 1];
                     float z = currentXYZ[j];
-                    newVertexXYZ[prevModelXYZindex + (j - 2)] = x;
-                    newVertexXYZ[prevModelXYZindex + (j - 1)] = y;
-                    newVertexXYZ[prevModelXYZindex + j] = z;
+                    newVertexXYZ[prevModelXYZIndex + (j - 2)] = x;
+                    newVertexXYZ[prevModelXYZIndex + (j - 1)] = y;
+                    newVertexXYZ[prevModelXYZIndex + j] = z;
                 }
-                for (int j = vertexRGBAComponentCount - 1; j < modelsToCombine[i].getVertexXYZ().Length; j += vertexRGBAComponentCount)//combine rgb data
+
+                //If an alpha component is added to vertices, this must be modified.
+                for (int j = vertexRGBAComponentCount - 1; j < modelsToCombine[i].getVertexXYZ().Length; j += vertexRGBAComponentCount)//combine rgba data
                 {
                     float[] currentRGBA = modelsToCombine[i].getVertexRGBA();
                     float r = currentRGBA[j - 2];
@@ -108,7 +111,7 @@ namespace FredrickTechDemo.SubRendering
                     newVertexUV[prevModelUVIndex + j] = v;
                 }
 
-                prevModelXYZindex += modelsToCombine[i].getVertexCount() * vertexXYZComponentCount;//increase the respective index's 
+                prevModelXYZIndex += modelsToCombine[i].getVertexCount() * vertexXYZComponentCount;//increase the respective index's 
                 prevModelRGBAIndex += modelsToCombine[i].getVertexCount() * vertexRGBAComponentCount;
                 prevModelUVIndex += modelsToCombine[i].getVertexCount() * vertexUVComponentCount;
 

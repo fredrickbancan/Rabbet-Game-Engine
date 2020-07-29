@@ -7,11 +7,11 @@ namespace FredrickTechDemo.SubRendering.Text
     class TextPanelTextLine2D
     {
         private Model lineModel;
-        private float consolasCharWidth = 0.05F;//TODO change to actual consolas char width
         private float[] vertexXYZ;
         private float[] vertexRGB;
         private float[] vertexUV;
-        public TextPanelTextLine2D(String textToBeConverted, Vector2F pos, ColourF color)
+
+        public TextPanelTextLine2D(String textToBeConverted, Vector2F pos, ColourF color, FontFile font)
         {
 
             vertexXYZ = new float[textToBeConverted.Replace(" ", "").Length * 3];
@@ -19,11 +19,12 @@ namespace FredrickTechDemo.SubRendering.Text
             vertexRGB = new float[textToBeConverted.Replace(" ", "").Length * 3];
 
             vertexUV = new float[textToBeConverted.Replace(" ", "").Length * 2];
-            convertStringToCharacterArrayModel(textToBeConverted, pos, color);
+
+            convertStringToCharacterArrayModel(textToBeConverted, pos, color, font);
         }
 
         /*pos is where the line of text will start, the left bottom corner of the first character in text*/
-        private void convertStringToCharacterArrayModel(String text, Vector2F pos, ColourF color)
+        private void convertStringToCharacterArrayModel(String text, Vector2F pos, ColourF color, FontFile font)
         {
             for (int i = 0; i < text.Length; i++)
             {

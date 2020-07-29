@@ -9,7 +9,8 @@ namespace FredrickTechDemo.SubRendering
     class TextRenderer2D
     {
         private readonly String textShaderDir = ResourceHelper.getShaderFileDir("GuiTransparentShader.shader");
-        private readonly String consolasTextureDir = ResourceHelper.getFontTextureFileDir("consolasNative.png");
+        private readonly String fontTextureDir;
+        private FontFile font;
 
         private bool screenTextModelExists = false;
         private ColourF defaultColour;
@@ -18,14 +19,18 @@ namespace FredrickTechDemo.SubRendering
 
         private Dictionary<String, TextPanel2D> currentScreenTextPanels = new Dictionary<String, TextPanel2D>();
 
-        public TextRenderer2D()
+        public TextRenderer2D(String font)
         {
             this.defaultColour = ColourF.white;
+            fontTextureDir = ResourceHelper.getFontTextureFileDir(font + ".png");
+            this.font = new FontFile(font);
         }
 
-        public TextRenderer2D(ColourF color)
+        public TextRenderer2D(String font, ColourF color)
         {
             this.defaultColour = color;
+            fontTextureDir = ResourceHelper.getFontTextureFileDir(font + ".png");
+            this.font = new FontFile(font);
         }
 
         public void setColour(ColourF newColour)
@@ -50,21 +55,20 @@ namespace FredrickTechDemo.SubRendering
 
         public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor)
         {
-            currentScreenTextPanels.Add(textPanelName, new TextPanel2D(textPanelLines, textPanelPosition, textPanelColor));
+            currentScreenTextPanels.Add(textPanelName, new TextPanel2D(textPanelLines, textPanelPosition, textPanelColor, font));
             batchScreenTextForRendering();
         }
 
         public void removeTextPanel(String textPanelName)
         {
-            try
+            if (!currentScreenTextPanels.Remove(textPanelName))
             {
-                currentScreenTextPanels.Remove(textPanelName);
+                Application.error("TextRenderer2D could not remove panel named " + textPanelName);
             }
-            catch(Exception e)
+            else
             {
-                Application.error("TextRenderer2D could not remove panel named " + textPanelName + " | error message: " + e.Message);
+                batchScreenTextForRendering();
             }
-            batchScreenTextForRendering();
         }
 
         public void batchScreenTextForRendering()
@@ -95,7 +99,7 @@ namespace FredrickTechDemo.SubRendering
                 }
             }
 
-            screenTextModel = QuadBatcher.batchQuadModelsGui(arrayOfLineModels, textShaderDir, consolasTextureDir);
+            screenTextModel = QuadBatcher.batchQuadModelsGui(arrayOfLineModels, textShaderDir, fontTextureDir);
             screenTextModelExists = true;
         }
 

@@ -77,6 +77,10 @@ namespace FredrickTechDemo
             return (float)percentToNextTick;
         }
 
+        public static long getMiliseconds()
+        {
+            return stopwatch.ElapsedMilliseconds;
+        }
         public static int getFps()
         {
             return fps;
