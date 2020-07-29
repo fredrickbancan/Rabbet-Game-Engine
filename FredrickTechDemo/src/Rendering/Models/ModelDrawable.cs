@@ -18,11 +18,10 @@ namespace FredrickTechDemo.Models
         protected Shader shader;
         protected Matrix4F prevModelMatrix;
         protected Matrix4F modelMatrix = new Matrix4F(1.0F);
-        protected UInt32[] indices;
 
 
         /*takes in directory for the shader and texture for this model*/
-        public ModelDrawable(String shaderFile, String textureFile, float[] vertexPositions, float[] vertexColour, float[] vertexUV, UInt32[] indices) : base(vertexPositions, vertexColour, vertexUV)
+        public ModelDrawable(String shaderFile, String textureFile, float[] vertexPositions, float[] vertexColour, float[] vertexUV, UInt32[] indices) : base(vertexPositions, vertexColour, vertexUV, indices)
         {
             this.indices = indices;
             texture = new Texture(textureFile, true);
@@ -44,7 +43,7 @@ namespace FredrickTechDemo.Models
             
             bindIndicesBuffer(); //for indices
             storeDataInAttributeList(0, 3, vertexXYZ);//for X,y,z coords
-            storeDataInAttributeList(1, 3, vertexRGB);//for rgb
+            storeDataInAttributeList(1, 3, vertexRGBA);//for rgb
             storeDataInAttributeList(2, 2, vertexUV);//for uv
         }
 

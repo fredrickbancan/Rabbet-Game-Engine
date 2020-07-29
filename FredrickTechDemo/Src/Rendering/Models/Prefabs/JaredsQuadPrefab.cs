@@ -2,7 +2,7 @@
 
 namespace FredrickTechDemo.Models
 {
-    public static class JaredsQuadModelData
+    public static class JaredsQuadPrefab
     {
         public static readonly  float[] jaredsQuadVerticesXYZ = new float[]
         {/*   x      y      z   */
@@ -33,6 +33,29 @@ namespace FredrickTechDemo.Models
             1, 3, 2 //second triangle
         };
 
-        
+        /*generates a new model using copies of this models arrays.*/
+        public static Model getNewModel()
+        {
+            float[] copyXYZ = new float[jaredsQuadVerticesXYZ.Length];
+            float[] copyRGB = new float[jaredsQuadVerticesRGB.Length];
+            float[] copyUV = new float[jaredsQuadVerticesUV.Length];
+            UInt32[] copyIndices = new uint[jaredsQuadIndices.Length];
+            Array.Copy(jaredsQuadVerticesXYZ, copyXYZ, jaredsQuadVerticesXYZ.Length);
+            Array.Copy(jaredsQuadVerticesRGB, copyRGB, jaredsQuadVerticesRGB.Length);
+            Array.Copy(jaredsQuadVerticesUV, copyUV, jaredsQuadVerticesUV.Length);
+            Array.Copy(jaredsQuadIndices, copyIndices, jaredsQuadIndices.Length);
+            return new Model(copyXYZ, copyRGB, copyUV, copyIndices);
+            //return new Model(jaredsQuadVerticesXYZ, jaredsQuadVerticesRGB, jaredsQuadVerticesUV, jaredsQuadIndices);
+        }
+
+        public static String getShaderDir()
+        {
+            return ResourceHelper.getShaderFileDir("ColourTextureShader3D.shader");
+        }
+
+        public static String getTextureDir()
+        {
+            return ResourceHelper.getTextureFileDir("aie.png");
+        }
     }
 }
