@@ -1,4 +1,6 @@
 ﻿using FredrickTechDemo.FredsMath;
+using FredrickTechDemo.Models;
+using FredrickTechDemo.SubRendering;
 using OpenTK.Graphics.OpenGL;
 
 namespace FredrickTechDemo
@@ -11,6 +13,9 @@ namespace FredrickTechDemo
     {
         private GameInstance gameInstance;
         private Matrix4F projectionMatrix;
+        private ModelDrawable quads;
+        private Vector3F fogColour = ColourF.lightBlossom.normalize();
+        private Vector3F skyColour = ColourF.skyBlue.normalize();
         public Renderer(GameInstance game)
         {
             this.gameInstance = game;
@@ -19,26 +24,56 @@ namespace FredrickTechDemo
         /*Called before any rendering is done*/
         public void init()
         {
-            Renderer.setClearColor(ColourF.steelBlue);
+            gameInstance.MakeCurrent();
+            Renderer.setClearColor(skyColour);
             GL.Enable(EnableCap.DepthTest);
             GL.Viewport(gameInstance.ClientRectangle);
-            projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), (float)gameInstance.Width / (float)gameInstance.Height, 0.001F, 1000.0F);
+            projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), (float)gameInstance.Width / (float)gameInstance.Height, 0.1F, 1000.0F);
+            long constructStart = TicksAndFps.getMiliseconds();
+            Model[] filler = new Model[32768];
+            for(int z = 0; z < 32; z++ )
+            {
+                for (int x = 0; x < 32; x++)
+                {
+                    for (int y = 0; y < 32; y++)
+                    {
+                        filler[z * 1024 + x * 32 + y] = JaredsQuadPrefab.getNewModel().transformVertices(new Vector3F(1), new Vector3F(0,y*90F,0), new Vector3F(x - 16, y, -z));
+                    }
+                }
+            }
+            Application.debug("test mesh quad count: " + filler.Length);
+            Application.debug("test mesh triangle count: " + filler.Length * 2);
+            Application.debug("test mesh vertex count: " + filler.Length * 4);
+            Application.debug("test mesh took " + (TicksAndFps.getMiliseconds() - constructStart) + " miliseconds to construct.");
+            long batchStart = TicksAndFps.getMiliseconds();
+            quads = QuadBatcher.batchQuadModels3D(filler, JaredsQuadPrefab.getShaderDir(), JaredsQuadPrefab.getTextureDir());
+            Application.debug("test mesh took " + (TicksAndFps.getMiliseconds() - batchStart) + " miliseconds to batch.");
         }
 
         /*Called each time the game window is resized*/
         public void onResize()
         {
             GL.Viewport(gameInstance.ClientRectangle);
-            projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), (float)gameInstance.Width / (float)gameInstance.Height, 0.001F, 1000.0F);
+            projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), (float)gameInstance.Width / (float)gameInstance.Height, 0.1F, 1000.0F);
         }
 
-        /*Called before each draw call*/
+        /*Called before all draw calls*/
         public void preRender()
         {
+            gameInstance.thePlayer.onCameraUpdate();
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
         
-        /*Called after each draw call*/
+        public void updateCameraAndRenderWorld()
+        {
+            preRender();
+            quads.bind();
+            quads.draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, fogColour);
+            quads.unBind();
+            postRender();
+        }
+
+        /*Called after all draw calls*/
         public void postRender()
         {
             gameInstance.SwapBuffers();
@@ -46,10 +81,14 @@ namespace FredrickTechDemo
 
         public static void setClearColor(ColourF color)
         {
-            float r =MathUtil.normalize(0, 255, color.GetRed());
-            float g =MathUtil.normalize(0, 255, color.GetGreen());
-            float b =MathUtil.normalize(0, 255, color.GetBlue());
+            float r = MathUtil.normalize(0, 255, color.GetRed());
+            float g = MathUtil.normalize(0, 255, color.GetGreen());
+            float b = MathUtil.normalize(0, 255, color.GetBlue());
             GL.ClearColor(r, g, b, 1.0f);
+        }
+        public static void setClearColor(Vector3F colorNormalized)
+        {
+            GL.ClearColor(colorNormalized.x, colorNormalized.y, colorNormalized.z, 1.0f);
         }
     }
 }

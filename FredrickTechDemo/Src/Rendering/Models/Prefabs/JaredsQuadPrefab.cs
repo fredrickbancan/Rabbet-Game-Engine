@@ -45,12 +45,23 @@ namespace FredrickTechDemo.Models
             Array.Copy(jaredsQuadVerticesUV, copyUV, jaredsQuadVerticesUV.Length);
             Array.Copy(jaredsQuadIndices, copyIndices, jaredsQuadIndices.Length);
             return new Model(copyXYZ, copyRGB, copyUV, copyIndices);
-            //return new Model(jaredsQuadVerticesXYZ, jaredsQuadVerticesRGB, jaredsQuadVerticesUV, jaredsQuadIndices);
+        }
+        public static ModelDrawable getNewModelDrawable()
+        {
+            float[] copyXYZ = new float[jaredsQuadVerticesXYZ.Length];
+            float[] copyRGB = new float[jaredsQuadVerticesRGB.Length];
+            float[] copyUV = new float[jaredsQuadVerticesUV.Length];
+            UInt32[] copyIndices = new uint[jaredsQuadIndices.Length];
+            Array.Copy(jaredsQuadVerticesXYZ, copyXYZ, jaredsQuadVerticesXYZ.Length);
+            Array.Copy(jaredsQuadVerticesRGB, copyRGB, jaredsQuadVerticesRGB.Length);
+            Array.Copy(jaredsQuadVerticesUV, copyUV, jaredsQuadVerticesUV.Length);
+            Array.Copy(jaredsQuadIndices, copyIndices, jaredsQuadIndices.Length);
+            return new ModelDrawable(getShaderDir(), getTextureDir(), copyXYZ, copyRGB, copyUV, copyIndices);
         }
 
         public static String getShaderDir()
         {
-            return ResourceHelper.getShaderFileDir("ColourTextureShader3D.shader");
+            return ResourceHelper.getShaderFileDir("ColourTextureShader3DFog.shader");
         }
 
         public static String getTextureDir()

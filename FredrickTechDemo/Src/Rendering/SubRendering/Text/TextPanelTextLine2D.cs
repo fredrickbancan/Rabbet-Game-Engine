@@ -14,11 +14,11 @@ namespace FredrickTechDemo.SubRendering.Text
         public TextPanelTextLine2D(String textToBeConverted, Vector2F pos, ColourF color, FontFile font)
         {
 
-            vertexXYZ = new float[textToBeConverted.Replace(" ", "").Length * 3];
+            vertexXYZ = new float[textToBeConverted.Replace(" ", "").Length * 12];
 
-            vertexRGB = new float[textToBeConverted.Replace(" ", "").Length * 3];
+            vertexRGB = new float[textToBeConverted.Replace(" ", "").Length * 12];
 
-            vertexUV = new float[textToBeConverted.Replace(" ", "").Length * 2];
+            vertexUV = new float[textToBeConverted.Replace(" ", "").Length * 8];
 
             convertStringToCharacterArrayModel(textToBeConverted, pos, color, font);
         }

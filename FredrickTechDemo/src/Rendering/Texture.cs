@@ -6,7 +6,7 @@ using System.Drawing.Imaging;
 namespace FredrickTechDemo
 {
     /*this class provides a handle on any image the game wants to load as a texture.*/
-    class Texture : IDisposable
+    public class Texture : IDisposable
     {
         private bool disposed = false;
         private int id;

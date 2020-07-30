@@ -7,17 +7,16 @@ namespace FredrickTechDemo.Models
 {
     /*Base class for models that wont be batched and can be drawn individually with additional draw calls and have
      *individual VAO's.*/
-    class ModelDrawable : Model
+    public class ModelDrawable : Model
     {
         protected bool hasInitialized = false;
         private int indicesBufferObject;
         private List<int> VBOS = new List<int>();
         private int VAO;
-
         protected Texture texture;
         protected Shader shader;
-        protected Matrix4F prevModelMatrix;
         protected Matrix4F modelMatrix = new Matrix4F(1.0F);
+        protected Matrix4F prevModelMatrix = new Matrix4F(1.0F);
 
 
         /*takes in directory for the shader and texture for this model*/
@@ -28,6 +27,10 @@ namespace FredrickTechDemo.Models
             shader = new Shader(shaderFile);
         }
 
+        public virtual void setUniformVec3(String name, Vector3F vec)
+        {
+            shader.setUniformVec3F(name, vec);
+        }
         /*called when model is first bound. can be used for more*/
         protected virtual void init()
         {
@@ -48,32 +51,33 @@ namespace FredrickTechDemo.Models
         }
 
         /*Binds the models texture and shader, can be used for more*/
-        protected virtual void bind()
+        public virtual void bind()
         {
-            if (!hasInitialized) 
-            { 
-               init();
+            if (!hasInitialized)
+            {
+                init();
             }
-            GL.BindVertexArray(VAO);//must be bound first before indices
+            else
+            {
+                GL.BindVertexArray(VAO);//must be bound first before indices
+            }
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBufferObject);
             texture.use();
             shader.use();
         }
 
         /*Draws this model. If its the first draw call, and firtst bind call, the model will be initialized.*/
-        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix)
+        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Vector3F fogColour)
         {
-            bind();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
             shader.setUniformMat4F("modelMatrix", prevModelMatrix + (modelMatrix - prevModelMatrix) * TicksAndFps.getPercentageToNextTick());//interpolating model matrix between ticks
-
+            shader.setUniformVec3F("fogColour", fogColour);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
-            unBind();
         }
 
         /*Unbinds this model so the renderer can render different things.*/
-        protected virtual void unBind()
+        public virtual void unBind()
         {
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
             GL.BindTexture(TextureTarget.Texture2D, 0);

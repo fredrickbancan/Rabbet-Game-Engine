@@ -14,6 +14,7 @@ namespace FredrickTechDemo
         public static int mouseCenterY;//the y position of the center of the game winwow
         private Renderer renderer;
         public EntityPlayer thePlayer;
+
         public GameInstance(int width, int height, String title) : base(width, height, GraphicsMode.Default, title)
         {
             GameInstance.windowWidth = width;
@@ -21,7 +22,7 @@ namespace FredrickTechDemo
             GameInstance.mouseCenterX = this.X + this.Width / 2;
             GameInstance.mouseCenterY = this.Y + this.Height / 2;
             renderer = new Renderer(this);
-            thePlayer = new EntityPlayer("Steve", new Vector3F(0.0F, 0.0F, 1.5F));
+            thePlayer = new EntityPlayer("Steve", new Vector3F(0.0F, 16.0F, 32F));
             GameSettings.loadSettings(this);
         }
 
@@ -46,11 +47,15 @@ namespace FredrickTechDemo
                 onTick();
             }
             TicksAndFps.update();
+            base.OnUpdateFrame(args);
         }
 
         /*overriding OpenTk render update function, called every frame.*/
         protected override void OnRenderFrame(FrameEventArgs args)
         {
+            
+            renderer.updateCameraAndRenderWorld();
+            base.OnRenderFrame(args);
         }
 
         /*Overriding OpenTK resize function, called every time the game window is resized*/

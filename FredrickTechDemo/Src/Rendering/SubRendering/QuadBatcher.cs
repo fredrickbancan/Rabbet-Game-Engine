@@ -62,7 +62,14 @@ namespace FredrickTechDemo.SubRendering
             int totalVertexCount = 0;
             for (int i = 0; i < modelsToCombine.Length; i++)
             {
-                totalVertexCount += modelsToCombine[i].getVertexCount(); //count vertices based on position
+                if (modelsToCombine[i] != null)
+                {
+                    totalVertexCount += modelsToCombine[i].getVertexCount(); //count vertices based on position
+                }
+                else
+                {
+                    Application.warn("QuadBatcher detected null model in array at combineData() index: " + i);
+                }
             }
             if (totalVertexCount % 4 != 0)
             {
@@ -79,45 +86,47 @@ namespace FredrickTechDemo.SubRendering
             int prevModelUVIndex = 0;
             for (int i = 0; i < modelsToCombine.Length; i++)
             {
-                for (int j = vertexXYZComponentCount - 1; j < modelsToCombine[i].getVertexXYZ().Length; j += vertexXYZComponentCount)//combine xyz data
+                if (modelsToCombine[i] != null)
                 {
-                    float[] currentXYZ = modelsToCombine[i].getVertexXYZ();
-                    float x = currentXYZ[j - 2];
-                    float y = currentXYZ[j - 1];
-                    float z = currentXYZ[j];
-                    newVertexXYZ[prevModelXYZIndex + (j - 2)] = x;
-                    newVertexXYZ[prevModelXYZIndex + (j - 1)] = y;
-                    newVertexXYZ[prevModelXYZIndex + j] = z;
-                }
+                    for (int j = vertexXYZComponentCount - 1; j < modelsToCombine[i].getVertexXYZ().Length; j += vertexXYZComponentCount)//combine xyz data
+                    {
+                        float[] currentXYZ = modelsToCombine[i].getVertexXYZ();
+                        float x = currentXYZ[j - 2];
+                        float y = currentXYZ[j - 1];
+                        float z = currentXYZ[j];
+                        newVertexXYZ[prevModelXYZIndex + (j - 2)] = x;
+                        newVertexXYZ[prevModelXYZIndex + (j - 1)] = y;
+                        newVertexXYZ[prevModelXYZIndex + j] = z;
+                    }
 
-                //If an alpha component is added to vertices, this must be modified.
-                for (int j = vertexRGBAComponentCount - 1; j < modelsToCombine[i].getVertexXYZ().Length; j += vertexRGBAComponentCount)//combine rgba data
-                {
-                    float[] currentRGBA = modelsToCombine[i].getVertexRGBA();
-                    float r = currentRGBA[j - 2];
-                    float g = currentRGBA[j - 1];
-                    float b = currentRGBA[j];
-                    newVertexRGBA[prevModelRGBAIndex + (j - 2)] = r;
-                    newVertexRGBA[prevModelRGBAIndex + (j - 1)] = g;
-                    newVertexRGBA[prevModelRGBAIndex + j] = b;
-                }
+                    //If an alpha component is added to vertices, this must be modified.
+                    for (int j = vertexRGBAComponentCount - 1; j < modelsToCombine[i].getVertexXYZ().Length; j += vertexRGBAComponentCount)//combine rgba data
+                    {
+                        float[] currentRGBA = modelsToCombine[i].getVertexRGBA();
+                        float r = currentRGBA[j - 2];
+                        float g = currentRGBA[j - 1];
+                        float b = currentRGBA[j];
+                        newVertexRGBA[prevModelRGBAIndex + (j - 2)] = r;
+                        newVertexRGBA[prevModelRGBAIndex + (j - 1)] = g;
+                        newVertexRGBA[prevModelRGBAIndex + j] = b;
+                    }
 
-                for (int j = vertexUVComponentCount - 1; j < modelsToCombine[i].getVertexUV().Length; j += vertexUVComponentCount)// do same for UV
-                {
-                    float[] currentUV = modelsToCombine[i].getVertexUV();
-                    float u = currentUV[j - 1];
-                    float v = currentUV[j];
-                    newVertexUV[prevModelUVIndex + (j - 1)] = u;
-                    newVertexUV[prevModelUVIndex + j] = v;
-                }
+                    for (int j = vertexUVComponentCount - 1; j < modelsToCombine[i].getVertexUV().Length; j += vertexUVComponentCount)// do same for UV
+                    {
+                        float[] currentUV = modelsToCombine[i].getVertexUV();
+                        float u = currentUV[j - 1];
+                        float v = currentUV[j];
+                        newVertexUV[prevModelUVIndex + (j - 1)] = u;
+                        newVertexUV[prevModelUVIndex + j] = v;
+                    }
+                    prevModelXYZIndex += modelsToCombine[i].getVertexCount() * vertexXYZComponentCount;//increase the respective index's 
+                    prevModelRGBAIndex += modelsToCombine[i].getVertexCount() * vertexRGBAComponentCount;
+                    prevModelUVIndex += modelsToCombine[i].getVertexCount() * vertexUVComponentCount;
 
-                prevModelXYZIndex += modelsToCombine[i].getVertexCount() * vertexXYZComponentCount;//increase the respective index's 
-                prevModelRGBAIndex += modelsToCombine[i].getVertexCount() * vertexRGBAComponentCount;
-                prevModelUVIndex += modelsToCombine[i].getVertexCount() * vertexUVComponentCount;
-
-                if (modelsToCombine[i] is ModelDrawable md)//lastly, delete original model info opengl buffers and programs (if it is an instance of a modeldrawable)
-                {
-                    md.delete();
+                    if (modelsToCombine[i] is ModelDrawable md)//lastly, delete original model info opengl buffers and programs (if it is an instance of a modeldrawable)
+                    {
+                        md.delete();
+                    }
                 }
             }
         }

@@ -17,7 +17,7 @@ namespace FredrickTechDemo
         FRAGMENT
     };
 
-    class Shader : IDisposable
+    public class Shader : IDisposable
     {
         private bool disposed = false;
         private int id;
@@ -110,12 +110,12 @@ namespace FredrickTechDemo
 
         public void setUniformVec3F(String name, Vector3F vec)
         {
-            GL.Uniform3(getUniformLocation(name), (double)vec.x, (double)vec.y, (double)vec.z);
+            GL.Uniform3(getUniformLocation(name), vec.x, vec.y, vec.z);
         }
 
         public void setUniformVec2F(String name, Vector2F vec)
         {
-            GL.Uniform2(getUniformLocation(name), (double)vec.x, (double)vec.y);
+            GL.Uniform2(getUniformLocation(name), vec.x, vec.y);
         }
 
         private int getUniformLocation(String name)// later will cache uniforms
