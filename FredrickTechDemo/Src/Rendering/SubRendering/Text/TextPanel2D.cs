@@ -7,12 +7,11 @@ namespace FredrickTechDemo.SubRendering.Text
     {
         private TextPanelTextLine2D[] textLinesInPanel;
 
-        private Vector2F panelPos;
+        private Vector2F panelPos; // position of the top left corner of this panel
         private ColourF panelColour;
         private int linesAdded = 0;
-        private float consolasLineHeight = 0.0023F;//TODO change to actual correct line height of text being used
 
-        public TextPanel2D(String[] lines, Vector2F screenPos, ColourF panelColor, FontFile font)
+        public TextPanel2D(String[] lines, Vector2F screenPos, ColourF panelColor, float fontSize, FontReader font)
         {
             this.panelPos = screenPos;
             this.panelColour = panelColor;
@@ -21,17 +20,9 @@ namespace FredrickTechDemo.SubRendering.Text
 
             for(int i = 0; i < lines.Length; i++)
             {
-                textLinesInPanel[i] = makeLineWithCorrectPos(lines[i], font);
+                textLinesInPanel[i] = new TextPanelTextLine2D(lines[i], screenPos, panelColor, fontSize, i, font);
                 linesAdded++;
             }
-        }
-
-        private TextPanelTextLine2D makeLineWithCorrectPos(String line, FontFile font)
-        {
-            Vector2F newPos;
-            newPos.x = panelPos.x;
-            newPos.y = panelPos.y + linesAdded * consolasLineHeight;
-            return new TextPanelTextLine2D(line, newPos, panelColour, font);
         }
 
         public TextPanelTextLine2D[] getTextPanelTextLines()

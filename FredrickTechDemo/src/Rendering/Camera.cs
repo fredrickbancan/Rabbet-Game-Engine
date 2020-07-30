@@ -71,8 +71,8 @@ namespace FredrickTechDemo
             MouseState mouseState = Mouse.GetCursorState();
 
             /*compares the current curor pos to the center of screen location each frame. The cursor will then be reset to cetner after taking value.*/
-            mouseDeltaX = mouseState.X - GameInstance.mouseCenterX;
-            mouseDeltaY = mouseState.Y - GameInstance.mouseCenterY;
+            mouseDeltaX = mouseState.X - GameInstance.windowCenterX;
+            mouseDeltaY = mouseState.Y - GameInstance.windowCenterY;
         }
         public Matrix4F getViewMatrix()
         {

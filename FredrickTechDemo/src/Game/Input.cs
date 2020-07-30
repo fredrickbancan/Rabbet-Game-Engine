@@ -67,7 +67,7 @@ namespace FredrickTechDemo
         /*Places the mouse cursor at the center of the game window*/
         public static void centerMouse()
         {
-            Mouse.SetPosition(GameInstance.mouseCenterX, GameInstance.mouseCenterY); // center the mouse cursor
+            Mouse.SetPosition(GameInstance.windowCenterX, GameInstance.windowCenterY); // center the mouse cursor
         }
 
         /*toggles the visibility of the mouse cursor*/

@@ -12,10 +12,11 @@ namespace FredrickTechDemo
     class Renderer
     {
         private GameInstance gameInstance;
+        private TextRenderer2D textRenderer2D;
         private Matrix4F projectionMatrix;
         private ModelDrawable quads;
-        private Vector3F fogColour = ColourF.lightBlossom.normalize();
-        private Vector3F skyColour = ColourF.skyBlue.normalize();
+        private Vector3F fogColour = ColourF.black.normalize();
+        private Vector3F skyColour = ColourF.black.normalize();
         public Renderer(GameInstance game)
         {
             this.gameInstance = game;
@@ -25,10 +26,20 @@ namespace FredrickTechDemo
         public void init()
         {
             gameInstance.MakeCurrent();
+            textRenderer2D = new TextRenderer2D("consolasNative");
+            textRenderer2D.addNewTextPanel("test", "A", new Vector2F(0,0));
             Renderer.setClearColor(skyColour);
             GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.Blend);
+            GL.Enable(EnableCap.AlphaTest);
+            GL.Enable(EnableCap.CullFace);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            GL.AlphaFunc(AlphaFunction.Greater, 0.01F);
             GL.Viewport(gameInstance.ClientRectangle);
-            projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), (float)gameInstance.Width / (float)gameInstance.Height, 0.1F, 1000.0F);
+            projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
+
+
+
             long constructStart = TicksAndFps.getMiliseconds();
             Model[] filler = new Model[32768];
             for(int z = 0; z < 32; z++ )
@@ -37,7 +48,7 @@ namespace FredrickTechDemo
                 {
                     for (int y = 0; y < 32; y++)
                     {
-                        filler[z * 1024 + x * 32 + y] = JaredsQuadPrefab.getNewModel().transformVertices(new Vector3F(1), new Vector3F(0,y*90F,0), new Vector3F(x - 16, y, -z));
+                        filler[z * 1024 + x * 32 + y] = JaredsQuadPrefab.getNewModel().transformVertices(new Vector3F(1), new Vector3F(0,0,0), new Vector3F(x - 16, y, -z));
                     }
                 }
             }
@@ -54,27 +65,37 @@ namespace FredrickTechDemo
         public void onResize()
         {
             GL.Viewport(gameInstance.ClientRectangle);
-            projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), (float)gameInstance.Width / (float)gameInstance.Height, 0.1F, 1000.0F);
+            projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
+            textRenderer2D.onWindowResize();
         }
 
         /*Called before all draw calls*/
-        public void preRender()
+        private void preRender()
         {
-            gameInstance.thePlayer.onCameraUpdate();
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
         
-        public void updateCameraAndRenderWorld()
+        public void renderAll()
         {
             preRender();
-            quads.bind();
-            quads.draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, fogColour);
-            quads.unBind();
+            updateCameraAndRenderWorld();
+            renderGui();
             postRender();
         }
 
+        private void updateCameraAndRenderWorld()
+        {
+            gameInstance.thePlayer.onCameraUpdate();
+            quads.draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, fogColour);
+        }
+
+        private void renderGui()
+        {
+            textRenderer2D.renderAnyText();
+        }
+
         /*Called after all draw calls*/
-        public void postRender()
+        private void postRender()
         {
             gameInstance.SwapBuffers();
         }

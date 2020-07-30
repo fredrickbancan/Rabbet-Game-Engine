@@ -13,7 +13,7 @@ namespace FredrickTechDemo.Models
         }
 
         /*Draws this model. If its the first draw call, and firtst bind call, the model will be initialized.*/
-        public virtual void draw(float aspectRatio)
+        public virtual void draw()
         {
             bind();
             shader.setUniformMat4F("scaleMatrix", Matrix4F.scale(new Vector3F(1.0F)));

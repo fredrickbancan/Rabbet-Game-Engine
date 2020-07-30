@@ -86,7 +86,7 @@
     <Compile Include="Src\Rendering\SubRendering\Text\TextPanelTextLine2D.cs" />
     <Compile Include="Src\Rendering\SubRendering\Text\TextPanel2D.cs" />
     <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\Character.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\FontFile.cs" />
+    <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\FontReader.cs" />
     <Compile Include="Src\Rendering\SubRendering\Text\TextRenderer2D.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\JaredsQuadPrefab.cs" />
     <Compile Include="Src\Rendering\Renderer.cs" />
@@ -123,6 +123,8 @@
     <Content Include="Res\Font\consolasJava.png" />
     <Content Include="Res\Font\consolasNative.png" />
     <Content Include="Res\Texture\aie.png" />
+    <Content Include="Res\Texture\cactus_side.png" />
+    <Content Include="Res\Texture\glass.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

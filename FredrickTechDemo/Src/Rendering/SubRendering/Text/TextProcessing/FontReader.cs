@@ -4,7 +4,7 @@ using System.IO;
 
 namespace FredrickTechDemo.SubRendering
 {
-    class FontFile
+    class FontReader
     {
         private String debugDir;
         private static readonly byte padTop = 0;
@@ -14,20 +14,20 @@ namespace FredrickTechDemo.SubRendering
         private static readonly byte desiredPadding = 3;
         private static readonly char splitter = ' ';
         private static readonly char numberSeperator = ',';
-        private static readonly int spaceAscii = 32;
+        private static readonly byte spaceAscii = 32;
 
         private byte[] padding;
         private int paddingWidth;
         private int paddingHeight;
         private int lineHeightPixels;
-        private int imageSquareSize;
+        private float imageSquareSize;
         private int spaceWidth;
 
-        private Dictionary<int, Character> finalFontData = new Dictionary<int, Character>();
+        private Dictionary<byte, Character> finalFontData = new Dictionary<byte, Character>();
         private Dictionary<String, String> lineData = new Dictionary<String, String>();
         private StreamReader reader;
 
-        public FontFile(String fontName)
+        public FontReader(String fontName)
         {
             debugDir = ResourceHelper.getFontTextureFileDir(fontName + ".fnt");
 
@@ -43,6 +43,7 @@ namespace FredrickTechDemo.SubRendering
             loadPaddingData();
             loadLineSize();
             imageSquareSize = getValueFromLineData("scaleW");
+            loadCharacterData();
             reader.Close();
         }
 
@@ -77,18 +78,18 @@ namespace FredrickTechDemo.SubRendering
 
         private Character loadCharacter()
         {
-            int id = getValueFromLineData("id");
+            byte id = (byte)getValueFromLineData("id");
             if(id == spaceAscii)
             {
                 spaceWidth = getValueFromLineData("xadvance") - paddingWidth;
                 return null;
             }
-            float u = (getValueFromLineData("x") + (padding[padLeft] - desiredPadding)) / imageSquareSize;
-            float v = (getValueFromLineData("y") + (padding[padTop] - desiredPadding)) / imageSquareSize;
+            float u =  (getValueFromLineData("x") + (padding[padLeft] - desiredPadding)) / imageSquareSize;
+            float v =  (getValueFromLineData("y") + (padding[padTop] - desiredPadding)) / imageSquareSize;
             float widthPixels = getValueFromLineData("width") - (paddingWidth - (2 * desiredPadding));
             float heightPixels = getValueFromLineData("height") - (paddingHeight - (2 * desiredPadding));
             float uMax = widthPixels / imageSquareSize;
-            float vMax = heightPixels / imageSquareSize;
+            float vMax =  heightPixels / imageSquareSize;
             float xOffsetPixels = (getValueFromLineData("xoffset") + (padding[padLeft] - desiredPadding));
             float yOffsetPixels = (getValueFromLineData("yoffset") + (padding[padTop] - desiredPadding));
             float xAdvancePixels = (getValueFromLineData("xadvance") - paddingWidth);
@@ -174,12 +175,16 @@ namespace FredrickTechDemo.SubRendering
             return bytes;
         }
 
+        public float getLineHeightPixels()
+        {
+            return lineHeightPixels;
+        }
         public float getSpaceWidthPixels()
         {
             return spaceWidth;
         }
 
-        public Character getCharacter(int asciiId)
+        public Character getCharacter(byte asciiId)
         {
             Character character;
             if(!finalFontData.TryGetValue(asciiId, out character))

@@ -49,5 +49,5 @@ uniform vec3 fogColour;
 void main()
 {
 	color = texture(uTexture, vTexCoord) * vcolour;// *texture(uTexture, vTexCoord); // mixes colour and textures
-	color = mix(vec4(fogColour, 1.0), color, visibility);
+	color = mix(vec4(fogColour, color.a), color, visibility);
 }

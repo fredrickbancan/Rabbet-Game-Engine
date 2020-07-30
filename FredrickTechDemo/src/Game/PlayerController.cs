@@ -15,21 +15,24 @@ namespace FredrickTechDemo
         /*Called every tick from Input.cs if a key is being pressed. for detecting player input*/
         public void updateInput(KeyboardState keyboard)
         {
-            if(keyboard.IsKeyDown(Key.W))
+            if (!thePlayer.menuOpen)
             {
-                thePlayer.walkFowards();
-            }
-            if (keyboard.IsKeyDown(Key.S))
-            {
-                thePlayer.walkBackwards();
-            }
-            if (keyboard.IsKeyDown(Key.A))
-            {
-                thePlayer.strafeLeft();
-            }
-            if (keyboard.IsKeyDown(Key.D))
-            {
-                thePlayer.strafeRight();
+                if (keyboard.IsKeyDown(Key.W))
+                {
+                    thePlayer.walkFowards();
+                }
+                if (keyboard.IsKeyDown(Key.S))
+                {
+                    thePlayer.walkBackwards();
+                }
+                if (keyboard.IsKeyDown(Key.A))
+                {
+                    thePlayer.strafeLeft();
+                }
+                if (keyboard.IsKeyDown(Key.D))
+                {
+                    thePlayer.strafeRight();
+                }
             }
         }
 

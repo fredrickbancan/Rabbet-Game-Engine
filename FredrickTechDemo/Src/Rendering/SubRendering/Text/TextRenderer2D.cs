@@ -10,11 +10,10 @@ namespace FredrickTechDemo.SubRendering
     {
         private readonly String textShaderDir = ResourceHelper.getShaderFileDir("GuiTransparentShader.shader");
         private readonly String fontTextureDir;
-        private FontFile font;
-
+        private FontReader font;
+        private float defaultFontSize = 25.0F;
         private bool screenTextModelExists = false;
         private ColourF defaultColour;
-        private Renderer gameRenderer;
         private ModelDrawableGUI screenTextModel;
 
         private Dictionary<String, TextPanel2D> currentScreenTextPanels = new Dictionary<String, TextPanel2D>();
@@ -23,14 +22,14 @@ namespace FredrickTechDemo.SubRendering
         {
             this.defaultColour = ColourF.white;
             fontTextureDir = ResourceHelper.getFontTextureFileDir(font + ".png");
-            this.font = new FontFile(font);
+            this.font = new FontReader(font);
         }
 
         public TextRenderer2D(String font, ColourF color)
         {
             this.defaultColour = color;
             fontTextureDir = ResourceHelper.getFontTextureFileDir(font + ".png");
-            this.font = new FontFile(font);
+            this.font = new FontReader(font);
         }
 
         public void setColour(ColourF newColour)
@@ -38,32 +37,48 @@ namespace FredrickTechDemo.SubRendering
             this.defaultColour = newColour;
         }
 
+
+        #region addNewTextPanel
         public void addNewTextPanel(String textPanelName, String textPanelLine, Vector2F textPanelPosition, ColourF color)
         {
-            addNewTextPanel(textPanelName, new string[] { textPanelLine }, textPanelPosition, color);
+            addNewTextPanel(textPanelName, new string[] { textPanelLine }, textPanelPosition, color, defaultFontSize);
         }
 
         public void addNewTextPanel(String textPanelName, String textPanelLine, Vector2F textPanelPosition)
         {
-            addNewTextPanel(textPanelName, new string[] { textPanelLine}, textPanelPosition, defaultColour);
+            addNewTextPanel(textPanelName, new string[] { textPanelLine}, textPanelPosition, defaultColour, defaultFontSize);
+        }
+
+        public void addNewTextPanel(String textPanelName, String textPanelLine, float fontSize, Vector2F textPanelPosition)
+        {
+            addNewTextPanel(textPanelName, new string[] { textPanelLine }, textPanelPosition, defaultColour, fontSize);
         }
 
         public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition)
         {
-            addNewTextPanel(textPanelName, textPanelLines, textPanelPosition, defaultColour);
+            addNewTextPanel(textPanelName, textPanelLines, textPanelPosition, defaultColour, defaultFontSize);
         }
 
-        public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor)
+        public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor, float fontSize)
         {
-            currentScreenTextPanels.Add(textPanelName, new TextPanel2D(textPanelLines, textPanelPosition, textPanelColor, font));
+            if(currentScreenTextPanels.ContainsKey(textPanelName))
+            {
+                if (!currentScreenTextPanels.Remove(textPanelName))
+                {
+                    Application.error("TextRenderer2D addNewTextPanel() could not remove old panel named " + textPanelName);
+                }
+            }
+            currentScreenTextPanels.Add(textPanelName, new TextPanel2D(textPanelLines, textPanelPosition,  textPanelColor, fontSize, font));
             batchScreenTextForRendering();
         }
+        #endregion
+
 
         public void removeTextPanel(String textPanelName)
         {
             if (!currentScreenTextPanels.Remove(textPanelName))
             {
-                Application.error("TextRenderer2D could not remove panel named " + textPanelName);
+                Application.error("TextRenderer2D removeTextPanel() could not remove panel named " + textPanelName);
             }
             else
             {
@@ -71,12 +86,17 @@ namespace FredrickTechDemo.SubRendering
             }
         }
 
+        public void clearAllText()
+        {
+            currentScreenTextPanels.Clear();
+            delete();
+        }
+
         public void batchScreenTextForRendering()
         {
-            Application.say("TextRenderer2D Batching new screen text model");
-            if(screenTextModelExists)
+            if(screenTextModelExists && screenTextModel != null)
             {
-                screenTextModel.delete();
+                delete();
             }
             int itterator = 0; // total number of line models
             foreach(KeyValuePair<String, TextPanel2D> entry in currentScreenTextPanels)
@@ -99,20 +119,28 @@ namespace FredrickTechDemo.SubRendering
                 }
             }
 
-            screenTextModel = QuadBatcher.batchQuadModelsGui(arrayOfLineModels, textShaderDir, fontTextureDir);
-            screenTextModelExists = true;
+            if (arrayOfLineModels.Length > 0)
+            {
+                screenTextModel = QuadBatcher.batchQuadModelsGui(arrayOfLineModels, textShaderDir, fontTextureDir);
+                screenTextModelExists = true;
+            }
         }
 
 
-        public void draw(float aspectRatio)
+        /*If theres any text model available it will be rendered.*/
+        public void renderAnyText()
         {
-            if(!screenTextModelExists || screenTextModel == null)
+            if(screenTextModelExists && screenTextModel != null)
             {
-                Application.error("TextRenderer2D attempted to draw without properly batched model!");
+                screenTextModel.draw();
             }
-            else
+        }
+
+        public void onWindowResize()
+        {
+            if (currentScreenTextPanels.Count > 0 && screenTextModelExists && screenTextModel != null)
             {
-                screenTextModel.draw(aspectRatio);
+                batchScreenTextForRendering();
             }
         }
 

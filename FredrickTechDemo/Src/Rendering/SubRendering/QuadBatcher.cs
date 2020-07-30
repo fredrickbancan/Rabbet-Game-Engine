@@ -43,6 +43,12 @@ namespace FredrickTechDemo.SubRendering
             float[] newVertexRGBA;
             float[] newVertexUV;
             combineData(quadModels, out newVertexXYZ, out newVertexRGBA, out newVertexUV);
+
+            if(newVertexXYZ.Length < vertexXYZComponentCount || newVertexRGBA.Length < vertexRGBAComponentCount || newVertexUV.Length < vertexUVComponentCount)
+            {
+                return null;
+            }
+
             return new ModelDrawableGUI(shaderFile, textureFile, newVertexXYZ, newVertexRGBA, newVertexUV, indices);
         }
 
@@ -53,11 +59,17 @@ namespace FredrickTechDemo.SubRendering
             float[] newVertexRGBA;
             float[] newVertexUV;
             combineData(quadModels, out newVertexXYZ, out newVertexRGBA, out newVertexUV);
+
+            if (newVertexXYZ.Length < vertexXYZComponentCount || newVertexRGBA.Length < vertexRGBAComponentCount || newVertexUV.Length < vertexUVComponentCount)
+            {
+                return null;
+            }
+
             return new ModelDrawable(shaderFile, textureFile, newVertexXYZ, newVertexRGBA, newVertexUV, indices);
         }
 
         /*Combines all the data in the model array and outputs the combined ordered arrays.*/
-        private static void combineData(Model[] modelsToCombine, out float[] newVertexXYZ, out float[] newVertexRGBA, out float[] newVertexUV)
+        private static bool combineData(Model[] modelsToCombine, out float[] newVertexXYZ, out float[] newVertexRGBA, out float[] newVertexUV)
         {
             int totalVertexCount = 0;
             for (int i = 0; i < modelsToCombine.Length; i++)
@@ -68,12 +80,12 @@ namespace FredrickTechDemo.SubRendering
                 }
                 else
                 {
-                    Application.warn("QuadBatcher detected null model in array at combineData() index: " + i);
+                    Application.error("QuadBatcher detected null model in array at combineData() index: " + i);
                 }
             }
             if (totalVertexCount % 4 != 0)
             {
-                Application.warn("QuadBatcher attempting to batch an un-even number of vertices! at combineData().");
+                Application.warn("QuadBatcher attempting to batch an un-even number of vertices!");
             }
 
             newVertexXYZ = new float[totalVertexCount * vertexXYZComponentCount];//create new arrays based on total vertex count
@@ -129,6 +141,7 @@ namespace FredrickTechDemo.SubRendering
                     }
                 }
             }
+            return true;
         }
     }
 }
