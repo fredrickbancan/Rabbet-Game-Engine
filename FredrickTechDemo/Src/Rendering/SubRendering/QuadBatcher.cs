@@ -80,7 +80,7 @@ namespace FredrickTechDemo.SubRendering
                 }
                 else
                 {
-                    Application.error("QuadBatcher detected null model in array at combineData() index: " + i);
+                    Application.warn("QuadBatcher detected null model in array at combineData() index: " + i);
                 }
             }
             if (totalVertexCount % 4 != 0)

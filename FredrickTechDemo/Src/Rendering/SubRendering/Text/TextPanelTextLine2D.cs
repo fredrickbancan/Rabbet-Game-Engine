@@ -10,9 +10,8 @@ namespace FredrickTechDemo.SubRendering.Text
     panel position, screen size etc*/
     class TextPanelTextLine2D
     {
-        private static readonly float lineHeightMultiplier = 0.03F;
         private static readonly byte spaceAscii = 32;
-        private Vector2F cursorPos;
+        private Vector2F cursorPixelPos;
         private Model lineModel;
         private float[] vertexXYZ;
         private float[] vertexRGB;
@@ -23,66 +22,83 @@ namespace FredrickTechDemo.SubRendering.Text
         private int previousLineCount;//used to tell how many lines to offset this line from the origin. Origin is the top left corner of the parent text panel
         private Vector3F color;
         private float fontSize;
-        float verticalSizePerPixel;
-        float horizontalSizePerPixel;
+        private byte screenEdgePaddingPixels = 10;//number of pixels to pad the top and left edges of screen
 
-        public TextPanelTextLine2D(String textToBeConverted, Vector2F panelPosition, ColourF color, float fontSize, int previousLineCount, FontReader font)
+        public TextPanelTextLine2D(String textToBeConverted, Vector2F pos, Vector3F color, float fontSize, int previousLineCount, FontReader font)
         {
-            this.color = color.normalize();
-            this.cursorPos = panelPosition;
+            this.color = color;
+            cursorPixelPos = pos;
             this.fontSize = fontSize;
             this.previousLineCount = previousLineCount;
             this.vertexXYZ = new float[textToBeConverted.Replace(" ", "").Length * 12];//number of vertices for each character. Excluding spaces.
             this.vertexRGB = new float[textToBeConverted.Replace(" ", "").Length * 12];
             this.vertexUV = new float[textToBeConverted.Replace(" ", "").Length * 8];
 
-            this.convertStringToCharacterArrayModel(textToBeConverted, panelPosition, font);
+            this.convertStringToCharacterArrayModel(textToBeConverted, pos, font);
         }
 
 
+        /*Loop through each letter and convert it to a quad on the screen*/
         private void convertStringToCharacterArrayModel(String text, Vector2F panelTopLeftPosition, FontReader font)
         {
-            this.verticalSizePerPixel = (lineHeightMultiplier / font.getLineHeightPixels()) * fontSize;
-            this.horizontalSizePerPixel = verticalSizePerPixel / GameInstance.aspectRatio;
-            this.cursorPos.y -= (previousLineCount + 1) * verticalSizePerPixel;
+            this.cursorPixelPos.y += previousLineCount * font.getLineHeightPixels();
             byte[] charIds = Encoding.ASCII.GetBytes(text);
 
             for (int i = 0; i < text.Length; i++)
             {
                 if (charIds[i] == spaceAscii)
                 {
-                    this.cursorPos.x += font.getSpaceWidthPixels() * verticalSizePerPixel;
+                    this.cursorPixelPos.x += font.getSpaceWidthPixels() * fontSize;
                 }
                 else
                 {
                     Character currentChar = font.getCharacter(charIds[i]);
-                    addVerticesForCharAtCursor(currentChar);
-                    this.cursorPos.x += currentChar.getXAdvancePixels() * horizontalSizePerPixel;
+                    addVerticesForCharAtCursor(currentChar, font);
+                    this.cursorPixelPos.x += currentChar.getXAdvancePixels() * fontSize;
                 }
             }
             this.lineModel = new Model(vertexXYZ, vertexRGB, vertexUV);
         }
         
-        private void addVerticesForCharAtCursor(Character character)
+        /*Add the vertices for the letter at the virtual cursor position*/
+        private void addVerticesForCharAtCursor(Character character, FontReader font)
         {
-            Vector2F posMin;
-            posMin.x = cursorPos.x + character.getxOffsetPixels() * horizontalSizePerPixel;
-            posMin.y = cursorPos.y + character.getyOffsetPixels() * verticalSizePerPixel;
+            //get pixel values
+            float x = cursorPixelPos.x + character.getxOffsetPixels() * fontSize + screenEdgePaddingPixels;
+            float y = cursorPixelPos.y + character.getyOffsetPixels() * fontSize ;
+            float xMax = x + character.getXPixels() * fontSize;
+            float yMax = y + character.getYPixels() * fontSize;
+            float u = character.getUPixels();
+            float v = character.getVPixels();
+            float uMax = character.getUPixelMax();
+            float vMax = character.getVPixelMax();
 
-            Vector2F posMax;
-            posMax.x = posMin.x + character.getXPixels() * horizontalSizePerPixel;
-            posMax.y = posMin.y + character.getYPixels() * verticalSizePerPixel;
+            //convert pixel values to vertices in screen coords
+            //x = (x * fontSize);
+          //  y = (y * fontSize);
+           // xMax = (xMax * fontSize);
+           // yMax = (yMax * fontSize);
+            x = MathUtil.normalizeCustom(-1, 1, 0, GameInstance.gameWindowWidth, x);
+            y = MathUtil.normalizeCustom(-1, 1, 0, GameInstance.gameWindowHeight, y);
+            xMax = MathUtil.normalizeCustom(-1, 1, 0, GameInstance.gameWindowWidth, xMax);
+            yMax = MathUtil.normalizeCustom(-1, 1, 0, GameInstance.gameWindowHeight, yMax);
+            y = -y;
+            yMax = -yMax;
+            //convert pixel uv values to opengl uv values for texture atlas
+            u = u / font.getImagePixelWidth();
+            v = 1 - (v / font.getImagePixelHeight());//1 minus because opengl starts from bottom left and these uv's are from top left
+            uMax = uMax / font.getImagePixelWidth();
+            vMax = 1 - (vMax / font.getImagePixelHeight());//1 minus because opengl starts from bottom left and these uv's are from top left
 
-            posMin.x = 2 * posMin.x - 1F;
-            posMax.x = 2 * posMax.x - 1F;
-
-            addVertex(posMin.x, posMin.y, character.getU(), character.getV());
-            addVertex(posMax.x, posMin.y, character.getUMax(), character.getV());
-            addVertex(posMin.x, posMax.y, character.getU(), character.getVMax());
-            addVertex(posMax.x, posMax.y, character.getUMax(), character.getVMax());
+            //add vertices at screen coords with uv
+            addVertexScreenCoords(x, y, u, v);//Bottom left vertex
+            addVertexScreenCoords(xMax, y, uMax, v);//bottom right vertex
+            addVertexScreenCoords(x, yMax, u, vMax);//top left vertex
+            addVertexScreenCoords(xMax, yMax, uMax, vMax);//top right vertex
         }
 
-        private void addVertex(float x, float y, float u, float v)
+        /*Add vertices to screen space*/
+        private void addVertexScreenCoords(float x, float y, float u, float v)
         {
             this.vertexXYZ[vertexXYZIndex - 2] = x;
             this.vertexXYZ[vertexXYZIndex - 1] = y;

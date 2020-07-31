@@ -7,20 +7,16 @@ namespace FredrickTechDemo.SubRendering
     class FontReader
     {
         private String debugDir;
-        private static readonly byte padTop = 0;
-        private static readonly byte padLeft = 1;
-        private static readonly byte padBottom = 2;
-        private static readonly byte padRight = 3;
-        private static readonly byte desiredPadding = 3;
         private static readonly char splitter = ' ';
         private static readonly char numberSeperator = ',';
         private static readonly byte spaceAscii = 32;
-
-        private byte[] padding;
-        private int paddingWidth;
-        private int paddingHeight;
+        private byte paddingTop;
+        private byte paddingLeft;
+        private byte paddingBottom;
+        private byte paddingRight;
+        private int scaleW;
+        private int scaleH;
         private int lineHeightPixels;
-        private float imageSquareSize;
         private int spaceWidth;
 
         private Dictionary<byte, Character> finalFontData = new Dictionary<byte, Character>();
@@ -41,8 +37,7 @@ namespace FredrickTechDemo.SubRendering
             }
 
             loadPaddingData();
-            loadLineSize();
-            imageSquareSize = getValueFromLineData("scaleW");
+            loadLineAndImageSize();
             loadCharacterData();
             reader.Close();
         }
@@ -50,15 +45,19 @@ namespace FredrickTechDemo.SubRendering
         private void loadPaddingData()
         {
             readNextLine();
-            padding = getValuesFromLineData("padding");
-            paddingWidth = padding[padLeft] + padding[padRight];
-            paddingHeight = padding[padTop] + padding[padBottom];
+            byte[] paddingData = getValuesFromLineData("padding");
+            paddingTop = paddingData[0];
+          //  paddingLeft = paddingData[1];
+          //  paddingBottom = paddingData[2];
+            //paddingRight = paddingData[3];
         }
         
-        private void loadLineSize()
+        private void loadLineAndImageSize()
         {
             readNextLine();
-            lineHeightPixels = getValueFromLineData("lineHeight") - paddingHeight;
+            lineHeightPixels = getValueFromLineData("lineHeight") - paddingTop - paddingBottom;
+            scaleW = getValueFromLineData("scaleW");
+            scaleH = getValueFromLineData("scaleH");
         }
 
         private void loadCharacterData()
@@ -81,21 +80,22 @@ namespace FredrickTechDemo.SubRendering
             byte id = (byte)getValueFromLineData("id");
             if(id == spaceAscii)
             {
-                spaceWidth = getValueFromLineData("xadvance") - paddingWidth;
+                spaceWidth = getValueFromLineData("xadvance") - paddingRight;
                 return null;
             }
-            float u =  (getValueFromLineData("x") + (padding[padLeft] - desiredPadding)) / imageSquareSize;
-            float v =  (getValueFromLineData("y") + (padding[padTop] - desiredPadding)) / imageSquareSize;
-            float widthPixels = getValueFromLineData("width") - (paddingWidth - (2 * desiredPadding));
-            float heightPixels = getValueFromLineData("height") - (paddingHeight - (2 * desiredPadding));
-            float uMax = widthPixels / imageSquareSize;
-            float vMax =  heightPixels / imageSquareSize;
-            float xOffsetPixels = (getValueFromLineData("xoffset") + (padding[padLeft] - desiredPadding));
-            float yOffsetPixels = (getValueFromLineData("yoffset") + (padding[padTop] - desiredPadding));
-            float xAdvancePixels = (getValueFromLineData("xadvance") - paddingWidth);
+            float u =  getValueFromLineData("x");
+            float v =  getValueFromLineData("y");
+            float uMax = getValueFromLineData("width");
+            float vMax = getValueFromLineData("height");
+            float xOffsetPixels = getValueFromLineData("xoffset");
+            float yOffsetPixels = getValueFromLineData("yoffset");
+            float xAdvancePixels = getValueFromLineData("xadvance");
 
-            return new Character(id, u, v, uMax, vMax, xOffsetPixels, yOffsetPixels, widthPixels, heightPixels, xAdvancePixels);
+            //correct by padding
+            v -= paddingTop;
+            return new Character(id, u, v, uMax, vMax, xOffsetPixels, yOffsetPixels, xAdvancePixels);
         }
+
         /*resets line data and reads the next line of file, adds any relevant info to the lineData dictionary for processing.*/
         private bool readNextLine()
         {
@@ -175,10 +175,20 @@ namespace FredrickTechDemo.SubRendering
             return bytes;
         }
 
+        public int getImagePixelWidth()
+        {
+            return scaleW;
+        }
+
+        public int getImagePixelHeight()
+        {
+            return scaleH;
+        }
         public float getLineHeightPixels()
         {
             return lineHeightPixels;
         }
+
         public float getSpaceWidthPixels()
         {
             return spaceWidth;

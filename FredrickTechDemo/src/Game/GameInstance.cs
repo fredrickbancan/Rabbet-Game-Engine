@@ -39,6 +39,7 @@ namespace FredrickTechDemo
         /*overriding OpenTk game update function, called every frame.*/
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
+            base.OnUpdateFrame(args);
             mouseCenterX = this.X + this.Width / 2;
             mouseCenterY = this.Y + this.Height / 2;
 
@@ -47,24 +48,22 @@ namespace FredrickTechDemo
                 onTick();
             }
             TicksAndFps.update();
-            base.OnUpdateFrame(args);
         }
 
         /*overriding OpenTk render update function, called every frame.*/
         protected override void OnRenderFrame(FrameEventArgs args)
         {
-            
-            renderer.renderAll();
             base.OnRenderFrame(args);
+            renderer.renderAll();
         }
 
         /*Overriding OpenTK resize function, called every time the game window is resized*/
         protected override void OnResize(EventArgs e)
         {
+            base.OnResize(e);
             windowWidth = Width;
             windowHeight = Height;
             renderer.onResize();
-            base.OnResize(e);
         }
 
         /*Each itteration of game logic is done here*/
@@ -75,7 +74,7 @@ namespace FredrickTechDemo
         }
 
         public static int gameWindowWidth{get => windowWidth;}
-        public static int gameWindowheight {get => windowHeight;}
+        public static int gameWindowHeight {get => windowHeight;}
         public static int windowCenterX {get => mouseCenterX;}
         public static int windowCenterY {get => mouseCenterY;}
         public static float aspectRatio {get => ((float)windowWidth / (float)windowHeight); }

@@ -11,7 +11,7 @@ namespace FredrickTechDemo.SubRendering
         private readonly String textShaderDir = ResourceHelper.getShaderFileDir("GuiTransparentShader.shader");
         private readonly String fontTextureDir;
         private FontReader font;
-        private float defaultFontSize = 25.0F;
+        private float defaultFontSize = 1.0F;
         private bool screenTextModelExists = false;
         private ColourF defaultColour;
         private ModelDrawableGUI screenTextModel;
@@ -39,26 +39,27 @@ namespace FredrickTechDemo.SubRendering
 
 
         #region addNewTextPanel
-        public void addNewTextPanel(String textPanelName, String textPanelLine, Vector2F textPanelPosition, ColourF color)
+        public void addNewTextPanel(String textPanelName, String textPanelLines, Vector2F textPanelPosition)
         {
-            addNewTextPanel(textPanelName, new string[] { textPanelLine }, textPanelPosition, color, defaultFontSize);
+            addNewTextPanel(textPanelName, new String[] { textPanelLines }, textPanelPosition, defaultColour, defaultFontSize);
         }
-
-        public void addNewTextPanel(String textPanelName, String textPanelLine, Vector2F textPanelPosition)
+        public void addNewTextPanel(String textPanelName, String textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor)
         {
-            addNewTextPanel(textPanelName, new string[] { textPanelLine}, textPanelPosition, defaultColour, defaultFontSize);
+            addNewTextPanel(textPanelName, new String[] { textPanelLines }, textPanelPosition, textPanelColor, defaultFontSize);
         }
-
-        public void addNewTextPanel(String textPanelName, String textPanelLine, float fontSize, Vector2F textPanelPosition)
+        public void addNewTextPanel(String textPanelName, String textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor,float fontSize)
         {
-            addNewTextPanel(textPanelName, new string[] { textPanelLine }, textPanelPosition, defaultColour, fontSize);
+            addNewTextPanel(textPanelName, new String[] { textPanelLines }, textPanelPosition, textPanelColor, fontSize);
         }
 
         public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition)
         {
             addNewTextPanel(textPanelName, textPanelLines, textPanelPosition, defaultColour, defaultFontSize);
         }
-
+        public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor)
+        {
+            addNewTextPanel(textPanelName, textPanelLines, textPanelPosition, textPanelColor, defaultFontSize);
+        }
         public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor, float fontSize)
         {
             if(currentScreenTextPanels.ContainsKey(textPanelName))
@@ -86,6 +87,15 @@ namespace FredrickTechDemo.SubRendering
             }
         }
 
+        /*Builds or re builds all the text*/
+        private void buildAllText()
+        {
+            foreach(KeyValuePair<String, TextPanel2D> pair in currentScreenTextPanels)
+            {
+                pair.Value.build();
+            }
+        }
+
         public void clearAllText()
         {
             currentScreenTextPanels.Clear();
@@ -97,6 +107,10 @@ namespace FredrickTechDemo.SubRendering
             if(screenTextModelExists && screenTextModel != null)
             {
                 delete();
+            }
+            if(currentScreenTextPanels.Count > 0)
+            {
+                buildAllText();
             }
             int itterator = 0; // total number of line models
             foreach(KeyValuePair<String, TextPanel2D> entry in currentScreenTextPanels)
@@ -111,12 +125,16 @@ namespace FredrickTechDemo.SubRendering
             Model[] arrayOfLineModels = new Model[itterator];
 
             //loop through each enrty, then loop through each entry's array of line models and add each one to the model array.
+            int index = 0;//an index must be used to stack the models in the array after each panel
             foreach (KeyValuePair<String, TextPanel2D> entry in currentScreenTextPanels)
             {
+                int previousModelCount = 0;
                 for (int j = 0; j < entry.Value.getTextPanelTextLines().Length; j++)
                 {
-                    arrayOfLineModels[j] = entry.Value.getTextPanelTextLines()[j].getLineModel();
+                    arrayOfLineModels[index + j] = entry.Value.getTextPanelTextLines()[j].getLineModel();
+                    previousModelCount++;
                 }
+                index += previousModelCount;
             }
 
             if (arrayOfLineModels.Length > 0)

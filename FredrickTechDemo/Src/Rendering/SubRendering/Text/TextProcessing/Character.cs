@@ -3,8 +3,8 @@
     public class Character
 	{
 		private byte id;
-		private float xTextureCoord;
-		private float yTextureCoord;
+		private float xPixelCoord;
+		private float yPixelCoord;
 		private float xMaxTextureCoord;
 		private float yMaxTextureCoord;
 		private float xOffsetPixels;
@@ -12,18 +12,18 @@
 		private float sizeXPixels;
 		private float sizeYPixels;
 		private float xAdvancePixels;
-		public Character(byte id, float xTextureCoord, float yTextureCoord, float xTexSize, float yTexSize, float xOffset, float yOffset, float sizeXPixels, float sizeYPixels, float xAdvance)
+		public Character(byte id, float x, float y, float width, float height, float xOffset, float yOffset, float xadvance)
 		{
 			this.id = id;
-			this.xTextureCoord = xTextureCoord;
-			this.yTextureCoord = yTextureCoord;
+			this.xPixelCoord = x;
+			this.yPixelCoord = y;
 			this.xOffsetPixels = xOffset;
 			this.yOffsetPixels = yOffset;
-			this.sizeXPixels = sizeXPixels;
-			this.sizeYPixels = sizeYPixels;
-			this.xMaxTextureCoord = xTexSize + xTextureCoord;
-			this.yMaxTextureCoord = yTexSize + yTextureCoord;
-			this.xAdvancePixels = xAdvance;
+			this.sizeXPixels = width;
+			this.sizeYPixels = height;
+			this.xMaxTextureCoord = width + x;
+			this.yMaxTextureCoord = height + y;
+			this.xAdvancePixels = xadvance;
 		}
 
 		public byte getId()
@@ -31,22 +31,22 @@
 			return id;
 		}
 
-		public float getU()
+		public float getUPixels()
 		{
-			return xTextureCoord;
+			return xPixelCoord;
 		}
 
-		public float getV()
+		public float getVPixels()
 		{
-			return yTextureCoord;
+			return yPixelCoord;
 		}
 
-		public float getUMax()
+		public float getUPixelMax()
 		{
 			return xMaxTextureCoord;
 		}
 
-		public float getVMax()
+		public float getVPixelMax()
 		{
 			return yMaxTextureCoord;
 		}

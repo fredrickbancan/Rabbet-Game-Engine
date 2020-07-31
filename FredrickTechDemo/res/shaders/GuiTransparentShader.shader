@@ -26,5 +26,6 @@ uniform sampler2D uTexture;
 
 void main()
 {
+	gl_FragDepth = -1;
 	color = vec4(vcolour.rgb, texture(uTexture, fTexCoord).a);
 }
