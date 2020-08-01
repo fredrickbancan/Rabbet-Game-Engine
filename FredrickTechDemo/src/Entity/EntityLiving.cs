@@ -3,7 +3,7 @@ using System;
 
 namespace FredrickTechDemo
 {
-    class EntityLiving : Entity
+    public class EntityLiving : Entity
     {
         protected Vector3F frontVector;//vector pointing to the direction the entity is facing
         protected Vector3F upVector;

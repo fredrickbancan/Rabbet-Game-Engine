@@ -5,7 +5,7 @@ using System;
 namespace FredrickTechDemo
 {
     /*This class represents a virtual point at which the world should be rendered from. It takes in a player and will be bound to the players head.*/
-    class Camera
+    public class Camera
     {
         private float pitch, yaw;
         private int mouseDeltaX;

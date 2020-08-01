@@ -1,5 +1,4 @@
-﻿using FredrickTechDemo.FredsMath;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 using System;
 
 namespace FredrickTechDemo.Models
@@ -16,7 +15,6 @@ namespace FredrickTechDemo.Models
         public virtual void draw()
         {
             bind();
-            shader.setUniformMat4F("scaleMatrix", Matrix4F.scale(new Vector3F(1.0F)));
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }

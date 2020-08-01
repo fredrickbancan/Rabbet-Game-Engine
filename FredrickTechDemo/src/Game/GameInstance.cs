@@ -6,7 +6,7 @@ using System;
 namespace FredrickTechDemo
 {
     /*This class is the main game class. It contains all the execution code for rendering, logic loops and loading.*/
-    class GameInstance : GameWindow
+    public class GameInstance : GameWindow
     {
         private static int windowWidth;
         private static int windowHeight;
@@ -29,7 +29,7 @@ namespace FredrickTechDemo
         /*Called before game runs*/
         public void init()
         {
-            TicksAndFps.init(30.0D);
+            TicksAndFps.init(30.0D, this);
             renderer.init();
             Input.setGameInstance(this);
             Input.centerMouse();
@@ -47,13 +47,13 @@ namespace FredrickTechDemo
             {
                 onTick();
             }
-            TicksAndFps.update();
         }
 
         /*overriding OpenTk render update function, called every frame.*/
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             base.OnRenderFrame(args);
+            TicksAndFps.update();
             renderer.renderAll();
         }
 
@@ -73,6 +73,20 @@ namespace FredrickTechDemo
             thePlayer.onTick();
         }
 
+        public void onDebugScreenButtonPress()
+        {
+            Console.WriteLine();
+            Application.debug("F3 was pressed, printing debug info.");
+            Application.debug("Player position X: " + thePlayer.getPosition().x);
+            Application.debug("Player position Y: " + thePlayer.getPosition().y);
+            Application.debug("Player position Z: " + thePlayer.getPosition().z);
+            Application.debug("Player Head Pitch: " + thePlayer.getheadPitch());
+            Application.debug("Player Yaw       : " + thePlayer.getYaw());
+            Application.debug("Vsync enabled    : " + GameSettings.vsync);
+            Application.debug("Frames per second: " + TicksAndFps.getFps());
+        }
+
+        
         public static int gameWindowWidth{get => windowWidth;}
         public static int gameWindowHeight {get => windowHeight;}
         public static int windowCenterX {get => mouseCenterX;}

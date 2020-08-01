@@ -9,7 +9,7 @@ out vec2 fTexCoord;
 
 void main()
 {
-	gl_Position =  position;
+	gl_Position = position;
 	vcolour = colour;
 	fTexCoord = texCoord;
 }
@@ -25,6 +25,10 @@ uniform sampler2D uTexture;
 void main()
 {
 	vec4 textureColor = texture(uTexture, fTexCoord);
+	if (textureColor.a < 0.5)
+		discard;
 	gl_FragDepth = -1;
-	color = vec4(vcolour.rgb, textureColor.a);
+	vec4 vcolourChanged = vcolour;
+	//vcolourChanged.rgb *= textureColor.a;
+	color = vec4(vcolourChanged.rgb, 1.0);
 }

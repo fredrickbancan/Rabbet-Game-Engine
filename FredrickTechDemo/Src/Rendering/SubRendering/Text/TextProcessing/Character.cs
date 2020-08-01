@@ -3,26 +3,26 @@
     public class Character
 	{
 		private byte id;
-		private float xPixelCoord;
-		private float yPixelCoord;
-		private float xMaxTextureCoord;
-		private float yMaxTextureCoord;
+		private float u;
+		private float v;
+		private float uMax;
+		private float vMax;
+		private float pixelWidth;
+		private float pixelHeight;
 		private float xOffsetPixels;
 		private float yOffsetPixels;
-		private float sizeXPixels;
-		private float sizeYPixels;
 		private float xAdvancePixels;
-		public Character(byte id, float x, float y, float width, float height, float xOffset, float yOffset, float xadvance)
+		public Character(byte id, float u, float v, float uMax, float vMax, float pixelWidth, float pixelHeight, float xOffset, float yOffset, float xadvance)
 		{
 			this.id = id;
-			this.xPixelCoord = x;
-			this.yPixelCoord = y;
+			this.u = u;
+			this.v = v;
 			this.xOffsetPixels = xOffset;
 			this.yOffsetPixels = yOffset;
-			this.sizeXPixels = width;
-			this.sizeYPixels = height;
-			this.xMaxTextureCoord = width + x;
-			this.yMaxTextureCoord = height + y;
+			this.uMax = uMax;
+			this.vMax = vMax;
+			this.pixelWidth = pixelWidth;
+			this.pixelHeight = pixelHeight;
 			this.xAdvancePixels = xadvance;
 		}
 
@@ -31,26 +31,35 @@
 			return id;
 		}
 
-		public float getUPixels()
+		public float getU()
 		{
-			return xPixelCoord;
+			return u;
 		}
 
-		public float getVPixels()
+		public float getV()
 		{
-			return yPixelCoord;
+			return v;
 		}
 
-		public float getUPixelMax()
+		public float getUMax()
 		{
-			return xMaxTextureCoord;
+			return uMax;
 		}
 
-		public float getVPixelMax()
+		public float getVMax()
 		{
-			return yMaxTextureCoord;
+			return vMax;
 		}
+		
+		public float getPixelWidth()
+        {
+			return pixelWidth;
+        }
 
+		public float getPixelHeight()
+        {
+			return pixelHeight;
+        }
 		public float getxOffsetPixels()
 		{
 			return xOffsetPixels;
@@ -59,16 +68,6 @@
 		public float getyOffsetPixels()
 		{
 			return yOffsetPixels;
-		}
-
-		public float getXPixels()
-		{
-			return sizeXPixels;
-		}
-
-		public float getYPixels()
-		{
-			return sizeYPixels;
 		}
 
 		public float getXAdvancePixels()

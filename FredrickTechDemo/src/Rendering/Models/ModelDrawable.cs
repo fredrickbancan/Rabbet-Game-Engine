@@ -10,9 +10,9 @@ namespace FredrickTechDemo.Models
     public class ModelDrawable : Model
     {
         protected bool hasInitialized = false;
-        private int indicesBufferObject;
-        private List<int> VBOS = new List<int>();
-        private int VAO;
+        protected int indicesBufferObject;
+        protected List<int> VBOS = new List<int>();
+        protected int VAO;
         protected Texture texture;
         protected Shader shader;
         protected Matrix4F modelMatrix = new Matrix4F(1.0F);
@@ -88,7 +88,7 @@ namespace FredrickTechDemo.Models
         }
 
         /*Binds the indicie buffer to the VAO*/
-        private void bindIndicesBuffer()
+        protected virtual void bindIndicesBuffer()
         {
             indicesBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBufferObject);
@@ -96,7 +96,7 @@ namespace FredrickTechDemo.Models
         }
 
         /*Binds the provided data to the VAO using the provided information*/
-        private void storeDataInAttributeList(int attributeNumber, int coordinateCount, float[] data)
+        protected virtual void storeDataInAttributeList(int attributeNumber, int coordinateCount, float[] data)
         {
             int vbo = GL.GenBuffer();
             VBOS.Add(vbo);
@@ -110,7 +110,7 @@ namespace FredrickTechDemo.Models
         }
 
         /*Called when this model is no longer needed and will be replaced*/
-        public void delete()
+        public virtual void delete()
         {
             GL.DeleteVertexArray(VAO);
             foreach (int vbo in VBOS)

@@ -8,9 +8,9 @@ namespace FredrickTechDemo.SubRendering
 {
     class TextRenderer2D
     {
-        private readonly String textShaderDir = ResourceHelper.getShaderFileDir("GuiTransparentShader.shader");
+        private readonly String textShaderDir = ResourceHelper.getShaderFileDir("GuiTextShader.shader");
         private readonly String fontTextureDir;
-        private FontReader font;
+        private FontBuilder font;
         private float defaultFontSize = 1.0F;
         private bool screenTextModelExists = false;
         private ColourF defaultColour;
@@ -22,14 +22,14 @@ namespace FredrickTechDemo.SubRendering
         {
             this.defaultColour = ColourF.white;
             fontTextureDir = ResourceHelper.getFontTextureFileDir(font + ".png");
-            this.font = new FontReader(font);
+            this.font = new FontBuilder(font);
         }
 
         public TextRenderer2D(String font, ColourF color)
         {
             this.defaultColour = color;
             fontTextureDir = ResourceHelper.getFontTextureFileDir(font + ".png");
-            this.font = new FontReader(font);
+            this.font = new FontBuilder(font);
         }
 
         public void setColour(ColourF newColour)
@@ -104,6 +104,7 @@ namespace FredrickTechDemo.SubRendering
 
         public void batchScreenTextForRendering()
         {
+            long startTime = TicksAndFps.getMiliseconds();
             if(screenTextModelExists && screenTextModel != null)
             {
                 delete();
@@ -142,6 +143,7 @@ namespace FredrickTechDemo.SubRendering
                 screenTextModel = QuadBatcher.batchQuadModelsGui(arrayOfLineModels, textShaderDir, fontTextureDir);
                 screenTextModelExists = true;
             }
+            Application.debug("TextRenderer2D took " + (TicksAndFps.getMiliseconds() - startTime) + " miliseconds to batch text.");
         }
 
 

@@ -86,7 +86,8 @@
     <Compile Include="Src\Rendering\SubRendering\Text\TextPanelTextLine2D.cs" />
     <Compile Include="Src\Rendering\SubRendering\Text\TextPanel2D.cs" />
     <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\Character.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\FontReader.cs" />
+    <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\CharModel.cs" />
+    <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\FontBuilder.cs" />
     <Compile Include="Src\Rendering\SubRendering\Text\TextRenderer2D.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\JaredsQuadPrefab.cs" />
     <Compile Include="Src\Rendering\Renderer.cs" />
@@ -98,13 +99,13 @@
     <None Include="App.config" />
     <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
-    <None Include="Res\Font\consolasFreeType.fnt" />
-    <None Include="Res\Font\consolasJava.fnt" />
-    <None Include="Res\Font\consolasNative.fnt" />
+    <None Include="Res\Font\Arial.fnt" />
+    <None Include="Res\Font\Consolas.fnt" />
     <None Include="Res\Shaders\ColourTextureShader3DFog.shader" />
     <None Include="Res\Shaders\GuiShader.shader" />
     <None Include="Res\Shaders\ColourTextureShader3D.shader" />
     <None Include="Res\Shaders\GuiTransparentShader.shader" />
+    <None Include="Res\Shaders\GuiTextShader.shader" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
@@ -119,9 +120,8 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Res\Font\consolasFreeType.png" />
-    <Content Include="Res\Font\consolasJava.png" />
-    <Content Include="Res\Font\consolasNative.png" />
+    <Content Include="Res\Font\Arial.png" />
+    <Content Include="Res\Font\Consolas.png" />
     <Content Include="Res\Texture\aie.png" />
     <Content Include="Res\Texture\cactus_side.png" />
     <Content Include="Res\Texture\glass.png" />

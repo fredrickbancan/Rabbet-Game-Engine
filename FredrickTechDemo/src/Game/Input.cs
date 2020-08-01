@@ -1,5 +1,4 @@
 ﻿using OpenTK.Input;
-using System;
 
 namespace FredrickTechDemo
 {
@@ -17,7 +16,7 @@ namespace FredrickTechDemo
         public static void setGameInstance(GameInstance game)
         {
             gameInstance = game;
-            playerController = new PlayerController(gameInstance.thePlayer);
+            playerController = new PlayerController(game);
             previouskeyboardState = Keyboard.GetState();
         }
 
@@ -48,15 +47,7 @@ namespace FredrickTechDemo
 
                     if (keyboardState.IsKeyDown(Key.F3))
                     {
-                        Console.WriteLine();
-                        Application.debug("F3 was pressed, printing debug info.");
-                        Application.debug("Player position X: " + gameInstance.thePlayer.getPosition().x);
-                        Application.debug("Player position Y: " + gameInstance.thePlayer.getPosition().y);
-                        Application.debug("Player position Z: " + gameInstance.thePlayer.getPosition().z);
-                        Application.debug("Player Head Pitch: " + gameInstance.thePlayer.getheadPitch());
-                        Application.debug("Player Yaw       : " + gameInstance.thePlayer.getYaw());
-                        Application.debug("Vsync enabled    : " + GameSettings.vsync);
-                        Application.debug("Frames per second: " + TicksAndFps.getFps());
+                        gameInstance.onDebugScreenButtonPress();
                     }
                 }
                 #endregion

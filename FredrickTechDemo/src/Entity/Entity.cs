@@ -4,7 +4,7 @@ namespace FredrickTechDemo
     /*Base class for every entity in the game, Anything with movement, vectors,
       physics, inventory and/or non-batched draw call is an entity.*/
 
-    class Entity
+    public class Entity
     {
         protected Vector3F previousTickPos;
         protected Vector3F pos;

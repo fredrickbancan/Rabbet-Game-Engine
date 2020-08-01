@@ -7,9 +7,11 @@ namespace FredrickTechDemo
     class PlayerController
     {
         private EntityPlayer thePlayer;
-        public PlayerController(EntityPlayer thePlayer)
+        private GameInstance game;
+        public PlayerController(GameInstance game)
         {
-            this.thePlayer = thePlayer;
+            this.game = game;
+            this.thePlayer = game.thePlayer;
         }
 
         /*Called every tick from Input.cs if a key is being pressed. for detecting player input*/

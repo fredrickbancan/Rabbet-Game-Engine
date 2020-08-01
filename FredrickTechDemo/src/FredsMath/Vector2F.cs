@@ -5,6 +5,7 @@ namespace FredrickTechDemo.FredsMath
     {
         public float x, y;
 
+        public static readonly Vector2F zero = new Vector2F(0.0F, 0.0F);
         //constructors
         public Vector2F(float x, float y)
         {

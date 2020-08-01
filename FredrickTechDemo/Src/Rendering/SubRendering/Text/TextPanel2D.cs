@@ -12,9 +12,10 @@ namespace FredrickTechDemo.SubRendering.Text
         private Vector3F panelColour;
         private String[] lines;
         private float fontSize;
-        private FontReader font;
+        private FontBuilder font;
+        private bool hasBuilt = false;
 
-        public TextPanel2D(String[] lines, Vector2F pos, ColourF panelColor, float fontSize, FontReader font)
+        public TextPanel2D(String[] lines, Vector2F pos, ColourF panelColor, float fontSize, FontBuilder font)
         {
             this.lines = lines;
             this.panelPos = pos;
@@ -27,12 +28,16 @@ namespace FredrickTechDemo.SubRendering.Text
         /*builds or re-builds the text in this panel.*/
         public void build()
         {
-            textLinesInPanel = new TextPanelTextLine2D[lines.Length];
-            this.panelPixelPos.x = panelPos.x * GameInstance.gameWindowWidth;
-            this.panelPixelPos.y = panelPos.y * GameInstance.gameWindowHeight;
-            for (int i = 0; i < lines.Length; i++)
+            if (!hasBuilt)
             {
-                textLinesInPanel[i] = new TextPanelTextLine2D(lines[i], panelPixelPos, panelColour, fontSize, i, font);
+                textLinesInPanel = new TextPanelTextLine2D[lines.Length];
+                this.panelPixelPos.x = panelPos.x * GameInstance.gameWindowWidth;
+                this.panelPixelPos.y = panelPos.y * GameInstance.gameWindowHeight;
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    textLinesInPanel[i] = new TextPanelTextLine2D(lines[i], panelPixelPos, panelColour, fontSize, i, font);
+                }
+                hasBuilt = true;
             }
         }
 

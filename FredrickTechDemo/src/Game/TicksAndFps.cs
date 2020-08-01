@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using FredrickTechDemo.FredsMath;
+using System;
+using System.Diagnostics;
 
 namespace FredrickTechDemo
 {
@@ -7,6 +9,7 @@ namespace FredrickTechDemo
     public static class TicksAndFps
     {
         private static Stopwatch stopwatch = new Stopwatch();
+        private static GameInstance game;
         private static long currentTime = 0;
         private static long lastTime = 0;
         private static double timer = 0;
@@ -18,8 +21,9 @@ namespace FredrickTechDemo
         private static double timePerTick;
         private static double percentToNextTick; //a decimal value between 0 and 1 which can be used as a percentage of progress towards next tick, usefull for interpolation.
 
-        public static void init(double tps)
+        public static void init(double tps, GameInstance game)
         {
+            TicksAndFps.game = game;
             ticksPerSecond = tps;
             timePerTick = 1 / ticksPerSecond;
             stopwatch.Start();
@@ -38,6 +42,7 @@ namespace FredrickTechDemo
                 fps = frames;
                 frames = 0;
                 timer -= 1;
+                displayFps();
             }
             frames++;
 
@@ -68,6 +73,28 @@ namespace FredrickTechDemo
             }
         }
 
+        /*Called every second by the TicksAndFps class to display new fps if setting is on*/
+        public static void displayFps()
+        {
+            if (GameSettings.displayFps)
+            {
+                String fpsString = fps.ToString();
+                String fpsPanelName = "fpsDisplay";
+                if (fps < 75)
+                {
+                    Renderer.textRenderer2D.addNewTextPanel(fpsPanelName, fpsString, Vector2F.zero, ColourF.darkRed);
+                }
+                else if (fps < 120)
+                {
+                    Renderer.textRenderer2D.addNewTextPanel(fpsPanelName, fpsString, Vector2F.zero, ColourF.darkYellow);
+                }
+                else
+                {
+                    Renderer.textRenderer2D.addNewTextPanel(fpsPanelName, fpsString, Vector2F.zero, ColourF.darkGreen);
+                }
+            }
+
+        }
         public static int getTicksElapsed()
         {
             return ticksElapsed;

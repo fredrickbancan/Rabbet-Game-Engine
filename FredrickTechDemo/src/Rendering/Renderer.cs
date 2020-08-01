@@ -2,7 +2,6 @@
 using FredrickTechDemo.Models;
 using FredrickTechDemo.SubRendering;
 using OpenTK.Graphics.OpenGL;
-using System;
 
 namespace FredrickTechDemo
 {
@@ -13,10 +12,10 @@ namespace FredrickTechDemo
     class Renderer
     {
         private GameInstance gameInstance;
-        private TextRenderer2D textRenderer2D;
+        private static TextRenderer2D privateTextRenderer2D;
         private Matrix4F projectionMatrix;
         private ModelDrawable quads;
-        private Vector3F fogColour = ColourF.black.normalize();
+        private Vector3F fogColour = ColourF.lightGrey.normalize();
         private Vector3F skyColour = ColourF.black.normalize();
         public Renderer(GameInstance game)
         {
@@ -27,14 +26,10 @@ namespace FredrickTechDemo
         public void init()
         {
             gameInstance.MakeCurrent();
-            textRenderer2D = new TextRenderer2D("consolasNative");
-            textRenderer2D.addNewTextPanel("test", new String[] { "Lorem ipsum dolor sit amet,", "consectetur adipiscing elit,", "sed do eiusmod tempor incididunt ","ut labore et dolore magna aliqua." }, new Vector2F(0.0F,0.0F));
-            textRenderer2D.addNewTextPanel("ayy",  "ABCDEFGHIJKLMNOPQRSTUVWXYZ", new Vector2F(0.0F,0.1F), ColourF.red, 2F);
-            textRenderer2D.addNewTextPanel("ayylmao",  "abcdefghijklmnopqrstuvwxyz", new Vector2F(0.0F,0.15F), ColourF.green, 3F);
-            textRenderer2D.addNewTextPanel("ayyxd",  "1234567890", new Vector2F(0.0F,0.2F), ColourF.lightBlue, 4F);
-            textRenderer2D.addNewTextPanel("ayywtf",  "\"!`?'.,;:()[]{}<>|/@\\^&-%+=#_&~* ", new Vector2F(0.0F,0.25F), ColourF.yellow, 5F);
-            textRenderer2D.addNewTextPanel("ayywtsf",  "HELLO WORLD.", new Vector2F(0.0F,0.35F), ColourF.orange, 5F);
-            Renderer.setClearColor(skyColour);
+            privateTextRenderer2D = new TextRenderer2D("Consolas");
+            privateTextRenderer2D.addNewTextPanel("test",new string[] { "HELLO WORLD" , "kill me please"}, new Vector2F(0.5F, 0.0F), ColourF.black, 2.0F);
+            privateTextRenderer2D.addNewTextPanel("test2",new string[] { "Every cell in my body is in" , "excruciating pain."}, new Vector2F(0.5F, 0.5F), ColourF.black, 2.0F);
+            setClearColor(skyColour);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
             GL.Enable(EnableCap.AlphaTest);
@@ -46,7 +41,7 @@ namespace FredrickTechDemo
 
 
 
-           // long constructStart = TicksAndFps.getMiliseconds();
+            long constructStart = TicksAndFps.getMiliseconds();
             Model[] filler = new Model[32768];
             for(int z = 0; z < 32; z++ )
             {
@@ -58,13 +53,13 @@ namespace FredrickTechDemo
                     }
                 }
             }
-           // Application.debug("test mesh quad count: " + filler.Length);
-            //Application.debug("test mesh triangle count: " + filler.Length * 2);
-           // Application.debug("test mesh vertex count: " + filler.Length * 4);
-           // Application.debug("test mesh took " + (TicksAndFps.getMiliseconds() - constructStart) + " miliseconds to construct.");
-           // long batchStart = TicksAndFps.getMiliseconds();
+            Application.debug("test mesh quad count: " + filler.Length);
+            Application.debug("test mesh triangle count: " + filler.Length * 2);
+            Application.debug("test mesh vertex count: " + filler.Length * 4);
+            Application.debug("test mesh took " + (TicksAndFps.getMiliseconds() - constructStart) + " miliseconds to construct.");
+            long batchStart = TicksAndFps.getMiliseconds();
             quads = QuadBatcher.batchQuadModels3D(filler, JaredsQuadPrefab.getShaderDir(), JaredsQuadPrefab.getTextureDir());
-           // Application.debug("test mesh took " + (TicksAndFps.getMiliseconds() - batchStart) + " miliseconds to batch.");
+            Application.debug("test mesh took " + (TicksAndFps.getMiliseconds() - batchStart) + " miliseconds to batch.");
         }
 
         /*Called each time the game window is resized*/
@@ -72,7 +67,7 @@ namespace FredrickTechDemo
         {
             GL.Viewport(gameInstance.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
-            textRenderer2D.onWindowResize();
+            privateTextRenderer2D.onWindowResize();
         }
 
         /*Called before all draw calls*/
@@ -84,8 +79,8 @@ namespace FredrickTechDemo
         public void renderAll()
         {
             preRender();
-            renderGui();
             updateCameraAndRenderWorld();
+            renderGui();
             postRender();
         }
 
@@ -97,9 +92,7 @@ namespace FredrickTechDemo
 
         private void renderGui()
         {
-            GL.Disable(EnableCap.CullFace);
-            textRenderer2D.renderAnyText();
-            GL.Enable(EnableCap.CullFace);
+            privateTextRenderer2D.renderAnyText();
         }
 
         /*Called after all draw calls*/
@@ -119,6 +112,9 @@ namespace FredrickTechDemo
         {
             GL.ClearColor(colorNormalized.x, colorNormalized.y, colorNormalized.z, 1.0f);
         }
+
+        public static TextRenderer2D textRenderer2D
+        { get { return privateTextRenderer2D; } }
     }
 }
  

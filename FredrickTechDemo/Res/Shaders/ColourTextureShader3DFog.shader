@@ -45,9 +45,15 @@ in float visibility;
 out vec4 color;
 
 uniform sampler2D uTexture;
+
 uniform vec3 fogColour;
 void main()
 {
-	color = texture(uTexture, vTexCoord) * vcolour;// *texture(uTexture, vTexCoord); // mixes colour and textures
+	vec4 textureColor = texture(uTexture, vTexCoord) * vcolour;// *texture(uTexture, vTexCoord); // mixes colour and textures
+	if (textureColor.a < 0.9)
+	{
+		discard;
+	}
+	color = textureColor;
 	color = mix(vec4(fogColour, color.a), color, visibility);
 }

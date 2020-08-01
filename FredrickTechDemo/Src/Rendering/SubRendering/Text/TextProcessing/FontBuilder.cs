@@ -4,7 +4,7 @@ using System.IO;
 
 namespace FredrickTechDemo.SubRendering
 {
-    class FontReader
+    class FontBuilder
     {
         private String debugDir;
         private static readonly char splitter = ' ';
@@ -23,7 +23,7 @@ namespace FredrickTechDemo.SubRendering
         private Dictionary<String, String> lineData = new Dictionary<String, String>();
         private StreamReader reader;
 
-        public FontReader(String fontName)
+        public FontBuilder(String fontName)
         {
             debugDir = ResourceHelper.getFontTextureFileDir(fontName + ".fnt");
 
@@ -33,7 +33,7 @@ namespace FredrickTechDemo.SubRendering
             }
             catch(Exception e)
             {
-                Application.error("FontFile could not open the provided directory file!\nException message: " + e.Message + "\nDirectory: " + debugDir);
+                Application.error("FontBuilder could not open the provided directory file!\nException message: " + e.Message + "\nDirectory: " + debugDir);
             }
 
             loadPaddingData();
@@ -47,15 +47,15 @@ namespace FredrickTechDemo.SubRendering
             readNextLine();
             byte[] paddingData = getValuesFromLineData("padding");
             paddingTop = paddingData[0];
-          //  paddingLeft = paddingData[1];
-          //  paddingBottom = paddingData[2];
-            //paddingRight = paddingData[3];
+            paddingLeft = paddingData[1];
+            paddingBottom = paddingData[2];
+            paddingRight = paddingData[3];
         }
         
         private void loadLineAndImageSize()
         {
             readNextLine();
-            lineHeightPixels = getValueFromLineData("lineHeight") - paddingTop - paddingBottom;
+            lineHeightPixels = getValueFromLineData("lineHeight");
             scaleW = getValueFromLineData("scaleW");
             scaleH = getValueFromLineData("scaleH");
         }
@@ -80,20 +80,23 @@ namespace FredrickTechDemo.SubRendering
             byte id = (byte)getValueFromLineData("id");
             if(id == spaceAscii)
             {
-                spaceWidth = getValueFromLineData("xadvance") - paddingRight;
+                spaceWidth = getValueFromLineData("xadvance");
                 return null;
             }
-            float u =  getValueFromLineData("x");
-            float v =  getValueFromLineData("y");
-            float uMax = getValueFromLineData("width");
-            float vMax = getValueFromLineData("height");
+            float u = ((float)getValueFromLineData("x")) / scaleW;
+            float v = ((float)getValueFromLineData("y")) / scaleH;
+            float uMax = u + ((float)getValueFromLineData("width") - paddingRight) / scaleW;
+            float vMax = v + ((float)getValueFromLineData("height") - paddingBottom) / scaleH;
+            float pixelsWidth = getValueFromLineData("width");
+            float pixelsHeight = getValueFromLineData("height");
             float xOffsetPixels = getValueFromLineData("xoffset");
             float yOffsetPixels = getValueFromLineData("yoffset");
-            float xAdvancePixels = getValueFromLineData("xadvance");
+            float xAdvancePixels = getValueFromLineData("xadvance") + paddingRight;
 
-            //correct by padding
-            v -= paddingTop;
-            return new Character(id, u, v, uMax, vMax, xOffsetPixels, yOffsetPixels, xAdvancePixels);
+            //flipping v
+            v = 1 - v;
+            vMax = 1 - vMax;
+            return new Character(id, u, v, uMax, vMax, pixelsWidth, pixelsHeight, xOffsetPixels, yOffsetPixels, xAdvancePixels);
         }
 
         /*resets line data and reads the next line of file, adds any relevant info to the lineData dictionary for processing.*/

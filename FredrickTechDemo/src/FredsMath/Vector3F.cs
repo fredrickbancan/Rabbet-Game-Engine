@@ -4,7 +4,9 @@ namespace FredrickTechDemo.FredsMath
     public struct Vector3F
     {
         public float x, y, z;
-
+        public float r { get => x; }
+        public float g { get => y; }
+        public float b { get => z; }
         //constructors
         /*public Vector3F()
         {

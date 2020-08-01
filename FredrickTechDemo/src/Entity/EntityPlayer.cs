@@ -4,11 +4,12 @@ using System;
 namespace FredrickTechDemo
 {
     /*Class for the player. Contains the players name, inventory etc.*/
-    class EntityPlayer : EntityLiving
+    public class EntityPlayer : EntityLiving
     {
         private String playerName;
         private Camera camera;
         public bool menuOpen = false;
+        public bool debugScreenOn = false;
         public EntityPlayer(String name) : base()
         {
             this.playerName = name;
