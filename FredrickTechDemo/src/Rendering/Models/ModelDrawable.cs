@@ -20,7 +20,7 @@ namespace FredrickTechDemo.Models
 
 
         /*takes in directory for the shader and texture for this model*/
-        public ModelDrawable(String shaderFile, String textureFile, float[] vertexPositions, float[] vertexColour, float[] vertexUV, UInt32[] indices) : base(vertexPositions, vertexColour, vertexUV, indices)
+        public ModelDrawable(String shaderFile, String textureFile, Vertex[] vertices, UInt32[] indices) : base(vertices, indices)
         {
             this.indices = indices;
             texture = new Texture(textureFile, false);
@@ -44,10 +44,8 @@ namespace FredrickTechDemo.Models
             VAO = GL.GenVertexArray();
             GL.BindVertexArray(VAO);
             
-            bindIndicesBuffer(); //for indices
-            storeDataInAttributeList(0, 3, vertexXYZ);//for X,y,z coords
-            storeDataInAttributeList(1, 3, vertexRGBA);//for rgb
-            storeDataInAttributeList(2, 2, vertexUV);//for uv
+            genAndBindIndices(); //for indices
+            storeVertexDataInAttributeList();
         }
 
         /*Binds the models texture and shader, can be used for more*/
@@ -77,10 +75,27 @@ namespace FredrickTechDemo.Models
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
+        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix)
+        {
+            bind();
+            shader.setUniformMat4F("projectionMatrix", projectionMatrix);
+            shader.setUniformMat4F("viewMatrix", viewMatrix);
+            shader.setUniformMat4F("modelMatrix", prevModelMatrix + (modelMatrix - prevModelMatrix) * TicksAndFps.getPercentageToNextTick());//interpolating model matrix between ticks
+
+            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+            unBind();
+        }
+        public virtual void draw()
+        {
+            bind();
+            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+            unBind();
+        }
 
         /*Unbinds this model so the renderer can render different things.*/
         public virtual void unBind()
         {
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.UseProgram(0);
@@ -88,7 +103,7 @@ namespace FredrickTechDemo.Models
         }
 
         /*Binds the indicie buffer to the VAO*/
-        protected virtual void bindIndicesBuffer()
+        protected virtual void genAndBindIndices()
         {
             indicesBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBufferObject);
@@ -96,6 +111,7 @@ namespace FredrickTechDemo.Models
         }
 
         /*Binds the provided data to the VAO using the provided information*/
+        [Obsolete("This method is depricated as now the system works with Vertex objects instead of float arrays. Use storeVertexDataInAttributeList() instead.")]
         protected virtual void storeDataInAttributeList(int attributeNumber, int coordinateCount, float[] data)
         {
             int vbo = GL.GenBuffer();
@@ -104,9 +120,35 @@ namespace FredrickTechDemo.Models
             GL.BufferData(BufferTarget.ArrayBuffer, data.Length * sizeof(float), data, BufferUsageHint.StaticDraw);
             /*Stride: the size in bytes between the start of one vertex to the start of another.
               Offset: the size in byts between the start of the vertex to the first bit of information for this specific attribute.*/
-            GL.VertexAttribPointer(attributeNumber, coordinateCount, VertexAttribPointerType.Float, false, 0, 0);
             GL.EnableVertexAttribArray(attributeNumber);
+            GL.VertexAttribPointer(attributeNumber, coordinateCount, VertexAttribPointerType.Float, false, 0, 0);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        }
+
+        protected virtual void storeVertexDataInAttributeList()
+        {
+            int vbo = GL.GenBuffer();
+            VBOS.Add(vbo);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);//TODO store buffer id's in an array so they can be deleted on model unload
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * Vertex.vertexByteSize, vertices, BufferUsageHint.StaticDraw);
+            /*Stride: the size in bytes between the start of one vertex to the start of another.
+              Offset: the size in byts between the start of the vertex to the first bit of information for this specific attribute.*/
+            GL.EnableVertexAttribArray(0);
+            GL.VertexAttribPointer(0, Vertex.positionLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.positionOffset);
+
+            GL.EnableVertexAttribArray(1);
+            GL.VertexAttribPointer(1, Vertex.colorLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.colorOffset);
+
+            GL.EnableVertexAttribArray(2);
+            GL.VertexAttribPointer(2, Vertex.uvLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.uvOffset);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        }
+
+
+        /*Used for binding the vertex buffer object in the array at the given index, any vbo's get unbound in unbind()*/
+        public virtual void bindVertexBuffer(int index = 0)
+        {
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VBOS[0]);
         }
 
         /*Called when this model is no longer needed and will be replaced*/

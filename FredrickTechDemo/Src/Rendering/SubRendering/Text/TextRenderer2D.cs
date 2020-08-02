@@ -14,7 +14,7 @@ namespace FredrickTechDemo.SubRendering
         private float defaultFontSize = 1.0F;
         private bool screenTextModelExists = false;
         private ColourF defaultColour;
-        private ModelDrawableGUI screenTextModel;
+        private ModelDrawable screenTextModel;
 
         private Dictionary<String, TextPanel2D> currentScreenTextPanels = new Dictionary<String, TextPanel2D>();
 
@@ -140,7 +140,7 @@ namespace FredrickTechDemo.SubRendering
 
             if (arrayOfLineModels.Length > 0)
             {
-                screenTextModel = QuadBatcher.batchQuadModelsGui(arrayOfLineModels, textShaderDir, fontTextureDir);
+                screenTextModel = QuadBatcher.batchQuadModels(arrayOfLineModels, textShaderDir, fontTextureDir);
                 screenTextModelExists = true;
             }
             Application.debug("TextRenderer2D took " + (TicksAndFps.getMiliseconds() - startTime) + " miliseconds to batch text.");

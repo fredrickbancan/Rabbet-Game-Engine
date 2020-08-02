@@ -33,5 +33,10 @@ out vec4 color;
 uniform sampler2D uTexture;
 void main()
 {
-	color = texture(uTexture, fTexCoord) * vcolour;// *texture(uTexture, fTexCoord); // mixes colour and textures
+	vec4 textureColor = texture(uTexture, vTexCoord) * vcolour;// *texture(uTexture, vTexCoord); // mixes colour and textures
+	if (textureColor.a < 0.9)
+	{
+		discard;
+	}
+	color = textureColor;
 }

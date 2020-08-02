@@ -15,8 +15,8 @@ namespace FredrickTechDemo
         private static TextRenderer2D privateTextRenderer2D;
         private Matrix4F projectionMatrix;
         private ModelDrawable quads;
-        private Vector3F fogColour = ColourF.lightGrey.normalize();
-        private Vector3F skyColour = ColourF.black.normalize();
+        private Vector3F fogColour = ColourF.grey.normalVector3F();
+        private Vector3F skyColour = ColourF.steelBlue.normalVector3F();
         public Renderer(GameInstance game)
         {
             this.gameInstance = game;
@@ -27,19 +27,13 @@ namespace FredrickTechDemo
         {
             gameInstance.MakeCurrent();
             privateTextRenderer2D = new TextRenderer2D("Consolas");
-            privateTextRenderer2D.addNewTextPanel("test",new string[] { "HELLO WORLD" , "kill me please"}, new Vector2F(0.5F, 0.0F), ColourF.black, 2.0F);
-            privateTextRenderer2D.addNewTextPanel("test2",new string[] { "Every cell in my body is in" , "excruciating pain."}, new Vector2F(0.5F, 0.5F), ColourF.black, 2.0F);
+            privateTextRenderer2D.addNewTextPanel("test",new string[] { "HELLO WORLD" , "kill me please"}, new Vector2F(0.5F, 0.0F), ColourF.darkBlossom, 2.0F);
+            privateTextRenderer2D.addNewTextPanel("test2",new string[] { "Every cell in my body is in" , "excruciating pain."}, new Vector2F(0.5F, 0.5F), ColourF.darkBlue, 2.0F);
             setClearColor(skyColour);
             GL.Enable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.Blend);
-            GL.Enable(EnableCap.AlphaTest);
-            GL.Enable(EnableCap.CullFace);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            GL.AlphaFunc(AlphaFunction.Greater, 0.01F);
+          //  GL.Enable(EnableCap.CullFace);
             GL.Viewport(gameInstance.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
-
-
 
             long constructStart = TicksAndFps.getMiliseconds();
             Model[] filler = new Model[32768];
@@ -49,7 +43,7 @@ namespace FredrickTechDemo
                 {
                     for (int y = 0; y < 32; y++)
                     {
-                        filler[z * 1024 + x * 32 + y] = JaredsQuadPrefab.getNewModel().transformVertices(new Vector3F(1), new Vector3F(0,0,0), new Vector3F(x - 16, y, -z));
+                        filler[z * 1024 + x * 32 + y] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1), new Vector3F(0,0,0), new Vector3F(x - 16, y, -z));
                     }
                 }
             }
@@ -58,7 +52,7 @@ namespace FredrickTechDemo
             Application.debug("test mesh vertex count: " + filler.Length * 4);
             Application.debug("test mesh took " + (TicksAndFps.getMiliseconds() - constructStart) + " miliseconds to construct.");
             long batchStart = TicksAndFps.getMiliseconds();
-            quads = QuadBatcher.batchQuadModels3D(filler, JaredsQuadPrefab.getShaderDir(), JaredsQuadPrefab.getTextureDir());
+            quads = QuadBatcher.batchQuadModels(filler, QuadPrefab.getShaderDir(), QuadPrefab.getTextureDir());
             Application.debug("test mesh took " + (TicksAndFps.getMiliseconds() - batchStart) + " miliseconds to batch.");
         }
 

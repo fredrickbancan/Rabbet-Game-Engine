@@ -4,6 +4,7 @@ using System.IO;
 
 namespace FredrickTechDemo.SubRendering
 {
+    /*This class is responsable for reading the .fnt files for each font, and generating a dictionary of characters for the text renderers to access.*/
     class FontBuilder
     {
         private String debugDir;
@@ -114,7 +115,7 @@ namespace FredrickTechDemo.SubRendering
                 Application.error("FontFile error reading line in readNextLine()!\nException message: " + e.Message);
             }
 
-            if(line == null)
+            if(line == null || line.Contains("kernings"))
             {
                 return false;
             }

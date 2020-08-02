@@ -13,26 +13,20 @@ namespace FredrickTechDemo.SubRendering.Text
         private static readonly byte spaceAscii = 32;
         private Vector2F cursorPixelPos;
         private Model lineModel;
-        private float[] vertexXYZ;
-        private float[] vertexRGB;
-        private float[] vertexUV;
-        private int vertexXYZIndex = 2;
-        private int vertexRGBIndex = 2;
-        private int vertexUVIndex = 1;
+        private Vertex[] vertices;
+        private int vertexIndex;
         private int previousLineCount;//used to tell how many lines to offset this line from the origin. Origin is the top left corner of the parent text panel
-        private Vector3F color;
+        private Vector4F color;
         private float fontSize;
         private byte screenEdgePaddingPixels = 10;//number of pixels to pad the top and left edges of screen
 
-        public TextPanelTextLine2D(String textToBeConverted, Vector2F pos, Vector3F color, float fontSize, int previousLineCount, FontBuilder font)
+        public TextPanelTextLine2D(String textToBeConverted, Vector2F pos, Vector4F color, float fontSize, int previousLineCount, FontBuilder font)
         {
             this.color = color;
             cursorPixelPos = pos;
             this.fontSize = fontSize;
             this.previousLineCount = previousLineCount;
-            this.vertexXYZ = new float[textToBeConverted.Replace(" ", "").Length * 12];//number of vertices for each character. Excluding spaces.
-            this.vertexRGB = new float[textToBeConverted.Replace(" ", "").Length * 12];
-            this.vertexUV = new float[textToBeConverted.Replace(" ", "").Length * 8];
+            this.vertices = new Vertex[textToBeConverted.Replace(" ", "").Length * 4];//number of vertices for each character. Excluding spaces.
 
             this.convertStringToCharacterArrayModel(textToBeConverted, pos, font);
         }
@@ -57,7 +51,7 @@ namespace FredrickTechDemo.SubRendering.Text
                     this.cursorPixelPos.x += currentChar.getXAdvancePixels() * fontSize;
                 }
             }
-            this.lineModel = new Model(vertexXYZ, vertexRGB, vertexUV);
+            this.lineModel = new Model(vertices);
         }
         
         /*Add the vertices for the letter at the virtual cursor position*/
@@ -86,30 +80,19 @@ namespace FredrickTechDemo.SubRendering.Text
             yMax = -yMax;
 
             //add vertices at screen coords with uv, in different order so the quads will now face fowards after being flipped, so that they show when face culling.
-            addVertexScreenCoords(xMax, y,color.r + 0.1F, color.g + 0.1F, color.b + 0.1F, uMax, v);//bottom right vertex1
-            addVertexScreenCoords(x, y, color.r + 0.1F, color.g + 0.1F, color.b + 0.1F, u, v);//Bottom left vertex0
-            addVertexScreenCoords(xMax, yMax, color.r * 0.5F, color.g * 0.5F, color.b * 0.5F, uMax, vMax);//top right vertex3
-            addVertexScreenCoords(x, yMax, color.r * 0.5F, color.g * 0.5F, color.b * 0.5F, u, vMax);//top left vertex2
+            addVertexScreenCoords(xMax, y,color.r + 0.1F, color.g + 0.1F, color.b + 0.1F, color.a, uMax, v);//bottom right vertex1
+            addVertexScreenCoords(x, y, color.r + 0.1F, color.g + 0.1F, color.b + 0.1F, color.a, u, v);//Bottom left vertex0
+            addVertexScreenCoords(xMax, yMax, color.r * 0.5F, color.g * 0.5F, color.b * 0.5F, color.a, uMax, vMax);//top right vertex3
+            addVertexScreenCoords(x, yMax, color.r * 0.5F, color.g * 0.5F, color.b * 0.5F, color.a, u, vMax);//top left vertex2
         }
 
         /*Add vertices to screen space*/
-        private void addVertexScreenCoords(float x, float y,float r, float g, float b, float u, float v)
+        private void addVertexScreenCoords(float x, float y,float r, float g, float b, float a, float u, float v)
         {
-            this.vertexXYZ[vertexXYZIndex - 2] = x;
-            this.vertexXYZ[vertexXYZIndex - 1] = y;
-            this.vertexXYZ[vertexXYZIndex - 0] = 0.0F;
-
-            this.vertexRGB[vertexRGBIndex - 2] = r;
-            this.vertexRGB[vertexRGBIndex - 1] = g;
-            this.vertexRGB[vertexRGBIndex - 0] = b;
-
-            this.vertexUV[vertexUVIndex - 1] = u;
-            this.vertexUV[vertexUVIndex - 0] = v;
+            this.vertices[vertexIndex] = new Vertex( x,  y, 0,  r,  g,  b,  a,  u,  v);
 
             //do last
-            this.vertexXYZIndex += 3;
-            this.vertexRGBIndex += 3;
-            this.vertexUVIndex += 2;
+            this.vertexIndex++;
         }
         public Model getLineModel()
         {

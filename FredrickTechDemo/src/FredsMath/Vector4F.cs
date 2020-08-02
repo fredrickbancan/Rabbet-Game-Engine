@@ -3,11 +3,11 @@ namespace FredrickTechDemo.FredsMath
 {
     public struct Vector4F
     {
-        public float x;
-        public float y;
-        public float z;
-        public float w;
-
+        public float x, y, z, w;
+        public float r { get => x; set { x = value; } }
+        public float g { get => y; set { y = value; } }
+        public float b { get => z; set { z = value; } }
+        public float a { get => w; set { w = value; } }
         //constructors
 
         /*public Vector4F()

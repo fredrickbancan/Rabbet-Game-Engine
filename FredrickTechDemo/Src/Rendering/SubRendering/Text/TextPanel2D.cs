@@ -9,7 +9,7 @@ namespace FredrickTechDemo.SubRendering.Text
 
         private Vector2F panelPos; // position of the top left corner of this panel
         private Vector2F panelPixelPos; // position of the top left corner of this panel
-        private Vector3F panelColour;
+        private Vector4F panelColour;
         private String[] lines;
         private float fontSize;
         private FontBuilder font;
@@ -20,7 +20,7 @@ namespace FredrickTechDemo.SubRendering.Text
             this.lines = lines;
             this.panelPos = pos;
             
-            this.panelColour = panelColor.normalize();
+            this.panelColour = panelColor.normalVector4F();
             this.fontSize = fontSize;
             this.font = font;
         }

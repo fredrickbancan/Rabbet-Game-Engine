@@ -55,7 +55,11 @@ namespace FredrickTechDemo.FredsMath
 
 
         //get functions
-        public Vector3F normalize()
+        public Vector4F normalVector4F()
+        {
+            return new Vector4F(MathUtil.normalize(0, 255, this.GetRed()), MathUtil.normalize(0, 255, this.GetGreen()), MathUtil.normalize(0, 255, this.GetBlue()), MathUtil.normalize(0, 255, this.GetAlpha()));
+        }
+        public Vector3F normalVector3F()
         {
             return new Vector3F(MathUtil.normalize(0, 255, this.GetRed()), MathUtil.normalize(0, 255, this.GetGreen()), MathUtil.normalize(0, 255, this.GetBlue()));
         }
