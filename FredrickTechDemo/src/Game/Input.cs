@@ -47,7 +47,7 @@ namespace FredrickTechDemo
 
                     if (keyboardState.IsKeyDown(Key.F3))
                     {
-                        gameInstance.onDebugScreenButtonPress();
+                        toggleDebugScreen();
                     }
                 }
                 #endregion
@@ -59,6 +59,18 @@ namespace FredrickTechDemo
         public static void centerMouse()
         {
             Mouse.SetPosition(GameInstance.windowCenterX, GameInstance.windowCenterY); // center the mouse cursor
+        }
+
+        public static void toggleDebugScreen()
+        {
+            if(!GameSettings.debugScreen)
+            {
+                GameSettings.debugScreen = true;
+            }
+            else
+            {
+                GameSettings.debugScreen = false;
+            }
         }
 
         /*toggles the visibility of the mouse cursor*/

@@ -35,7 +35,7 @@ namespace FredrickTechDemo
             /*updating FPS*/
             lastTime = currentTime;
             currentTime = stopwatch.ElapsedMilliseconds;
-            deltaTime = (currentTime - lastTime) / 1000.0f;
+            deltaTime = (currentTime - lastTime) / 1000.0F;
             timer += deltaTime;
             if (timer >= 1)
             {
@@ -82,15 +82,15 @@ namespace FredrickTechDemo
                 String fpsPanelName = "fpsDisplay";
                 if (fps < 75)
                 {
-                    Renderer.textRenderer2D.addNewTextPanel(fpsPanelName, fpsString, Vector2F.zero, ColourF.darkRed);
+                    Renderer.textRenderer2D.addNewTextPanel(fpsPanelName, fpsString, Vector2F.zero, ColourF.red);
                 }
                 else if (fps < 120)
                 {
-                    Renderer.textRenderer2D.addNewTextPanel(fpsPanelName, fpsString, Vector2F.zero, ColourF.darkYellow);
+                    Renderer.textRenderer2D.addNewTextPanel(fpsPanelName, fpsString, Vector2F.zero, ColourF.yellow);
                 }
                 else
                 {
-                    Renderer.textRenderer2D.addNewTextPanel(fpsPanelName, fpsString, Vector2F.zero, ColourF.darkGreen);
+                    Renderer.textRenderer2D.addNewTextPanel(fpsPanelName, fpsString, Vector2F.zero, ColourF.green);
                 }
             }
 

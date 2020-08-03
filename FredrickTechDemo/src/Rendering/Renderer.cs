@@ -9,32 +9,26 @@ namespace FredrickTechDemo
       e.g, when the game requests text to be rendered on the screen, the renderer will send a request to the TextRenderer2D.
       e.g, when the game requests entity models to be rendered in the world, the renderer will send a request to the model draw function.
       This class also contains the projection matrix.*/
-    class Renderer
+    public static class Renderer
     {
-        private GameInstance gameInstance;
+        private static GameInstance gameInstance;
         private static TextRenderer2D privateTextRenderer2D;
-        private Matrix4F projectionMatrix;
-        private ModelDrawable quads;
-        private Vector3F fogColour = ColourF.grey.normalVector3F();
-        private Vector3F skyColour = ColourF.steelBlue.normalVector3F();
-        public Renderer(GameInstance game)
-        {
-            this.gameInstance = game;
-        }
+        private static Matrix4F projectionMatrix;
+        private static ModelDrawable quads;
+        private static Vector3F fogColour = ColourF.grey.normalVector3F();
+        private static Vector3F skyColour = ColourF.steelBlue.normalVector3F();
         
         /*Called before any rendering is done*/
-        public void init()
+        public static void init(GameInstance game)
         {
+            Renderer.gameInstance = game;
             gameInstance.MakeCurrent();
-            privateTextRenderer2D = new TextRenderer2D("Consolas");
-            privateTextRenderer2D.addNewTextPanel("test",new string[] { "HELLO WORLD" , "kill me please"}, new Vector2F(0.5F, 0.0F), ColourF.darkBlossom, 2.0F);
-            privateTextRenderer2D.addNewTextPanel("test2",new string[] { "Every cell in my body is in" , "excruciating pain."}, new Vector2F(0.5F, 0.5F), ColourF.darkBlue, 2.0F);
+            privateTextRenderer2D = new TextRenderer2D("Arial");
             setClearColor(skyColour);
             GL.Enable(EnableCap.DepthTest);
-          //  GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.CullFace);
             GL.Viewport(gameInstance.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
-            Profiler.beginEndProfile("BuildingQuads");
             Model[] filler = new Model[32768];
             for(int z = 0; z < 32; z++ )
             {
@@ -46,14 +40,11 @@ namespace FredrickTechDemo
                     }
                 }
             }
-            Profiler.beginEndProfile("BuildingQuads");
-            Profiler.beginEndProfile("BatchingQuads");
             quads = QuadBatcher.batchQuadModels(filler, QuadPrefab.getShaderDir(), QuadPrefab.getTextureDir());
-            Profiler.beginEndProfile("BatchingQuads");
         }
 
         /*Called each time the game window is resized*/
-        public void onResize()
+        public static void onResize()
         {
             GL.Viewport(gameInstance.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
@@ -61,32 +52,34 @@ namespace FredrickTechDemo
         }
 
         /*Called before all draw calls*/
-        private void preRender()
+        private static void preRender()
         {
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
         
-        public void renderAll()
+        public static void renderAll()
         {
+            Profiler.beginEndProfile(Profiler.renderingName);
             preRender();
             updateCameraAndRenderWorld();
             renderGui();
             postRender();
+            Profiler.beginEndProfile(Profiler.renderingName);
         }
 
-        private void updateCameraAndRenderWorld()
+        private static void updateCameraAndRenderWorld()
         {
             gameInstance.thePlayer.onCameraUpdate();
             quads.draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, fogColour);
         }
 
-        private void renderGui()
+        private static void renderGui()
         {
             privateTextRenderer2D.renderAnyText();
         }
 
         /*Called after all draw calls*/
-        private void postRender()
+        private static void postRender()
         {
             gameInstance.SwapBuffers();
         }

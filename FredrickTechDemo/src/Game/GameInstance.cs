@@ -2,6 +2,7 @@
 using OpenTK;
 using OpenTK.Graphics;
 using System;
+using System.Drawing;
 
 namespace FredrickTechDemo
 {
@@ -11,8 +12,9 @@ namespace FredrickTechDemo
         private static int windowWidth;
         private static int windowHeight;
         private static int mouseCenterX;//the x position of the center of the game window
-        private static int mouseCenterY;//the y position of the center of the game winwow
-        private Renderer renderer;
+        private static int mouseCenterY;//the y position of the center of the game window
+        private static float dpiY;
+        private static float dpiX;
         public EntityPlayer thePlayer;
 
         public GameInstance(int width, int height, String title) : base(width, height, GraphicsMode.Default, title)
@@ -21,16 +23,19 @@ namespace FredrickTechDemo
             windowHeight = height;
             mouseCenterX = this.X + this.Width / 2;
             mouseCenterY = this.Y + this.Height / 2;
-            renderer = new Renderer(this);
-            thePlayer = new EntityPlayer("Steve", new Vector3F(0.0F, 16.0F, 32F));
+            Graphics g = Graphics.FromHwnd(this.WindowInfo.Handle);
+            dpiY = g.DpiY;
+            dpiX = g.DpiX;
+            
             GameSettings.loadSettings(this);
+            thePlayer = new EntityPlayer("Steve", new Vector3F(0.0F, 16.0F, 32F));
         }
 
         /*Called before game runs*/
         public void init()
         {
             TicksAndFps.init(30.0D, this);
-            renderer.init();
+            Renderer.init(this);
             Input.setGameInstance(this);
             Input.centerMouse();
             Input.toggleHideMouse();
@@ -54,7 +59,7 @@ namespace FredrickTechDemo
         {
             base.OnRenderFrame(args);
             TicksAndFps.update();
-            renderer.renderAll();
+            Renderer.renderAll();
         }
 
         /*Overriding OpenTK resize function, called every time the game window is resized*/
@@ -63,34 +68,25 @@ namespace FredrickTechDemo
             base.OnResize(e);
             windowWidth = Width;
             windowHeight = Height;
-            renderer.onResize();
+            Renderer.onResize();
         }
 
         /*Each itteration of game logic is done here*/
         private void onTick()
         {
+            Profiler.beginEndProfile(Profiler.gameLoopName);
             Input.updateInput();
+            DebugScreen.displayOrClearDebugInfo(this);
             thePlayer.onTick();
+            Profiler.beginEndProfile(Profiler.gameLoopName);
         }
 
-        public void onDebugScreenButtonPress()
-        {
-            Console.WriteLine();
-            Application.debug("F3 was pressed, printing debug info.");
-            Application.debug("Player position X: " + thePlayer.getPosition().x);
-            Application.debug("Player position Y: " + thePlayer.getPosition().y);
-            Application.debug("Player position Z: " + thePlayer.getPosition().z);
-            Application.debug("Player Head Pitch: " + thePlayer.getheadPitch());
-            Application.debug("Player Yaw       : " + thePlayer.getYaw());
-            Application.debug("Vsync enabled    : " + GameSettings.vsync);
-            Application.debug("Frames per second: " + TicksAndFps.getFps());
-        }
 
-        
-        public static int gameWindowWidth{get => windowWidth;}
-        public static int gameWindowHeight {get => windowHeight;}
-        public static int windowCenterX {get => mouseCenterX;}
-        public static int windowCenterY {get => mouseCenterY;}
-        public static float aspectRatio {get => ((float)windowWidth / (float)windowHeight); }
+        public static int gameWindowWidth { get => windowWidth; }
+        public static int gameWindowHeight { get => windowHeight; }
+        public static int windowCenterX { get => mouseCenterX; }
+        public static int windowCenterY { get => mouseCenterY; }
+        public static float aspectRatio { get => (float)windowWidth / (float)windowHeight; }
+        public static float dpiScale { get => (float)windowHeight / dpiY; }
     }
 }

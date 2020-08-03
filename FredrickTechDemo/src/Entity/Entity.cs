@@ -9,7 +9,7 @@ namespace FredrickTechDemo
         protected Vector3F previousTickPos;
         protected Vector3F pos;
         protected Vector3F velocity;
-        protected float airResistanceFactor = 0.73572F;
+        protected float airResistanceFactor = 0.9F;
 
         protected float pitch;
         protected float yaw;
@@ -32,8 +32,10 @@ namespace FredrickTechDemo
         /*Called every tick*/
         public virtual void onTick()
         {
-            /*do this first. Used for interpolation.*///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            /*do this first.*///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             previousTickPos = pos;
+            if (yaw > 360.0F) {  yaw = 0.0F; }
+            if (yaw < -360.0F) { yaw = 0.0F; }
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             /*decelerate velocity by air resistance (not accurate to real life)*/
@@ -76,6 +78,10 @@ namespace FredrickTechDemo
         public Vector3F getPosition()
         {
             return this.pos;
+        }
+        public Vector3F getVelocity()
+        {
+            return this.velocity;
         }
 
         public Vector3F getLerpPos()

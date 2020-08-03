@@ -35,6 +35,10 @@ namespace FredrickTechDemo
             }
         }
 
+        public String getName()
+        {
+            return this.playerName;
+        }
         public void toggleOpenMenu()
         {
             if(!menuOpen)

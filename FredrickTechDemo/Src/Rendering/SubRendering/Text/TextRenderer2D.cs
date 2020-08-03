@@ -6,13 +6,13 @@ using System.Collections.Generic;
 
 namespace FredrickTechDemo.SubRendering
 {
-    class TextRenderer2D
+    public class TextRenderer2D
     {
         private readonly String textShaderDir = ResourceHelper.getShaderFileDir("GuiTextShader.shader");
         private readonly String fontTextureDir;
         private readonly byte screenEdgePadding = 10;
         private FontBuilder font;
-        private float defaultFontSize = 1.0F;
+        private float defaultFontSize = 0.072F;
         private ColourF defaultColour;
         private ModelDrawableDynamic screenTextModel;
         private int maxCharCount;
@@ -69,14 +69,15 @@ namespace FredrickTechDemo.SubRendering
         public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor, float fontSize)
         {
             currentScreenTextPanels.Remove(textPanelName);
-            currentScreenTextPanels.Add(textPanelName, new TextPanel2D(textPanelLines, textPanelPosition,  textPanelColor, fontSize, screenEdgePadding, font));
+            currentScreenTextPanels.Add(textPanelName, new TextPanel2D(textPanelLines, textPanelPosition,  textPanelColor, fontSize * GameInstance.dpiScale, screenEdgePadding, font));
             buildAndSubmitDataToDynamicModel();
         }
         #endregion
 
         private void buildAndSubmitDataToDynamicModel()
         {
-            Profiler.beginEndProfile("TextRenderer Submitting");
+            Profiler.beginEndProfile(Profiler.textRenderer2DSubmittingName);
+            Vertex[] fillerVertexArray = new Vertex[maxCharCount * 4];//creating array big enough to fill max char count
             if (currentScreenTextPanels.Count > 0)
             {
                 //combine all models
@@ -104,27 +105,28 @@ namespace FredrickTechDemo.SubRendering
                 Vertex[] combinedVertices;
                 QuadBatcher.combineData(combinedModels, out combinedVertices);
 
-                //fill combined vertices with zero values untill it reaches the defined maximum character limit * 4
-                //This must be done to override the old data in the vertex buffer
-
-                Vertex[] combinedVerticesFilled = new Vertex[combinedVertices.Length + (maxCharCount * 4 - combinedVertices.Length)];//creating array big enough to fill max char count
-                Array.Copy(combinedVertices, combinedVerticesFilled, combinedVertices.Length);
-                screenTextModel.submitData(combinedVerticesFilled);
+                if (combinedVertices.Length > maxCharCount * 4)
+                {
+                    Application.error("TextRenderer2D has gone over its provided limit of characters!");
+                }
+                else
+                {
+                    //fill combined vertices with zero values untill it reaches the defined maximum character limit * 4
+                    //This must be done to override the old data in the vertex buffer
+                    Array.Copy(combinedVertices, fillerVertexArray, combinedVertices.Length);
+                }
+                screenTextModel.submitData(fillerVertexArray);
             }
             else
             {
-                screenTextModel.submitData(new Vertex[0]);
+                screenTextModel.submitData(fillerVertexArray);//just fill buffer with empties to clear screen of text
             }
-            Profiler.beginEndProfile("TextRenderer Submitting");
+            Profiler.beginEndProfile(Profiler.textRenderer2DSubmittingName);
         }
 
         public void removeTextPanel(String textPanelName)
         {
-            if (!currentScreenTextPanels.Remove(textPanelName))
-            {
-                Application.error("TextRenderer2D removeTextPanel() could not remove panel named " + textPanelName);
-            }
-            else
+            if (currentScreenTextPanels.Remove(textPanelName))
             {
                 buildAndSubmitDataToDynamicModel();
             }

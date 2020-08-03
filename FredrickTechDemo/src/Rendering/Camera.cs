@@ -43,6 +43,8 @@ namespace FredrickTechDemo
             Input.centerMouse();
             pitch -= mouseDeltaY * GameSettings.mouseSensitivity;
             yaw += mouseDeltaX * GameSettings.mouseSensitivity;
+            if (yaw > 360.0F) { yaw = 0.0F; }
+            if (yaw < -360.0F) { yaw = 0.0F; }
             /*cap pitch so cam and entity can not flip*/
             if (pitch > 90.0F)
             {
