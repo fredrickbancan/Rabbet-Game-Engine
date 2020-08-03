@@ -89,7 +89,7 @@ namespace FredrickTechDemo.Models
         public virtual void draw()
         {
             bind();
-            GL.DrawElements(PrimitiveType.LineLoop, indices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
 

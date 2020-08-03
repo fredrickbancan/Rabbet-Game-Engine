@@ -103,7 +103,13 @@ namespace FredrickTechDemo.SubRendering
                 //get and combine all vertex arrays and submit them to model
                 Vertex[] combinedVertices;
                 QuadBatcher.combineData(combinedModels, out combinedVertices);
-                screenTextModel.submitData(combinedVertices);
+
+                //fill combined vertices with zero values untill it reaches the defined maximum character limit * 4
+                //This must be done to override the old data in the vertex buffer
+
+                Vertex[] combinedVerticesFilled = new Vertex[combinedVertices.Length + (maxCharCount * 4 - combinedVertices.Length)];//creating array big enough to fill max char count
+                Array.Copy(combinedVertices, combinedVerticesFilled, combinedVertices.Length);
+                screenTextModel.submitData(combinedVerticesFilled);
             }
             else
             {

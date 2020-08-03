@@ -57,7 +57,7 @@ namespace FredrickTechDemo
             {  
                 Console.BackgroundColor = ConsoleColor.Cyan;
                 Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine("Profile: " + name + " measured " + (TicksAndFps.getMiliseconds() - startTime) + " miliseconds from start to finish.");
+                Console.WriteLine("Profile: \"" + name + "\" measured " + (TicksAndFps.getMiliseconds() - startTime) + " miliseconds from start to finish.");
                 Console.BackgroundColor = ConsoleColor.White;
                 Console.ForegroundColor = ConsoleColor.White;
             }
