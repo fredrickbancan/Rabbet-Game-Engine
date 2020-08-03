@@ -9,12 +9,16 @@ namespace FredrickTechDemo
         protected Vector3F previousTickPos;
         protected Vector3F pos;
         protected Vector3F velocity;
-        protected float airResistanceFactor = 0.9F;
-
+        public static readonly float defaultAirResistance = 0.9F;
+        public static readonly float defaultGravity = 0.05F;
+        protected float airResistance = defaultAirResistance;
+        protected float gravity = defaultGravity;
+        protected bool isFlying = false;
+        protected bool isGrounded = false;
         protected float pitch;
         protected float yaw;
         protected float roll;
-        public bool hasDoneFirstUpdate = false;
+        protected bool hasDoneFirstUpdate = false;
         public Entity()
         {
             this.pos = new Vector3F();
@@ -39,8 +43,9 @@ namespace FredrickTechDemo
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             /*decelerate velocity by air resistance (not accurate to real life)*/
-            velocity *= airResistanceFactor;
-
+            velocity *= airResistance;
+            //decrease entity y velocity by gravity, will not spiral out of control due to terminal velocity.
+            if(!isFlying && !isGrounded) velocity.y -= gravity;
 
 
             /*do this last*///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -83,7 +88,27 @@ namespace FredrickTechDemo
         {
             return this.velocity;
         }
+        public bool getIsFlying()
+        {
+            return isFlying;
+        }
 
+        public void setFlying(bool flag)
+        {
+            this.isFlying = flag;
+        }
+
+        public void toggleFlying()
+        {
+            if(!isFlying)
+            {
+                isFlying = true;
+            }
+            else
+            {
+                isFlying = false;
+            }
+        }
         public Vector3F getLerpPos()
         {
             return previousTickPos + (pos - previousTickPos) * TicksAndFps.getPercentageToNextTick();

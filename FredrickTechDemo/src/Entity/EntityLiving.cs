@@ -5,11 +5,13 @@ namespace FredrickTechDemo
 {
     public class EntityLiving : Entity
     {
+        
         protected Vector3F frontVector;//vector pointing to the direction the entity is facing
         protected Vector3F upVector;
         protected Vector3F movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
         protected float headPitch; // pitch of the living entity head
-        protected float walkSpeed = 0.13572F;
+        public static readonly float defaultWalkSpeed = 0.02F;
+        protected float walkSpeed = defaultWalkSpeed;
         public EntityLiving() : base()
         {
             frontVector = new Vector3F(0.0F, 0.0F, -1.0F);
@@ -30,7 +32,14 @@ namespace FredrickTechDemo
 
             /*correcting front vector based on new pitch and yaw*/
             frontVector.x = (float) (Math.Cos(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(headPitch)));
-            frontVector.y = (float)  Math.Sin(MathUtil.radians(headPitch));
+            if (isFlying)
+            {
+                frontVector.y = (float)Math.Sin(MathUtil.radians(headPitch));
+            }
+            else
+            {//if the living entity isnt flying, it shouldnt be able to move up or down willingly
+                frontVector.y = 0;
+            }
             frontVector.z = (float) (Math.Sin(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(headPitch)));
             frontVector.Normalize();
 
@@ -38,12 +47,19 @@ namespace FredrickTechDemo
         }
         private void moveByMovementVector()
         {
+            float walkSpeedModified = walkSpeed;
+
+            if (isFlying)
+            {
+                walkSpeedModified *= 3;
+            }
+
             if(movementVector.Magnitude() > 0)
             {
                 movementVector.Normalize();//movement vector is a unit vector.
                 //change velocity based on movement
-                velocity += frontVector * movementVector.z * walkSpeed;//fowards and backwards movement
-                velocity += Vector3F.normalize(Vector3F.cross(frontVector, upVector)) * movementVector.x * walkSpeed;//strafing movement
+                velocity += frontVector * movementVector.z * walkSpeedModified;//fowards and backwards movement
+                velocity += Vector3F.normalize(Vector3F.cross(frontVector, upVector)) * movementVector.x * walkSpeedModified;//strafing movement
                 movementVector *= 0;//reset movement vector
             }
         }
@@ -81,5 +97,7 @@ namespace FredrickTechDemo
         {
             return this.upVector;
         }
+
+        
     }
 }

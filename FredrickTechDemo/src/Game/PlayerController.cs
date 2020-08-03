@@ -48,6 +48,11 @@ namespace FredrickTechDemo
                 Input.toggleHideMouse();
                 thePlayer.toggleOpenMenu();
             }
+
+            if (keyboard.IsKeyDown(Key.F))
+            {
+                thePlayer.toggleFlying();
+            }
         }
     }
 }
