@@ -22,10 +22,8 @@ namespace FredrickTechDemo.Models
         public static Model getNewModel()
         {
             Vertex[] verticesCopy = new Vertex[quadVertices.Length];
-            UInt32[] indicesCopy = new uint[quadIndices.Length];
             Array.Copy(quadVertices, verticesCopy, quadVertices.Length);
-            Array.Copy(quadIndices, indicesCopy, quadIndices.Length);
-            return new Model(verticesCopy, indicesCopy);
+            return new Model(verticesCopy);
         }
         public static ModelDrawable getNewModelDrawable()
         {

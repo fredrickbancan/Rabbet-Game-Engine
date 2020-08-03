@@ -1,4 +1,4 @@
-﻿namespace FredrickTechDemo.SubRendering
+﻿namespace FredrickTechDemo.SubRendering.Text
 {
     public class Character
 	{

@@ -34,8 +34,7 @@ namespace FredrickTechDemo
           //  GL.Enable(EnableCap.CullFace);
             GL.Viewport(gameInstance.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
-
-            long constructStart = TicksAndFps.getMiliseconds();
+            Profiler.beginEndProfile("BuildingQuads");
             Model[] filler = new Model[32768];
             for(int z = 0; z < 32; z++ )
             {
@@ -47,13 +46,10 @@ namespace FredrickTechDemo
                     }
                 }
             }
-            Application.debug("test mesh quad count: " + filler.Length);
-            Application.debug("test mesh triangle count: " + filler.Length * 2);
-            Application.debug("test mesh vertex count: " + filler.Length * 4);
-            Application.debug("test mesh took " + (TicksAndFps.getMiliseconds() - constructStart) + " miliseconds to construct.");
-            long batchStart = TicksAndFps.getMiliseconds();
+            Profiler.beginEndProfile("BuildingQuads");
+            Profiler.beginEndProfile("BatchingQuads");
             quads = QuadBatcher.batchQuadModels(filler, QuadPrefab.getShaderDir(), QuadPrefab.getTextureDir());
-            Application.debug("test mesh took " + (TicksAndFps.getMiliseconds() - batchStart) + " miliseconds to batch.");
+            Profiler.beginEndProfile("BatchingQuads");
         }
 
         /*Called each time the game window is resized*/

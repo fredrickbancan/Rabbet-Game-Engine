@@ -10,27 +10,7 @@ namespace FredrickTechDemo.SubRendering
     {
         public static readonly int maxQuadCount = 196608; // maximum number of quads that can be batched into one call, otherwise a new one must be made.
         public static readonly int maxVertexCount = maxQuadCount * 4;
-        public static readonly int maxIndexCount = maxQuadCount * 6;
-        private static readonly UInt32[] indices = new UInt32[maxIndexCount];
-        private static UInt32 offset = 0;
-
-        static QuadBatcher()
-        {
-            //Building indicies array, will work with any number of quads under the max amount.
-            //Assuming all quads are actually quads.
-            for (UInt32 i = 0; i < maxIndexCount; i += 6)
-            {
-                indices[i + 0] = 0 + offset;
-                indices[i + 1] = 1 + offset;
-                indices[i + 2] = 2 + offset;
-
-                indices[i + 3] = 1 + offset;
-                indices[i + 4] = 3 + offset;
-                indices[i + 5] = 2 + offset;
-
-                offset += 4;
-            }
-        }
+        private static readonly UInt32[] indices = getIndicesForQuadCount(maxQuadCount);
 
 
         /*Batches together models made of quads for being rendered in 3D*/
@@ -43,14 +23,14 @@ namespace FredrickTechDemo.SubRendering
         }
 
         /*Combines all the data in the model array and outputs the combined ordered arrays.*/
-        private static void combineData(Model[] modelsToCombine, out Vertex[] newVertices)
+        public static void combineData(Model[] modelsToCombine, out Vertex[] newVertices)
         {
             int totalVertexCount = 0;
             for (int i = 0; i < modelsToCombine.Length; i++)
             {
                 if (modelsToCombine[i] != null)
                 {
-                    totalVertexCount += modelsToCombine[i].getVertexCount(); //count vertices based on position
+                    totalVertexCount += modelsToCombine[i].vertices.Length; //count vertices based on position
                 }
                 else
                 {
@@ -70,18 +50,36 @@ namespace FredrickTechDemo.SubRendering
             {
                 if (modelsToCombine[i] != null)
                 {
-                    for(int j = 0; j < modelsToCombine[i].getVertexCount(); j++)
+                    for(int j = 0; j < modelsToCombine[i].vertices.Length; j++)
                     {
-                        newVertices[prevModelVertexIndex + j] = modelsToCombine[i].getVertexArray()[j];
+                        newVertices[prevModelVertexIndex + j] = modelsToCombine[i].vertices[j];
                     }
-                    prevModelVertexIndex += modelsToCombine[i].getVertexCount();
-
-                    if (modelsToCombine[i] is ModelDrawable md)//lastly, delete original model info opengl buffers and programs (if it is an instance of a modeldrawable)
-                    {
-                        md.delete();
-                    }
+                    prevModelVertexIndex += modelsToCombine[i].vertices.Length;
                 }
             }
+        }
+
+        public static UInt32[] getIndicesForQuadCount(int quadCount)
+        {
+            int indexCount = quadCount * 6;
+            UInt32 offset = 0;
+            UInt32[] result = new UInt32[indexCount];
+            //Building indicies array, will work with any number of quads under the max amount.
+            //Assuming all quads are actually quads.
+            for (UInt32 i = 0; i < indexCount; i += 6)
+            {
+                result[i + 0] = 0 + offset;
+                result[i + 1] = 1 + offset;
+                result[i + 2] = 2 + offset;
+
+                result[i + 3] = 1 + offset;
+                result[i + 4] = 3 + offset;
+                result[i + 5] = 2 + offset;
+
+                offset += 4;
+            }
+
+            return result;
         }
     }
 }

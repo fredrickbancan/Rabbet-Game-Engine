@@ -326,12 +326,11 @@ namespace FredrickTechDemo.FredsMath
             return result; 
         }
 
-        public static void translateXYZFloats(Vector3F newPosition, float x, float y, float z, out float newX, out float newY, out float newZ)
+        public static void translateXYZFloats(Vector3F translation, float x, float y, float z, out float newX, out float newY, out float newZ)
         {
-            Matrix4F transMat = createTranslationMatrix(newPosition);
-            newX = x + transMat.m13;
-            newY = y + transMat.m14;
-            newZ = z + transMat.m15;
+            newX = x + translation.x;
+            newY = y + translation.y;
+            newZ = z + translation.z;
         }
         public static void rotateXYZFloats(Vector3F newRotation, float x, float y, float z, out float newX, out float newY, out float newZ)
         {
@@ -342,10 +341,9 @@ namespace FredrickTechDemo.FredsMath
         }
         public static void scaleXYZFloats(Vector3F newScale, float x, float y, float z, out float newX, out float newY, out float newZ)
         {
-            Matrix4F scaleMat = scale(newScale);
-            newX = x * scaleMat.m1;
-            newY = y * scaleMat.m6;
-            newZ = z * scaleMat.m11;
+            newX = x * newScale.x;
+            newY = y * newScale.y;
+            newZ = z * newScale.z;
         }
 
         #endregion

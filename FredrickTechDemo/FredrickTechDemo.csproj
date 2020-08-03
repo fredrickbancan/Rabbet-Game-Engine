@@ -76,6 +76,7 @@
     <Compile Include="Src\Game\GameSettings.cs" />
     <Compile Include="Src\Game\Input.cs" />
     <Compile Include="Src\Game\PlayerController.cs" />
+    <Compile Include="Src\Game\Profiler.cs" />
     <Compile Include="Src\Game\ResourceHelper.cs" />
     <Compile Include="Src\Game\TicksAndFps.cs" />
     <Compile Include="Src\Rendering\Camera.cs" />
@@ -83,7 +84,6 @@
     <Compile Include="Src\Rendering\Models\ModelDrawable.cs" />
     <Compile Include="Src\Rendering\Models\ModelDrawableDynamic.cs" />
     <Compile Include="Src\Rendering\SubRendering\QuadBatcher.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Text\TextPanelTextLine2D.cs" />
     <Compile Include="Src\Rendering\SubRendering\Text\TextPanel2D.cs" />
     <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\Character.cs" />
     <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\FontBuilder.cs" />

@@ -9,6 +9,7 @@ namespace FredrickTechDemo.Models
      *individual VAO's.*/
     public class ModelDrawable : Model
     {
+        protected UInt32[] indices;
         protected bool hasInitialized = false;
         protected int indicesBufferObject;
         protected List<int> VBOS = new List<int>();
@@ -20,7 +21,7 @@ namespace FredrickTechDemo.Models
 
 
         /*takes in directory for the shader and texture for this model*/
-        public ModelDrawable(String shaderFile, String textureFile, Vertex[] vertices, UInt32[] indices) : base(vertices, indices)
+        public ModelDrawable(String shaderFile, String textureFile, Vertex[] vertices, UInt32[] indices) : base(vertices)
         {
             this.indices = indices;
             texture = new Texture(textureFile, false);
@@ -88,7 +89,7 @@ namespace FredrickTechDemo.Models
         public virtual void draw()
         {
             bind();
-            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.LineLoop, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
 

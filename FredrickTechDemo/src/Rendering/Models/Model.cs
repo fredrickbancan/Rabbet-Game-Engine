@@ -1,40 +1,16 @@
 ﻿using FredrickTechDemo.FredsMath;
-using System;
 
 namespace FredrickTechDemo.Models
 {
-    /*Model base class. This class is intended to hold the vertex, color, uv etc data for a mesh to be
-      rendered.*/
+    /*Model base class. This class is intended to hold the vertex, color, uv etc data for a model to be
+      rendered. This has to be a class not a struct because we need to null check it*/
     public class Model
     {
-        protected Vertex[] vertices;
-        protected UInt32[] indices;
-
-        protected Model()
-        {
-
-        }
+        public Vertex[] vertices = null;
         public Model(Vertex[] vertices)
         {
             this.vertices = vertices;
         }
-        public Model(Vertex[] vertices, UInt32[] indices)
-        {
-            this.vertices = vertices;
-            this.indices = indices;
-        }
-
-        /*returns number of vertices in this model based on xyz coordinates*/
-        public int getVertexCount()
-        {
-            return vertices.Length;
-        }
-
-        public Vertex[] getVertexArray()
-        {
-            return vertices;
-        }
-
 
         /*sets all vertex colors to this color*/
         public Model setColor(ColourF color)

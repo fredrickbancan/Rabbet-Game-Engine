@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace FredrickTechDemo.SubRendering
+namespace FredrickTechDemo.SubRendering.Text
 {
     /*This class is responsable for reading the .fnt files for each font, and generating a dictionary of characters for the text renderers to access.*/
-    class FontBuilder
+    public class FontBuilder
     {
         private String debugDir;
         private static readonly char splitter = ' ';
@@ -26,11 +26,11 @@ namespace FredrickTechDemo.SubRendering
 
         public FontBuilder(String fontName)
         {
-            debugDir = ResourceHelper.getFontTextureFileDir(fontName + ".fnt");
+            debugDir = ResourceHelper.getFontFileDir(fontName + ".fnt");
 
             try
             {
-                reader = new StreamReader(ResourceHelper.getFontTextureFileDir(fontName + ".fnt"));
+                reader = new StreamReader(ResourceHelper.getFontFileDir(fontName + ".fnt"));
             }
             catch(Exception e)
             {

@@ -7,9 +7,11 @@ namespace FredrickTechDemo.Models
     public class ModelDrawableDynamic : ModelDrawable
     {
         private int maxVertexCount;
+        /*ModelDrawableDynamics must be initialized at construction because they can not have data submittied to them unless the VBO's are made*/
         public ModelDrawableDynamic(String shaderFile, String textureFile, UInt32[] indices, int maxVertexCount = 4000) : base( shaderFile, textureFile, null, indices)
         {
             this.maxVertexCount = maxVertexCount;
+            init();
         }
 
         /*Create a VAO with buffers accodmodating the size of the maxvertexcount in vertex sizes. Array is null pointerbecase we will dynamically add data.*/
@@ -34,7 +36,7 @@ namespace FredrickTechDemo.Models
         }
 
         /*A method which can be called frequently to change the vertex data in the vbo of the provided index without re building the whole model*/
-        public virtual void submitData(Vertex[] data, int index = 0)
+        public virtual void submitData(Vertex[] data, int vboIndex = 0)
         {
             if (data.Length > maxVertexCount)
             {
@@ -42,7 +44,7 @@ namespace FredrickTechDemo.Models
             }
             else
             {
-                this.bindVertexBuffer(index);
+                this.bindVertexBuffer(vboIndex);
                 GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, data.Length * Vertex.vertexByteSize, data);
             }
         }

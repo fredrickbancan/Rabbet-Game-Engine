@@ -110,5 +110,11 @@ namespace FredrickTechDemo.FredsMath
             return vec;
         }
 
+        public static void translateFloats(Vector2F translation, float srcX, float srcY, out float newX, out float newY)
+        {
+            newX = srcX + translation.x;
+            newY = srcY + translation.y;
+        }
+
     }
 }

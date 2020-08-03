@@ -10,7 +10,7 @@ namespace FredrickTechDemo
             return @"..\..\Res\Texture\" + fileName;
         }
 
-        public static String getFontTextureFileDir(String fileName)
+        public static String getFontFileDir(String fileName)
         {
             return @"..\..\Res\Font\" + fileName;
         }

@@ -10,26 +10,32 @@ namespace FredrickTechDemo.SubRendering
     {
         private readonly String textShaderDir = ResourceHelper.getShaderFileDir("GuiTextShader.shader");
         private readonly String fontTextureDir;
+        private readonly byte screenEdgePadding = 10;
         private FontBuilder font;
         private float defaultFontSize = 1.0F;
-        private bool screenTextModelExists = false;
         private ColourF defaultColour;
-        private ModelDrawable screenTextModel;
+        private ModelDrawableDynamic screenTextModel;
+        private int maxCharCount;
 
         private Dictionary<String, TextPanel2D> currentScreenTextPanels = new Dictionary<String, TextPanel2D>();
 
-        public TextRenderer2D(String font)
+        public TextRenderer2D(String font, int maxCharacterCount = 256)
         {
+            this.maxCharCount = maxCharacterCount;
             this.defaultColour = ColourF.white;
-            fontTextureDir = ResourceHelper.getFontTextureFileDir(font + ".png");
+            this.fontTextureDir = ResourceHelper.getFontFileDir(font + ".png");
             this.font = new FontBuilder(font);
+            this.screenTextModel = new ModelDrawableDynamic(textShaderDir, fontTextureDir, QuadBatcher.getIndicesForQuadCount(maxCharCount), maxCharCount * 4);
         }
 
-        public TextRenderer2D(String font, ColourF color)
+        public TextRenderer2D(String font, ColourF color, int maxCharacterCount = 256)
         {
+            this.maxCharCount = maxCharacterCount;
             this.defaultColour = color;
-            fontTextureDir = ResourceHelper.getFontTextureFileDir(font + ".png");
+            this.fontTextureDir = ResourceHelper.getFontFileDir(font + ".png");
             this.font = new FontBuilder(font);
+            this.screenTextModel = new ModelDrawableDynamic(textShaderDir, fontTextureDir, QuadBatcher.getIndicesForQuadCount(maxCharCount), maxCharCount * 4);
+
         }
 
         public void setColour(ColourF newColour)
@@ -62,18 +68,49 @@ namespace FredrickTechDemo.SubRendering
         }
         public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor, float fontSize)
         {
-            if(currentScreenTextPanels.ContainsKey(textPanelName))
-            {
-                if (!currentScreenTextPanels.Remove(textPanelName))
-                {
-                    Application.error("TextRenderer2D addNewTextPanel() could not remove old panel named " + textPanelName);
-                }
-            }
-            currentScreenTextPanels.Add(textPanelName, new TextPanel2D(textPanelLines, textPanelPosition,  textPanelColor, fontSize, font));
-            batchScreenTextForRendering();
+            currentScreenTextPanels.Remove(textPanelName);
+            currentScreenTextPanels.Add(textPanelName, new TextPanel2D(textPanelLines, textPanelPosition,  textPanelColor, fontSize, screenEdgePadding, font));
+            buildAndSubmitDataToDynamicModel();
         }
         #endregion
 
+        private void buildAndSubmitDataToDynamicModel()
+        {
+            Profiler.beginEndProfile("TextRenderer Submitting");
+            if (currentScreenTextPanels.Count > 0)
+            {
+                //combine all models
+                Model[] combinedModels = null;
+
+                int totalModelCount = 0;
+                foreach (KeyValuePair<String, TextPanel2D> pair in currentScreenTextPanels)
+                {
+                    totalModelCount += pair.Value.models.Length;
+                }
+
+                combinedModels = new Model[totalModelCount];
+
+                int modelIndex = 0;
+                foreach (KeyValuePair<String, TextPanel2D> pair in currentScreenTextPanels)
+                {
+                    for (int i = 0; i < pair.Value.models.Length; i++)
+                    {
+                        combinedModels[modelIndex + i] = pair.Value.models[i];
+                    }
+                    modelIndex += pair.Value.models.Length;
+                }
+
+                //get and combine all vertex arrays and submit them to model
+                Vertex[] combinedVertices;
+                QuadBatcher.combineData(combinedModels, out combinedVertices);
+                screenTextModel.submitData(combinedVertices);
+            }
+            else
+            {
+                screenTextModel.submitData(new Vertex[0]);
+            }
+            Profiler.beginEndProfile("TextRenderer Submitting");
+        }
 
         public void removeTextPanel(String textPanelName)
         {
@@ -83,74 +120,22 @@ namespace FredrickTechDemo.SubRendering
             }
             else
             {
-                batchScreenTextForRendering();
-            }
-        }
-
-        /*Builds or re builds all the text*/
-        private void buildAllText()
-        {
-            foreach(KeyValuePair<String, TextPanel2D> pair in currentScreenTextPanels)
-            {
-                pair.Value.build();
+                buildAndSubmitDataToDynamicModel();
             }
         }
 
         public void clearAllText()
         {
             currentScreenTextPanels.Clear();
-            delete();
+            buildAndSubmitDataToDynamicModel();
         }
 
-        public void batchScreenTextForRendering()
-        {
-            long startTime = TicksAndFps.getMiliseconds();
-            if(screenTextModelExists && screenTextModel != null)
-            {
-                delete();
-            }
-            if(currentScreenTextPanels.Count > 0)
-            {
-                buildAllText();
-            }
-            int itterator = 0; // total number of line models
-            foreach(KeyValuePair<String, TextPanel2D> entry in currentScreenTextPanels)
-            {
-                for(int j = 0; j < entry.Value.getTextPanelTextLines().Length; j++)
-                {
-                    itterator++;
-                }
-            }
-
-            //build the array of line models according to the acculated size
-            Model[] arrayOfLineModels = new Model[itterator];
-
-            //loop through each enrty, then loop through each entry's array of line models and add each one to the model array.
-            int index = 0;//an index must be used to stack the models in the array after each panel
-            foreach (KeyValuePair<String, TextPanel2D> entry in currentScreenTextPanels)
-            {
-                int previousModelCount = 0;
-                for (int j = 0; j < entry.Value.getTextPanelTextLines().Length; j++)
-                {
-                    arrayOfLineModels[index + j] = entry.Value.getTextPanelTextLines()[j].getLineModel();
-                    previousModelCount++;
-                }
-                index += previousModelCount;
-            }
-
-            if (arrayOfLineModels.Length > 0)
-            {
-                screenTextModel = QuadBatcher.batchQuadModels(arrayOfLineModels, textShaderDir, fontTextureDir);
-                screenTextModelExists = true;
-            }
-            Application.debug("TextRenderer2D took " + (TicksAndFps.getMiliseconds() - startTime) + " miliseconds to batch text.");
-        }
 
 
         /*If theres any text model available it will be rendered.*/
         public void renderAnyText()
         {
-            if(screenTextModelExists && screenTextModel != null)
+            if(screenTextModel != null)
             {
                 screenTextModel.draw();
             }
@@ -158,9 +143,17 @@ namespace FredrickTechDemo.SubRendering
 
         public void onWindowResize()
         {
-            if (currentScreenTextPanels.Count > 0 && screenTextModelExists && screenTextModel != null)
+            if (currentScreenTextPanels.Count > 0  && screenTextModel != null)
             {
-                batchScreenTextForRendering();
+                buildAll();
+                buildAndSubmitDataToDynamicModel();
+            }
+        }
+        private void buildAll()
+        {
+            foreach (KeyValuePair<String, TextPanel2D> pair in currentScreenTextPanels)
+            {
+                pair.Value.build();
             }
         }
 
@@ -168,7 +161,6 @@ namespace FredrickTechDemo.SubRendering
         {
             screenTextModel.delete();
             screenTextModel = null;
-            screenTextModelExists = false;
         }
     }
 }
