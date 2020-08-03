@@ -69,7 +69,7 @@ namespace FredrickTechDemo.SubRendering
         public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor, float fontSize)
         {
             currentScreenTextPanels.Remove(textPanelName);
-            currentScreenTextPanels.Add(textPanelName, new TextPanel2D(textPanelLines, textPanelPosition,  textPanelColor, fontSize * GameInstance.dpiScale, screenEdgePadding, font));
+            currentScreenTextPanels.Add(textPanelName, new TextPanel2D(textPanelLines, textPanelPosition,  textPanelColor, fontSize, screenEdgePadding, font));
             buildAndSubmitDataToDynamicModel();
         }
         #endregion

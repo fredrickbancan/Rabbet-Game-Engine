@@ -68,8 +68,10 @@
     <Compile Include="Src\FredsMath\Matrix3F.cs" />
     <Compile Include="Src\FredsMath\Matrix4F.cs" />
     <Compile Include="Src\FredsMath\Vector2F.cs" />
+    <Compile Include="Src\FredsMath\Vector3D.cs" />
     <Compile Include="Src\FredsMath\Vector3F.cs" />
     <Compile Include="Src\FredsMath\Vector4F.cs" />
+    <Compile Include="Src\Game\Collisions\AxisAlignedBoundingBox.cs" />
     <Compile Include="Src\Game\Debugging\DebugScreen.cs" />
     <Compile Include="Src\Game\GameInstance.cs" />
     <Compile Include="Src\Application.cs" />
@@ -80,10 +82,12 @@
     <Compile Include="Src\Game\Debugging\Profiler.cs" />
     <Compile Include="Src\Game\Debugging\ResourceHelper.cs" />
     <Compile Include="Src\Game\TicksAndFps.cs" />
+    <Compile Include="Src\Game\World\Planet.cs" />
     <Compile Include="Src\Rendering\Camera.cs" />
     <Compile Include="Src\Rendering\Models\Model.cs" />
     <Compile Include="Src\Rendering\Models\ModelDrawable.cs" />
     <Compile Include="Src\Rendering\Models\ModelDrawableDynamic.cs" />
+    <Compile Include="Src\Rendering\Models\Prefabs\PlanePrefab.cs" />
     <Compile Include="Src\Rendering\SubRendering\QuadBatcher.cs" />
     <Compile Include="Src\Rendering\SubRendering\Text\TextPanel2D.cs" />
     <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\Character.cs" />
@@ -125,7 +129,10 @@
     <Content Include="Res\Font\Consolas.png" />
     <Content Include="Res\Texture\aie.png" />
     <Content Include="Res\Texture\cactus_side.png" />
+    <Content Include="Res\Texture\cactus_top.png" />
     <Content Include="Res\Texture\glass.png" />
+    <Content Include="Res\Texture\sand.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

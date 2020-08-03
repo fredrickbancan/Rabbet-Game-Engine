@@ -22,7 +22,7 @@ namespace FredrickTechDemo
                         ("Velocity X: " + game.thePlayer.getVelocity().x.ToString("0.##")),
                         ("Velocity Y: " + game.thePlayer.getVelocity().y.ToString("0.##")),
                         ("Velocity Z: " + game.thePlayer.getVelocity().z.ToString("0.##")),
-                        ("Head Pitch: " + game.thePlayer.getheadPitch().ToString("0.##")),
+                        ("Head Pitch: " + game.thePlayer.getHeadPitch().ToString("0.##")),
                         ("Yaw: " + game.thePlayer.getYaw().ToString("0.##")),
                         ("Profiler ms averages: "),
                         ("Game loop: " + Profiler.getAveragesForProfile(Profiler.gameLoopName).ToString("0.##") + " ms."),

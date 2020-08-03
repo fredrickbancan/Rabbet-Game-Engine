@@ -14,8 +14,8 @@ namespace FredrickTechDemo
         private static int mouseCenterX;//the x position of the center of the game window
         private static int mouseCenterY;//the y position of the center of the game window
         private static float dpiY;
-        private static float dpiX;
         public EntityPlayer thePlayer;
+        public Planet currentPlanet;
 
         public GameInstance(int width, int height, String title) : base(width, height, GraphicsMode.Default, title)
         {
@@ -25,17 +25,22 @@ namespace FredrickTechDemo
             mouseCenterY = this.Y + this.Height / 2;
             Graphics g = Graphics.FromHwnd(this.WindowInfo.Handle);
             dpiY = g.DpiY;
-            dpiX = g.DpiX;
+            g.Dispose();
             
             GameSettings.loadSettings(this);
-            thePlayer = new EntityPlayer("Steve", new Vector3F(0.0F, 16.0F, 32F));
+            thePlayer = new EntityPlayer("Steve", new Vector3D(0.0, 2.0, 0));
+            thePlayer.setFlying(true);
+            currentPlanet = new Planet();
+            currentPlanet.spawnEntityInWorld(thePlayer);
         }
 
         /*Called before game runs*/
         public void init()
         {
-            TicksAndFps.init(30.0D, this);
+            TicksAndFps.init(30.0, this);
             Renderer.init(this);
+            Renderer.textRenderer2D.addNewTextPanel("label", "Fredricks OpenGL Math tech demo.", new Vector2F(0, 0.97F), ColourF.black);
+            Renderer.textRenderer2D.addNewTextPanel("help", new string[] { "Press 'W,A,S,D' to move. Move mouse to look around.", "Press 'F' to fly. Press 'I' to release mouse.", "           Press 'ESC' to close game."}, new Vector2F(0.35F, 0.0F), ColourF.black);
             Input.setGameInstance(this);
             Input.centerMouse();
             Input.toggleHideMouse();

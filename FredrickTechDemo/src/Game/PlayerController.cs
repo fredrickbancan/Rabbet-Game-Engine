@@ -17,7 +17,7 @@ namespace FredrickTechDemo
         /*Called every tick from Input.cs if a key is being pressed. for detecting player input*/
         public void updateInput(KeyboardState keyboard)
         {
-            if (!thePlayer.menuOpen)
+            if (!thePlayer.paused)
             {
                 if (keyboard.IsKeyDown(Key.W))
                 {
@@ -46,7 +46,7 @@ namespace FredrickTechDemo
             {
                 Input.centerMouse(); // center the mouse cursor when closing or opening menu
                 Input.toggleHideMouse();
-                thePlayer.toggleOpenMenu();
+                thePlayer.togglePause();
             }
 
             if (keyboard.IsKeyDown(Key.F))

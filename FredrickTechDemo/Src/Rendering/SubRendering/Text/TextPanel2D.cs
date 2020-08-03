@@ -33,7 +33,7 @@ namespace FredrickTechDemo.SubRendering.Text
         {
             this.panelPixelPos.x = panelPos.x * GameInstance.gameWindowWidth;
             this.panelPixelPos.y = panelPos.y * GameInstance.gameWindowHeight;
-            this.models = TextModelBuilder.convertStringArrayToModelArray(lines, font, panelColour, panelPixelPos, fontSize, screenEdgePadding);
+            this.models = TextModelBuilder.convertStringArrayToModelArray(lines, font, panelColour, panelPixelPos, fontSize * GameInstance.dpiScale, screenEdgePadding);
         }
     }
 }

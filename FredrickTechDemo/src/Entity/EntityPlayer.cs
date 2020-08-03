@@ -8,14 +8,14 @@ namespace FredrickTechDemo
     {
         private String playerName;
         private Camera camera;
-        public bool menuOpen = false;
+        public bool paused = false;
         public bool debugScreenOn = false;
         public EntityPlayer(String name) : base()
         {
             this.playerName = name;
             camera = new Camera(this);
         }
-        public EntityPlayer(String name, Vector3F spawnPosition) : base(spawnPosition)
+        public EntityPlayer(String name, Vector3D spawnPosition) : base(spawnPosition)
         {
             this.playerName = name;
             camera = new Camera(this);
@@ -23,13 +23,16 @@ namespace FredrickTechDemo
 
         public override void onTick()
         {
-            base.onTick();//do first
+            if (!paused)
+            {
+                base.onTick();//do first
+            }
         }
 
         /*Called before game renders, each frame.*/
         public void onCameraUpdate()
         {
-            if (!menuOpen)
+            if (!paused)
             {
                 this.camera.onUpdate();
             }
@@ -39,15 +42,15 @@ namespace FredrickTechDemo
         {
             return this.playerName;
         }
-        public void toggleOpenMenu()
+        public void togglePause()
         {
-            if(!menuOpen)
+            if(!paused)
             {
-                menuOpen = true;
+                paused = true;
             }
             else
             {
-                menuOpen = false;
+                paused = false;
             }
         }
         public Camera getCamera()

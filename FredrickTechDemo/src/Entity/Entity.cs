@@ -6,27 +6,27 @@ namespace FredrickTechDemo
 
     public class Entity
     {
-        protected Vector3F previousTickPos;
-        protected Vector3F pos;
-        protected Vector3F velocity;
-        public static readonly float defaultAirResistance = 0.9F;
-        public static readonly float defaultGravity = 0.05F;
-        protected float airResistance = defaultAirResistance;
-        protected float gravity = defaultGravity;
+        protected Vector3D previousTickPos;
+        protected Vector3D pos;
+        protected Vector3D velocity;
+        public static readonly double defaultAirResistance = 0.9F;
+        public static readonly double defaultGravity = 0.06F;
+        protected double airResistance = defaultAirResistance;
+        protected double gravity = defaultGravity;
         protected bool isFlying = false;
         protected bool isGrounded = false;
-        protected float pitch;
-        protected float yaw;
-        protected float roll;
+        protected double pitch;
+        protected double yaw;
+        protected double roll;
         protected bool hasDoneFirstUpdate = false;
         public Entity()
         {
-            this.pos = new Vector3F();
+            this.pos = new Vector3D();
             previousTickPos = pos;
             yaw = -90.0F;
         }
         
-        public Entity(Vector3F spawnPosition)
+        public Entity(Vector3D spawnPosition)
         {
             this.pos = spawnPosition;
             previousTickPos = pos;
@@ -56,35 +56,35 @@ namespace FredrickTechDemo
             }
         }
 
-        public void rotateYaw(float amount)
+        public void rotateYaw(double amount)
         {
             yaw += amount;
         }
 
-        public void rotatePitch(float amount)
+        public void rotatePitch(double amount)
         {
             pitch += amount;
         }
 
-        public void setYaw(float amount)
+        public void setYaw(double amount)
         {
             yaw = amount;
         }
 
-        public void setPitch(float amount)
+        public void setPitch(double amount)
         {
             pitch = amount;
         }
 
-        public float getYaw()
+        public double getYaw()
         {
             return yaw;
         }
-        public Vector3F getPosition()
+        public Vector3D getPosition()
         {
             return this.pos;
         }
-        public Vector3F getVelocity()
+        public Vector3D getVelocity()
         {
             return this.velocity;
         }
@@ -109,7 +109,12 @@ namespace FredrickTechDemo
                 isFlying = false;
             }
         }
-        public Vector3F getLerpPos()
+
+        public void setPosition(Vector3D newPos)
+        {
+            this.pos = newPos;
+        }
+        public Vector3D getLerpPos()
         {
             return previousTickPos + (pos - previousTickPos) * TicksAndFps.getPercentageToNextTick();
         }

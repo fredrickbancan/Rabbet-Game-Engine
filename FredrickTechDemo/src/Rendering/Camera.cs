@@ -7,16 +7,16 @@ namespace FredrickTechDemo
     /*This class represents a virtual point at which the world should be rendered from. It takes in a player and will be bound to the players head.*/
     public class Camera
     {
-        private float pitch, yaw;
+        private double pitch, yaw;
         private int mouseDeltaX;
         private int mouseDeltaY;
         private Matrix4F viewMatrix;
-        private Vector3F camUpVector;
-        private Vector3F up;
-        private Vector3F camFrontVector;
-        private Vector3F camRightVector;
-        private Vector3F camTargetVector;
-        private Vector3F camDirectionVector;
+        private Vector3D camUpVector;
+        private Vector3D up;
+        private Vector3D camFrontVector;
+        private Vector3D camRightVector;
+        private Vector3D camTargetVector;
+        private Vector3D camDirectionVector;
         private EntityPlayer parent;
 
         /*Class for a camera controlled by a mouse. The camera will be attached to a player entity. The 
@@ -26,12 +26,12 @@ namespace FredrickTechDemo
         {
             this.parent = parentEntity;
             yaw = -90.0F;
-            camTargetVector = new Vector3F(0.0F);
-            camDirectionVector = Vector3F.normalize(parentEntity.getPosition() - camTargetVector);
-            up = new Vector3F(0.0F, 1.0F, 0.0F);
-            camRightVector = Vector3F.normalize(Vector3F.cross(up, camDirectionVector));
-            camFrontVector = new Vector3F(0.0F, 0.0F, -1.0F);
-            camUpVector = Vector3F.cross(camDirectionVector, camRightVector);
+            camTargetVector = new Vector3D(0.0F);
+            camDirectionVector = Vector3D.normalize(parentEntity.getPosition() - camTargetVector);
+            up = new Vector3D(0.0F, 1.0F, 0.0F);
+            camRightVector = Vector3D.normalize(Vector3D.cross(up, camDirectionVector));
+            camFrontVector = new Vector3D(0.0F, 0.0F, -1.0F);
+            camUpVector = Vector3D.cross(camDirectionVector, camRightVector);
             viewMatrix = Matrix4F.lookAt(parentEntity.getPosition(), camTargetVector, up);
         }
 
@@ -56,14 +56,14 @@ namespace FredrickTechDemo
             }
 
             parent.setYaw(yaw);
-            parent.setheadPitch(pitch);
+            parent.setHeadPitch(pitch);
 
             camDirectionVector.x =(float) (Math.Cos(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
             camDirectionVector.y =(float) Math.Sin(MathUtil.radians(pitch));
             camDirectionVector.z =(float) (Math.Sin(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
-            camFrontVector = Vector3F.normalize(camDirectionVector);
-            camRightVector = Vector3F.normalize(Vector3F.cross(up, camDirectionVector));
-            camUpVector = Vector3F.cross(camDirectionVector, camRightVector);
+            camFrontVector = Vector3D.normalize(camDirectionVector);
+            camRightVector = Vector3D.normalize(Vector3D.cross(up, camDirectionVector));
+            camUpVector = Vector3D.cross(camDirectionVector, camRightVector);
             viewMatrix = Matrix4F.lookAt(parent.getLerpPos(), parent.getLerpPos() + camFrontVector, camUpVector);
         }
 

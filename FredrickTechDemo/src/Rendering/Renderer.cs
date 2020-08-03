@@ -13,34 +13,30 @@ namespace FredrickTechDemo
     {
         private static GameInstance gameInstance;
         private static TextRenderer2D privateTextRenderer2D;
+        private static ModelDrawable cactusModel;
+        private static ModelDrawable cactusTopFaceModel;
         private static Matrix4F projectionMatrix;
-        private static ModelDrawable quads;
         private static Vector3F fogColour = ColourF.grey.normalVector3F();
-        private static Vector3F skyColour = ColourF.steelBlue.normalVector3F();
+        private static Vector3F skyColour = ColourF.grey.normalVector3F();
         
         /*Called before any rendering is done*/
         public static void init(GameInstance game)
         {
             Renderer.gameInstance = game;
             gameInstance.MakeCurrent();
-            privateTextRenderer2D = new TextRenderer2D("Arial");
+            privateTextRenderer2D = new TextRenderer2D("Consolas", 512);
             setClearColor(skyColour);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
             GL.Viewport(gameInstance.ClientRectangle);
+            Model[] temp = new Model[5];
+            temp[0] = QuadPrefab.getNewModel().translateVertices(new Vector3F(0.0F, 0.5F, 0.4375F));
+            temp[1] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1,1,1), new Vector3F(0, 90, 0), new Vector3F(-0.4375F, 0.5F, 0));
+            temp[2] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(0, 180, 0), new Vector3F(0F, 0.5F, -0.4375F));
+            temp[3] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(0, -90, 0), new Vector3F(0.4375F, 0.5F, 0));
+            cactusModel = QuadBatcher.batchQuadModels(temp, QuadPrefab.getShaderDir(), QuadPrefab.getTextureDir());
+            cactusTopFaceModel = QuadBatcher.batchQuadModels(new Model[] { QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(90, 0, 0), new Vector3F(0, 1F, 0)) }, QuadPrefab.getShaderDir(), ResourceHelper.getTextureFileDir("cactus_top.png")); 
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
-            Model[] filler = new Model[32768];
-            for(int z = 0; z < 32; z++ )
-            {
-                for (int x = 0; x < 32; x++)
-                {
-                    for (int y = 0; y < 32; y++)
-                    {
-                        filler[z * 1024 + x * 32 + y] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1), new Vector3F(0,0,0), new Vector3F(x - 16, y, -z));
-                    }
-                }
-            }
-            quads = QuadBatcher.batchQuadModels(filler, QuadPrefab.getShaderDir(), QuadPrefab.getTextureDir());
         }
 
         /*Called each time the game window is resized*/
@@ -70,7 +66,9 @@ namespace FredrickTechDemo
         private static void updateCameraAndRenderWorld()
         {
             gameInstance.thePlayer.onCameraUpdate();
-            quads.draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, fogColour);
+            gameInstance.currentPlanet.getTerrainModel().draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, fogColour);
+            cactusModel.draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, fogColour);
+            cactusTopFaceModel.draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, fogColour);
         }
 
         private static void renderGui()

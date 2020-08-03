@@ -263,6 +263,10 @@ namespace FredrickTechDemo.FredsMath
             result.m11 = scaleVec.z;
             return result;
         }
+        public static Matrix4F lookAt(Vector3D eye, Vector3D target, Vector3D up)
+        {
+            return lookAt(new Vector3F((float)eye.x, (float)eye.y, (float)eye.z), new Vector3F((float)target.x, (float)target.y, (float)target.z), new Vector3F((float)up.x, (float)up.y, (float)up.z));
+        }
         public static Matrix4F lookAt(Vector3F eye, Vector3F target, Vector3F up)
          {
              Vector3F front = new Vector3F(Vector3F.normalize(eye - target));
