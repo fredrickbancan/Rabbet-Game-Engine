@@ -10,6 +10,7 @@ namespace FredrickTechDemo
         private Camera camera;
         public bool paused = false;
         public bool debugScreenOn = false;
+        public static readonly Vector3D eyeOffset = new Vector3D(0.0D, 1.62D, 0.0D);
         public EntityPlayer(String name) : base()
         {
             this.playerName = name;
@@ -29,6 +30,14 @@ namespace FredrickTechDemo
             }
         }
 
+        public Vector3D getEyePosition()
+        {
+            return pos + EntityPlayer.eyeOffset;
+        }
+        public Vector3D getLerpEyePos()
+        {
+            return this.getLerpPos() + EntityPlayer.eyeOffset;
+        }
         /*Called before game renders, each frame.*/
         public void onCameraUpdate()
         {

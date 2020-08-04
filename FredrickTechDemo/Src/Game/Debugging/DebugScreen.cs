@@ -29,7 +29,7 @@ namespace FredrickTechDemo
                         ("Render: " + Profiler.getAveragesForProfile(Profiler.renderingName).ToString("0.##") + " ms."),
                         ("Text Renderer 2D: " + Profiler.getAveragesForProfile(Profiler.textRenderer2DSubmittingName).ToString("0.##") + " ms."),
                         ("press F3 to hide debug screen."),
-                       }, new Vector2F(0.0F, 0.05F), ColourF.white); 
+                       }, new Vector2F(0.0F, 0.05F), ColourF.grey); 
             }
             else
             {

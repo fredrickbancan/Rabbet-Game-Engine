@@ -27,12 +27,12 @@ namespace FredrickTechDemo
             this.parent = parentEntity;
             yaw = -90.0F;
             camTargetVector = new Vector3D(0.0F);
-            camDirectionVector = Vector3D.normalize(parentEntity.getPosition() - camTargetVector);
+            camDirectionVector = Vector3D.normalize(parentEntity.getEyePosition() - camTargetVector);
             up = new Vector3D(0.0F, 1.0F, 0.0F);
             camRightVector = Vector3D.normalize(Vector3D.cross(up, camDirectionVector));
             camFrontVector = new Vector3D(0.0F, 0.0F, -1.0F);
             camUpVector = Vector3D.cross(camDirectionVector, camRightVector);
-            viewMatrix = Matrix4F.lookAt(parentEntity.getPosition(), camTargetVector, up);
+            viewMatrix = Matrix4F.lookAt(parentEntity.getEyePosition(), camTargetVector, up);
         }
 
         /*Called every FRAME (not tick), will update view matrix depending on interpolated player position.
@@ -64,7 +64,7 @@ namespace FredrickTechDemo
             camFrontVector = Vector3D.normalize(camDirectionVector);
             camRightVector = Vector3D.normalize(Vector3D.cross(up, camDirectionVector));
             camUpVector = Vector3D.cross(camDirectionVector, camRightVector);
-            viewMatrix = Matrix4F.lookAt(parent.getLerpPos(), parent.getLerpPos() + camFrontVector, camUpVector);
+            viewMatrix = Matrix4F.lookAt(parent.getLerpEyePos(), parent.getLerpEyePos() + camFrontVector, camUpVector);
         }
 
         /*updates mouse input for camera*/

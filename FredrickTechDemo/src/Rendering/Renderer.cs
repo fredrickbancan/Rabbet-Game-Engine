@@ -24,7 +24,7 @@ namespace FredrickTechDemo
         {
             Renderer.gameInstance = game;
             gameInstance.MakeCurrent();
-            privateTextRenderer2D = new TextRenderer2D("Consolas", 512);
+            privateTextRenderer2D = new TextRenderer2D("Arial", 512);
             setClearColor(skyColour);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);

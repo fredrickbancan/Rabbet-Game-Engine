@@ -42,7 +42,7 @@ namespace FredrickTechDemo
           usefull for input such as opening menus, attacking, jumping, things that only need one key press.*/
         public void updateSinglePressInput(KeyboardState keyboard)
         {
-            if(keyboard.IsKeyDown(Key.I))
+            if(keyboard.IsKeyDown(Key.E))
             {
                 Input.centerMouse(); // center the mouse cursor when closing or opening menu
                 Input.toggleHideMouse();
