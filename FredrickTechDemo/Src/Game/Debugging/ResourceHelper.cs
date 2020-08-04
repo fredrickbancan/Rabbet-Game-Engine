@@ -1,0 +1,23 @@
+﻿using System;
+
+namespace FredrickTechDemo
+{
+    /*A class containing functions to gelp find resources. This class will make it much easier to change resource directories.*/
+    public static class ResourceHelper
+    {
+        public static String getTextureFileDir(String fileName)
+        {
+            return @"..\..\Res\Texture\" + fileName;
+        }
+
+        public static String getFontFileDir(String fileName)
+        {
+            return @"..\..\Res\Font\" + fileName;
+        }
+
+        public static String getShaderFileDir(String shaderName)
+        {
+            return @"..\..\Res\Shaders\" + shaderName;
+        }
+    }
+}
