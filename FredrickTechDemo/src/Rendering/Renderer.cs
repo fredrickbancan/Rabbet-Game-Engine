@@ -16,8 +16,8 @@ namespace FredrickTechDemo
         private static ModelDrawable cactusModel;
         private static ModelDrawable cactusTopFaceModel;
         private static Matrix4F projectionMatrix;
-        private static Vector3F fogColour = ColourF.grey.normalVector3F();
-        private static Vector3F skyColour = ColourF.grey.normalVector3F();
+        private static Vector3F fogColour = ColourF.lightBlossom.normalVector3F();
+        private static Vector3F skyColour = ColourF.skyBlue.normalVector3F();
         
         /*Called before any rendering is done*/
         public static void init(GameInstance game)
@@ -30,10 +30,10 @@ namespace FredrickTechDemo
             GL.Enable(EnableCap.CullFace);
             GL.Viewport(gameInstance.ClientRectangle);
             Model[] temp = new Model[5];
-            temp[0] = QuadPrefab.getNewModel().translateVertices(new Vector3F(0.0F, 0.5F, 0.4375F));
-            temp[1] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1,1,1), new Vector3F(0, 90, 0), new Vector3F(-0.4375F, 0.5F, 0));
-            temp[2] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(0, 180, 0), new Vector3F(0F, 0.5F, -0.4375F));
-            temp[3] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(0, -90, 0), new Vector3F(0.4375F, 0.5F, 0));
+            temp[0] = QuadPrefab.getNewModel().translateVertices(new Vector3F(0.0F, 0.5F, 0.4375F)).setColor(new Vector4F(0.8F,0.8F,0.8F,1));
+            temp[1] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1,1,1), new Vector3F(0, 90, 0), new Vector3F(-0.4375F, 0.5F, 0)).setColor(new Vector4F(0.5F, 0.5F, 0.5F, 1)); 
+            temp[2] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(0, 180, 0), new Vector3F(0F, 0.5F, -0.4375F)).setColor(new Vector4F(0.8F, 0.8F, 0.8F, 1)); 
+            temp[3] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(0, -90, 0), new Vector3F(0.4375F, 0.5F, 0)).setColor(new Vector4F(0.5F, 0.5F, 0.5F, 1));
             cactusModel = QuadBatcher.batchQuadModels(temp, QuadPrefab.getShaderDir(), QuadPrefab.getTextureDir());
             cactusTopFaceModel = QuadBatcher.batchQuadModels(new Model[] { QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(90, 0, 0), new Vector3F(0, 1F, 0)) }, QuadPrefab.getShaderDir(), ResourceHelper.getTextureFileDir("cactus_top.png")); 
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
@@ -66,6 +66,7 @@ namespace FredrickTechDemo
         private static void updateCameraAndRenderWorld()
         {
             gameInstance.thePlayer.onCameraUpdate();
+            gameInstance.currentPlanet.getSkyboxModel().draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, skyColour, fogColour);
             gameInstance.currentPlanet.getTerrainModel().draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, fogColour);
             cactusModel.draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, fogColour);
             cactusTopFaceModel.draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, fogColour);

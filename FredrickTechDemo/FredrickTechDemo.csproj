@@ -106,6 +106,7 @@
     <None Include="packages.config" />
     <None Include="Res\Font\Arial.fnt" />
     <None Include="Res\Font\Consolas.fnt" />
+    <None Include="Res\Shaders\SkyboxShader3D.shader" />
     <None Include="Res\Shaders\ColourTextureShader3DFog.shader" />
     <None Include="Res\Shaders\GuiShader.shader" />
     <None Include="Res\Shaders\ColourTextureShader3D.shader" />
