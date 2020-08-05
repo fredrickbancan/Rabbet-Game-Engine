@@ -64,7 +64,8 @@ namespace FredrickTechDemo
             camFrontVector = Vector3D.normalize(camDirectionVector);
             camRightVector = Vector3D.normalize(Vector3D.cross(up, camDirectionVector));
             camUpVector = Vector3D.cross(camDirectionVector, camRightVector);
-            viewMatrix = Matrix4F.lookAt(parent.getLerpEyePos(), parent.getLerpEyePos() + camFrontVector, camUpVector);
+            Vector3D parentLerpPos = parent.getLerpEyePos();
+            viewMatrix = Matrix4F.lookAt(parentLerpPos, parentLerpPos + camFrontVector, camUpVector);
         }
 
         /*updates mouse input for camera*/

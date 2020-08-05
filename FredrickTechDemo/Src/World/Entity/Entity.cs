@@ -49,15 +49,18 @@ namespace FredrickTechDemo
             /*decelerate velocity by air resistance (not accurate to real life)*/
             velocity *= (1 - resistance);
 
-            if (pos.y <= 0.0000D) isGrounded = true; else isGrounded = false;//basic ground level collision detection
+            if (pos.y <= 0.0000D) isGrounded = true; else isGrounded = false;//basic ground level collision detection, in this case there is a ground plane collider at 0.0000D
 
             //decrease entity y velocity by gravity, will not spiral out of control due to terminal velocity.
             if (!isFlying && !isGrounded) velocity.y -= gravity;
 
-            if (isGrounded && velocity.y < 0) velocity.y = pos.y = 0; // stop entity from fallling through ground
+            //to prevent the entity from going through  the ground plane, if the next position increased by velocity will place the entity
+            //below the ground plane, it will be given a value of -pos.y, so when position is increased by velocity, they cancel out resulting
+            //in perfect 0, which stops the entity perfectly on the ground plane.
+            if (pos.y + velocity.y < 0.0000D) velocity.y = 0.0000D - pos.y;
 
             /*do this last*///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            pos += velocity; //There is a problem here, if velocity is large enough, the entitiy may go through the ground for one tick.
+            pos += velocity;
 
             if (!hasDoneFirstUpdate)
             {
