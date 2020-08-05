@@ -60,9 +60,9 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Src\Entity\Entity.cs" />
-    <Compile Include="Src\Entity\EntityLiving.cs" />
-    <Compile Include="Src\Entity\EntityPlayer.cs" />
+    <Compile Include="Src\World\Entity\Entity.cs" />
+    <Compile Include="Src\World\Entity\EntityLiving.cs" />
+    <Compile Include="Src\World\Entity\EntityPlayer.cs" />
     <Compile Include="Src\FredsMath\ColourF.cs" />
     <Compile Include="Src\FredsMath\MathUtil.cs" />
     <Compile Include="Src\FredsMath\Matrix3F.cs" />
@@ -71,7 +71,7 @@
     <Compile Include="Src\FredsMath\Vector3D.cs" />
     <Compile Include="Src\FredsMath\Vector3F.cs" />
     <Compile Include="Src\FredsMath\Vector4F.cs" />
-    <Compile Include="Src\Game\Collisions\AxisAlignedBoundingBox.cs" />
+    <Compile Include="Src\World\Collisions\AxisAlignedBoundingBox.cs" />
     <Compile Include="Src\Game\Debugging\DebugScreen.cs" />
     <Compile Include="Src\Game\GameInstance.cs" />
     <Compile Include="Src\Application.cs" />
@@ -82,7 +82,7 @@
     <Compile Include="Src\Game\Debugging\Profiler.cs" />
     <Compile Include="Src\Game\Debugging\ResourceHelper.cs" />
     <Compile Include="Src\Game\TicksAndFps.cs" />
-    <Compile Include="Src\Game\World\Planet.cs" />
+    <Compile Include="Src\World\Planet.cs" />
     <Compile Include="Src\Rendering\Camera.cs" />
     <Compile Include="Src\Rendering\Models\Model.cs" />
     <Compile Include="Src\Rendering\Models\ModelDrawable.cs" />
@@ -106,11 +106,9 @@
     <None Include="packages.config" />
     <None Include="Res\Font\Arial.fnt" />
     <None Include="Res\Font\Consolas.fnt" />
+    <None Include="Res\Shaders\ColourTextureShader3D.shader" />
     <None Include="Res\Shaders\SkyboxShader3D.shader" />
     <None Include="Res\Shaders\ColourTextureShader3DFog.shader" />
-    <None Include="Res\Shaders\GuiShader.shader" />
-    <None Include="Res\Shaders\ColourTextureShader3D.shader" />
-    <None Include="Res\Shaders\GuiTransparentShader.shader" />
     <None Include="Res\Shaders\GuiTextShader.shader" />
   </ItemGroup>
   <ItemGroup>

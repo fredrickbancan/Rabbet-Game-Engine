@@ -29,7 +29,6 @@ namespace FredrickTechDemo
             
             GameSettings.loadSettings(this);
             thePlayer = new EntityPlayer("Steve", new Vector3D(0.0, 0.0, 2.0));
-            thePlayer.setFlying(true);
             currentPlanet = new Planet();
             currentPlanet.spawnEntityInWorld(thePlayer);
         }
@@ -39,8 +38,9 @@ namespace FredrickTechDemo
         {
             TicksAndFps.init(30.0, this);
             Renderer.init(this);
+            Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", new Vector2F(0.92F, 0.0F), ColourF.darkRed);
             Renderer.textRenderer2D.addNewTextPanel("label", "Fredricks OpenGL Math tech demo.", new Vector2F(0, 0.97F), ColourF.black);
-            Renderer.textRenderer2D.addNewTextPanel("help", new string[] { "Press 'W,A,S,D' to move. Move mouse to look around.", "Press 'F' to fly. Press 'E' to release mouse.", "           Press 'ESC' to close game."}, new Vector2F(0.35F, 0.0F), ColourF.black);
+            Renderer.textRenderer2D.addNewTextPanel("help", new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'F' to toggle flying. Tap 'E' to release mouse.", "           Press 'ESC' to close game."}, new Vector2F(0.35F, 0.0F), ColourF.black);
             Input.setGameInstance(this);
             Input.centerMouse();
             Input.toggleHideMouse();
@@ -57,6 +57,7 @@ namespace FredrickTechDemo
             {
                 onTick();
             }
+            Input.updateInput();
         }
 
         /*overriding OpenTk render update function, called every frame.*/
@@ -80,7 +81,10 @@ namespace FredrickTechDemo
         private void onTick()
         {
             Profiler.beginEndProfile(Profiler.gameLoopName);
-            Input.updateInput();
+            if(thePlayer.getIsFlying())
+            Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: ON", new Vector2F(0.92F, 0.0F), ColourF.darkGreen);
+            else
+            Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", new Vector2F(0.92F, 0.0F), ColourF.darkRed);
             DebugScreen.displayOrClearDebugInfo(this);
             thePlayer.onTick();
             Profiler.beginEndProfile(Profiler.gameLoopName);

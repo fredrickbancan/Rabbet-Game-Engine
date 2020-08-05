@@ -24,22 +24,7 @@ namespace FredrickTechDemo
         /*returns true if two bounding boxes are touching in any way*/
         public static bool areBoxesTouching(AxisAlignedBoundingBox boxA, AxisAlignedBoundingBox boxB)
         {
-            if
-            (
-                boxA.maxBounds.x > boxB.minBounds.x &&
-                boxA.minBounds.x < boxB.maxBounds.x &&
-                boxA.maxBounds.y > boxB.minBounds.y &&
-                boxA.minBounds.y < boxB.maxBounds.y &&
-                boxA.maxBounds.z > boxB.minBounds.z &&
-                boxA.minBounds.z < boxB.maxBounds.z
-            )
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return false;
         }
     }
 }

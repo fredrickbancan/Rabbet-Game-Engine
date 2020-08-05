@@ -10,7 +10,7 @@ namespace FredrickTechDemo
         protected Vector3D upVector;
         protected Vector3D movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
         protected double headPitch; // pitch of the living entity head
-        public static readonly double defaultWalkSpeed = 0.02F;
+        public static readonly double defaultWalkSpeed = 0.09F;
         protected double walkSpeed = defaultWalkSpeed;
         public EntityLiving() : base()
         {
@@ -49,10 +49,9 @@ namespace FredrickTechDemo
         {
             double walkSpeedModified = walkSpeed;
 
-            if (isFlying)
-            {
-                walkSpeedModified *= 3;
-            }
+            if (!isGrounded) walkSpeedModified = 0.02D;
+
+            //modify walk speed here i.e slows, speed ups etc
 
             if(movementVector.Magnitude() > 0)
             {
@@ -60,10 +59,29 @@ namespace FredrickTechDemo
                 //change velocity based on movement
                 velocity += frontVector * movementVector.z * walkSpeedModified;//fowards and backwards movement
                 velocity += Vector3D.normalize(Vector3D.cross(frontVector, upVector)) * movementVector.x * walkSpeedModified;//strafing movement
+                if (movementVector.y > 0)// if player jumping or flying up
+                {
+                    if (isFlying)
+                    {
+                        velocity.y += walkSpeedModified;//fly up
+                    }
+                    else
+                    {
+                        velocity.y += 0.671D;//jump
+                    }
+                }
                 movementVector *= 0;//reset movement vector
             }
         }
 
+        public void jump()
+        {
+            if (isGrounded && velocity.y <= 0)
+            {
+                isGrounded = false;
+                movementVector.y = 1;
+            }
+        }
         public void walkFowards()
         {
             ++movementVector.z;
@@ -79,6 +97,11 @@ namespace FredrickTechDemo
         public void strafeLeft()
         {
             --movementVector.x;
+        }
+
+        public void flyUp()
+        {  
+            ++movementVector.y;
         }
         public void setHeadPitch(double pitch)
         {

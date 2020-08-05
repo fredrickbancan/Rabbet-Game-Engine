@@ -9,9 +9,10 @@ namespace FredrickTechDemo
         protected Vector3D previousTickPos;
         protected Vector3D pos;
         protected Vector3D velocity;
-        public static readonly double defaultAirResistance = 0.9F;
-        public static readonly double defaultGravity = 0.06F;
-        protected double airResistance = defaultAirResistance;
+        public static readonly double defaultAirResistance = 0.03572F;
+        public static readonly double defaultGroundResistance = 0.3572F;
+        public static readonly double defaultGravity = 0.03572F;
+        protected double resistance = defaultAirResistance;
         protected double gravity = defaultGravity;
         protected bool isFlying = false;
         protected bool isGrounded = false;
@@ -42,14 +43,22 @@ namespace FredrickTechDemo
             if (yaw < -360.0F) { yaw = 0.0F; }
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-            /*decelerate velocity by air resistance (not accurate to real life)*/
-            velocity *= airResistance;
-            //decrease entity y velocity by gravity, will not spiral out of control due to terminal velocity.
-            if(!isFlying && !isGrounded) velocity.y -= gravity;
+            //resist velocity differently depending on state
+            if (isGrounded) resistance = defaultGroundResistance; else resistance = defaultAirResistance;
 
+            /*decelerate velocity by air resistance (not accurate to real life)*/
+            velocity *= (1 - resistance);
+
+            if (pos.y <= 0.0000D) isGrounded = true; else isGrounded = false;//basic ground level collision detection
+
+            //decrease entity y velocity by gravity, will not spiral out of control due to terminal velocity.
+            if (!isFlying && !isGrounded) velocity.y -= gravity;
+
+            if (isGrounded && velocity.y < 0) velocity.y = pos.y = 0; // stop entity from fallling through ground
 
             /*do this last*///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            pos += velocity;
+            pos += velocity; //There is a problem here, if velocity is large enough, the entitiy may go through the ground for one tick.
+
             if (!hasDoneFirstUpdate)
             {
                 hasDoneFirstUpdate = true;
@@ -109,7 +118,10 @@ namespace FredrickTechDemo
                 isFlying = false;
             }
         }
-
+        public void addYVelocity(double d)
+        {
+            velocity.y += d;
+        }
         public void setPosition(Vector3D newPos)
         {
             this.pos = newPos;
