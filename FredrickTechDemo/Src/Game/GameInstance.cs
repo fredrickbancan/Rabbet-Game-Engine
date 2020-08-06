@@ -6,9 +6,13 @@ using System.Drawing;
 
 namespace FredrickTechDemo
 {
+    //enum for text alignment choices
+    public enum TextAlign { LEFT, CENTER, RIGHT };
+
     /*This class is the main game class. It contains all the execution code for rendering, logic loops and loading.*/
     public class GameInstance : GameWindow
     {
+
         private static int windowWidth;
         private static int windowHeight;
         private static int mouseCenterX;//the x position of the center of the game window
@@ -38,9 +42,9 @@ namespace FredrickTechDemo
         {
             TicksAndFps.init(30.0, this);
             Renderer.init(this);
-            Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", new Vector2F(0.92F, 0.0F), ColourF.darkRed);
+            Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", new Vector2F(), ColourF.darkRed, TextAlign.RIGHT);
             Renderer.textRenderer2D.addNewTextPanel("label", "Fredricks OpenGL Math tech demo.", new Vector2F(0, 0.97F), ColourF.black);
-            Renderer.textRenderer2D.addNewTextPanel("help", new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'F' to toggle flying. Tap 'E' to release mouse.", "           Press 'ESC' to close game."}, new Vector2F(0.35F, 0.0F), ColourF.black);
+            Renderer.textRenderer2D.addNewTextPanel("help", new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'F' to toggle flying. Tap 'E' to release mouse.", "Press 'ESC' to close game."}, new Vector2F(0.5F, 0.0F), ColourF.black, TextAlign.CENTER);
             Input.setGameInstance(this);
             Input.centerMouse();
             Input.toggleHideMouse();
@@ -82,9 +86,9 @@ namespace FredrickTechDemo
         {
             Profiler.beginEndProfile(Profiler.gameLoopName);
             if(thePlayer.getIsFlying())
-            Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: ON", new Vector2F(0.92F, 0.0F), ColourF.darkGreen);
+            Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: ON", new Vector2F(), ColourF.darkGreen, TextAlign.RIGHT);
             else
-            Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", new Vector2F(0.92F, 0.0F), ColourF.darkRed);
+            Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", new Vector2F(), ColourF.darkRed, TextAlign.RIGHT);
             DebugScreen.displayOrClearDebugInfo(this);
             thePlayer.onTick();
             Profiler.beginEndProfile(Profiler.gameLoopName);

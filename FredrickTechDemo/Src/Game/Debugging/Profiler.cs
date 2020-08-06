@@ -6,7 +6,7 @@ namespace FredrickTechDemo
     /*This class will be responsable for debugging, measuring and testing performance of the subsystems in this program.*/
     public static class Profiler
     {
-        public static String textRenderer2DSubmittingName = "TextRenderer2D Submitting";
+        public static String textRender2DBuildingName = "TextRenderer2D Building";
         public static String gameLoopName = "Game Loop";
         public static String renderingName = "Rendering";
         private static Dictionary<String, Profile> profiles = new Dictionary<String, Profile>();
@@ -78,7 +78,14 @@ namespace FredrickTechDemo
                 {
                     return (float)combinedTimePassed; 
                 }
-                return (float)combinedTimePassed / (float)totalUpdates;
+                float result =  (float)combinedTimePassed / (float)totalUpdates;
+
+                if(totalUpdates >= 100)//resetting after 100 updates to give a more accurate result
+                {
+                    totalUpdates = 0;
+                    combinedTimePassed = 0;
+                }
+                return result;
             }
             private void printInfo()
             {  

@@ -9,8 +9,9 @@ namespace FredrickTechDemo
         protected Vector3D frontVector;//vector pointing to the direction the entity is facing
         protected Vector3D upVector;
         protected Vector3D movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
+        protected bool isJumping = false;
         protected double headPitch; // pitch of the living entity head
-        public static readonly double defaultWalkSpeed = 0.072F;
+        public static readonly double defaultWalkSpeed = 0.3572F;
         protected double walkSpeed = defaultWalkSpeed;
         public EntityLiving() : base()
         {
@@ -47,30 +48,24 @@ namespace FredrickTechDemo
         }
         private void moveByMovementVector()
         {
+            //modify walk speed here i.e slows, speed ups etc
             double walkSpeedModified = walkSpeed;
 
-            if (!isGrounded && !isFlying) walkSpeedModified = 0.0045D;//reduce movespeed when jumping or mid air
+            if (!isGrounded) if (!isFlying) walkSpeedModified = 0.0072D; else walkSpeedModified = 0.02D;//reduce movespeed when jumping or mid air and reduce movespeed when flying as to not accellerate out of control
 
-            //modify walk speed here i.e slows, speed ups etc
 
-            if(movementVector.Magnitude() > 0)
+            //change velocity based on movement
+            //movement vector is a unit vector.
+            movementVector.Normalize();//normalize vector so player is same speed in any direction
+            velocity += frontVector * movementVector.z * walkSpeedModified;//fowards and backwards movement
+            velocity += Vector3D.normalize(Vector3D.cross(frontVector, upVector)) * movementVector.x * walkSpeedModified;//strafing movement
+
+            movementVector *= 0;//reset movement vector
+
+            if (isJumping)// if player jumping or flying up
             {
-                movementVector.Normalize();//movement vector is a unit vector.
-                //change velocity based on movement
-                velocity += frontVector * movementVector.z * walkSpeedModified;//fowards and backwards movement
-                velocity += Vector3D.normalize(Vector3D.cross(frontVector, upVector)) * movementVector.x * walkSpeedModified;//strafing movement
-                if (movementVector.y > 0)// if player jumping or flying up
-                {
-                    if (isFlying)
-                    {
-                        velocity.y += walkSpeedModified;//fly up
-                    }
-                    else
-                    {
-                        velocity.y += 0.671D;//jump
-                    }
-                }
-                movementVector *= 0;//reset movement vector
+                velocity.y += 0.32D;//jump //TODO make jumping create a vector that maintains movement velocity in the xz directions and reaches 1.25 y in hegiht
+                isJumping = false;
             }
         }
 
@@ -78,31 +73,27 @@ namespace FredrickTechDemo
         {
             if (isGrounded && velocity.y <= 0)
             {
-                isGrounded = false;
-                movementVector.y = 1;
+              
+                isJumping = true;
             }
         }
         public void walkFowards()
         {
-            ++movementVector.z;
+            movementVector.z++;
         }
         public void walkBackwards()
         {
-            --movementVector.z;
+            movementVector.z--;
         }
         public void strafeRight()
         {
-            ++movementVector.x;
+            movementVector.x++;
         }
         public void strafeLeft()
         {
-            --movementVector.x;
+            movementVector.x--;
         }
 
-        public void flyUp()
-        {  
-            ++movementVector.y;
-        }
         public void setHeadPitch(double pitch)
         {
             this.headPitch = pitch;

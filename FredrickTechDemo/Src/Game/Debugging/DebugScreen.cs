@@ -27,7 +27,7 @@ namespace FredrickTechDemo
                         ("Profiler ms averages: "),
                         ("Game loop: " + Profiler.getAveragesForProfile(Profiler.gameLoopName).ToString("0.##") + " ms."),
                         ("Render: " + Profiler.getAveragesForProfile(Profiler.renderingName).ToString("0.##") + " ms."),
-                        ("Text Renderer 2D: " + Profiler.getAveragesForProfile(Profiler.textRenderer2DSubmittingName).ToString("0.##") + " ms."),
+                        ("Text Renderer 2D: " + Profiler.getAveragesForProfile(Profiler.textRender2DBuildingName).ToString("0.##") + " ms."),
                         ("press F3 to hide debug screen."),
                        }, new Vector2F(0.0F, 0.05F), ColourF.grey); 
             }

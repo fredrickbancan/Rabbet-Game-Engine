@@ -106,6 +106,7 @@
     <None Include="packages.config" />
     <None Include="Res\Font\Arial.fnt" />
     <None Include="Res\Font\Consolas.fnt" />
+    <None Include="Res\Font\Trebuchet.fnt" />
     <None Include="Res\Shaders\ColourTextureShader3D.shader" />
     <None Include="Res\Shaders\SkyboxShader3D.shader" />
     <None Include="Res\Shaders\ColourTextureShader3DFog.shader" />
@@ -126,6 +127,7 @@
   <ItemGroup>
     <Content Include="Res\Font\Arial.png" />
     <Content Include="Res\Font\Consolas.png" />
+    <Content Include="Res\Font\Trebuchet.png" />
     <Content Include="Res\Texture\aie.png" />
     <Content Include="Res\Texture\cactus_side.png" />
     <Content Include="Res\Texture\cactus_top.png" />

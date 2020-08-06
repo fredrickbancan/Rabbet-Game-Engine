@@ -10,9 +10,9 @@ namespace FredrickTechDemo.SubRendering
     {
         private readonly String textShaderDir = ResourceHelper.getShaderFileDir("GuiTextShader.shader");
         private readonly String fontTextureDir;
-        private readonly byte screenEdgePadding = 10;
+        private readonly int screenEdgePadding = 10;
         private FontBuilder font;
-        private float defaultFontSize = 0.072F;
+        private float defaultFontSize = 0.02F;
         private ColourF defaultColour;
         private ModelDrawableDynamic screenTextModel;
         private int maxCharCount;
@@ -43,40 +43,67 @@ namespace FredrickTechDemo.SubRendering
             this.defaultColour = newColour;
         }
 
-
+        //lots of different addNewTextPanel() functions with different params for versatility
         #region addNewTextPanel
+        public void addNewTextPanel(String textPanelName, String textPanelLines, Vector2F textPanelPosition, TextAlign alignment)
+        {
+            addNewTextPanel(textPanelName, new String[] { textPanelLines }, textPanelPosition, defaultColour, defaultFontSize, alignment);
+        }
+        public void addNewTextPanel(String textPanelName, String textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor, TextAlign alignment)
+        {
+            addNewTextPanel(textPanelName, new String[] { textPanelLines }, textPanelPosition, textPanelColor, defaultFontSize, alignment);
+        }
+        public void addNewTextPanel(String textPanelName, String textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor, float fontSize, TextAlign alignment)
+        {
+            addNewTextPanel(textPanelName, new String[] { textPanelLines }, textPanelPosition, textPanelColor, fontSize, alignment);
+        }
+
+        public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition, TextAlign alignment)
+        {
+            addNewTextPanel(textPanelName, textPanelLines, textPanelPosition, defaultColour, defaultFontSize, alignment);
+        }
+        public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor, TextAlign alignment)
+        {
+            addNewTextPanel(textPanelName, textPanelLines, textPanelPosition, textPanelColor, defaultFontSize, alignment);
+        }
+
         public void addNewTextPanel(String textPanelName, String textPanelLines, Vector2F textPanelPosition)
         {
-            addNewTextPanel(textPanelName, new String[] { textPanelLines }, textPanelPosition, defaultColour, defaultFontSize);
+            addNewTextPanel(textPanelName, new String[] { textPanelLines }, textPanelPosition, defaultColour, defaultFontSize, TextAlign.LEFT);
         }
         public void addNewTextPanel(String textPanelName, String textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor)
         {
-            addNewTextPanel(textPanelName, new String[] { textPanelLines }, textPanelPosition, textPanelColor, defaultFontSize);
+            addNewTextPanel(textPanelName, new String[] { textPanelLines }, textPanelPosition, textPanelColor, defaultFontSize, TextAlign.LEFT);
         }
-        public void addNewTextPanel(String textPanelName, String textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor,float fontSize)
+        public void addNewTextPanel(String textPanelName, String textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor, float fontSize)
         {
-            addNewTextPanel(textPanelName, new String[] { textPanelLines }, textPanelPosition, textPanelColor, fontSize);
+            addNewTextPanel(textPanelName, new String[] { textPanelLines }, textPanelPosition, textPanelColor, fontSize, TextAlign.LEFT);
         }
 
         public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition)
         {
-            addNewTextPanel(textPanelName, textPanelLines, textPanelPosition, defaultColour, defaultFontSize);
+            addNewTextPanel(textPanelName, textPanelLines, textPanelPosition, defaultColour, defaultFontSize, TextAlign.LEFT);
         }
         public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor)
         {
-            addNewTextPanel(textPanelName, textPanelLines, textPanelPosition, textPanelColor, defaultFontSize);
+            addNewTextPanel(textPanelName, textPanelLines, textPanelPosition, textPanelColor, defaultFontSize, TextAlign.LEFT);
         }
         public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor, float fontSize)
         {
+            addNewTextPanel(textPanelName, textPanelLines, textPanelPosition, textPanelColor, fontSize, TextAlign.LEFT);
+        }
+        public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor, float fontSize, TextAlign alignment)
+        {
+            Profiler.beginEndProfile(Profiler.textRender2DBuildingName);
             currentScreenTextPanels.Remove(textPanelName);
-            currentScreenTextPanels.Add(textPanelName, new TextPanel2D(textPanelLines, textPanelPosition,  textPanelColor, fontSize, screenEdgePadding, font));
-            buildAndSubmitDataToDynamicModel();
+            currentScreenTextPanels.Add(textPanelName, new TextPanel2D(textPanelLines, textPanelPosition,  textPanelColor, fontSize, screenEdgePadding, font, alignment));
+            submitDataToDynamicModel();
+            Profiler.beginEndProfile(Profiler.textRender2DBuildingName);
         }
         #endregion
 
-        private void buildAndSubmitDataToDynamicModel()
+        private void submitDataToDynamicModel()
         {
-            Profiler.beginEndProfile(Profiler.textRenderer2DSubmittingName);
             Vertex[] fillerVertexArray = new Vertex[maxCharCount * 4];//creating array big enough to fill max char count
             if (currentScreenTextPanels.Count > 0)
             {
@@ -121,21 +148,20 @@ namespace FredrickTechDemo.SubRendering
             {
                 screenTextModel.submitData(fillerVertexArray);//just fill buffer with empties to clear screen of text
             }
-            Profiler.beginEndProfile(Profiler.textRenderer2DSubmittingName);
         }
 
         public void removeTextPanel(String textPanelName)
         {
             if (currentScreenTextPanels.Remove(textPanelName))
             {
-                buildAndSubmitDataToDynamicModel();
+                submitDataToDynamicModel();
             }
         }
 
         public void clearAllText()
         {
             currentScreenTextPanels.Clear();
-            buildAndSubmitDataToDynamicModel();
+            submitDataToDynamicModel();
         }
 
 
@@ -154,7 +180,7 @@ namespace FredrickTechDemo.SubRendering
             if (currentScreenTextPanels.Count > 0  && screenTextModel != null)
             {
                 buildAll();
-                buildAndSubmitDataToDynamicModel();
+                submitDataToDynamicModel();
             }
         }
         private void buildAll()

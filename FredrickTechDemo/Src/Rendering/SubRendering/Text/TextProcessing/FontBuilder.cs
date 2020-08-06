@@ -15,6 +15,7 @@ namespace FredrickTechDemo.SubRendering.Text
         private byte paddingLeft;
         private byte paddingBottom;
         private byte paddingRight;
+        private int size;
         private int scaleW;
         private int scaleH;
         private int lineHeightPixels;
@@ -37,13 +38,13 @@ namespace FredrickTechDemo.SubRendering.Text
                 Application.error("FontBuilder could not open the provided directory file!\nException message: " + e.Message + "\nDirectory: " + debugDir);
             }
 
-            loadPaddingData();
+            loadPaddingAndSize();
             loadLineAndImageSize();
             loadCharacterData();
             reader.Close();
         }
 
-        private void loadPaddingData()
+        private void loadPaddingAndSize()
         {
             readNextLine();
             byte[] paddingData = getValuesFromLineData("padding");
@@ -51,6 +52,7 @@ namespace FredrickTechDemo.SubRendering.Text
             paddingLeft = paddingData[1];
             paddingBottom = paddingData[2];
             paddingRight = paddingData[3];
+            size = getValueFromLineData("size");
         }
         
         private void loadLineAndImageSize()
@@ -115,7 +117,7 @@ namespace FredrickTechDemo.SubRendering.Text
                 Application.error("FontFile error reading line in readNextLine()!\nException message: " + e.Message);
             }
 
-            if(line == null || line.Contains("kernings"))
+            if(line == null || line.Contains("kerning"))
             {
                 return false;
             }
@@ -198,6 +200,10 @@ namespace FredrickTechDemo.SubRendering.Text
             return spaceWidth;
         }
 
+        public float getTextSizePixels()
+        {
+            return size;
+        }
         public Character getCharacter(byte asciiId)
         {
             Character character;

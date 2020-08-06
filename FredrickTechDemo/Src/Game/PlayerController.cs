@@ -35,10 +35,6 @@ namespace FredrickTechDemo
                 {
                     thePlayer.strafeRight();
                 }
-                if(thePlayer.getIsFlying() && keyboard.IsKeyDown(Key.Space))
-                {
-                    thePlayer.flyUp();
-                }
             }
         }
 
