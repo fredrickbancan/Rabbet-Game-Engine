@@ -60,8 +60,11 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Src\Rendering\Models\EntityModels\EntityCactusModel.cs" />
     <Compile Include="Src\World\Entity\Entity.cs" />
+    <Compile Include="Src\World\Entity\EntityCactus.cs" />
     <Compile Include="Src\World\Entity\EntityLiving.cs" />
+    <Compile Include="Src\World\Entity\EntityModel.cs" />
     <Compile Include="Src\World\Entity\EntityPlayer.cs" />
     <Compile Include="Src\FredsMath\ColourF.cs" />
     <Compile Include="Src\FredsMath\MathUtil.cs" />
@@ -129,8 +132,7 @@
     <Content Include="Res\Font\Consolas.png" />
     <Content Include="Res\Font\Trebuchet.png" />
     <Content Include="Res\Texture\aie.png" />
-    <Content Include="Res\Texture\cactus_side.png" />
-    <Content Include="Res\Texture\cactus_top.png" />
+    <Content Include="Res\Texture\EntityCactus.png" />
     <Content Include="Res\Texture\glass.png" />
     <Content Include="Res\Texture\sand.png" />
   </ItemGroup>

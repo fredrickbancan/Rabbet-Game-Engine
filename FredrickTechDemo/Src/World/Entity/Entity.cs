@@ -1,4 +1,6 @@
-﻿using FredrickTechDemo.FredsMath;
+﻿using FredrickTechDemo.Entities;
+using FredrickTechDemo.FredsMath;
+
 namespace FredrickTechDemo
 {
     /*Base class for every entity in the game, Anything with movement, vectors,
@@ -9,9 +11,11 @@ namespace FredrickTechDemo
         protected Vector3D previousTickPos;
         protected Vector3D pos;
         protected Vector3D velocity;
+        protected EntityModel entityModel;
         public static readonly double defaultAirResistance = 0.03572F;
         public static readonly double defaultGroundResistance = 0.72F;
         public static readonly double defaultGravity = 0.03572F;
+        protected bool hasModel = false;
         protected double resistance = defaultAirResistance;
         protected double gravity = defaultGravity;
         protected bool isFlying = false;
@@ -60,16 +64,25 @@ namespace FredrickTechDemo
             //below the ground plane, it will be given a value of 0.0000D -pos.y, so when position is increased by velocity, they cancel out resulting
             //in perfect 0, which stops the entity perfectly on the ground plane.
             if (pos.y + velocity.y < 0.0000D) velocity.y = 0.0000D - pos.y;
-
             /*do this last*///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             pos += velocity;
-
+            if (hasModel) entityModel.updateModel();
             if (!hasDoneFirstUpdate)
             {
                 hasDoneFirstUpdate = true;
             }
         }
+        public bool getHasModel()
+        {
+            return hasModel;
+        }
 
+        public EntityModel getEntityModel()
+        {
+            return this.entityModel;
+        }
+
+        
         public void rotateYaw(double amount)
         {
             yaw += amount;
@@ -90,9 +103,17 @@ namespace FredrickTechDemo
             pitch = amount;
         }
 
+        public double getPitch()
+        {
+            return pitch;
+        }
         public double getYaw()
         {
             return yaw;
+        }
+        public double getRoll()
+        {
+            return roll;
         }
         public Vector3D getPosition()
         {

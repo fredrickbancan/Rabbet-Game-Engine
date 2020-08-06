@@ -152,5 +152,11 @@ namespace FredrickTechDemo.FredsMath
         {
             return vecA.x * vecB.x + vecA.y * vecB.y + vecA.z * vecB.z;
         }
+
+        /*Converts a Vecotr3D to a Vector3F*/
+        public static Vector3F convert(Vector3D vec)
+        {
+            return new Vector3F((float)vec.x, (float)vec.y, (float)vec.z);
+        }
     }
 }

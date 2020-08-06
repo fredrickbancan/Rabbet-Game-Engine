@@ -9,14 +9,47 @@ namespace FredrickTechDemo
     public class Planet
     {
         private ModelDrawable tempWorldModel;
-        private ModelDrawable tempSkyboxModel;
+        private ModelDrawable skyboxModel;
+        private Vector3F skyColor;
+        private Vector3F fogColor;
 
         private List<Entity> entities;
         public Planet()
         {
+            fogColor = ColourF.lightBlossom.normalVector3F();
+            skyColor = ColourF.skyBlue.normalVector3F();
             entities = new List<Entity>();
             buildSkyBox();
             generateWorld();
+        }
+
+        public void setSkyColor(Vector3F skyColor)
+        {
+            this.skyColor = skyColor;
+        }
+        public void setFogColor(Vector3F skyColor)
+        {
+            this.fogColor = skyColor;
+        }
+
+        public Vector3F getSkyColor()
+        {
+            return skyColor;
+        }public Vector3F getFogColor()
+        {
+            return fogColor;
+        }
+
+        /*Loop through each entity and render them with a seperate draw call (INEFFICIENT)*/
+        public void drawEntities(Matrix4F viewMatrix, Matrix4F projectionMatrix)
+        {
+            foreach(Entity ent in entities)
+            {
+                if(ent.getHasModel())
+                {
+                    ent.getEntityModel().draw(viewMatrix, projectionMatrix, fogColor);
+                }
+            }
         }
         private void buildSkyBox()
         {
@@ -27,7 +60,7 @@ namespace FredrickTechDemo
             temp[3] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(0, 0, 0), new Vector3F(0, 0, -0.5F));//negZ
             temp[4] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(-90, 0, 0), new Vector3F(0, 0.5F, 0));//top
             temp[5] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(90, 0, 0), new Vector3F(0, -0.5F, 0));//bottom
-            tempSkyboxModel = QuadBatcher.batchQuadModels(temp, ResourceHelper.getShaderFileDir("SkyboxShader3D.shader"), QuadPrefab.getTextureDir());
+            skyboxModel = QuadBatcher.batchQuadModels(temp, ResourceHelper.getShaderFileDir("SkyboxShader3D.shader"), QuadPrefab.getTextureDir());
         }
 
         private void generateWorld()
@@ -42,12 +75,26 @@ namespace FredrickTechDemo
             }
             tempWorldModel = QuadBatcher.batchQuadModels(unBatchedQuads, PlanePrefab.getShaderDir(), PlanePrefab.getTextureDir());
         }
-
+        
+        public void onTick()
+        {
+            tickEntities();
+        }
+        private void tickEntities()
+        {
+            foreach(Entity ent in entities)
+            {
+                if (ent != null)
+                {
+                    ent.onTick();
+                }
+            }
+        }
         public ModelDrawable getSkyboxModel()
         {
-            return tempSkyboxModel;
+            return skyboxModel;
         }
-        public ModelDrawable getTerrainModel()
+        public ModelDrawable getTerrainModel()//temporary
         {
             return tempWorldModel;
         }

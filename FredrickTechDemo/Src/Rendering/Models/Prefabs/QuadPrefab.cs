@@ -41,7 +41,7 @@ namespace FredrickTechDemo.Models
 
         public static String getTextureDir()
         {
-            return ResourceHelper.getTextureFileDir("cactus_side.png");
+            return ResourceHelper.getTextureFileDir("aie.png");
         }
     }
 }

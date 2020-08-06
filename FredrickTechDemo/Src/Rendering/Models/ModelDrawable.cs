@@ -16,8 +16,6 @@ namespace FredrickTechDemo.Models
         protected int VAO;
         protected Texture texture;
         protected Shader shader;
-        protected Matrix4F modelMatrix = new Matrix4F(1.0F);
-        protected Matrix4F prevModelMatrix = new Matrix4F(1.0F);
 
 
         /*takes in directory for the shader and texture for this model*/
@@ -32,6 +30,7 @@ namespace FredrickTechDemo.Models
         {
             shader.setUniformVec3F(name, vec);
         }
+
         /*called when model is first bound. can be used for more*/
         protected virtual void init()
         {
@@ -71,7 +70,7 @@ namespace FredrickTechDemo.Models
             bind();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
-            shader.setUniformMat4F("modelMatrix", prevModelMatrix + (modelMatrix - prevModelMatrix) * TicksAndFps.getPercentageToNextTick());//interpolating model matrix between ticks
+            shader.setUniformMat4F("modelMatrix", new Matrix4F(1.0F));
             shader.setUniformVec3F("skyTop", skyTopColor);
             shader.setUniformVec3F("skyHorizon", skyHorizonColor);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
@@ -82,17 +81,18 @@ namespace FredrickTechDemo.Models
             bind();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
-            shader.setUniformMat4F("modelMatrix", prevModelMatrix + (modelMatrix - prevModelMatrix) * TicksAndFps.getPercentageToNextTick());//interpolating model matrix between ticks
+            shader.setUniformMat4F("modelMatrix", new Matrix4F(1.0F));
             shader.setUniformVec3F("fogColour", fogColour);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
-        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix)
+        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Matrix4F modelMatrix, Vector3F fogColor)
         {
             bind();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
-            shader.setUniformMat4F("modelMatrix", prevModelMatrix + (modelMatrix - prevModelMatrix) * TicksAndFps.getPercentageToNextTick());//interpolating model matrix between ticks
+            shader.setUniformMat4F("modelMatrix", modelMatrix);
+            shader.setUniformVec3F("fogColour", fogColor);
 
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();

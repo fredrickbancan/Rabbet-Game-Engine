@@ -35,6 +35,7 @@ namespace FredrickTechDemo
             thePlayer = new EntityPlayer("Steve", new Vector3D(0.0, 0.0, 2.0));
             currentPlanet = new Planet();
             currentPlanet.spawnEntityInWorld(thePlayer);
+            currentPlanet.spawnEntityInWorld(new EntityCactus());
         }
 
         /*Called before game runs*/
@@ -48,6 +49,7 @@ namespace FredrickTechDemo
             Input.setGameInstance(this);
             Input.centerMouse();
             Input.toggleHideMouse();
+            
         }
 
         /*overriding OpenTk game update function, called every frame.*/
@@ -90,7 +92,7 @@ namespace FredrickTechDemo
             else
             Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", new Vector2F(), ColourF.darkRed, TextAlign.RIGHT);
             DebugScreen.displayOrClearDebugInfo(this);
-            thePlayer.onTick();
+            currentPlanet.onTick();
             Profiler.beginEndProfile(Profiler.gameLoopName);
         }
 
