@@ -1,5 +1,4 @@
-﻿using FredrickTechDemo.Entities;
-using FredrickTechDemo.FredsMath;
+﻿using FredrickTechDemo.FredsMath;
 using FredrickTechDemo.Models;
 
 namespace FredrickTechDemo
@@ -11,8 +10,7 @@ namespace FredrickTechDemo
             this.entityModel = new EntityModel(this);
             this.entityModel.initModel(EntityCactusModel.getNewModelDrawable());
             this.hasModel = true;
-
-            this.walkSpeed = 0.005D;
+            this.walkSpeed = 0.015D;
         }
         public EntityCactus(Vector3D pos) : base(pos)
         {
@@ -25,8 +23,9 @@ namespace FredrickTechDemo
         public override void onTick()
         {
             base.onTick();//do first
+            rotatePitch(-1.0F);
             walkFowards();
-            rotateYaw(1.5F);
+           
             jump();
         }
     }

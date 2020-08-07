@@ -87,16 +87,26 @@ namespace FredrickTechDemo
         private void onTick()
         {
             Profiler.beginEndProfile(Profiler.gameLoopName);
-            if(thePlayer.getIsFlying())
-            Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: ON", new Vector2F(), ColourF.darkGreen, TextAlign.RIGHT);
-            else
-            Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", new Vector2F(), ColourF.darkRed, TextAlign.RIGHT);
-            DebugScreen.displayOrClearDebugInfo(this);
-            currentPlanet.onTick();
+            updateGUI();
+            if (!thePlayer.paused)
+            {
+                currentPlanet.onTick();
+            }
             Profiler.beginEndProfile(Profiler.gameLoopName);
         }
 
-
+        private void updateGUI()
+        {
+            if (thePlayer.getIsFlying())
+            {
+                Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: ON", new Vector2F(), ColourF.darkGreen, TextAlign.RIGHT);
+            }
+            else
+            {
+                Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", new Vector2F(), ColourF.darkRed, TextAlign.RIGHT);
+            }
+            DebugScreen.displayOrClearDebugInfo(this);
+        }
         public static int gameWindowWidth { get => windowWidth; }
         public static int gameWindowHeight { get => windowHeight; }
         public static int windowCenterX { get => mouseCenterX; }

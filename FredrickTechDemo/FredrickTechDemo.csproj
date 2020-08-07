@@ -61,10 +61,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Src\Rendering\Models\EntityModels\EntityCactusModel.cs" />
+    <Compile Include="Src\Rendering\Models\OBJProcessing\OBJLoader.cs" />
     <Compile Include="Src\World\Entity\Entity.cs" />
     <Compile Include="Src\World\Entity\EntityCactus.cs" />
     <Compile Include="Src\World\Entity\EntityLiving.cs" />
-    <Compile Include="Src\World\Entity\EntityModel.cs" />
+    <Compile Include="Src\Rendering\Models\EntityModel.cs" />
     <Compile Include="Src\World\Entity\EntityPlayer.cs" />
     <Compile Include="Src\FredsMath\ColourF.cs" />
     <Compile Include="Src\FredsMath\MathUtil.cs" />
@@ -111,6 +112,7 @@
     <None Include="Res\Font\Consolas.fnt" />
     <None Include="Res\Font\Trebuchet.fnt" />
     <None Include="Res\Shaders\ColourTextureShader3D.shader" />
+    <None Include="Res\Shaders\PS1ColourTextureShader3DFog.shader" />
     <None Include="Res\Shaders\SkyboxShader3D.shader" />
     <None Include="Res\Shaders\ColourTextureShader3DFog.shader" />
     <None Include="Res\Shaders\GuiTextShader.shader" />
@@ -136,6 +138,8 @@
     <Content Include="Res\Texture\glass.png" />
     <Content Include="Res\Texture\sand.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Res\OBJ\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

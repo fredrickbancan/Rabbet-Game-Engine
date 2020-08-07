@@ -1,5 +1,5 @@
-﻿using FredrickTechDemo.Entities;
-using FredrickTechDemo.FredsMath;
+﻿using FredrickTechDemo.FredsMath;
+using FredrickTechDemo.Models;
 
 namespace FredrickTechDemo
 {
@@ -8,6 +8,7 @@ namespace FredrickTechDemo
 
     public class Entity
     {
+        private double groundPlaneHeight = 0.0000D;
         protected Vector3D previousTickPos;
         protected Vector3D pos;
         protected Vector3D velocity;
@@ -20,22 +21,22 @@ namespace FredrickTechDemo
         protected double gravity = defaultGravity;
         protected bool isFlying = false;
         protected bool isGrounded = false;
+        protected double roll;
         protected double pitch;
         protected double yaw;
-        protected double roll;
         protected bool hasDoneFirstUpdate = false;
         public Entity()
         {
             this.pos = new Vector3D();
             previousTickPos = pos;
-            yaw = -90.0F;
+            pitch = -90.0F;
         }
         
         public Entity(Vector3D spawnPosition)
         {
             this.pos = spawnPosition;
             previousTickPos = pos;
-            yaw = -90.0F;
+            pitch = -90.0F;
         }
 
         /*Called every tick*/
@@ -43,8 +44,8 @@ namespace FredrickTechDemo
         {
             /*do this first.*///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             previousTickPos = pos;
-            if (yaw > 360.0F) {  yaw = 0.0F; }
-            if (yaw < -360.0F) { yaw = 0.0F; }
+            if (pitch > 360.0F) {  pitch = 0.0F; }
+            if (pitch < -360.0F) { pitch = 0.0F; }
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             //resist velocity differently depending on state
@@ -55,7 +56,7 @@ namespace FredrickTechDemo
             velocity.z *= (1 - resistance);
             velocity.y *= (1 - defaultAirResistance);
 
-            if (pos.y <= 0.0000D) isGrounded = true; else isGrounded = false;//basic ground level collision detection, in this case there is a ground plane collider at 0.0000D
+            if (pos.y <= groundPlaneHeight) isGrounded = true; else isGrounded = false;//basic ground level collision detection, in this case there is a ground plane collider at 0.0000D
 
             //decrease entity y velocity by gravity, will not spiral out of control due to terminal velocity.
             if (!isFlying && !isGrounded) velocity.y -= gravity;
@@ -63,14 +64,20 @@ namespace FredrickTechDemo
             //to prevent the entity from going through  the ground plane, if the next position increased by velocity will place the entity
             //below the ground plane, it will be given a value of 0.0000D -pos.y, so when position is increased by velocity, they cancel out resulting
             //in perfect 0, which stops the entity perfectly on the ground plane.
-            if (pos.y + velocity.y < 0.0000D) velocity.y = 0.0000D - pos.y;
-            /*do this last*///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            pos += velocity;
-            if (hasModel) entityModel.updateModel();
+            if (pos.y + velocity.y < groundPlaneHeight) velocity.y = groundPlaneHeight - pos.y;
+
+            if (hasModel)
+            {
+                entityModel.updateModel();
+            }
+
             if (!hasDoneFirstUpdate)
             {
                 hasDoneFirstUpdate = true;
             }
+
+            /*do this last*///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            pos += velocity;
         }
         public bool getHasModel()
         {
@@ -82,15 +89,18 @@ namespace FredrickTechDemo
             return this.entityModel;
         }
 
-        
         public void rotateYaw(double amount)
         {
             yaw += amount;
         }
-
         public void rotatePitch(double amount)
         {
             pitch += amount;
+        }
+
+        public void rotateRoll(double amount)
+        {
+            roll += amount;
         }
 
         public void setYaw(double amount)
@@ -101,6 +111,10 @@ namespace FredrickTechDemo
         public void setPitch(double amount)
         {
             pitch = amount;
+        }
+        public void setRoll(double amount)
+        {
+            roll = amount;
         }
 
         public double getPitch()

@@ -10,7 +10,7 @@ namespace FredrickTechDemo
         protected Vector3D upVector;
         protected Vector3D movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
         protected bool isJumping = false;
-        protected double headPitch; // pitch of the living entity head
+        protected double headRoll; // roll of the living entity head
         public static readonly double defaultWalkSpeed = 0.3572F;
         protected double walkSpeed = defaultWalkSpeed;
         public EntityLiving() : base()
@@ -31,21 +31,12 @@ namespace FredrickTechDemo
         {
             base.onTick();//do first
 
-            /*correcting front vector based on new pitch and yaw*/
-            frontVector.x = (double) (Math.Cos(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(headPitch)));
-            if (isFlying)
-            {
-                frontVector.y = (double)Math.Sin(MathUtil.radians(headPitch));
-            }
-            else
-            {//if the living entity isnt flying, it shouldnt be able to move up or down willingly
-                frontVector.y = 0;
-            }
-            frontVector.z = (double) (Math.Sin(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(headPitch)));
-            frontVector.Normalize();
+            alignVectors();
 
-            this.moveByMovementVector();
+            moveByMovementVector();
         }
+
+        /*Changes velocity based on state and movement vector, movement vector is changed by movement functions such as walkFowards()*/
         private void moveByMovementVector()
         {
             //modify walk speed here i.e slows, speed ups etc
@@ -67,6 +58,23 @@ namespace FredrickTechDemo
                 velocity.y += 0.32D;//jump //TODO make jumping create a vector that maintains movement velocity in the xz directions and reaches 1.25 y in hegiht
                 isJumping = false;
             }
+        }
+
+        /*When called, aligns vectors according to the entities state and rotations.*/
+        private void alignVectors()
+        {
+            /*correcting front vector based on new pitch and yaw*/
+            frontVector.x = (double)(Math.Cos(MathUtil.radians(pitch)) * Math.Cos(MathUtil.radians(headRoll)));
+            if (isFlying)
+            {
+                frontVector.y = (double)Math.Sin(MathUtil.radians(headRoll));
+            }
+            else
+            {//if the living entity isnt flying, it shouldnt be able to move up or down willingly
+                frontVector.y = 0;
+            }
+            frontVector.z = (double)(Math.Sin(MathUtil.radians(pitch)) * Math.Cos(MathUtil.radians(headRoll)));
+            frontVector.Normalize();
         }
 
         public void jump()
@@ -94,13 +102,13 @@ namespace FredrickTechDemo
             movementVector.x--;
         }
 
-        public void setHeadPitch(double pitch)
+        public void setHeadRoll(double roll)
         {
-            this.headPitch = pitch;
+            this.headRoll = roll;
         }
         public double getHeadPitch()
         {
-            return this.headPitch;
+            return this.headRoll;
         }
         public Vector3D getFrontVector()
         {

@@ -7,7 +7,7 @@ namespace FredrickTechDemo
     /*This class represents a virtual point at which the world should be rendered from. It takes in a player and will be bound to the players head.*/
     public class Camera
     {
-        private double pitch, yaw;
+        private double roll, pitch;
         private int mouseDeltaX;
         private int mouseDeltaY;
         private Matrix4F viewMatrix;
@@ -25,7 +25,7 @@ namespace FredrickTechDemo
         public Camera(EntityPlayer parentEntity)
         {
             this.parent = parentEntity;
-            yaw = -90.0F;
+            pitch = -90.0F;
             camTargetVector = new Vector3D(0.0F);
             camDirectionVector = Vector3D.normalize(parentEntity.getEyePosition() - camTargetVector);
             up = new Vector3D(0.0F, 1.0F, 0.0F);
@@ -41,26 +41,27 @@ namespace FredrickTechDemo
         {
             updateMouseDeltas();
             Input.centerMouse();
-            pitch -= mouseDeltaY * GameSettings.mouseSensitivity;
-            yaw += mouseDeltaX * GameSettings.mouseSensitivity;
-            if (yaw > 360.0F) { yaw = 0.0F; }
-            if (yaw < -360.0F) { yaw = 0.0F; }
+            roll -= mouseDeltaY * GameSettings.mouseSensitivity;
+            pitch += mouseDeltaX * GameSettings.mouseSensitivity;
+
+            if (pitch > 360.0F) { pitch = 0.0F; }
+            if (pitch < -360.0F) { pitch = 0.0F; }
             /*cap pitch so cam and entity can not flip*/
-            if (pitch > 90.0F)
+            if (roll > 90.0F)
             {
-                pitch = 90.0F;
+                roll = 90.0F;
             }
-            else if (pitch < -90.0F)
+            else if (roll < -90.0F)
             {
-                pitch = -90.0F;
+                roll = -90.0F;
             }
 
-            parent.setYaw(yaw);
-            parent.setHeadPitch(pitch);
+            parent.setPitch(pitch);
+            parent.setHeadRoll(roll);
 
-            camDirectionVector.x =(float) (Math.Cos(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
-            camDirectionVector.y =(float) Math.Sin(MathUtil.radians(pitch));
-            camDirectionVector.z =(float) (Math.Sin(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
+            camDirectionVector.x =(float) (Math.Cos(MathUtil.radians(pitch)) * Math.Cos(MathUtil.radians(roll)));
+            camDirectionVector.y =(float) Math.Sin(MathUtil.radians(roll));
+            camDirectionVector.z =(float) (Math.Sin(MathUtil.radians(pitch)) * Math.Cos(MathUtil.radians(roll)));
             camFrontVector = Vector3D.normalize(camDirectionVector);
             camRightVector = Vector3D.normalize(Vector3D.cross(up, camDirectionVector));
             camUpVector = Vector3D.cross(camDirectionVector, camRightVector);

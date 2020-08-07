@@ -1,21 +1,21 @@
 ﻿using FredrickTechDemo.FredsMath;
-using FredrickTechDemo.Models;
 
-namespace FredrickTechDemo.Entities
+namespace FredrickTechDemo.Models
 {
     public struct EntityModel
     {
         private Entity parent;
-        private ModelDrawable entityModel;
+        private ModelDrawable theModel;
         private Matrix4F prevTickModelMatrix;
         private Matrix4F modelMatrix;
 
         public EntityModel(Entity parent)
         {
             this.parent = parent;
-            entityModel = null;
+            theModel = null;
             modelMatrix = new Matrix4F(1.0F);
             prevTickModelMatrix = new Matrix4F(1.0F);
+            updateModel();//updating model twice to set first frame render position to the entity position.
             updateModel();
         }
 
@@ -23,27 +23,32 @@ namespace FredrickTechDemo.Entities
         public void updateModel()
         {
             prevTickModelMatrix = modelMatrix;
-            modelMatrix = Matrix4F.translate(Vector3F.convert(parent.getPosition())) * Matrix4F.rotate(new Vector3F((float)parent.getPitch(), (float)parent.getYaw(), (float)parent.getRoll()));
+            modelMatrix = Matrix4F.rotate(new Vector3F((float)parent.getRoll(), (float)-parent.getPitch(), (float)parent.getYaw())) *  Matrix4F.translate(Vector3F.convert(parent.getPosition())) ;
         }
 
         public EntityModel initModel(ModelDrawable newModel)
         {
-            entityModel = newModel;
+            theModel = newModel;
             return this;
         }
 
         /*draws this model*/
         public void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Vector3F fogColor)
         {
-            if (entityModel != null)
+            if (theModel != null)
             {
                 //interpolating model matrix between ticks for smooth transitions
-                entityModel.draw(viewMatrix, projectionMatrix, prevTickModelMatrix + (modelMatrix - prevTickModelMatrix) * TicksAndFps.getPercentageToNextTick(), fogColor);
+                theModel.draw(viewMatrix, projectionMatrix, prevTickModelMatrix + (modelMatrix - prevTickModelMatrix) * TicksAndFps.getPercentageToNextTick(), fogColor);
             }
             else
             {
                 Application.error("An attempt was made to render a null entity model!");
             }
+        }
+
+        public bool exists()
+        {
+            return theModel != null;
         }
     }
 }

@@ -24,7 +24,6 @@ namespace FredrickTechDemo.SubRendering.Text
         private Dictionary<byte, Character> finalFontData = new Dictionary<byte, Character>();
         private Dictionary<String, String> lineData = new Dictionary<String, String>();
         private StreamReader reader;
-
         public FontBuilder(String fontName)
         {
             debugDir = ResourceHelper.getFontFileDir(fontName + ".fnt");

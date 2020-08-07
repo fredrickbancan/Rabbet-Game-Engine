@@ -19,5 +19,9 @@ namespace FredrickTechDemo
         {
             return @"..\..\Res\Shaders\" + shaderName;
         }
+        public static String getOBJFileDir(String modelName)
+        {
+            return @"..\..\Res\OBJ\" + modelName;
+        }
     }
 }
