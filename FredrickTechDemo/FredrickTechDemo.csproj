@@ -111,6 +111,8 @@
     <None Include="Res\Font\Arial.fnt" />
     <None Include="Res\Font\Consolas.fnt" />
     <None Include="Res\Font\Trebuchet.fnt" />
+    <None Include="Res\OBJ\IcoSphere.obj" />
+    <None Include="Res\OBJ\Plane.obj" />
     <None Include="Res\Shaders\ColourTextureShader3D.shader" />
     <None Include="Res\Shaders\PS1ColourTextureShader3DFog.shader" />
     <None Include="Res\Shaders\SkyboxShader3D.shader" />
@@ -138,8 +140,6 @@
     <Content Include="Res\Texture\glass.png" />
     <Content Include="Res\Texture\sand.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Res\OBJ\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

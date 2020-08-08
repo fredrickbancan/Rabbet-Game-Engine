@@ -1,4 +1,5 @@
 ﻿using FredrickTechDemo.FredsMath;
+using FredrickTechDemo.Models;
 using FredrickTechDemo.SubRendering;
 using OpenTK.Graphics.OpenGL;
 
@@ -10,6 +11,8 @@ namespace FredrickTechDemo
       This class also contains the projection matrix.*/
     public static class Renderer
     {
+        private static OBJLoader tempLoader = new OBJLoader();
+        private static ModelDrawable tempModel;
         private static GameInstance gameInstance;
         private static TextRenderer2D privateTextRenderer2D;
         private static Matrix4F projectionMatrix;
@@ -25,6 +28,8 @@ namespace FredrickTechDemo
             GL.Enable(EnableCap.CullFace);
             GL.Viewport(gameInstance.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
+
+            tempModel = (ModelDrawable)tempLoader.loadModelDrawableFromObjFile(ResourceHelper.getShaderFileDir("ColourTextureShader3DFog.shader"), ResourceHelper.getTextureFileDir("aie.png"), ResourceHelper.getOBJFileDir("Plane.obj")).translateVertices(new Vector3F(0, 1,0));
         }
 
         /*Called each time the game window is resized*/
@@ -57,6 +62,7 @@ namespace FredrickTechDemo
             gameInstance.currentPlanet.drawEntities(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix);
             gameInstance.currentPlanet.getTerrainModel().draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, gameInstance.currentPlanet.getFogColor());
             gameInstance.currentPlanet.getSkyboxModel().draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, gameInstance.currentPlanet.getSkyColor(), gameInstance.currentPlanet.getFogColor());
+            tempModel.draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, gameInstance.currentPlanet.getFogColor());
         }
 
         private static void renderGui()
