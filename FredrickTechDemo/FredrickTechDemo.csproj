@@ -86,6 +86,7 @@
     <Compile Include="Src\Game\Debugging\Profiler.cs" />
     <Compile Include="Src\Game\Debugging\ResourceHelper.cs" />
     <Compile Include="Src\Game\TicksAndFps.cs" />
+    <Compile Include="Src\World\Entity\EntityVehicle.cs" />
     <Compile Include="Src\World\Planet.cs" />
     <Compile Include="Src\Rendering\Camera.cs" />
     <Compile Include="Src\Rendering\Models\Model.cs" />
@@ -112,11 +113,15 @@
     <None Include="Res\Font\Consolas.fnt" />
     <None Include="Res\Font\Trebuchet.fnt" />
     <None Include="Res\OBJ\IcoSphere.obj" />
+    <None Include="Res\OBJ\Monkey.obj" />
     <None Include="Res\OBJ\Plane.obj" />
-    <None Include="Res\Shaders\ColourTextureShader3D.shader" />
+    <None Include="Res\OBJ\TankBarrel.obj" />
+    <None Include="Res\OBJ\TankBody.obj" />
+    <None Include="Res\OBJ\TankWheels.obj" />
+    <None Include="Res\Shaders\ColorTexture3D.shader" />
+    <None Include="Res\Shaders\ColorTextureFog3D.shader" />
     <None Include="Res\Shaders\PS1ColourTextureShader3DFog.shader" />
     <None Include="Res\Shaders\SkyboxShader3D.shader" />
-    <None Include="Res\Shaders\ColourTextureShader3DFog.shader" />
     <None Include="Res\Shaders\GuiTextShader.shader" />
   </ItemGroup>
   <ItemGroup>
@@ -136,10 +141,13 @@
     <Content Include="Res\Font\Consolas.png" />
     <Content Include="Res\Font\Trebuchet.png" />
     <Content Include="Res\Texture\aie.png" />
+    <Content Include="Res\Texture\Camo.png" />
     <Content Include="Res\Texture\EntityCactus.png" />
     <Content Include="Res\Texture\glass.png" />
     <Content Include="Res\Texture\sand.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Src\World\Entity\EntityTank\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

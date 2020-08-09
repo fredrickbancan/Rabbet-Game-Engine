@@ -11,13 +11,14 @@ namespace FredrickTechDemo.Models
     {
         private String currentLine = "empty";
         private StreamReader reader;
-        private bool hasProcessedFaces = false;
+        private bool successfullyLoaded = false;
         private List<Vertex> vertexResult;
         private List<Vector3F> positions;
         private List<Vector2F> unorderedUVs; 
-        private List<Vector2F> orderedUVs; 
+        private Vector2F[] orderedUVs; 
         private List<UInt32> indices;
 
+        /*Takes in a shader,texture and obj file and returns a modeldrawable. If processing fails, will return a default debug model*/
         public  ModelDrawable loadModelDrawableFromObjFile(String shaderDir, String textureDir, String objFilePath)
         {
             try
@@ -27,27 +28,29 @@ namespace FredrickTechDemo.Models
             catch(Exception e)
             {
                 Application.error("Could not load OBJ File!\nFile Path: " + objFilePath + "\nException: " + e.Message);
-                return EntityCactusModel.getNewModelDrawable();//returns cactus model by defualt or failing
+                return EntityCactusModel.getNewModelDrawable();//returns model by defualt or failing
             }
 
             vertexResult = new List<Vertex>();
             positions = new List<Vector3F>();
             unorderedUVs = new List<Vector2F>();
-            orderedUVs = new List<Vector2F>();
             indices = new List<UInt32>();
+
             processAllLines();
+
+            if(!successfullyLoaded)
+            {
+                return EntityCactusModel.getNewModelDrawable();//returns model by defualt or failing
+            }
+
             return new ModelDrawable(shaderDir, textureDir, vertexResult.ToArray(), indices.ToArray());
         }
 
+        /*reads each line and processes it based on its tag, v is vertex position, vt is uv, and f is a face*/
         private void processAllLines()
         {
-           while((currentLine = reader.ReadLine()) != null)
+           while((currentLine = reader.ReadLine()) != null && !successfullyLoaded)
             {
-                if(currentLine.Contains("#") || currentLine.Contains("mtl") || currentLine.StartsWith("o ") || currentLine.StartsWith("s ") || currentLine.StartsWith("vn "))
-                {
-                    continue;
-                }
-
                 if(currentLine.StartsWith("v "))
                 {
                     processVertexPosition();
@@ -56,58 +59,79 @@ namespace FredrickTechDemo.Models
                 {
                     processUV();
                 }
-                if (currentLine.StartsWith("f ") && !hasProcessedFaces)
+                if (currentLine.StartsWith("f "))
                 {
                     processAllFaces();
                 }
             }
         }
 
+        /*Adds the vertex positions in the line to the positions list as a vector3f*/
         private void processVertexPosition()
         {
             float[] vertexPosData = getFloatsFromStringArray(currentLine.Split(' '));
             Vector3F newVertPos = new Vector3F(vertexPosData[0], vertexPosData[1], vertexPosData[2]);
             positions.Add(newVertPos);
         }
+        /*Adds the uvs in the line to the unordered uv list as a vector2f*/
         private void processUV()
         {
             float[] vertexUV = getFloatsFromStringArray(currentLine.Split(' '));
-            Vector2F newUV = new Vector2F(vertexUV[0], 1 - vertexUV[1]);
+            Vector2F newUV = new Vector2F(vertexUV[0], 1 - vertexUV[1]); // 1 - because we need to flip uvs on y for opengl
             unorderedUVs.Add(newUV);
         }
+
+        /*This will read all the face lines and construct the vertices and indices as is in the file.
+          A list of ordered uv's will be constructed based on the uv indices in the face lines. This 
+          ordered uv list will match the positions list and thus can be placed in the same vertices*/
         private void processAllFaces()
         {
-            List<UInt32> uvIndices = new List<UInt32>();
-
-            do//looping through all face lines in obj file
-            {
-                String[] faceTriples = currentLine.TrimStart("f ".ToCharArray()).Split(' ');
-
-                indices.Add(UInt32.Parse(faceTriples[0][0].ToString()) - 1);
-                indices.Add(UInt32.Parse(faceTriples[1][0].ToString()) - 1);
-                indices.Add(UInt32.Parse(faceTriples[2][0].ToString()) - 1);
-
-                uvIndices.Add(UInt32.Parse(faceTriples[0][2].ToString()));
-                uvIndices.Add(UInt32.Parse(faceTriples[1][2].ToString()));
-                uvIndices.Add(UInt32.Parse(faceTriples[2][2].ToString()));
-
-            } while ((currentLine = reader.ReadLine()) != null && currentLine.StartsWith("f"));
-
             try
             {
-               
+                List<int> uvIndices = new List<int>();
+
+                do//looping through all face lines in obj file and reading all the indices
+                {
+                    String[] faceTriples = currentLine.TrimStart("f ".ToCharArray()).Split(' ');
+                    String[] vertex1 = faceTriples[0].Split('/');
+                    String[] vertex2 = faceTriples[1].Split('/');
+                    String[] vertex3 = faceTriples[2].Split('/');
+
+                    indices.Add(UInt32.Parse(vertex1[0].ToString()) - 1);//-1 because obj indices start from 1
+                    indices.Add(UInt32.Parse(vertex2[0].ToString()) - 1);
+                    indices.Add(UInt32.Parse(vertex3[0].ToString()) - 1);
+
+                    uvIndices.Add(int.Parse(vertex1[1].ToString()) - 1);
+                    uvIndices.Add(int.Parse(vertex2[1].ToString()) - 1);
+                    uvIndices.Add(int.Parse(vertex3[1].ToString()) - 1);
+
+                } while ((currentLine = reader.ReadLine()) != null && currentLine.StartsWith("f"));
+
+                if (indices.Count != uvIndices.Count)
+                {
+                    Application.error("OBJ loader detected missmatch in data, UV and Position indices are not the same length!");
+                }
+
+                /*Here we take init the ordered uv list, and then for each position index (which we are using as vertex indices) 
+                  We take the corrosponding uv index and use it to take the values from the unordered array at that index. This 
+                  Manually matches the uv data with the vertex position data so they can be put into vertices.*/
+                orderedUVs = new Vector2F[unorderedUVs.Count];
+                for (int i = 0; i < uvIndices.Count; i++)
+                {
+                    orderedUVs[indices.ElementAt(i)] = unorderedUVs.ElementAt(uvIndices.ElementAt(i));
+                }
+
                 for (int i = 0; i < positions.Count; i++)
                 {
-                    vertexResult.Add(new Vertex(positions.ElementAt(i), ColourF.white.normalVector4F(), orderedUVs.ElementAt(i)));
+                    vertexResult.Add(new Vertex(positions.ElementAt(i), ColourF.white.normalVector4F(), orderedUVs[i]));
                 }
+                successfullyLoaded = true;//do last, to make sure there is not mistake with any lines starting with f triggering a new face processing method call
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Application.error("OBJLoader could not convert data to vertices!\nException: " + e.Message);
-                Console.ReadKey();
+                successfullyLoaded = false;
             }
-
-            hasProcessedFaces = true;//do last, to make sure there is not mistake with any lines starting with f triggering a new face processing method call
         }
 
         private float[] getFloatsFromStringArray(String[] strings)

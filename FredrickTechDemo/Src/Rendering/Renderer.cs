@@ -22,14 +22,14 @@ namespace FredrickTechDemo
         {
             Renderer.gameInstance = game;
             gameInstance.MakeCurrent();
-            privateTextRenderer2D = new TextRenderer2D("Arial", 512);
+            privateTextRenderer2D = new TextRenderer2D("Trebuchet", 512);
             setClearColor(ColourF.black);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
             GL.Viewport(gameInstance.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
 
-            tempModel = (ModelDrawable)tempLoader.loadModelDrawableFromObjFile(ResourceHelper.getShaderFileDir("ColourTextureShader3DFog.shader"), ResourceHelper.getTextureFileDir("aie.png"), ResourceHelper.getOBJFileDir("Plane.obj")).translateVertices(new Vector3F(0, 1,0));
+            tempModel = (ModelDrawable)tempLoader.loadModelDrawableFromObjFile(ResourceHelper.getShaderFileDir("ColorTextureFog3D.shader"), ResourceHelper.getTextureFileDir("Camo.png"), ResourceHelper.getOBJFileDir("TankWheels.obj")).scaleVertices(new Vector3F(.5F, .5F, .5F));
         }
 
         /*Called each time the game window is resized*/
@@ -58,7 +58,7 @@ namespace FredrickTechDemo
 
         private static void updateCameraAndRenderWorld()
         {
-            gameInstance.thePlayer.onCameraUpdate();
+            gameInstance.thePlayer.onCameraUpdate();//do this first
             gameInstance.currentPlanet.drawEntities(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix);
             gameInstance.currentPlanet.getTerrainModel().draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, gameInstance.currentPlanet.getFogColor());
             gameInstance.currentPlanet.getSkyboxModel().draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, gameInstance.currentPlanet.getSkyColor(), gameInstance.currentPlanet.getFogColor());

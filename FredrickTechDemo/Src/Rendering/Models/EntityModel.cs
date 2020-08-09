@@ -23,7 +23,7 @@ namespace FredrickTechDemo.Models
         public void updateModel()
         {
             prevTickModelMatrix = modelMatrix;
-            modelMatrix = Matrix4F.rotate(new Vector3F((float)parent.getRoll(), (float)-parent.getPitch(), (float)parent.getYaw())) *  Matrix4F.translate(Vector3F.convert(parent.getPosition())) ;
+            modelMatrix = Matrix4F.rotate(new Vector3F((float)parent.getPitch(), (float)-parent.getYaw(), (float)parent.getRoll())) *  Matrix4F.translate(Vector3F.convert(parent.getPosition())) ;
         }
 
         public EntityModel initModel(ModelDrawable newModel)

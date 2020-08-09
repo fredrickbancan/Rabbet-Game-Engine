@@ -60,7 +60,7 @@ namespace FredrickTechDemo.Models
 
         public static String getShaderDir()
         {
-            return ResourceHelper.getShaderFileDir("ColourTextureShader3DFog.shader");
+            return ResourceHelper.getShaderFileDir("ColorTextureFog3D.shader");
         }
 
         public static String getTextureDir()

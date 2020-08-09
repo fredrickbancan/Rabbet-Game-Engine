@@ -21,22 +21,22 @@ namespace FredrickTechDemo
         protected double gravity = defaultGravity;
         protected bool isFlying = false;
         protected bool isGrounded = false;
-        protected double roll;
         protected double pitch;
         protected double yaw;
+        protected double roll;
         protected bool hasDoneFirstUpdate = false;
         public Entity()
         {
             this.pos = new Vector3D();
             previousTickPos = pos;
-            pitch = -90.0F;
+            yaw = -90.0F; // make entity face -z
         }
         
         public Entity(Vector3D spawnPosition)
         {
             this.pos = spawnPosition;
             previousTickPos = pos;
-            pitch = -90.0F;
+            yaw = -90.0F;// make entity face -z
         }
 
         /*Called every tick*/
@@ -44,8 +44,8 @@ namespace FredrickTechDemo
         {
             /*do this first.*///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             previousTickPos = pos;
-            if (pitch > 360.0F) {  pitch = 0.0F; }
-            if (pitch < -360.0F) { pitch = 0.0F; }
+            if (yaw > 360.0F) {  yaw = 0.0F; }
+            if (yaw < -360.0F) { yaw = 0.0F; }
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             //resist velocity differently depending on state
@@ -89,38 +89,34 @@ namespace FredrickTechDemo
             return this.entityModel;
         }
 
+        public void rotateRoll(double amount)
+        {
+            roll += amount;
+        }
         public void rotateYaw(double amount)
         {
             yaw += amount;
         }
+
         public void rotatePitch(double amount)
         {
             pitch += amount;
         }
 
-        public void rotateRoll(double amount)
+        public void setRoll(double amount)
         {
-            roll += amount;
+            roll = amount;
         }
 
         public void setYaw(double amount)
         {
             yaw = amount;
         }
-
         public void setPitch(double amount)
         {
             pitch = amount;
         }
-        public void setRoll(double amount)
-        {
-            roll = amount;
-        }
 
-        public double getPitch()
-        {
-            return pitch;
-        }
         public double getYaw()
         {
             return yaw;
@@ -128,6 +124,10 @@ namespace FredrickTechDemo
         public double getRoll()
         {
             return roll;
+        }
+        public double getPitch()
+        {
+            return pitch;
         }
         public Vector3D getPosition()
         {

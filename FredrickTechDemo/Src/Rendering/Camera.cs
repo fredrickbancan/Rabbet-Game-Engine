@@ -7,7 +7,7 @@ namespace FredrickTechDemo
     /*This class represents a virtual point at which the world should be rendered from. It takes in a player and will be bound to the players head.*/
     public class Camera
     {
-        private double roll, pitch;
+        private double pitch, yaw;
         private int mouseDeltaX;
         private int mouseDeltaY;
         private Matrix4F viewMatrix;
@@ -19,13 +19,13 @@ namespace FredrickTechDemo
         private Vector3D camDirectionVector;
         private EntityPlayer parent;
 
-        /*Class for a camera controlled by a mouse. The camera will be attached to a player entity. The 
-          camera movement will control the players yaw and head pitch, which will then controll which
+        /*Class for a camera contpitched by a mouse. The camera will be attached to a player entity. The 
+          camera movement will control the players yaw and head yaw, which will then contpitch which
           direction the player moves in.*/
         public Camera(EntityPlayer parentEntity)
         {
             this.parent = parentEntity;
-            pitch = -90.0F;
+            yaw = -90.0F;// make camera face -z
             camTargetVector = new Vector3D(0.0F);
             camDirectionVector = Vector3D.normalize(parentEntity.getEyePosition() - camTargetVector);
             up = new Vector3D(0.0F, 1.0F, 0.0F);
@@ -41,27 +41,27 @@ namespace FredrickTechDemo
         {
             updateMouseDeltas();
             Input.centerMouse();
-            roll -= mouseDeltaY * GameSettings.mouseSensitivity;
-            pitch += mouseDeltaX * GameSettings.mouseSensitivity;
+            pitch -= mouseDeltaY * GameSettings.mouseSensitivity;
+            yaw += mouseDeltaX * GameSettings.mouseSensitivity;
 
-            if (pitch > 360.0F) { pitch = 0.0F; }
-            if (pitch < -360.0F) { pitch = 0.0F; }
-            /*cap pitch so cam and entity can not flip*/
-            if (roll > 90.0F)
+            if (yaw > 360.0F) { yaw = 0.0F; }
+            if (yaw < -360.0F) { yaw = 0.0F; }
+            /*cap yaw so cam and entity can not flip*/
+            if (pitch > 90.0F)
             {
-                roll = 90.0F;
+                pitch = 90.0F;
             }
-            else if (roll < -90.0F)
+            else if (pitch < -90.0F)
             {
-                roll = -90.0F;
+                pitch = -90.0F;
             }
 
-            parent.setPitch(pitch);
-            parent.setHeadRoll(roll);
+            parent.setYaw(yaw);
+            parent.setHeadPitch(pitch);
 
-            camDirectionVector.x =(float) (Math.Cos(MathUtil.radians(pitch)) * Math.Cos(MathUtil.radians(roll)));
-            camDirectionVector.y =(float) Math.Sin(MathUtil.radians(roll));
-            camDirectionVector.z =(float) (Math.Sin(MathUtil.radians(pitch)) * Math.Cos(MathUtil.radians(roll)));
+            camDirectionVector.x =(float) (Math.Cos(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
+            camDirectionVector.y =(float) Math.Sin(MathUtil.radians(pitch));
+            camDirectionVector.z =(float) (Math.Sin(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
             camFrontVector = Vector3D.normalize(camDirectionVector);
             camRightVector = Vector3D.normalize(Vector3D.cross(up, camDirectionVector));
             camUpVector = Vector3D.cross(camDirectionVector, camRightVector);
