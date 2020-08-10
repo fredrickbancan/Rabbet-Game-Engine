@@ -6,7 +6,7 @@ layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 colour;
 layout(location = 2) in vec2 texCoord;
 
-out vec2 fTexCoord;
+out vec2 vTexCoord;
 
 out vec4 vcolour;
 //matrix for projection transformations.
@@ -18,7 +18,7 @@ uniform mat4 modelMatrix;
 void main()
 {
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * position;
-	fTexCoord = texCoord;
+	vTexCoord = texCoord;
 	vcolour = colour;
 }
 
@@ -27,7 +27,7 @@ void main()
 #shader fragment
 #version 330 core
 in vec4 vcolour;
-in vec2 fTexCoord;
+in vec2 vTexCoord;
 out vec4 color;
 
 uniform sampler2D uTexture;

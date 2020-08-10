@@ -68,7 +68,7 @@ namespace FredrickTechDemo
 
             if (hasModel)
             {
-                entityModel.updateModel();
+                updateModel();
             }
 
             if (!hasDoneFirstUpdate)
@@ -79,75 +79,80 @@ namespace FredrickTechDemo
             /*do this last*///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             pos += velocity;
         }
-        public bool getHasModel()
+
+        protected virtual void updateModel()
+        {
+            entityModel.updateModel();
+        }
+        public virtual bool getHasModel()
         {
             return hasModel;
         }
 
-        public EntityModel getEntityModel()
+        public virtual EntityModel getEntityModel()
         {
             return this.entityModel;
         }
 
-        public void rotateRoll(double amount)
+        public virtual void rotateRoll(double amount)
         {
             roll += amount;
         }
-        public void rotateYaw(double amount)
+        public virtual void rotateYaw(double amount)
         {
             yaw += amount;
         }
 
-        public void rotatePitch(double amount)
+        public virtual void rotatePitch(double amount)
         {
             pitch += amount;
         }
 
-        public void setRoll(double amount)
+        public virtual void setRoll(double amount)
         {
             roll = amount;
         }
 
-        public void setYaw(double amount)
+        public virtual void setYaw(double amount)
         {
             yaw = amount;
         }
-        public void setPitch(double amount)
+        public virtual void setPitch(double amount)
         {
             pitch = amount;
         }
 
-        public double getYaw()
+        public virtual double getYaw()
         {
             return yaw;
         }
-        public double getRoll()
+        public virtual double getRoll()
         {
             return roll;
         }
-        public double getPitch()
+        public virtual double getPitch()
         {
             return pitch;
         }
-        public Vector3D getPosition()
+        public virtual Vector3D getPosition()
         {
             return this.pos;
         }
-        public Vector3D getVelocity()
+        public virtual Vector3D getVelocity()
         {
             return this.velocity;
         }
-        public bool getIsFlying()
+        public virtual bool getIsFlying()
         {
             return isFlying;
         }
 
-        public void setFlying(bool flag)
+        public virtual void setFlying(bool flag)
         {
             this.isFlying = flag;
         }
 
-        public void toggleFlying()
+        public virtual void toggleFlying()
         {
             if(!isFlying)
             {
@@ -158,15 +163,15 @@ namespace FredrickTechDemo
                 isFlying = false;
             }
         }
-        public void addYVelocity(double d)
+        public virtual void addYVelocity(double d)
         {
             velocity.y += d;
         }
-        public void setPosition(Vector3D newPos)
+        public virtual void setPosition(Vector3D newPos)
         {
             this.pos = newPos;
         }
-        public Vector3D getLerpPos()
+        public virtual Vector3D getLerpPos()
         {
             return previousTickPos + (pos - previousTickPos) * TicksAndFps.getPercentageToNextTick();
         }

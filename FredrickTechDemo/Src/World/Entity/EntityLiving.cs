@@ -5,7 +5,7 @@ namespace FredrickTechDemo
 {
     public class EntityLiving : Entity
     {
-        
+        protected EntityVehicle currentVehicle;
         protected Vector3D frontVector;//vector pointing to the direction the entity is facing
         protected Vector3D upVector;
         protected Vector3D movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
@@ -37,7 +37,7 @@ namespace FredrickTechDemo
         }
 
         /*Changes velocity based on state and movement vector, movement vector is changed by movement functions such as walkFowards()*/
-        private void moveByMovementVector()
+        protected virtual void moveByMovementVector()
         {
             //modify walk speed here i.e slows, speed ups etc
             double walkSpeedModified = walkSpeed;
@@ -54,7 +54,6 @@ namespace FredrickTechDemo
                 }
             }
 
-
             //change velocity based on movement
             //movement vector is a unit vector.
             movementVector.Normalize();//normalize vector so player is same speed in any direction
@@ -65,16 +64,16 @@ namespace FredrickTechDemo
 
             if (isJumping)// if player jumping or flying up
             {
-                velocity.y += 0.32D;//jump //TODO make jumping create a vector that maintains movement velocity in the xz directions and reaches 1.25 y in hegiht
+                velocity.y += 0.32D;//jump 
                 isJumping = false;
             }
         }
 
         /*When called, aligns vectors according to the entities state and rotations.*/
-        private void alignVectors()
+        protected virtual void alignVectors()
         {
             /*correcting front vector based on new pitch and yaw*/
-            frontVector.x = (double)(Math.Cos(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(headPitch)));
+            frontVector.x = (double)(Math.Cos(MathUtil.radians(yaw)));
             if (isFlying)
             {
                 frontVector.y = (double)Math.Sin(MathUtil.radians(headPitch));
@@ -83,11 +82,11 @@ namespace FredrickTechDemo
             {//if the living entity isnt flying, it shouldnt be able to move up or down willingly
                 frontVector.y = 0;
             }
-            frontVector.z = (double)(Math.Sin(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(headPitch)));
+            frontVector.z = (double)(Math.Sin(MathUtil.radians(yaw)));
             frontVector.Normalize();
         }
 
-        public void jump()
+        public virtual void jump()
         {
             if (isGrounded && velocity.y <= 0)
             {
@@ -95,37 +94,73 @@ namespace FredrickTechDemo
                 isJumping = true;
             }
         }
-        public void walkFowards()
+
+        public virtual void mountVehicle(EntityVehicle theVehicle)
         {
-            movementVector.z++;
-        }
-        public void walkBackwards()
-        {
-            movementVector.z--;
-        }
-        public void strafeRight()
-        {
-            movementVector.x++;
-        }
-        public void strafeLeft()
-        {
-            movementVector.x--;
+            this.pos = theVehicle.getMountingPos();
+            currentVehicle = theVehicle;
+            theVehicle.setMountedEntity(this);
         }
 
-        public void setHeadPitch(double Pitch)
+        public virtual void walkFowards()
+        {
+            if (currentVehicle != null)
+            {
+                currentVehicle.driveFowards();
+            }
+            else
+            {
+                movementVector.z++;
+            }
+        }
+        public virtual void walkBackwards()
+        {
+            if (currentVehicle != null)
+            {
+                currentVehicle.driveBackwards();
+            }
+            else
+            {
+                movementVector.z--;
+            }
+        }
+        public virtual void strafeRight()
+        {
+            if (currentVehicle != null)
+            {
+                currentVehicle.turnRight();
+            }
+            else
+            {
+                movementVector.x++;
+            }
+        }
+        public virtual void strafeLeft()
+        {
+            if (currentVehicle != null)
+            {
+                currentVehicle.turnLeft();
+            }
+            else
+            {
+                movementVector.x--;
+            }
+        }
+
+        public virtual void setHeadPitch(double Pitch)
         {
             this.headPitch = Pitch;
         }
-        public double getHeadPitch()
+        public virtual double getHeadPitch()
         {
             return this.headPitch;
         }
-        public Vector3D getFrontVector()
+        public virtual Vector3D getFrontVector()
         {
             return this.frontVector;
         }
 
-        public Vector3D getUpVector()
+        public virtual Vector3D getUpVector()
         {
             return this.upVector;
         }

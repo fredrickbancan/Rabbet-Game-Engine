@@ -7,19 +7,19 @@ using System.Linq;
 namespace FredrickTechDemo.Models
 {
     /*This class will be responsable for loading models and converting them to vertex arrays for use with rendering.*/
-    public class OBJLoader
+    public static class OBJLoader
     {
-        private String currentLine = "empty";
-        private StreamReader reader;
-        private bool successfullyLoaded = false;
-        private List<Vertex> vertexResult;
-        private List<Vector3F> positions;
-        private List<Vector2F> unorderedUVs; 
-        private Vector2F[] orderedUVs; 
-        private List<UInt32> indices;
+        private static String currentLine = "empty";
+        private static StreamReader reader;
+        private static bool successfullyLoaded = false;
+        private static List<Vertex> vertexResult;
+        private static List<Vector3F> positions;
+        private static List<Vector2F> unorderedUVs; 
+        private static Vector2F[] orderedUVs; 
+        private static List<UInt32> indices;
 
         /*Takes in a shader,texture and obj file and returns a modeldrawable. If processing fails, will return a default debug model*/
-        public  ModelDrawable loadModelDrawableFromObjFile(String shaderDir, String textureDir, String objFilePath)
+        public static ModelDrawable loadModelDrawableFromObjFile(String shaderDir, String textureDir, String objFilePath)
         {
             try
             {
@@ -28,9 +28,9 @@ namespace FredrickTechDemo.Models
             catch(Exception e)
             {
                 Application.error("Could not load OBJ File!\nFile Path: " + objFilePath + "\nException: " + e.Message);
-                return EntityCactusModel.getNewModelDrawable();//returns model by defualt or failing
+                return DefaultDebugModel.getNewModelDrawable();//returns model by defualt or failing
             }
-
+            successfullyLoaded = false;
             vertexResult = new List<Vertex>();
             positions = new List<Vector3F>();
             unorderedUVs = new List<Vector2F>();
@@ -40,14 +40,14 @@ namespace FredrickTechDemo.Models
 
             if(!successfullyLoaded)
             {
-                return EntityCactusModel.getNewModelDrawable();//returns model by defualt or failing
+                return DefaultDebugModel.getNewModelDrawable();//returns model by defualt or failing
             }
 
             return new ModelDrawable(shaderDir, textureDir, vertexResult.ToArray(), indices.ToArray());
         }
 
         /*reads each line and processes it based on its tag, v is vertex position, vt is uv, and f is a face*/
-        private void processAllLines()
+        private static void processAllLines()
         {
            while((currentLine = reader.ReadLine()) != null && !successfullyLoaded)
             {
@@ -67,14 +67,14 @@ namespace FredrickTechDemo.Models
         }
 
         /*Adds the vertex positions in the line to the positions list as a vector3f*/
-        private void processVertexPosition()
+        private static void processVertexPosition()
         {
             float[] vertexPosData = getFloatsFromStringArray(currentLine.Split(' '));
             Vector3F newVertPos = new Vector3F(vertexPosData[0], vertexPosData[1], vertexPosData[2]);
             positions.Add(newVertPos);
         }
         /*Adds the uvs in the line to the unordered uv list as a vector2f*/
-        private void processUV()
+        private static void processUV()
         {
             float[] vertexUV = getFloatsFromStringArray(currentLine.Split(' '));
             Vector2F newUV = new Vector2F(vertexUV[0], 1 - vertexUV[1]); // 1 - because we need to flip uvs on y for opengl
@@ -84,7 +84,7 @@ namespace FredrickTechDemo.Models
         /*This will read all the face lines and construct the vertices and indices as is in the file.
           A list of ordered uv's will be constructed based on the uv indices in the face lines. This 
           ordered uv list will match the positions list and thus can be placed in the same vertices*/
-        private void processAllFaces()
+        private static void processAllFaces()
         {
             try
             {
@@ -134,7 +134,7 @@ namespace FredrickTechDemo.Models
             }
         }
 
-        private float[] getFloatsFromStringArray(String[] strings)
+        private static float[] getFloatsFromStringArray(String[] strings)
         {
             List<float> result = new List<float>();
 

@@ -9,7 +9,7 @@ namespace FredrickTechDemo.Models
      *individual VAO's.*/
     public class ModelDrawable : Model
     {
-        protected UInt32[] indices;
+        public UInt32[] indices;
         protected bool hasInitialized = false;
         protected int indicesBufferObject;
         protected List<int> VBOS = new List<int>();
@@ -23,6 +23,12 @@ namespace FredrickTechDemo.Models
         {
             this.indices = indices;
             texture = new Texture(textureFile, false);
+            shader = new Shader(shaderFile);
+        }
+        public ModelDrawable(String shaderFile, Texture tex, Vertex[] vertices, UInt32[] indices) : base(vertices)
+        {
+            this.indices = indices;
+            texture = tex;
             shader = new Shader(shaderFile);
         }
 
@@ -155,7 +161,6 @@ namespace FredrickTechDemo.Models
             GL.VertexAttribPointer(2, Vertex.uvLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.uvOffset);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
-
 
         /*Used for binding the vertex buffer object in the array at the given index, any vbo's get unbound in unbind()*/
         public virtual void bindVertexBuffer(int index = 0)

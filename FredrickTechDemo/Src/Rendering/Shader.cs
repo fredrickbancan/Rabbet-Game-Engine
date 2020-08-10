@@ -19,6 +19,16 @@ namespace FredrickTechDemo
 
     public class Shader : IDisposable
     {
+        public static readonly String debugDefaultVertexShader = 
+            "void main()\n" +
+            "{\n" +
+            "gl_Position = vec4(0,0,0,0);\n" +
+            "}\n";
+        public static readonly String debugDefaultFragmentShader =
+            "void main()\n" +
+            "{\n" +
+            "discard;\n" +
+            "}\n";
         private bool disposed = false;
         private int id;
         private String debugShaderPath;
@@ -35,31 +45,42 @@ namespace FredrickTechDemo
             String currentLine = "";
             String vertexSource = "";
             String fragmentSource = "";
-            StreamReader reader = new StreamReader(path);
+            StreamReader reader;
+            try
+            {
+                reader = new StreamReader(path);
 
-            while((currentLine = reader.ReadLine()) != null)
-            { 
-                if (currentLine.Contains("#shader"))
+                while ((currentLine = reader.ReadLine()) != null)
                 {
-                    if (currentLine.Contains("vertex"))
+                    if (currentLine.Contains("#shader"))
                     {
-                        type = Type.VERTEX;
+                        if (currentLine.Contains("vertex"))
+                        {
+                            type = Type.VERTEX;
+                        }
+                        else if (currentLine.Contains("fragment"))
+                        {
+                            type = Type.FRAGMENT;
+                        }
                     }
-                    else if (currentLine.Contains("fragment"))
+                    else if (type == Type.VERTEX)
                     {
-                        type = Type.FRAGMENT;
+                        vertexSource += (currentLine + "\n");
+                    }
+                    else if (type == Type.FRAGMENT)
+                    {
+                        fragmentSource += (currentLine + "\n");
                     }
                 }
-                else if (type == Type.VERTEX)
-                {
-                    vertexSource += (currentLine + "\n");
-                }
-                else if (type == Type.FRAGMENT)
-                {
-                    fragmentSource += (currentLine + "\n");
-                }
+                reader.Close();
+                
             }
-            reader.Close();
+            catch(Exception e)
+            {
+                Application.error("Shader failed to load!\nException: " + e.Message + "\nShader path: " + path);
+                vertexSource = debugDefaultVertexShader;
+                fragmentSource = debugDefaultFragmentShader;
+            }
             shaderProgramSource result;
             result.vertexSource = vertexSource;
             result.fragmentSource = fragmentSource;

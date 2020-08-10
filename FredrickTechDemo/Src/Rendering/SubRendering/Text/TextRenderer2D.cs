@@ -16,6 +16,7 @@ namespace FredrickTechDemo.SubRendering
         private ColourF defaultColour;
         private ModelDrawableDynamic screenTextModel;
         private int maxCharCount;
+        private bool needsBuilding = false;//will be true if text has changed since last tick update and model needs to be recalculated
 
         private Dictionary<String, TextPanel2D> currentScreenTextPanels = new Dictionary<String, TextPanel2D>();
 
@@ -94,14 +95,13 @@ namespace FredrickTechDemo.SubRendering
         }
         public void addNewTextPanel(String textPanelName, String[] textPanelLines, Vector2F textPanelPosition, ColourF textPanelColor, float fontSize, TextAlign alignment)
         {
-            Profiler.beginEndProfile(Profiler.textRender2DBuildingName);
-            currentScreenTextPanels.Remove(textPanelName);
+            currentScreenTextPanels.Remove(textPanelName);//removes the text panel if it exists, so that it can be updated instead.
             currentScreenTextPanels.Add(textPanelName, new TextPanel2D(textPanelLines, textPanelPosition,  textPanelColor, fontSize, screenEdgePadding, font, alignment));
-            submitDataToDynamicModel();
-            Profiler.beginEndProfile(Profiler.textRender2DBuildingName);
+            needsBuilding = true;
         }
         #endregion
-
+         
+        /*Combines all the vertex data of all of the text panels, and sends the information to the dynamic model.*/
         private void submitDataToDynamicModel()
         {
             Vertex[] fillerVertexArray = new Vertex[maxCharCount * 4];//creating array big enough to fill max char count
@@ -148,20 +148,33 @@ namespace FredrickTechDemo.SubRendering
             {
                 screenTextModel.submitData(fillerVertexArray);//just fill buffer with empties to clear screen of text
             }
+
+            needsBuilding = false;
+        }
+        
+        /*Called every tick*/
+        public void onTick()
+        {
+            Profiler.beginEndProfile(Profiler.textRender2DBuildingName);
+            if (needsBuilding)
+            {
+                submitDataToDynamicModel();
+            }
+            Profiler.beginEndProfile(Profiler.textRender2DBuildingName);
         }
 
         public void removeTextPanel(String textPanelName)
         {
             if (currentScreenTextPanels.Remove(textPanelName))
             {
-                submitDataToDynamicModel();
+                needsBuilding = true;
             }
         }
 
         public void clearAllText()
         {
             currentScreenTextPanels.Clear();
-            submitDataToDynamicModel();
+            needsBuilding = true;
         }
 
 
@@ -180,7 +193,7 @@ namespace FredrickTechDemo.SubRendering
             if (currentScreenTextPanels.Count > 0  && screenTextModel != null)
             {
                 buildAll();
-                submitDataToDynamicModel();
+                needsBuilding = true;
             }
         }
         private void buildAll()

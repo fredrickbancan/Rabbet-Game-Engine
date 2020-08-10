@@ -24,11 +24,14 @@ namespace FredrickTechDemo
 
         public Texture()//constructs default texture
         {
-            Bitmap bitmap = new Bitmap(2, 2);//creating default error texture
-            bitmap.SetPixel(0, 0, Color.Black);
-            bitmap.SetPixel(0, 1, Color.Magenta);
-            bitmap.SetPixel(1, 0, Color.Magenta);
-            bitmap.SetPixel(1, 1, Color.Black);
+            Bitmap bitmap = new Bitmap(16, 16);//creating default error texture
+            for(int i = 0; i < 16; i++)
+            {
+                for(int j = 0; j < 16; j++)
+                {//exlusive or
+                    bitmap.SetPixel(i, j, i % 2 == 0 ^ j % 2 != 0 ? Color.Magenta : Color.Black);//creating black and magenta checker board
+                }
+            }
 
             int tex;
             GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Nicest);

@@ -36,6 +36,9 @@ namespace FredrickTechDemo
             currentPlanet = new Planet();
             currentPlanet.spawnEntityInWorld(thePlayer);
             currentPlanet.spawnEntityInWorld(new EntityCactus());
+            EntityTank tank = new EntityTank();
+            currentPlanet.spawnEntityInWorld(tank);
+            thePlayer.mountVehicle(tank);
         }
 
         /*Called before game runs*/
@@ -88,10 +91,9 @@ namespace FredrickTechDemo
         {
             Profiler.beginEndProfile(Profiler.gameLoopName);
             updateGUI();
-            if (!thePlayer.paused)
-            {
-                currentPlanet.onTick();
-            }
+
+            if (!thePlayer.paused) currentPlanet.onTick();
+
             Profiler.beginEndProfile(Profiler.gameLoopName);
         }
 
@@ -106,7 +108,10 @@ namespace FredrickTechDemo
                 Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", new Vector2F(), ColourF.darkRed, TextAlign.RIGHT);
             }
             DebugScreen.displayOrClearDebugInfo(this);
+
+            Renderer.textRenderer2D.onTick();//do this last for gui text
         }
+
         public static int gameWindowWidth { get => windowWidth; }
         public static int gameWindowHeight { get => windowHeight; }
         public static int windowCenterX { get => mouseCenterX; }
