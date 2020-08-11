@@ -67,9 +67,9 @@ namespace FredrickTechDemo
             /*limit ticks elapsed to Half a second's worth, so the game does not speed out of control in some laggy circumstances
               In other words, the game will only "catch up" by half a second at a time. Any hangs more than half a second will not 
               be corrected for.*/
-            if (ticksElapsed > ticksPerSecond/2)
+            if (ticksElapsed > ticksPerSecond)
             {
-                ticksElapsed = (int)ticksPerSecond / 2;
+                ticksElapsed = (int)ticksPerSecond;
             }
         }
 
@@ -98,6 +98,11 @@ namespace FredrickTechDemo
         public static int getTicksElapsed()
         {
             return ticksElapsed;
+        }
+
+        public static double getFrameTickPercentage()
+        {
+           return deltaTime / timePerTick;
         }
         public static float getPercentageToNextTick()
         {

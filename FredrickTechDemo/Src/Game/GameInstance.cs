@@ -101,11 +101,11 @@ namespace FredrickTechDemo
         {
             if (thePlayer.getIsFlying())
             {
-                Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: ON", new Vector2F(), ColourF.darkGreen, TextAlign.RIGHT);
+                Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: ON", Vector2F.zero, ColourF.darkGreen, TextAlign.RIGHT);
             }
             else
             {
-                Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", new Vector2F(), ColourF.darkRed, TextAlign.RIGHT);
+                Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", Vector2F.zero, ColourF.darkRed, TextAlign.RIGHT);
             }
             DebugScreen.displayOrClearDebugInfo(this);
 

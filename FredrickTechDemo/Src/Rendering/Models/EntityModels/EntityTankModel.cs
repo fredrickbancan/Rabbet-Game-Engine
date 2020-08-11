@@ -17,14 +17,13 @@ namespace FredrickTechDemo.Models
         private Matrix4F tankBarrelModelMatrix = new Matrix4F(1.0F);
         private String shaderDir = ResourceHelper.getShaderFileDir("ColorTextureFog3D.shader");
         private String textureDir = ResourceHelper.getTextureFileDir("Camo.png");
-        private bool modelsNeedUpdating = true;
 
         public EntityTankModel(EntityTank parent)//dont want to call the base constructor for this model
         {
             this.parent = parent;
             tankWheelModel = (ModelDrawable)OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceHelper.getOBJFileDir(@"Tank\TankWheels.obj")).scaleVertices(new Vector3F(.5f,.5f,.5f));
             tankBodyModel = (ModelDrawable)OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceHelper.getOBJFileDir(@"Tank\TankBody.obj")).scaleVertices(new Vector3F(.5f, .5f, .5f));
-            tankBarrelModel = (ModelDrawable)OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceHelper.getOBJFileDir(@"Tank\TankBarrel.obj")).scaleVertices(new Vector3F(.5f, .5f, .5f)).translateVertices(new Vector3F(0, 2, -1F));
+            tankBarrelModel = (ModelDrawable)OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceHelper.getOBJFileDir(@"Tank\TankBarrel.obj")).scaleVertices(new Vector3F(.5f, .5f, .5f)).translateVertices(new Vector3F(0, 2, -0.5F));
             updateModel();
             updateModel();
         }

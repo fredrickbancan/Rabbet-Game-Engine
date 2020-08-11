@@ -15,7 +15,6 @@ namespace FredrickTechDemo
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
-            this.turnRate = 0.12D;
             wheelsYaw = yaw;
             mountingOffset = new Vector3D(pos.x, pos.y + 2, pos.z);
         }
@@ -23,7 +22,6 @@ namespace FredrickTechDemo
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
-            this.turnRate = 0.12D;
             wheelsYaw = yaw;
             mountingOffset = new Vector3D(pos.x, pos.y + 2, pos.z);
         }
@@ -33,6 +31,9 @@ namespace FredrickTechDemo
             base.onTick();//do first
             mountingOffset = new Vector3D(pos.x, pos.y + 2, pos.z);
             barrelPos = new Vector3D(pos.x, pos.y, pos.z);
+            bodyYaw = mountingEntity.getYaw() + 90;
+            barrelPitch = mountingEntity.getHeadPitch();
+            barrelYaw = bodyYaw;
         }
 
         /*Called by base ontick()*/
@@ -54,11 +55,11 @@ namespace FredrickTechDemo
 
             if (!isGrounded)walkSpeedModified = 0.02D;//reduce movespeed when jumping or mid air and reduce movespeed when flying as to not accellerate out of control
 
-            rotateYaw(movementVector.x * turnRate);//rotate wheels
 
             //change velocity based on movement
             //movement vector is a unit vector.
             movementVector.Normalize();//normalize vector so vehicle is same speed in any direction
+            rotateYaw((movementVector.x > 0 ? 1 : (movementVector.x < 0 ? -1 : 0))  * turnRate);//rotate wheels, if reversing then rotate tank in opposite direction
             velocity += frontVector * movementVector.z * walkSpeedModified;//fowards and backwards movement
             movementVector *= 0;//reset movement vector
         }
@@ -66,6 +67,9 @@ namespace FredrickTechDemo
         public override void rotateYaw(double amount)
         {
             wheelsYaw += amount;
+            bodyYaw += amount;
+            barrelYaw += amount;
+            this.mountingEntity.rotateYaw(amount);
         }
         public double getWheelsYaw { get => wheelsYaw;}
         public double getBodyYaw { get => bodyYaw;}

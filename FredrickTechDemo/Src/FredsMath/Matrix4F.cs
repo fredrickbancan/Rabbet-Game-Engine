@@ -247,7 +247,7 @@ namespace FredrickTechDemo.FredsMath
         }
         public static Matrix4F rotate(Vector3F rotationVector)
         {
-            return rotate(rotationVector.y, Axis.y) * rotate(rotationVector.x, Axis.x) *  rotate(rotationVector.z, Axis.z);
+            return rotate(rotationVector.x, Axis.x) * rotate(rotationVector.y, Axis.y) * rotate(rotationVector.z, Axis.z);
         }
         public static Matrix4F translate(Vector3F vec)
         {

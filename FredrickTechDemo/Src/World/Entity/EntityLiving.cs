@@ -31,9 +31,36 @@ namespace FredrickTechDemo
         {
             base.onTick();//do first
 
+            //prevent head from rotating up and down too much
+            if(headPitch > 90F)
+            {
+                headPitch = 90F;
+            }
+            else if(headPitch < -90F)
+            {
+                headPitch = -90F;
+            }
+
             alignVectors();
 
             moveByMovementVector();
+        }
+
+        /*When called, aligns vectors according to the entities state and rotations.*/
+        protected virtual void alignVectors()
+        {
+            /*correcting front vector based on new pitch and yaw*/
+            frontVector.x = (double)(Math.Cos(MathUtil.radians(yaw)));
+            if (isFlying)
+            {
+                frontVector.y = (double)Math.Sin(MathUtil.radians(headPitch));
+            }
+            else
+            {//if the living entity isnt flying, it shouldnt be able to move up or down willingly
+                frontVector.y = 0;
+            }
+            frontVector.z = (double)(Math.Sin(MathUtil.radians(yaw)));
+            frontVector.Normalize();
         }
 
         /*Changes velocity based on state and movement vector, movement vector is changed by movement functions such as walkFowards()*/
@@ -69,23 +96,7 @@ namespace FredrickTechDemo
             }
         }
 
-        /*When called, aligns vectors according to the entities state and rotations.*/
-        protected virtual void alignVectors()
-        {
-            /*correcting front vector based on new pitch and yaw*/
-            frontVector.x = (double)(Math.Cos(MathUtil.radians(yaw)));
-            if (isFlying)
-            {
-                frontVector.y = (double)Math.Sin(MathUtil.radians(headPitch));
-            }
-            else
-            {//if the living entity isnt flying, it shouldnt be able to move up or down willingly
-                frontVector.y = 0;
-            }
-            frontVector.z = (double)(Math.Sin(MathUtil.radians(yaw)));
-            frontVector.Normalize();
-        }
-
+        
         public virtual void jump()
         {
             if (isGrounded && velocity.y <= 0)

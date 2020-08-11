@@ -24,6 +24,9 @@ namespace FredrickTechDemo
         protected double pitch;
         protected double yaw;
         protected double roll;
+        protected double prevTickPitch;
+        protected double prevTickYaw;
+        protected double prevTickRoll;
         protected bool hasDoneFirstUpdate = false;
         public Entity()
         {
@@ -44,8 +47,9 @@ namespace FredrickTechDemo
         {
             /*do this first.*///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             previousTickPos = pos;
-            if (yaw > 360.0F) {  yaw = 0.0F; }
-            if (yaw < -360.0F) { yaw = 0.0F; }
+            prevTickPitch = pitch;
+            prevTickYaw = yaw;
+            prevTickRoll = roll;
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             //resist velocity differently depending on state
@@ -173,7 +177,20 @@ namespace FredrickTechDemo
         }
         public virtual Vector3D getLerpPos()
         {
-            return previousTickPos + (pos - previousTickPos) * TicksAndFps.getPercentageToNextTick();
+            if (hasDoneFirstUpdate)
+            {
+                return previousTickPos + (pos - previousTickPos) * TicksAndFps.getPercentageToNextTick();
+            }
+            return pos;
+        }
+
+        public virtual double getLerpYaw()
+        {
+            if (hasDoneFirstUpdate)
+            {
+                return prevTickYaw + (yaw - prevTickYaw) * TicksAndFps.getPercentageToNextTick();
+            }
+            return yaw;
         }
 
     }

@@ -89,8 +89,8 @@
     <Compile Include="Src\Game\Debugging\Profiler.cs" />
     <Compile Include="Src\Game\Debugging\ResourceHelper.cs" />
     <Compile Include="Src\Game\TicksAndFps.cs" />
-    <Compile Include="Src\World\Entity\EntityTank\EntityTank.cs" />
-    <Compile Include="Src\World\Entity\EntityVehicle.cs" />
+    <Compile Include="Src\World\Entity\Vehicles\EntityTank.cs" />
+    <Compile Include="Src\World\Entity\Vehicles\EntityVehicle.cs" />
     <Compile Include="Src\World\Planet.cs" />
     <Compile Include="Src\Rendering\Camera.cs" />
     <Compile Include="Src\Rendering\Models\Model.cs" />

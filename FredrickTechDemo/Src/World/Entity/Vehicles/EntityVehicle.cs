@@ -10,8 +10,8 @@ namespace FredrickTechDemo
         protected Vector3D frontVector;//vector pointing to the direction the entity is facing
         protected Vector3D upVector;
         protected Vector3D movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
-        public static readonly double defaultTurnRate = 15.0F;
-        public static readonly double defaultDriveSpeed = 0.3572F;
+        public static readonly double defaultTurnRate = 2.5F;//degrees per tick
+        public static readonly double defaultDriveSpeed = 0.4F;
         protected double driveSpeed = defaultDriveSpeed;
         protected double turnRate = defaultTurnRate;
 
@@ -58,13 +58,12 @@ namespace FredrickTechDemo
 
             if (!isGrounded) walkSpeedModified = 0.0072D; else walkSpeedModified = 0.02D;//reduce movespeed when jumping or mid air and reduce movespeed when flying as to not accellerate out of control
 
-            if(movementVector.Magnitude() > 0)
-            {
-                rotateYaw(movementVector.x * turnRate);//steer vehicle
-            }
+
 
             //change velocity based on movement
             //movement vector is a unit vector.
+            movementVector.Normalize();
+            rotateYaw(movementVector.x * movementVector.z * turnRate);//steer vehicle, if reversing then vehicle will turn opposite way
             velocity += frontVector * movementVector.z * walkSpeedModified;//fowards and backwards movement
 
             movementVector *= 0;//reset movement vector
