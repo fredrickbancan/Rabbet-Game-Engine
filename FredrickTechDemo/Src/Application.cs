@@ -9,8 +9,10 @@ namespace FredrickTechDemo
     {
         static void Main(string[] args)
         {
+            
             GameInstance game = new GameInstance(1920, 1080, "Fredrick Math Library OpenGL Tech Demo (Using OpenTk library, excluding maths)");
             game.init();
+            
             game.Run(); //Will start the OpenTk Game instance running. Eeach frame will call OnUpdateFrame and OnRenderFrame. I am using my own tickrate class to controll ticks (TicksAndFps.cs)  
         }
         #region Print functions

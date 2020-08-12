@@ -22,5 +22,11 @@
         {
             return xA * xB + yA * yB + zA * zB;
         }
+
+        public static double dotDoubles(double xA, double yA, double zA, double xB, double yB, double zB)
+        {
+            return xA * xB + yA * yB + zA * zB;
+        }
+    
     }
 }

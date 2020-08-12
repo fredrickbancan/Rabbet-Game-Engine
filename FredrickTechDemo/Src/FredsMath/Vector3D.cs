@@ -4,6 +4,7 @@ namespace FredrickTechDemo.FredsMath
     /*This is a double precision version of Vector3F*/
     public struct Vector3D
     {
+        public static Vector3D zero = new Vector3D();
         public double x, y, z;
         public double r { get => x; set { x = value; } }
         public double g { get => y; set { y = value; } }
@@ -131,18 +132,19 @@ namespace FredrickTechDemo.FredsMath
         }
         public static Vector3D normalize(Vector3D vec)
         {
-            double length = magnitude(vec);
+            Vector3D resultVec = vec;
+            double length = magnitude(resultVec);
             if (length != 0)
             {
-                vec.x /= length;
-                vec.y /= length;
-                vec.z /= length;
+                resultVec.x /= length;
+                resultVec.y /= length;
+                resultVec.z /= length;
             }
             else
             {
-                vec.x = vec.y = vec.z = 0;
+                resultVec.x = resultVec.y = resultVec.z = 0;
             }
-            return vec;
+            return resultVec;
         }
 
         public static Vector3D cross(Vector3D vecA, Vector3D vecB)

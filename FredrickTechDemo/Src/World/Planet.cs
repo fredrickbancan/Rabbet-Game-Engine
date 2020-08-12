@@ -2,6 +2,7 @@
 using FredrickTechDemo.Models;
 using FredrickTechDemo.SubRendering;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace FredrickTechDemo
 {
@@ -13,7 +14,7 @@ namespace FredrickTechDemo
         private Vector3F skyColor;
         private Vector3F fogColor;
 
-        private List<Entity> entities;
+        public List<Entity> entities;
         public Planet()
         {
             fogColor = ColourF.lightBlossom.normalVector3F();
@@ -78,8 +79,10 @@ namespace FredrickTechDemo
         
         public void onTick()
         {
+            removeMarkedEntities();
             tickEntities();
         }
+
         private void tickEntities()
         {
             foreach(Entity ent in entities)
@@ -90,10 +93,40 @@ namespace FredrickTechDemo
                 }
             }
         }
+
+        private void removeMarkedEntities()
+        {
+            for(int i = 0; i < entities.Count; i++)
+            {
+                if (entities.ElementAt(i) != null && entities.ElementAt(i).getIsMarkedForRemoval())
+                {
+                    removeEntity(entities.ElementAt(i));
+                }
+            }
+        }
+
+        /*creates an impulse at the given location which will push entities away, 
+          like an explosion.*/
+        public void createImpulseAtLocation(Vector3D loc, double radius = 4, float power = 1)
+        {
+            foreach (Entity ent in entities)
+            {
+                if (ent != null)
+                {
+                    double distanceFromLocation = (ent.getPosition() - loc).Magnitude();
+                    if (distanceFromLocation < radius)
+                    {
+                        ent.applyImpulseFromLocation(loc, (1 - MathUtil.normalize(0, (float)radius, (float)distanceFromLocation)) * power);
+                    }
+                }
+            }
+        }
+
         public ModelDrawable getSkyboxModel()
         {
             return skyboxModel;
         }
+
         public ModelDrawable getTerrainModel()//temporary
         {
             return tempWorldModel;
@@ -101,16 +134,20 @@ namespace FredrickTechDemo
 
         public void spawnEntityInWorld(Entity theEntity)
         {
+            theEntity.setCurrentPlanet(this);
             entities.Add(theEntity);
         }
+
         public void spawnEntityInWorldAtPosition(Entity theEntity, Vector3D atPosition)
         {
+            theEntity.setCurrentPlanet(this);
             theEntity.setPosition(atPosition);
             entities.Add(theEntity);
         }
         
         public void removeEntity(Entity theEntity)
         {
+            theEntity.setCurrentPlanet(null);
             entities.Remove(theEntity);
         }
     }

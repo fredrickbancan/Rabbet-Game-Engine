@@ -12,6 +12,7 @@ namespace FredrickTechDemo
         protected Vector3D previousTickPos;
         protected Vector3D pos;
         protected Vector3D velocity;
+        protected Planet currentPlanet;
         protected EntityModel entityModel;
         public static readonly double defaultAirResistance = 0.03572F;
         public static readonly double defaultGroundResistance = 0.72F;
@@ -21,6 +22,7 @@ namespace FredrickTechDemo
         protected double gravity = defaultGravity;
         protected bool isFlying = false;
         protected bool isGrounded = false;
+        private bool removalFlag = false;// true if this entity should be removed in the next tick
         protected double pitch;
         protected double yaw;
         protected double roll;
@@ -28,6 +30,7 @@ namespace FredrickTechDemo
         protected double prevTickYaw;
         protected double prevTickRoll;
         protected bool hasDoneFirstUpdate = false;
+        protected int existedTicks = 0;//number of ticks this entity has existed for
         public Entity()
         {
             this.pos = new Vector3D();
@@ -50,6 +53,8 @@ namespace FredrickTechDemo
             prevTickPitch = pitch;
             prevTickYaw = yaw;
             prevTickRoll = roll;
+            existedTicks++;
+            if (existedTicks < 0) existedTicks = 0;//incase of int overflow
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
             //resist velocity differently depending on state
@@ -68,7 +73,11 @@ namespace FredrickTechDemo
             //to prevent the entity from going through  the ground plane, if the next position increased by velocity will place the entity
             //below the ground plane, it will be given a value of 0.0000D -pos.y, so when position is increased by velocity, they cancel out resulting
             //in perfect 0, which stops the entity perfectly on the ground plane.
-            if (pos.y + velocity.y < groundPlaneHeight) velocity.y = groundPlaneHeight - pos.y;
+            if (pos.y + velocity.y < groundPlaneHeight)
+            {
+                velocity.y = groundPlaneHeight - pos.y;
+                isGrounded = true;
+            }
 
             if (hasModel)
             {
@@ -84,6 +93,21 @@ namespace FredrickTechDemo
             pos += velocity;
         }
 
+        public virtual void setCurrentPlanet(Planet p)
+        {
+            this.currentPlanet = p;
+        }
+
+        //removes this entity from existance
+        public virtual void ceaseToExist()
+        {
+            removalFlag = true;
+        }
+
+        public bool getIsMarkedForRemoval()
+        {
+            return removalFlag;
+        }
         protected virtual void updateModel()
         {
             entityModel.updateModel();
@@ -96,6 +120,12 @@ namespace FredrickTechDemo
         public virtual EntityModel getEntityModel()
         {
             return this.entityModel;
+        }
+
+        /*Apply a force to this entity from the location with the power.*/
+        public virtual void applyImpulseFromLocation(Vector3D loc, double power)
+        {
+            velocity += Vector3D.normalize(pos - loc) * power;
         }
 
         public virtual void rotateRoll(double amount)

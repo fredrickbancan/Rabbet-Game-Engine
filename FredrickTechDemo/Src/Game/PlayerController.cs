@@ -38,23 +38,36 @@ namespace FredrickTechDemo
             }
         }
 
+        public void updateSingleMousePressInput(MouseState mouse)
+        {
+            if(Input.mosueKeySinglePress(MouseButton.Left))//left mouse click
+            {
+                thePlayer.onLeftClick();
+            }
+        }
+
         /*Called if a new key is being pressed in a tick. Will only call for one tick if it is the same key.
           usefull for input such as opening menus, attacking, jumping, things that only need one key press.*/
         public void updateSinglePressInput(KeyboardState keyboard)
         {
-            if(keyboard.IsKeyDown(Key.E))
+            if(Input.keySinglePress(Key.E))
             {
                 Input.centerMouse(); // center the mouse cursor when closing or opening menu
                 Input.toggleHideMouse();
                 thePlayer.togglePause();
             }
 
-            if (keyboard.IsKeyDown(Key.F))
+            if (Input.keySinglePress(Key.V))
             {
                 thePlayer.toggleFlying();
             }
 
-            if(keyboard.IsKeyDown(Key.Space))
+            if (Input.keySinglePress(Key.F))
+            {
+                thePlayer.interact();
+            }
+
+            if (Input.keySinglePress(Key.Space))
             {
                 thePlayer.jump();
             }

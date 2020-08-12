@@ -3,6 +3,7 @@ namespace FredrickTechDemo.FredsMath
 {
     public struct Vector3F
     {
+        public static Vector3F zero = new Vector3F();
         public float x, y, z;
         public float r { get => x; set { x = value; } }
         public float g { get => y; set { y = value; } }

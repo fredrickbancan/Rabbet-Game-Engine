@@ -77,7 +77,7 @@ namespace FredrickTechDemo.Models
         private static void processUV()
         {
             float[] vertexUV = getFloatsFromStringArray(currentLine.Split(' '));
-            Vector2F newUV = new Vector2F(vertexUV[0], 1 - vertexUV[1]); // 1 - because we need to flip uvs on y for opengl
+            Vector2F newUV = new Vector2F(vertexUV[0], vertexUV[1]);// other model programs may requre a v flip, blender does not
             unorderedUVs.Add(newUV);
         }
 

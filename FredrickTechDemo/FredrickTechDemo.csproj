@@ -60,9 +60,10 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Src\Rendering\Models\EntityModels\EntityTankModel.cs" />
-    <Compile Include="Src\Rendering\Models\Prefabs\DefaultDebugModel.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\EntityCactusModel.cs" />
+    <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankModel.cs" />
+    <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankProjectileModel.cs" />
+    <Compile Include="Src\Rendering\Models\Prefabs\DefaultDebugModel.cs" />
     <Compile Include="Src\Rendering\Models\OBJProcessing\OBJLoader.cs" />
     <Compile Include="Src\Rendering\SubRendering\TriangleBatcher.cs" />
     <Compile Include="Src\World\Entity\Entity.cs" />
@@ -89,6 +90,8 @@
     <Compile Include="Src\Game\Debugging\Profiler.cs" />
     <Compile Include="Src\Game\Debugging\ResourceHelper.cs" />
     <Compile Include="Src\Game\TicksAndFps.cs" />
+    <Compile Include="Src\World\Entity\Projectiles\EntityProjectile.cs" />
+    <Compile Include="Src\World\Entity\Projectiles\EntityTankProjectile.cs" />
     <Compile Include="Src\World\Entity\Vehicles\EntityTank.cs" />
     <Compile Include="Src\World\Entity\Vehicles\EntityVehicle.cs" />
     <Compile Include="Src\World\Planet.cs" />
@@ -116,11 +119,13 @@
     <None Include="Res\Font\Arial.fnt" />
     <None Include="Res\Font\Consolas.fnt" />
     <None Include="Res\Font\Trebuchet.fnt" />
+    <None Include="Res\OBJ\Cactus.obj" />
     <None Include="Res\OBJ\IcoSphere.obj" />
     <None Include="Res\OBJ\Monkey.obj" />
     <None Include="Res\OBJ\Plane.obj" />
     <None Include="Res\OBJ\Tank\TankBarrel.obj" />
     <None Include="Res\OBJ\Tank\TankBody.obj" />
+    <None Include="Res\OBJ\Tank\TankProjectile.obj" />
     <None Include="Res\OBJ\Tank\TankWheels.obj" />
     <None Include="Res\Shaders\ColorTexture3D.shader" />
     <None Include="Res\Shaders\ColorTextureFog3D.shader" />

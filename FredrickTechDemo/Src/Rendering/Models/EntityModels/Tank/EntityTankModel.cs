@@ -21,9 +21,9 @@ namespace FredrickTechDemo.Models
         public EntityTankModel(EntityTank parent)//dont want to call the base constructor for this model
         {
             this.parent = parent;
-            tankWheelModel = (ModelDrawable)OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceHelper.getOBJFileDir(@"Tank\TankWheels.obj")).scaleVertices(new Vector3F(.5f,.5f,.5f));
-            tankBodyModel = (ModelDrawable)OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceHelper.getOBJFileDir(@"Tank\TankBody.obj")).scaleVertices(new Vector3F(.5f, .5f, .5f));
-            tankBarrelModel = (ModelDrawable)OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceHelper.getOBJFileDir(@"Tank\TankBarrel.obj")).scaleVertices(new Vector3F(.5f, .5f, .5f)).translateVertices(new Vector3F(0, 2, -0.5F));
+            tankWheelModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceHelper.getOBJFileDir(@"Tank\TankWheels.obj"));
+            tankBodyModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceHelper.getOBJFileDir(@"Tank\TankBody.obj"));
+            tankBarrelModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceHelper.getOBJFileDir(@"Tank\TankBarrel.obj"));
             updateModel();
             updateModel();
         }
@@ -35,9 +35,14 @@ namespace FredrickTechDemo.Models
             prevTickTankBodyModelMatrix = tankBodyModelMatrix;
             prevTickTankBarrelModelMatrix = tankBarrelModelMatrix;
 
-            tankWheelsModelMatrix = Matrix4F.rotate(new Vector3F((float)parent.getPitch(), -(float)parent.getWheelsYaw - 90, (float)parent.getRoll())) * Matrix4F.translate(Vector3F.convert(parent.getPosition()));
-            tankBodyModelMatrix = Matrix4F.rotate(new Vector3F((float)parent.getPitch(), -(float)parent.getBodyYaw, (float)parent.getRoll())) * Matrix4F.translate(Vector3F.convert(parent.getPosition()));
-            tankBarrelModelMatrix = Matrix4F.rotate(new Vector3F((float)parent.getBarrelPitch, -(float)parent.getBarrelYaw, (float)parent.getRoll())) * Matrix4F.translate(Vector3F.convert(parent.getBarrelpos));
+            //Matrix heirarchy, barel is child of body is child of wheels.
+            //body yaw  is also child of camera yaw, which means it has to be additionally rotated by getBodyYaw
+            //barrel pitch is also child of camera pitch, which means it has to be additionally rotated by getBarrelPitch
+            //barrel also needs to be translated to a specific spot on the body model
+            tankWheelsModelMatrix = Matrix4F.scale(new Vector3F(0.5F, 0.5F, 0.5F)) * Matrix4F.rotate(new Vector3F((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) * Matrix4F.translate(Vector3F.convert(parent.getPosition()));
+            tankBodyModelMatrix = Matrix4F.rotate(new Vector3F(0, 90 + (float)parent.getYaw() - (float)parent.getBodyYaw, 0)) * tankWheelsModelMatrix;
+            tankBarrelModelMatrix = Matrix4F.rotate(new Vector3F((float)parent.getBarrelPitch, 0, 0)) * Matrix4F.translate(new Vector3F(0, 4, -2F)) * tankBodyModelMatrix;
+
         }
 
         /*Called every frame by base*/
@@ -56,6 +61,11 @@ namespace FredrickTechDemo.Models
         public override bool exists()
         {
             return tankWheelModel != null && tankBodyModel != null && tankBarrelModel != null;
+        }
+
+        public Matrix4F getBarrelModelMatrix()
+        {
+            return tankBarrelModelMatrix;
         }
     }
 }

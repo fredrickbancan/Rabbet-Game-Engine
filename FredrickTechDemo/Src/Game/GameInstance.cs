@@ -36,9 +36,7 @@ namespace FredrickTechDemo
             currentPlanet = new Planet();
             currentPlanet.spawnEntityInWorld(thePlayer);
             currentPlanet.spawnEntityInWorld(new EntityCactus());
-            EntityTank tank = new EntityTank();
-            currentPlanet.spawnEntityInWorld(tank);
-            thePlayer.mountVehicle(tank);
+            currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3D(5, 10, -5)));
         }
 
         /*Called before game runs*/
@@ -48,7 +46,7 @@ namespace FredrickTechDemo
             Renderer.init(this);
             Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", new Vector2F(), ColourF.darkRed, TextAlign.RIGHT);
             Renderer.textRenderer2D.addNewTextPanel("label", "Fredricks OpenGL Math tech demo.", new Vector2F(0, 0.97F), ColourF.black);
-            Renderer.textRenderer2D.addNewTextPanel("help", new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'F' to toggle flying. Tap 'E' to release mouse.", "Press 'ESC' to close game."}, new Vector2F(0.5F, 0.0F), ColourF.black, TextAlign.CENTER);
+            Renderer.textRenderer2D.addNewTextPanel("help", new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'V' to toggle flying. Tap 'E' to release mouse.", "Walk up to tank and press F to drive, Left click to fire.", "Press 'ESC' to close game."}, new Vector2F(0.5F, 0.0F), ColourF.black, TextAlign.CENTER);
             Input.setGameInstance(this);
             Input.centerMouse();
             Input.toggleHideMouse();

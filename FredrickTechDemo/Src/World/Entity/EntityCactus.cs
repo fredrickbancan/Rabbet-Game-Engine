@@ -7,14 +7,12 @@ namespace FredrickTechDemo
     {
         public EntityCactus() : base()
         {
-            this.entityModel = new EntityModel(this);
-            this.entityModel.setModel(EntityCactusModel.getNewModelDrawable());
+            this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
         }
         public EntityCactus(Vector3D pos) : base(pos)
         {
-            this.entityModel = new EntityModel(this);
-            this.entityModel.setModel(EntityCactusModel.getNewModelDrawable());
+            this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
         }
 

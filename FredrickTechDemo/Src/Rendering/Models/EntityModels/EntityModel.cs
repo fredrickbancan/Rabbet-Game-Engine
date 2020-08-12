@@ -44,7 +44,7 @@ namespace FredrickTechDemo.Models
         public virtual void updateModel()
         {
             prevTickModelMatrix = modelMatrix;
-            modelMatrix = Matrix4F.rotate(new Vector3F((float)parent.getPitch(), (float)-parent.getYaw() + 90, (float)parent.getRoll())) *  Matrix4F.translate(Vector3F.convert(parent.getPosition())) ;
+            modelMatrix = Matrix4F.rotate(new Vector3F((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) *  Matrix4F.translate(Vector3F.convert(parent.getPosition())) ;
         }
 
         /*Replaces the current or non existing ModelDrawable with the one provided*/
@@ -67,6 +67,7 @@ namespace FredrickTechDemo.Models
                 Application.error("An attempt was made to render a null entity model!");
             }
         }
+
 
         public virtual bool exists()
         {

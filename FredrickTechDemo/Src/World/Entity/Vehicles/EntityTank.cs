@@ -6,34 +6,31 @@ namespace FredrickTechDemo
 {
     public class EntityTank : EntityVehicle
     {
-        private double wheelsYaw;
         private double bodyYaw;
-        private double barrelYaw;
         private double barrelPitch;
-        private Vector3D barrelPos;
+        private readonly double barrelLength = 6.75D;
         public EntityTank() : base()
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
-            wheelsYaw = yaw;
             mountingOffset = new Vector3D(pos.x, pos.y + 2, pos.z);
         }
         public EntityTank(Vector3D initialPos) : base(initialPos)
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
-            wheelsYaw = yaw;
             mountingOffset = new Vector3D(pos.x, pos.y + 2, pos.z);
         }
 
         public override void onTick()
         {
             base.onTick();//do first
-            mountingOffset = new Vector3D(pos.x, pos.y + 2, pos.z);
-            barrelPos = new Vector3D(pos.x, pos.y, pos.z);
-            bodyYaw = mountingEntity.getYaw() + 90;
-            barrelPitch = mountingEntity.getHeadPitch();
-            barrelYaw = bodyYaw;
+            if (mountingEntity != null)
+            {
+                mountingOffset = new Vector3D(pos.x, pos.y + 2, pos.z);
+                bodyYaw = mountingEntity.getYaw() + 90;
+                barrelPitch = mountingEntity.getHeadPitch();
+            }
         }
 
         /*Called by base ontick()*/
@@ -41,8 +38,8 @@ namespace FredrickTechDemo
         protected override void alignVectors()
         {
             /*correcting front vector based on new pitch and yaw*/
-            frontVector.x = (double)(Math.Cos(MathUtil.radians(wheelsYaw)));
-            frontVector.z = (double)(Math.Sin(MathUtil.radians(wheelsYaw)));
+            frontVector.x = (double)(Math.Cos(MathUtil.radians(yaw)));
+            frontVector.z = (double)(Math.Sin(MathUtil.radians(yaw)));
             frontVector.Normalize();
         }
 
@@ -53,7 +50,7 @@ namespace FredrickTechDemo
             //modify walk speed here i.e slows, speed ups etc
             double walkSpeedModified = driveSpeed;
 
-            if (!isGrounded)walkSpeedModified = 0.02D;//reduce movespeed when jumping or mid air and reduce movespeed when flying as to not accellerate out of control
+            if (!isGrounded)walkSpeedModified = 0.02D;//reduce movespeed when jumping or mid air 
 
 
             //change velocity based on movement
@@ -64,17 +61,27 @@ namespace FredrickTechDemo
             movementVector *= 0;//reset movement vector
         }
 
+        /*called when player left clicks while driving this vehicle*/
+        public override void onLeftClick()
+        {
+            currentPlanet.spawnEntityInWorld(new EntityTankProjectile(getMuzzleLocation(), mountingEntity.getFrontVector(), barrelPitch, bodyYaw));
+        }
+
+        private Vector3D getMuzzleLocation()
+        {
+            Matrix4F barrelLengthTranslationMatrix = Matrix4F.translate(new Vector3F(0, 0, -(float)barrelLength)) * ((EntityTankModel)entityModel).getBarrelModelMatrix();
+            Vector3D result = new Vector3D();
+            result.x += barrelLengthTranslationMatrix.row3.x;
+            result.y += barrelLengthTranslationMatrix.row3.y;
+            result.z += barrelLengthTranslationMatrix.row3.z;
+            return result;
+        }
         public override void rotateYaw(double amount)
         {
-            wheelsYaw += amount;
-            bodyYaw += amount;
-            barrelYaw += amount;
+            base.rotateYaw(amount);
             this.mountingEntity.rotateYaw(amount);
         }
-        public double getWheelsYaw { get => wheelsYaw;}
         public double getBodyYaw { get => bodyYaw;}
-        public double getBarrelYaw { get => barrelYaw;}
         public double getBarrelPitch { get => barrelPitch;}
-        public Vector3D getBarrelpos { get => barrelPos;}
     }
 }

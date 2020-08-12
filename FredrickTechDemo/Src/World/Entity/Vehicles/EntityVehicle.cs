@@ -35,10 +35,14 @@ namespace FredrickTechDemo
         public override void onTick()
         {
             base.onTick();//do first
-            mountingEntity.setPosition(mountingOffset);
-            alignVectors();
+            if (mountingEntity != null)
+            {
+                mountingEntity.setPosition(mountingOffset);
 
-            moveByMovementVector();
+                alignVectors();
+
+                moveByMovementVector();
+            }
         }
 
         /*When called, aligns vectors according to the entities state and rotations.*/
@@ -56,7 +60,7 @@ namespace FredrickTechDemo
             //modify walk speed here i.e slows, speed ups etc
             double walkSpeedModified = driveSpeed;
 
-            if (!isGrounded) walkSpeedModified = 0.0072D; else walkSpeedModified = 0.02D;//reduce movespeed when jumping or mid air and reduce movespeed when flying as to not accellerate out of control
+            if (!isGrounded) walkSpeedModified = 0.02D;//reduce movespeed when jumping or mid air 
 
 
 

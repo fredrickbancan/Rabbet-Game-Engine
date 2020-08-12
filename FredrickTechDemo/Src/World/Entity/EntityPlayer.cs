@@ -31,11 +31,19 @@ namespace FredrickTechDemo
             camera.onTick();
         }
 
+        /*Called by input when user left clicks*/
+        public void onLeftClick()
+        {
+            if(currentVehicle != null)
+            {
+                currentVehicle.onLeftClick();
+            }
+        }
+
         /*When the player is rotated by something other than the camera, it needs to apply the rotation to the camera smoothly in between ticks. 
           The camera will then apply this rotation to the player entity.*/
         public override void rotateYaw(double amount)
         {
-            base.rotateYaw(amount);
             camera.tickRotateYaw(amount);
         }
 

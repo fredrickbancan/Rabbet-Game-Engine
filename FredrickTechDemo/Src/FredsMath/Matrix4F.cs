@@ -350,6 +350,13 @@ namespace FredrickTechDemo.FredsMath
             newZ = z * newScale.z;
         }
 
+        public static void rotateXYZDoubles(Vector3D newRotation, double x, double y, double z, out double newX, out double newY, out double newZ)
+        {
+            Matrix4F rotMat = rotate(Vector3F.convert(newRotation));
+            newX = MathUtil.dotDoubles(rotMat.m1, rotMat.m2, rotMat.m3, x, y, z) + rotMat.m4;
+            newY = MathUtil.dotDoubles(rotMat.m5, rotMat.m6, rotMat.m7, x, y, z) + rotMat.m8;
+            newZ = MathUtil.dotDoubles(rotMat.m9, rotMat.m10, rotMat.m11, x, y, z) + rotMat.m12;
+        }
         #endregion
     }
 }

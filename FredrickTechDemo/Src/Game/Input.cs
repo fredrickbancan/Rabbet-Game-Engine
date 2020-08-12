@@ -9,8 +9,12 @@ namespace FredrickTechDemo
         private static bool mouseHidden = false;
         private static GameInstance gameInstance;
         private static PlayerController playerController;
+
         private static KeyboardState previouskeyboardState;
         private static KeyboardState keyboardState;
+
+        private static MouseState previousMouseState;
+        private static MouseState mouseState;
 
         /*Set the game instance for input to manipulate*/
         public static void setGameInstance(GameInstance game)
@@ -23,38 +27,51 @@ namespace FredrickTechDemo
         /*called every tick to check which keys are being pressed and manipulates the provided game instance reference's logic and entities */
         public static void updateInput()
         {
-            keyboardState = Keyboard.GetState();
-
-           /*Only update keyboard input if the game window is focused, and if any key is being pressed.*/
-            if (gameInstance.Focused && keyboardState.IsAnyKeyDown)
+            updateMouseButtonInput();
+            updateKeyboardInput();
+        }
+        private static void updateMouseButtonInput()
+        {
+            previousMouseState = mouseState;
+            mouseState = Mouse.GetState();
+            /*Only update mouse input if the game window is focused, and if any key is being pressed.*/
+            if (gameInstance.Focused && mouseState.IsAnyButtonDown)
             {
-                playerController.updateInput(keyboardState);//do player input
+                //do constant input here
 
-                #region constant input
-                
-
-                #endregion
-
-                #region single press input
-                if (previouskeyboardState != keyboardState)
-                {
-                    playerController.updateSinglePressInput(keyboardState);//do player single button input
-
-                    if (keyboardState.IsKeyDown(Key.Escape))
-                    {
-                        gameInstance.Exit();
-                    }
-
-                    if (keyboardState.IsKeyDown(Key.F3))
-                    {
-                        toggleDebugScreen();
-                    }
-                }
-                #endregion
+                //this does single button input
+                playerController.updateSingleMousePressInput(mouseState);
             }
-            previouskeyboardState = keyboardState;
         }
 
+        private static void updateKeyboardInput()
+        {
+            previouskeyboardState = keyboardState;
+            keyboardState = Keyboard.GetState();
+
+            /*Only update keyboard input if the game window is focused, and if any key is being pressed.*/
+            if (gameInstance.Focused && keyboardState.IsAnyKeyDown)
+            {
+                //do consistant input here
+                playerController.updateInput(keyboardState);//do player input 
+
+
+
+                //this does single key input~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                playerController.updateSinglePressInput(keyboardState);//do player single button input
+
+                if (keySinglePress(Key.Escape))
+                {
+                    gameInstance.Exit();
+                }
+
+                if (keySinglePress(Key.F3))
+                {
+                    toggleDebugScreen();
+                }
+
+            }
+        }
         /*Places the mouse cursor at the center of the game window*/
         public static void centerMouse()
         {
@@ -91,6 +108,17 @@ namespace FredrickTechDemo
         public static bool getIsMouseHidden()
         {
             return mouseHidden;
+        }
+
+        public static bool keySinglePress(Key key)
+        {
+            //returns true if this key is pressed, and only for the first update.
+            return (keyboardState[key] && (keyboardState[key] != previouskeyboardState[key]));
+        }
+        public static bool mosueKeySinglePress(MouseButton key)
+        {
+            //returns true if this key is pressed, and only for the first update.
+            return (mouseState[key] && (mouseState[key] != previousMouseState[key]));
         }
     }
 }
