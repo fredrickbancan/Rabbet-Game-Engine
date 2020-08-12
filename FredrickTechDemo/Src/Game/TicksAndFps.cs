@@ -100,9 +100,9 @@ namespace FredrickTechDemo
             return ticksElapsed;
         }
 
-        public static int getNumOfTicksForSeconds(int seconds)
+        public static double getNumOfTicksForSeconds(double seconds)
         {
-            return (int)(seconds * ticksPerSecond);
+            return seconds * ticksPerSecond;
         }
         public static double getFrameTickPercentage()
         {

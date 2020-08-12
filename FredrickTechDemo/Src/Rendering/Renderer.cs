@@ -55,6 +55,7 @@ namespace FredrickTechDemo
         {
             gameInstance.thePlayer.onCameraUpdate();//do this first
             gameInstance.currentPlanet.drawEntities(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix);
+            gameInstance.currentPlanet.drawVFX(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix);
             gameInstance.currentPlanet.getTerrainModel().draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, gameInstance.currentPlanet.getFogColor());
             gameInstance.currentPlanet.getSkyboxModel().draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, gameInstance.currentPlanet.getSkyColor(), gameInstance.currentPlanet.getFogColor());
            

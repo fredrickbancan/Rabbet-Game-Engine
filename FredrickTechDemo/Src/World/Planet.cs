@@ -15,11 +15,13 @@ namespace FredrickTechDemo
         private Vector3F fogColor;
 
         public List<Entity> entities;
+        public List<VFX> vfxList;
         public Planet()
         {
             fogColor = ColourF.lightBlossom.normalVector3F();
             skyColor = ColourF.skyBlue.normalVector3F();
             entities = new List<Entity>();
+            vfxList = new List<VFX>();
             buildSkyBox();
             generateWorld();
         }
@@ -52,6 +54,18 @@ namespace FredrickTechDemo
                 }
             }
         }
+
+        /*Loop through each vfx and render them with a seperate draw call (INEFFICIENT)*/
+        public void drawVFX(Matrix4F viewMatrix, Matrix4F projectionMatrix)
+        {
+            foreach (VFX vfx in vfxList)
+            {
+                if (vfx.exists())
+                {
+                    vfx.draw(viewMatrix, projectionMatrix, fogColor);
+                }
+            }
+        }
         private void buildSkyBox()
         {
             Model[] temp = new Model[6];
@@ -80,7 +94,9 @@ namespace FredrickTechDemo
         public void onTick()
         {
             removeMarkedEntities();
+            removeMarkedVFX();
             tickEntities();
+            tickVFX();
         }
 
         private void tickEntities()
@@ -90,6 +106,16 @@ namespace FredrickTechDemo
                 if (ent != null)
                 {
                     ent.onTick();
+                }
+            }
+        }
+        private void tickVFX()
+        {
+            foreach (VFX vfx in vfxList)
+            {
+                if (vfx != null)
+                {
+                    vfx.onTick();
                 }
             }
         }
@@ -105,10 +131,24 @@ namespace FredrickTechDemo
             }
         }
 
+        private void removeMarkedVFX()
+        {
+            for (int i = 0; i < vfxList.Count; i++)
+            {
+                if (vfxList.ElementAt(i) != null && !vfxList.ElementAt(i).exists())
+                {
+                    vfxList.Remove(vfxList.ElementAt(i));
+                }
+            }
+        }
+
         /*creates an impulse at the given location which will push entities away, 
           like an explosion.*/
-        public void createImpulseAtLocation(Vector3D loc, double radius = 4, float power = 1)
+        public void doExplosionAt(Vector3D loc, double radius = 7, float power = 3)
         {
+            //render an explosion effect
+            spawnVFXInWorld(new VFXExplosion(loc));
+
             foreach (Entity ent in entities)
             {
                 if (ent != null)
@@ -144,7 +184,12 @@ namespace FredrickTechDemo
             theEntity.setPosition(atPosition);
             entities.Add(theEntity);
         }
-        
+
+        public void spawnVFXInWorld(VFX vfx)
+        {
+            vfxList.Add(vfx);
+        }
+
         public void removeEntity(Entity theEntity)
         {
             theEntity.setCurrentPlanet(null);

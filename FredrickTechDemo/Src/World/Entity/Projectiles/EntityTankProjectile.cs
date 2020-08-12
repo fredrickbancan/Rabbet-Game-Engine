@@ -20,7 +20,7 @@ namespace FredrickTechDemo
 
         public override void onCollideWithGround()
         {
-            currentPlanet.createImpulseAtLocation(pos);
+            currentPlanet.doExplosionAt(pos);
             base.onCollideWithGround();//do last
         }
     }

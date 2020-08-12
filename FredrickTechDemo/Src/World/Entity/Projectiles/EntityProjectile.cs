@@ -4,9 +4,9 @@ namespace FredrickTechDemo
 {
     class EntityProjectile : Entity
     {
-        protected int maxExistedTicks;
+        protected double maxExistedTicks;
 
-        public EntityProjectile(Vector3D pos, Vector3D direction, double initialVelocity = 2.5D, int maxLivingSeconds = 10) : base(pos)
+        public EntityProjectile(Vector3D pos, Vector3D direction, double initialVelocity = 2.5D, double maxLivingSeconds = 10) : base(pos)
         {
             velocity += direction * initialVelocity;
             this.maxExistedTicks = TicksAndFps.getNumOfTicksForSeconds(maxLivingSeconds);

@@ -66,6 +66,7 @@
     <Compile Include="Src\Rendering\Models\Prefabs\DefaultDebugModel.cs" />
     <Compile Include="Src\Rendering\Models\OBJProcessing\OBJLoader.cs" />
     <Compile Include="Src\Rendering\SubRendering\TriangleBatcher.cs" />
+    <Compile Include="Src\Rendering\VFX\VFXExplosion.cs" />
     <Compile Include="Src\World\Entity\Entity.cs" />
     <Compile Include="Src\World\Entity\EntityCactus.cs" />
     <Compile Include="Src\World\Entity\EntityLiving.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="Src\Rendering\Shader.cs" />
     <Compile Include="Src\Rendering\Texture.cs" />
     <Compile Include="Src\Rendering\Vertex.cs" />
+    <Compile Include="Src\Rendering\VFX\VFX.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -152,9 +154,12 @@
     <Content Include="Res\Texture\aie.png" />
     <Content Include="Res\Texture\Camo.png" />
     <Content Include="Res\Texture\EntityCactus.png" />
+    <Content Include="Res\Texture\Explosion.png" />
     <Content Include="Res\Texture\glass.png" />
     <Content Include="Res\Texture\sand.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Res\OBJ\VFX\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -22,7 +22,7 @@ namespace FredrickTechDemo
             rotateYaw(-1.0F);
             walkFowards();
            
-            jump();
+           // jump();
         }
     }
 }

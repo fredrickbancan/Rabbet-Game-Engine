@@ -64,10 +64,15 @@ namespace FredrickTechDemo.Models
             }
             else
             {
-                Application.error("An attempt was made to render a null entity model!");
+                Application.warn("An attempt was made to render a null entity model!");
             }
         }
 
+        public virtual void delete()
+        {
+            theModel.delete();
+            theModel = null;
+        }
 
         public virtual bool exists()
         {

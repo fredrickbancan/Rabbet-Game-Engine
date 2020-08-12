@@ -79,9 +79,16 @@ namespace FredrickTechDemo
                 isGrounded = true;
             }
 
-            if (hasModel)
+            if (hasModel )
             {
-                updateModel();
+                if (entityModel.exists())
+                {
+                    updateModel();
+                }
+                else
+                {
+                    hasModel = false;
+                }
             }
 
             if (!hasDoneFirstUpdate)
@@ -101,6 +108,7 @@ namespace FredrickTechDemo
         //removes this entity from existance
         public virtual void ceaseToExist()
         {
+            entityModel.delete();
             removalFlag = true;
         }
 
@@ -114,7 +122,7 @@ namespace FredrickTechDemo
         }
         public virtual bool getHasModel()
         {
-            return hasModel;
+            return hasModel && entityModel != null && entityModel.exists();
         }
 
         public virtual EntityModel getEntityModel()
@@ -125,7 +133,8 @@ namespace FredrickTechDemo
         /*Apply a force to this entity from the location with the power.*/
         public virtual void applyImpulseFromLocation(Vector3D loc, double power)
         {
-            velocity += Vector3D.normalize(pos - loc) * power;
+            //adding a tiny pos y bias to the impulses for now, because all entities are exactly on the 0 y plane so they wont get launched at all otherwise
+            velocity += Vector3D.normalize((pos += new Vector3D(0,0.5,0)) - loc) * power;
         }
 
         public virtual void rotateRoll(double amount)
