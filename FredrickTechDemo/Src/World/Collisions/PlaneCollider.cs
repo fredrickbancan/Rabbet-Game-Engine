@@ -13,24 +13,29 @@ namespace FredrickTechDemo
             this.scalar = scalar;
         }
 
-        public CollisionDirection getCollisionResultAABB(AABBCollider boxToTest)
+        public CollisionDirection getCollisionResultAABB(AABBCollider boxToTest, out bool touching)
         {
             throw new System.NotImplementedException();
         }
 
-        public CollisionDirection getCollisionResultPoint(Vector3D pointToTest)
+        public CollisionDirection getCollisionResultPoint(Vector3D pointToTest, out bool touching)
         {
             throw new System.NotImplementedException();
         }
 
-        public CollisionDirection getCollisionResultSphere(SphereCollider sphereToTest)
+        public CollisionDirection getCollisionResultSphere(SphereCollider sphereToTest, out bool touching)
         {
             throw new System.NotImplementedException();
         }
 
         public bool getHasParent()
         {
-            throw new System.NotImplementedException();
+            return false;
+        }
+
+        public ICollider getNextTickPredictedHitbox()
+        {
+            return this;
         }
 
         public void onTick()

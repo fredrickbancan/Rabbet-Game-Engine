@@ -15,29 +15,42 @@ namespace FredrickTechDemo
             this.parent = parent;
         }
 
-        public CollisionDirection getCollisionResultAABB(AABBCollider boxToTest)
+        public CollisionDirection getCollisionResultAABB(AABBCollider boxToTest, out bool touching)
         {
             throw new System.NotImplementedException();
         }
 
-        public CollisionDirection getCollisionResultPoint(Vector3D pointToTest)
+        public CollisionDirection getCollisionResultPoint(Vector3D pointToTest, out bool touching)
         {
-            throw new System.NotImplementedException();
+            return CollisionDirection.none;//points can not collide with spheres with direction in an axis aligned only context
         }
 
-        public CollisionDirection getCollisionResultSphere(SphereCollider sphereToTest)
+        public CollisionDirection getCollisionResultSphere(SphereCollider sphereToTest, out bool touching)
         {
-            throw new System.NotImplementedException();
+            return CollisionDirection.none;//spheres can not collide with spheres with direction in an axis aligned only context
         }
 
         public bool getHasParent()
         {
-            throw new System.NotImplementedException();
+            return parent != null;
+        }
+
+        public ICollider getNextTickPredictedHitbox()
+        {
+            SphereCollider result = new SphereCollider(pos, radius, parent);
+            if (parent != null)
+            {
+                result.pos = parent.getPredictedNextTickPos();
+            }
+            return result;
         }
 
         public void onTick()
         {
-            throw new System.NotImplementedException();
+            if (parent != null)
+            {
+                pos = parent.getPosition();
+            }
         }
     }
 }

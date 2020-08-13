@@ -14,16 +14,14 @@ namespace FredrickTechDemo
         private Vector3F skyColor;
         private Vector3F fogColor;
         private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
-        public Dictionary<int, ICollider> colliders;
-        public Dictionary<int, Entity> entities;
-        public List<VFX> vfxList;
+        public Dictionary<int, ICollider> colliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity, -1 if has no parent
+        public Dictionary<int, Entity> entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
+        public List<VFX> vfxList = new List<VFX>();
+
         public Planet()
         {
             fogColor = ColourF.lightBlossom.normalVector3F();
             skyColor = ColourF.skyBlue.normalVector3F();
-            colliders = new Dictionary<int, ICollider>();// the int is the ID for the parent entity, -1 if has no parent
-            entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
-            vfxList = new List<VFX>();
             buildSkyBox();
             generateWorld();
         }
@@ -112,6 +110,7 @@ namespace FredrickTechDemo
                 }
             }
         }
+
         private void tickVFX()
         {
             foreach (VFX vfx in vfxList)
@@ -125,7 +124,14 @@ namespace FredrickTechDemo
 
         private void doCollisions()
         {
+            if(colliders.Count >= 2)
             CollisionHandler.doCollisions(colliders);
+        }
+
+        /*For adding colliders with no entity parent, eg, for map collisions, inanimate immovable uncolliding objects.*/
+        public void addNonParentCollider(ICollider collider)
+        {
+            colliders.Add(-1, collider);
         }
 
         private void removeMarkedEntities()
@@ -191,10 +197,12 @@ namespace FredrickTechDemo
         public void spawnEntityInWorld(Entity theEntity)
         {
             theEntity.setCurrentPlanet(this);
+
             entities.Add(entityIDItterator++, theEntity);
+
             if(theEntity.getHasCollider())
             {
-                colliders.Add(entityIDItterator, theEntity.getCollider());
+                colliders.Add(entityIDItterator - 1, theEntity.getCollider());
             }
         }
 
