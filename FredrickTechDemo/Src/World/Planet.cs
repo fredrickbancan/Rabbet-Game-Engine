@@ -13,14 +13,16 @@ namespace FredrickTechDemo
         private ModelDrawable skyboxModel;
         private Vector3F skyColor;
         private Vector3F fogColor;
-
-        public List<Entity> entities;
+        private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
+        public Dictionary<int, ICollider> colliders;
+        public Dictionary<int, Entity> entities;
         public List<VFX> vfxList;
         public Planet()
         {
             fogColor = ColourF.lightBlossom.normalVector3F();
             skyColor = ColourF.skyBlue.normalVector3F();
-            entities = new List<Entity>();
+            colliders = new Dictionary<int, ICollider>();// the int is the ID for the parent entity, -1 if has no parent
+            entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
             vfxList = new List<VFX>();
             buildSkyBox();
             generateWorld();
@@ -46,11 +48,11 @@ namespace FredrickTechDemo
         /*Loop through each entity and render them with a seperate draw call (INEFFICIENT)*/
         public void drawEntities(Matrix4F viewMatrix, Matrix4F projectionMatrix)
         {
-            foreach(Entity ent in entities)
+            foreach(KeyValuePair<int, Entity> ent in entities)
             {
-                if(ent.getHasModel())
+                if(ent.Value.getHasModel())
                 {
-                    ent.getEntityModel().draw(viewMatrix, projectionMatrix, fogColor);
+                    ent.Value.getEntityModel().draw(viewMatrix, projectionMatrix, fogColor);
                 }
             }
         }
@@ -95,17 +97,18 @@ namespace FredrickTechDemo
         {
             removeMarkedEntities();
             removeMarkedVFX();
+            doCollisions();
             tickEntities();
             tickVFX();
         }
 
         private void tickEntities()
         {
-            foreach(Entity ent in entities)
+            foreach(KeyValuePair<int, Entity> ent in entities)
             {
-                if (ent != null)
+                if (ent.Value != null)
                 {
-                    ent.onTick();
+                    ent.Value.onTick();
                 }
             }
         }
@@ -120,13 +123,26 @@ namespace FredrickTechDemo
             }
         }
 
+        private void doCollisions()
+        {
+            CollisionHandler.doCollisions(colliders);
+        }
+
         private void removeMarkedEntities()
         {
             for(int i = 0; i < entities.Count; i++)
             {
-                if (entities.ElementAt(i) != null && entities.ElementAt(i).getIsMarkedForRemoval())
+                Entity entAt = entities.ElementAt(i).Value;
+
+                if (entAt != null && entAt.getIsMarkedForRemoval())
                 {
-                    removeEntity(entities.ElementAt(i));
+                    entAt.setCurrentPlanet(null);
+                    if(entAt.getHasCollider())
+                    {
+                        colliders.Remove(entities.ElementAt(i).Key);
+                    }
+                    entities.Remove(entities.ElementAt(i).Key);
+                    
                 }
             }
         }
@@ -149,14 +165,14 @@ namespace FredrickTechDemo
             //render an explosion effect
             spawnVFXInWorld(new VFXExplosion(loc));
 
-            foreach (Entity ent in entities)
+            foreach (KeyValuePair<int, Entity> ent in entities)
             {
-                if (ent != null)
+                if (ent.Value != null)
                 {
-                    double distanceFromLocation = (ent.getPosition() - loc).Magnitude();
+                    double distanceFromLocation = (ent.Value.getPosition() - loc).Magnitude();
                     if (distanceFromLocation < radius)
                     {
-                        ent.applyImpulseFromLocation(loc, (1 - MathUtil.normalize(0, (float)radius, (float)distanceFromLocation)) * power);
+                        ent.Value.applyImpulseFromLocation(loc, (1 - MathUtil.normalize(0, (float)radius, (float)distanceFromLocation)) * power);
                     }
                 }
             }
@@ -175,25 +191,22 @@ namespace FredrickTechDemo
         public void spawnEntityInWorld(Entity theEntity)
         {
             theEntity.setCurrentPlanet(this);
-            entities.Add(theEntity);
+            entities.Add(entityIDItterator++, theEntity);
+            if(theEntity.getHasCollider())
+            {
+                colliders.Add(entityIDItterator, theEntity.getCollider());
+            }
         }
 
         public void spawnEntityInWorldAtPosition(Entity theEntity, Vector3D atPosition)
         {
-            theEntity.setCurrentPlanet(this);
             theEntity.setPosition(atPosition);
-            entities.Add(theEntity);
+            spawnEntityInWorld(theEntity);
         }
 
         public void spawnVFXInWorld(VFX vfx)
         {
             vfxList.Add(vfx);
-        }
-
-        public void removeEntity(Entity theEntity)
-        {
-            theEntity.setCurrentPlanet(null);
-            entities.Remove(theEntity);
         }
     }
 }

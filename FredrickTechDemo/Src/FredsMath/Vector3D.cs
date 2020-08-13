@@ -107,6 +107,11 @@ namespace FredrickTechDemo.FredsMath
             return (double)Math.Sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
         }
 
+        public double horizontalMagnitude()
+        {
+            return (double)Math.Sqrt(this.x * this.x + this.z * this.z);
+        }
+
         public void Normalize()
         {
             double length = this.Magnitude();

@@ -4,10 +4,12 @@ using FredrickTechDemo.Models;
 namespace FredrickTechDemo
 {
     /*Base class for every entity in the game, Anything with movement, vectors,
-      physics, inventory and/or non-batched draw call is an entity.*/
+      physics is an entity.*/
 
     public class Entity
     {
+        protected ICollider collider = null;
+        protected bool hasCollider = false;
         private double groundPlaneHeight = 0.0000D;
         protected Vector3D previousTickPos;
         protected Vector3D pos;
@@ -73,7 +75,7 @@ namespace FredrickTechDemo
             //to prevent the entity from going through  the ground plane, if the next position increased by velocity will place the entity
             //below the ground plane, it will be given a value of 0.0000D -pos.y, so when position is increased by velocity, they cancel out resulting
             //in perfect 0, which stops the entity perfectly on the ground plane.
-            if (pos.y + velocity.y < groundPlaneHeight)
+            if (getPredictedNextTickPos().y < groundPlaneHeight)
             {
                 velocity.y = groundPlaneHeight - pos.y;
                 isGrounded = true;
@@ -98,8 +100,33 @@ namespace FredrickTechDemo
 
             /*do this last*///~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             pos += velocity;
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            //updating hitboxes below
+            if(hasCollider && collider != null)
+            {
+                collider.onTick();
+            }
         }
 
+        /*used for setting the collider of this entity by classes which extend entity.*/
+        protected virtual void setCollider(ICollider collider)
+        {
+            this.collider = collider;
+            if(this.collider != null)
+            {
+                this.hasCollider = true;
+            }
+        }
+
+        public virtual bool getHasCollider()
+        {
+            return hasCollider;
+        }
+
+        public virtual ICollider getCollider()
+        {
+            return collider;
+        }
         public virtual void setCurrentPlanet(Planet p)
         {
             this.currentPlanet = p;
@@ -129,6 +156,13 @@ namespace FredrickTechDemo
         {
             return this.entityModel;
         }
+
+        //useful for predicting and compensating for collisions
+        public virtual Vector3D getPredictedNextTickPos()
+        {
+            return pos + velocity;
+        }
+
 
         /*Apply a force to this entity from the location with the power.*/
         public virtual void applyImpulseFromLocation(Vector3D loc, double power)

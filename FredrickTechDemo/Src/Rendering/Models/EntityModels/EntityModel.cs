@@ -70,8 +70,11 @@ namespace FredrickTechDemo.Models
 
         public virtual void delete()
         {
-            theModel.delete();
-            theModel = null;
+            if (theModel != null)
+            {
+                theModel.delete();
+                theModel = null;
+            }
         }
 
         public virtual bool exists()

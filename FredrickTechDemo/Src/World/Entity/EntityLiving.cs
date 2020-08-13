@@ -1,5 +1,6 @@
 ﻿using FredrickTechDemo.FredsMath;
 using System;
+using System.Collections.Generic;
 
 namespace FredrickTechDemo
 {
@@ -111,13 +112,13 @@ namespace FredrickTechDemo
                 {
                     this.unmountVehicle();
                 }
-                else
+                else 
                 {
-                    foreach (Entity ent in currentPlanet.entities)
+                    foreach (KeyValuePair<int, Entity> ent in currentPlanet.entities)
                     {
-                        if ((ent.getPosition() - this.pos).Magnitude() < 3)//if the entity is atleast within 3 units (meters)
+                        if ((ent.Value.getPosition() - this.pos).Magnitude() < 3)//if the entity is atleast within 3 units (meters)
                         {
-                            if (ent is EntityVehicle vehicle)
+                            if (ent.Value is EntityVehicle vehicle)
                             {
                                 this.mountVehicle(vehicle);
                                 break;

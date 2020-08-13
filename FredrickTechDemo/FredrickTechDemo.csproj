@@ -67,6 +67,11 @@
     <Compile Include="Src\Rendering\Models\OBJProcessing\OBJLoader.cs" />
     <Compile Include="Src\Rendering\SubRendering\TriangleBatcher.cs" />
     <Compile Include="Src\Rendering\VFX\VFXExplosion.cs" />
+    <Compile Include="Src\World\Collisions\CollisionHandler.cs" />
+    <Compile Include="Src\World\Collisions\ICollider.cs" />
+    <Compile Include="Src\World\Collisions\PlaneCollider.cs" />
+    <Compile Include="Src\World\Collisions\PointCollider.cs" />
+    <Compile Include="Src\World\Collisions\SphereCollider.cs" />
     <Compile Include="Src\World\Entity\Entity.cs" />
     <Compile Include="Src\World\Entity\EntityCactus.cs" />
     <Compile Include="Src\World\Entity\EntityLiving.cs" />
@@ -80,7 +85,7 @@
     <Compile Include="Src\FredsMath\Vector3D.cs" />
     <Compile Include="Src\FredsMath\Vector3F.cs" />
     <Compile Include="Src\FredsMath\Vector4F.cs" />
-    <Compile Include="Src\World\Collisions\AxisAlignedBoundingBox.cs" />
+    <Compile Include="Src\World\Collisions\AABBCollider.cs" />
     <Compile Include="Src\Game\Debugging\DebugScreen.cs" />
     <Compile Include="Src\Game\GameInstance.cs" />
     <Compile Include="Src\Application.cs" />

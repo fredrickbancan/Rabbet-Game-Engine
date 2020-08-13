@@ -35,7 +35,10 @@ namespace FredrickTechDemo
             thePlayer = new EntityPlayer("Steve", new Vector3D(0.0, 0.0, 2.0));
             currentPlanet = new Planet();
             currentPlanet.spawnEntityInWorld(thePlayer);
-            currentPlanet.spawnEntityInWorld(new EntityCactus());
+            for (int i = 0; i < 30; i++)
+            {
+                currentPlanet.spawnEntityInWorld(new EntityCactus());
+            }
             currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3D(5, 10, -5)));
         }
 
@@ -59,7 +62,6 @@ namespace FredrickTechDemo
             base.OnUpdateFrame(args);
             mouseCenterX = this.X + this.Width / 2;
             mouseCenterY = this.Y + this.Height / 2;
-
             for (int i = 0; i < TicksAndFps.getTicksElapsed(); i++)//for each tick that has elapsed since the start of last update, run the games logic enough times to catch up. 
             {
                 onTick();
@@ -89,8 +91,8 @@ namespace FredrickTechDemo
         {
             Profiler.beginEndProfile(Profiler.gameLoopName);
             updateGUI();
-
-            if (!thePlayer.paused) currentPlanet.onTick();
+            
+            currentPlanet.onTick();
 
             Profiler.beginEndProfile(Profiler.gameLoopName);
         }

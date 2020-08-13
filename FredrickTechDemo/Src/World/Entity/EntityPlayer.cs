@@ -73,10 +73,12 @@ namespace FredrickTechDemo
             if(!paused)
             {
                 paused = true;
+                TicksAndFps.pause();
             }
             else
             {
                 paused = false;
+                TicksAndFps.unPause();
             }
         }
         public Camera getCamera()
