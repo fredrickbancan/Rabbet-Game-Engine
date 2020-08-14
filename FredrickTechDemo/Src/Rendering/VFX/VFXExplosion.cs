@@ -12,9 +12,9 @@ namespace FredrickTechDemo
         public VFXExplosion(Vector3D pos) : base(pos, 0.0F, shaderDir, textureDir, modelDir, 0.5D)
         {
             scale = 3.0F;
-            rotation.x = (float)rand.NextDouble() * 360;
-            rotation.y = (float)rand.NextDouble() * 360;
-            rotation.z = (float)rand.NextDouble() * 360;
+            setPitch((float)rand.NextDouble() * 180D);
+            setYaw((float)rand.NextDouble() * 180D);
+            setRoll((float)rand.NextDouble() * 180D);
         }
 
     }

@@ -7,33 +7,29 @@ namespace FredrickTechDemo
     /*This class is a spawnable sort of entity which can be rendered as a certain provided effect.
       Can be a particle, sprite, ect. This class will just hold the position, velocity and tick update code.
       VFX objects are treated as disposable and should not last more than a few ticks.*/
-    public class VFX : IDisposable
+    public class VFX : PositionalObject, IDisposable
     {
         protected bool disposed = false;
         protected float scale = 1;//scale of the VFX
         protected double maxExistingTicks;
         protected int ticksExisted;
-        protected Vector3D pos, prevTickPos, velocity;
         protected ModelDrawable vfxModel;
         protected Matrix4F prevTickModelMatrix;
         protected Matrix4F modelMatrix;
-        protected Vector3F rotation = Vector3F.zero;
         private bool removalFlag = false;// true if this entity should be removed in the next tick
 
-        public VFX(Vector3D pos, float initialScale, String shaderDir, String textureDir, String modelDir, double maxExistingSeconds = 1)
+        public VFX(Vector3D pos, float initialScale, String shaderDir, String textureDir, String modelDir, double maxExistingSeconds = 1) : base(pos)
         {
-            this.pos = pos;
             this.scale = initialScale;
             this.vfxModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelDir);
             maxExistingTicks = TicksAndFps.getNumOfTicksForSeconds(maxExistingSeconds);
             updateVFXModel();
             updateVFXModel();
         }
-        public VFX(Vector3D pos, float initialScale, Vector3D velocity, String shaderDir, String textureDir, String modelDir, double maxExistingSeconds = 1)
+        public VFX(Vector3D pos, float initialScale, Vector3D velocity, String shaderDir, String textureDir, String modelDir, double maxExistingSeconds = 1) : base (pos)
         {
-            this.pos = pos;
             this.scale = initialScale;
-            this.velocity = velocity;
+            setVelocity(velocity);
             this.vfxModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelDir);
             maxExistingTicks = TicksAndFps.getNumOfTicksForSeconds(maxExistingSeconds);
             updateVFXModel();
@@ -43,7 +39,7 @@ namespace FredrickTechDemo
         /*called every tick*/
         public virtual void onTick()
         {
-            prevTickPos = pos;
+            ticksExisted++;
             if (ticksExisted < 0) ticksExisted = 0;
             if (ticksExisted >= maxExistingTicks)
             {
@@ -51,14 +47,15 @@ namespace FredrickTechDemo
             }
             updateVFXModel();
 
-            ticksExisted++;
-            pos += velocity;
+            base.preTickMovement();
+            //do movement
+            base.postTickMovement();
         }
 
         protected virtual void updateVFXModel()
         {
             prevTickModelMatrix = modelMatrix;
-            modelMatrix = Matrix4F.scale(new Vector3F(scale, scale, scale)) * Matrix4F.rotate(rotation) * Matrix4F.translate(Vector3F.convert(pos));
+            modelMatrix = Matrix4F.scale(new Vector3F(scale, scale, scale)) * Matrix4F.rotate(new Vector3F((float)pitch, (float)yaw, (float)roll)) * Matrix4F.translate(Vector3F.convert(pos));
         }
 
         /*draws this vfx, can be overridden*/
@@ -72,11 +69,6 @@ namespace FredrickTechDemo
             {
                 Application.warn("An attempt was made to render a null or disposed VFX.");
             }
-        }
-
-        public virtual Vector3D getLerpPos()
-        {
-            return prevTickPos - (pos - prevTickPos) * TicksAndFps.getPercentageToNextTick();
         }
 
         public virtual void ceaseToExist()

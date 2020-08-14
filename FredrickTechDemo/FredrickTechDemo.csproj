@@ -38,6 +38,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -48,6 +49,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
@@ -69,9 +71,9 @@
     <Compile Include="Src\Rendering\VFX\VFXExplosion.cs" />
     <Compile Include="Src\World\Collisions\CollisionHandler.cs" />
     <Compile Include="Src\World\Collisions\ICollider.cs" />
-    <Compile Include="Src\World\Collisions\PlaneCollider.cs" />
-    <Compile Include="Src\World\Collisions\PointCollider.cs" />
-    <Compile Include="Src\World\Collisions\SphereCollider.cs" />
+    <Compile Include="Src\World\Collisions\Colliders\PlaneCollider.cs" />
+    <Compile Include="Src\World\Collisions\Colliders\PointCollider.cs" />
+    <Compile Include="Src\World\Collisions\Colliders\SphereCollider.cs" />
     <Compile Include="Src\World\Entity\Entity.cs" />
     <Compile Include="Src\World\Entity\EntityCactus.cs" />
     <Compile Include="Src\World\Entity\EntityLiving.cs" />
@@ -85,7 +87,7 @@
     <Compile Include="Src\FredsMath\Vector3D.cs" />
     <Compile Include="Src\FredsMath\Vector3F.cs" />
     <Compile Include="Src\FredsMath\Vector4F.cs" />
-    <Compile Include="Src\World\Collisions\AABBCollider.cs" />
+    <Compile Include="Src\World\Collisions\Colliders\AABBCollider.cs" />
     <Compile Include="Src\Game\Debugging\DebugScreen.cs" />
     <Compile Include="Src\Game\GameInstance.cs" />
     <Compile Include="Src\Application.cs" />
@@ -118,6 +120,7 @@
     <Compile Include="Src\Rendering\Texture.cs" />
     <Compile Include="Src\Rendering\Vertex.cs" />
     <Compile Include="Src\Rendering\VFX\VFX.cs" />
+    <Compile Include="Src\World\PositionalObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

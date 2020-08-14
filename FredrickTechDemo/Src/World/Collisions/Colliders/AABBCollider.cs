@@ -42,27 +42,49 @@ namespace FredrickTechDemo
                 || boxA.maxX < boxB.minX || boxA.maxY < boxB.minY || boxA.maxZ < boxB.minZ;
         }
 
-        public CollisionDirection getCollisionResultAABB(AABBCollider boxToTest, out bool touching)
+        public CollisionDirection getCollisionResultForColliderType(ICollider colliderToTest, out bool touching, out double overlap)
         {
-            if ((touching = !areBoxesNotTouching(this, boxToTest)))
+            if(colliderToTest is AABBCollider aabb)
             {
-                if()
-                {
-
-                }
+                return this.getCollisionResultAABB(aabb, out  touching, out  overlap);
             }
+
+            if (colliderToTest is PointCollider point)
+            {
+                return this.getCollisionResultPoint(point.pointPos, out touching, out overlap);
+            }
+
+            if (colliderToTest is SphereCollider sphere)
+            {
+                return this.getCollisionResultSphere(sphere, out touching, out overlap);
+            }
+
+            touching = false;
+            overlap = 0;
             return CollisionDirection.none;
         }
 
-        public CollisionDirection getCollisionResultPoint(Vector3D pointToTest, out bool touching)
+        public CollisionDirection getCollisionResultAABB(AABBCollider box, out bool touching, out double overlap)
         {
-            throw new System.NotImplementedException();
+            if ((touching = !areBoxesNotTouching(this, box)))
+            {
+               
+            }
+            overlap = 0;
             return CollisionDirection.none;
         }
 
-        public CollisionDirection getCollisionResultSphere(SphereCollider sphereToTest, out bool touching)
+        public CollisionDirection getCollisionResultPoint(Vector3D point, out bool touching, out double overlap)
         {
-            throw new System.NotImplementedException();
+            overlap = 0;
+            touching = false;
+            return CollisionDirection.none;
+        }
+
+        public CollisionDirection getCollisionResultSphere(SphereCollider sphere, out bool touching, out double overlap)
+        {
+            overlap = 0;
+            touching = false;
             return CollisionDirection.none;
         }
 
@@ -115,6 +137,8 @@ namespace FredrickTechDemo
 
             return result;
         }
+
+        
 
         public double minX { get => minBounds.x; set => minBounds.x = value; }
         public double minY { get => minBounds.y; set => minBounds.y = value; }

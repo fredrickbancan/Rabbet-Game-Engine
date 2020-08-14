@@ -5,6 +5,9 @@ namespace FredrickTechDemo
     /*An abstract interface for handling many different colliders.*/
     public interface ICollider
     {
+        /*returns the results of a collision test between this and the provided icollider using the type of the icollider*/
+        CollisionDirection getCollisionResultForColliderType(ICollider colliderToTest, out bool touching, out double overlap);
+
         //outputs the directions that the testing input collides with this collider.
         //for example, if the input lands on top of this collider, then in results, there will be CollisionDirection.bottom
         //the returned collisiondirection values will be used to calculate how to manipulate the child of the provided hitbox.
@@ -19,9 +22,9 @@ namespace FredrickTechDemo
         //in an axis aligned only context for example, a point and a sphere, or two spheres, can not collide in only one direction (except for impossibly rare situations)
         //so that will return a collisiondirection of "none" but if they are touching then the out bool touching will be true. This will let us
         //do things such as hit detection with a sphere hitbox bullet and a sphere hitbox target for example.
-        CollisionDirection getCollisionResultAABB(AABBCollider boxToTest, out bool touching);
-        CollisionDirection getCollisionResultPoint(Vector3D pointToTest, out bool touching);
-        CollisionDirection getCollisionResultSphere(SphereCollider sphereToTest, out bool touching);
+        CollisionDirection getCollisionResultAABB(AABBCollider boxToTest, out bool touching, out double overlap);
+        CollisionDirection getCollisionResultPoint(Vector3D pointToTest, out bool touching, out double overlap);
+        CollisionDirection getCollisionResultSphere(SphereCollider sphereToTest, out bool touching, out double overlap);
 
         /*Returns a copy of this hitbox which has been moved by the parent entities velocity by one tick which can be used to predict and account for collisions*/
         ICollider getNextTickPredictedHitbox();
