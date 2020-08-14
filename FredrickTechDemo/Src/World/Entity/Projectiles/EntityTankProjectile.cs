@@ -10,7 +10,7 @@ namespace FredrickTechDemo
         {
             this.yaw = initialYaw - 90;
             this.pitch = barrelPitch;
-            this.entityModel = new EntityTankProjectileModel(this, direction);
+            this.entityModel = new EntityTankProjectileModel(this);
             this.hasModel = true;
         }
 

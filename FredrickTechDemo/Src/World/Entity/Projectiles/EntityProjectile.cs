@@ -8,6 +8,7 @@ namespace FredrickTechDemo
 
         public EntityProjectile(Vector3D pos, Vector3D direction, double initialVelocity = 2.5D, double maxLivingSeconds = 20) : base(pos)
         {
+            airResistance = 0.001F;
             velocity += direction * initialVelocity;
             this.maxExistedTicks = TicksAndFps.getNumOfTicksForSeconds(maxLivingSeconds);
         }

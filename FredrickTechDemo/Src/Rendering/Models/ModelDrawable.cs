@@ -103,6 +103,23 @@ namespace FredrickTechDemo.Models
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
+
+        public virtual void draw(Matrix4F projectionMatrix, Matrix4F modelMatrix)
+        {
+            bind();
+            shader.setUniformMat4F("projectionMatrix", projectionMatrix);
+            shader.setUniformMat4F("modelMatrix", modelMatrix);
+            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+            unBind();
+        }
+        public virtual void draw(Matrix4F modelMatrix)
+        {
+            bind();
+            shader.setUniformMat4F("modelMatrix", modelMatrix);
+            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+            unBind();
+        }
+
         public virtual void draw()
         {
             bind();

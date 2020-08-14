@@ -9,7 +9,7 @@ namespace FredrickTechDemo
     public class Texture : IDisposable
     {
         private bool disposed = false;
-        private int id;
+        private int id, width, height;
         public Texture(String path, bool enableFiltering)
         {
             if (!enableFiltering)
@@ -25,6 +25,8 @@ namespace FredrickTechDemo
         public Texture()//constructs default texture
         {
             Bitmap bitmap = new Bitmap(16, 16);//creating default error texture
+            width = 16;
+            height = 16;
             for(int i = 0; i < 16; i++)
             {
                 for(int j = 0; j < 16; j++)
@@ -68,15 +70,22 @@ namespace FredrickTechDemo
             try
             {
                 bitmap = new Bitmap(file);
+                width = bitmap.Width;
+                height = bitmap.Height;
             }
             catch(Exception e)
             {
                 Application.error("Could not load texture: " + file + "\nException: " + e.Message);
-                bitmap = new Bitmap(2,2);//creating default error texture
-                bitmap.SetPixel(0,0, Color.Black);
-                bitmap.SetPixel(0,1, Color.Magenta);
-                bitmap.SetPixel(1,0, Color.Magenta);
-                bitmap.SetPixel(1,1, Color.Black);
+                bitmap = new Bitmap(16, 16);//creating default error texture
+                width = 16;
+                height = 16;
+                for (int i = 0; i < 16; i++)
+                {
+                    for (int j = 0; j < 16; j++)
+                    {//exlusive or
+                        bitmap.SetPixel(i, j, i % 2 == 0 ^ j % 2 != 0 ? Color.Magenta : Color.Black);//creating black and magenta checker board
+                    }
+                }
             }
             
             bitmap.RotateFlip(RotateFlipType.Rotate180FlipX);// flipping vertically because opengl starts from bottom left corner 
@@ -88,7 +97,7 @@ namespace FredrickTechDemo
             GL.BindTexture(TextureTarget.Texture2D, tex);
 
             BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-
+            
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
             bitmap.UnlockBits(data);
 
@@ -115,6 +124,16 @@ namespace FredrickTechDemo
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public int getWidth()
+        {
+            return width;
+        }
+
+        public int getHeight()
+        {
+            return height;
         }
     }
 }

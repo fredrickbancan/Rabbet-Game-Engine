@@ -329,6 +329,20 @@ namespace FredrickTechDemo.FredsMath
 
             return result; 
         }
+        public static Matrix4F createOrthographicMatrix(float width, float height, float zNear, float zFar)
+        {
+            Matrix4F result = new Matrix4F(1.0F);
+            result.m1 = 2 / width;
+            result.m6 = 2 / height;
+            result.m11 = -2 / (zFar - zNear);
+            result.m13 = -(width / width);
+            result.m14 = -(height / height);
+            result.m15 = -((zFar + zNear) / (zFar - zNear));
+            result.m16 = 1;
+
+
+            return result;
+        }
 
         public static void translateXYZFloats(Vector3F translation, float x, float y, float z, out float newX, out float newY, out float newZ)
         {

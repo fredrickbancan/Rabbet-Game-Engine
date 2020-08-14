@@ -17,7 +17,8 @@ namespace FredrickTechDemo
         public static readonly double defaultGroundResistance = 0.72F;
         public static readonly double defaultGravity = 0.03572F;
         protected bool hasModel = false;
-        protected double resistance = defaultAirResistance;
+        protected double airResistance = defaultAirResistance;
+        protected double groundResistance = defaultGroundResistance;
         protected double gravity = defaultGravity;
         protected bool isFlying = false;
         protected bool isGrounded = false;
@@ -37,15 +38,15 @@ namespace FredrickTechDemo
             existedTicks++;
             if (existedTicks < 0) existedTicks = 0;//incase of int overflow
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+            double resistance = 0;
             //resist velocity differently depending on state
-            if (isGrounded) { resistance = defaultGroundResistance; } else { resistance = defaultAirResistance; }
+            if (isGrounded) { resistance = groundResistance; } else { resistance = airResistance; }
             if (posY <= groundPlaneHeight) { isGrounded = true; } else { isGrounded = false; }//basic ground level collision detection, in this case there is a ground plane collider at 0.0000D
 
             base.preTickMovement();//do before movement
             /*decelerate velocity by air resistance (not accurate to real life)*/
             scaleXVelocity(1 - resistance);
-            scaleYVelocity(1 - defaultAirResistance);
+            scaleYVelocity(1 - airResistance);
             scaleZVelocity(1 - resistance);
 
             //decrease entity y velocity by gravity, will not spiral out of control due to terminal velocity.

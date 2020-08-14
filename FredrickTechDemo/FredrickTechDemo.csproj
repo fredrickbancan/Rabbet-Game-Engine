@@ -62,11 +62,14 @@
     <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Src\Rendering\GUIComponents\GUICrosshair.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\EntityCactusModel.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankModel.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankProjectileModel.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\DefaultDebugModel.cs" />
     <Compile Include="Src\Rendering\Models\OBJProcessing\OBJLoader.cs" />
+    <Compile Include="Src\Rendering\SubRendering\GUI\GUIScreen.cs" />
+    <Compile Include="Src\Rendering\SubRendering\GUI\GUIScreenComponent.cs" />
     <Compile Include="Src\Rendering\SubRendering\TriangleBatcher.cs" />
     <Compile Include="Src\Rendering\VFX\VFXExplosion.cs" />
     <Compile Include="Src\World\Collisions\CollisionHandler.cs" />
@@ -109,11 +112,11 @@
     <Compile Include="Src\Rendering\Models\ModelDrawableDynamic.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\PlanePrefab.cs" />
     <Compile Include="Src\Rendering\SubRendering\QuadBatcher.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Text\TextPanel2D.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\Character.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\FontBuilder.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\TextModelBuilder.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Text\TextRenderer2D.cs" />
+    <Compile Include="Src\Rendering\SubRendering\GUI\Text\TextPanel2D.cs" />
+    <Compile Include="Src\Rendering\SubRendering\GUI\Text\TextProcessing\Character.cs" />
+    <Compile Include="Src\Rendering\SubRendering\GUI\Text\TextProcessing\FontBuilder.cs" />
+    <Compile Include="Src\Rendering\SubRendering\GUI\Text\TextProcessing\TextModelBuilder.cs" />
+    <Compile Include="Src\Rendering\SubRendering\GUI\Text\TextRenderer2D.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\QuadPrefab.cs" />
     <Compile Include="Src\Rendering\Renderer.cs" />
     <Compile Include="Src\Rendering\Shader.cs" />
@@ -139,9 +142,10 @@
     <None Include="Res\OBJ\Tank\TankWheels.obj" />
     <None Include="Res\Shaders\ColorTexture3D.shader" />
     <None Include="Res\Shaders\ColorTextureFog3D.shader" />
+    <None Include="Res\Shaders\GUI\GuiCrosshairShader.shader" />
     <None Include="Res\Shaders\PS1ColourTextureShader3DFog.shader" />
     <None Include="Res\Shaders\SkyboxShader3D.shader" />
-    <None Include="Res\Shaders\GuiTextShader.shader" />
+    <None Include="Res\Shaders\GUI\GuiTextShader.shader" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
@@ -164,6 +168,7 @@
     <Content Include="Res\Texture\EntityCactus.png" />
     <Content Include="Res\Texture\Explosion.png" />
     <Content Include="Res\Texture\glass.png" />
+    <Content Include="Res\Texture\GUI\Crosshairs\CrosshairNormal.png" />
     <Content Include="Res\Texture\sand.png" />
   </ItemGroup>
   <ItemGroup>

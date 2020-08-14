@@ -8,7 +8,7 @@ namespace FredrickTechDemo.SubRendering
 {
     public class TextRenderer2D
     {
-        private readonly String textShaderDir = ResourceHelper.getShaderFileDir("GuiTextShader.shader");
+        private readonly String textShaderDir = ResourceHelper.getShaderFileDir(@"GUI\GuiTextShader.shader");
         private readonly String fontTextureDir;
         private readonly int screenEdgePadding = 10;
         private FontBuilder font;

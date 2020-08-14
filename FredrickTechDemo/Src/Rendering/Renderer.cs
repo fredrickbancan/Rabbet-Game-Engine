@@ -12,6 +12,7 @@ namespace FredrickTechDemo
     {
         private static GameInstance gameInstance;
         private static TextRenderer2D privateTextRenderer2D;
+        private static GUIScreen guiScreen;
         private static Matrix4F projectionMatrix;
         
         /*Called before any rendering is done*/
@@ -20,9 +21,11 @@ namespace FredrickTechDemo
             Renderer.gameInstance = game;
             gameInstance.MakeCurrent();
             privateTextRenderer2D = new TextRenderer2D("Trebuchet", 512);
+            guiScreen = new GUIScreen();
+            guiScreen.addGuiComponent("crosshair", new GUICrosshair());
             setClearColor(ColourF.black);
             GL.Enable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.CullFace);
+           // GL.Enable(EnableCap.CullFace);
             GL.Viewport(gameInstance.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
         }
@@ -33,6 +36,7 @@ namespace FredrickTechDemo
             GL.Viewport(gameInstance.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
             privateTextRenderer2D.onWindowResize();
+            guiScreen.onWindowResize();
         }
 
         /*Called before all draw calls*/
@@ -63,6 +67,7 @@ namespace FredrickTechDemo
 
         private static void renderGui()
         {
+            guiScreen.drawAll();
             privateTextRenderer2D.renderAnyText();
         }
 

@@ -6,6 +6,7 @@ namespace FredrickTechDemo
 {
     public class EntityTank : EntityVehicle
     {
+        private double projectileHopupAngle = 7.2F;
         private double bodyYaw;
         private double barrelPitch;
         private readonly double barrelLength = 6.75D;
@@ -29,7 +30,7 @@ namespace FredrickTechDemo
             {
                 mountingOffset = new Vector3D(pos.x, pos.y + 2, pos.z);
                 bodyYaw = mountingEntity.getYaw() + 90;
-                barrelPitch = mountingEntity.getHeadPitch();
+                barrelPitch = mountingEntity.getHeadPitch() + projectileHopupAngle;
             }
         }
 
@@ -64,7 +65,7 @@ namespace FredrickTechDemo
         /*called when player left clicks while driving this vehicle*/
         public override void onLeftClick()
         {
-            currentPlanet.spawnEntityInWorld(new EntityTankProjectile(getMuzzleLocation(), mountingEntity.getFrontVector(), barrelPitch, bodyYaw));
+            currentPlanet.spawnEntityInWorld(new EntityTankProjectile(getMuzzleLocation(), getMuzzleFrontVector(), barrelPitch, bodyYaw));
         }
 
         private Vector3D getMuzzleLocation()
@@ -74,6 +75,15 @@ namespace FredrickTechDemo
             result.x += barrelLengthTranslationMatrix.row3.x;
             result.y += barrelLengthTranslationMatrix.row3.y;
             result.z += barrelLengthTranslationMatrix.row3.z;
+            return result;
+        }
+        private Vector3D getMuzzleFrontVector()
+        {
+            Vector3D result = new Vector3D();
+            result.x = (double)(Math.Cos(MathUtil.radians(mountingEntity.getYaw()))) * (double)(Math.Cos(MathUtil.radians(barrelPitch)));
+            result.y = (double)Math.Sin(MathUtil.radians(barrelPitch));
+            result.z = (double)(Math.Sin(MathUtil.radians(mountingEntity.getYaw()))) * (double)(Math.Cos(MathUtil.radians(barrelPitch)));
+            result.Normalize();
             return result;
         }
         public override void rotateYaw(double amount)
