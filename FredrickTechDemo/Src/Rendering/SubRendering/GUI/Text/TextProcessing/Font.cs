@@ -5,9 +5,11 @@ using System.IO;
 namespace FredrickTechDemo.SubRendering.Text
 {
     /*This class is responsable for reading the .fnt files for each font, and generating a dictionary of characters for the text renderers to access.*/
-    public class FontBuilder
+    public class Font
     {
+        private bool successfull = true;
         private String debugDir;
+        private String fontName;
         private static readonly char splitter = ' ';
         private static readonly char numberSeperator = ',';
         private static readonly byte spaceAscii = 32;
@@ -24,22 +26,26 @@ namespace FredrickTechDemo.SubRendering.Text
         private Dictionary<byte, Character> finalFontData = new Dictionary<byte, Character>();
         private Dictionary<String, String> lineData = new Dictionary<String, String>();
         private StreamReader reader;
-        public FontBuilder(String fontName)
+        public Font(String fontName)
         {
             debugDir = ResourceHelper.getFontFileDir(fontName + ".fnt");
-
+            this.fontName = fontName;
             try
             {
                 reader = new StreamReader(ResourceHelper.getFontFileDir(fontName + ".fnt"));
             }
             catch(Exception e)
             {
-                Application.error("FontBuilder could not open the provided directory file!\nException message: " + e.Message + "\nDirectory: " + debugDir);
+                Application.error("Font could not open the provided directory file!\nException message: " + e.Message + "\nDirectory: " + debugDir);
+                successfull = false;
             }
 
-            loadPaddingAndSize();
-            loadLineAndImageSize();
-            loadCharacterData();
+            if (successfull)
+            {
+                loadPaddingAndSize();
+                loadLineAndImageSize();
+                loadCharacterData();
+            }
             reader.Close();
         }
 
@@ -114,6 +120,7 @@ namespace FredrickTechDemo.SubRendering.Text
             catch(Exception e)
             {
                 Application.error("FontFile error reading line in readNextLine()!\nException message: " + e.Message);
+                successfull = false;
             }
 
             if(line == null || line.Contains("kerning"))
@@ -138,14 +145,16 @@ namespace FredrickTechDemo.SubRendering.Text
             String stringResult;
             if(!lineData.TryGetValue(key, out stringResult))
             {
-                Application.warn("FontFile.getValueFromLineData() could not find value for key: " + key);
+                Application.error("FontFile.getValueFromLineData() could not find value for key: " + key);
+                successfull = false;
                 return 0;
             }
 
             int result;
             if(!int.TryParse(stringResult, out result))
             {
-                Application.warn("FontFile.getValueFromLineData() could not parse value to byte from string: " + stringResult);
+                Application.error("FontFile.getValueFromLineData() could not parse value to byte from string: " + stringResult);
+                successfull = false;
                 return 0;
             }
             return result;
@@ -158,7 +167,8 @@ namespace FredrickTechDemo.SubRendering.Text
             String resultString;
             if(!lineData.TryGetValue(key, out resultString))
             {
-                Application.warn("FontFile.getValuesFromLineData() could not find value for key: " + key);
+                Application.error("FontFile.getValuesFromLineData() could not find value for key: " + key);
+                successfull = false;
                 return null;
             }
 
@@ -170,7 +180,8 @@ namespace FredrickTechDemo.SubRendering.Text
                 byte result;
                 if(!Byte.TryParse(stringBytes[i], out result))
                 {
-                    Application.warn("FontFile.getValueFromLineData() could not parse value to byte from string: " + stringBytes[i]);
+                    Application.error("FontFile.getValueFromLineData() could not parse value to byte from string: " + stringBytes[i]);
+                    successfull = false;
                     result = 0;
                 }
 
@@ -212,5 +223,16 @@ namespace FredrickTechDemo.SubRendering.Text
             }
             return character;
         }
+
+        public bool successfullyInitialized()
+        {
+            return successfull;
+        }
+
+        public String getFontName()
+        {
+            return fontName;
+        }
+
     }
 }

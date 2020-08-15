@@ -16,6 +16,7 @@ namespace FredrickTechDemo.Models
         protected int VAO;
         protected Texture texture;
         protected Shader shader;
+        private bool drawErrorPrinted = false;
 
 
         /*takes in directory for the shader and texture for this model, indices can be null if they wont be used*/
@@ -131,15 +132,22 @@ namespace FredrickTechDemo.Models
             unBind();
         }
 
-        public virtual void drawPoints(Matrix4F viewMatrix, Matrix4F projectionMatrix, Matrix4F modelMatrix, Vector3F fogColor, bool ambientOcclusion)
+        public virtual void drawPoints(Matrix4F viewMatrix, Matrix4F projectionMatrix, Matrix4F modelMatrix, Vector3F fogColor, float pointRadius, bool ambientOcclusion)
         {
+            if (!drawErrorPrinted && indices != null && GL.IsBuffer(indicesBufferObject))
+            {
+                Application.warn("drawPoints called for object with indices!");
+                drawErrorPrinted = true;
+            }
             bind();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
             shader.setUniformMat4F("modelMatrix", modelMatrix);
             shader.setUniformVec3F("fogColour", fogColor);
+            shader.setUniformVec2F("viewPortSize", new Vector2F(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
+            shader.setUniform1F("pointRadius", pointRadius);
             shader.setUniform1I("aoc", ambientOcclusion ? 1 : 0);
-            //draw TODO
+            GL.DrawArrays(PrimitiveType.Points, 0, vertices.Length);
             unBind();
         }
 

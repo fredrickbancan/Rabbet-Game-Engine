@@ -1,19 +1,20 @@
 ﻿using FredrickTechDemo.FredsMath;
 using FredrickTechDemo.Models;
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace FredrickTechDemo.SubRendering.Text
 {
     /*this class is responsable for building arrays of veritces for text on the screen.*/
-    public static class TextModelBuilder
+    public static class TextModelBuilder2D
     {
         private static readonly byte spaceAscii = 32;
         
 
         /*Takes in an array of strings and converts them into an array of models. Each string in the array is treated as a new line of text.
           The lines start from the provided topleftorigin vector. Each model in the array is a line of text.*/
-        public static Model[] convertStringArrayToModelArray(String[] theStrings, FontBuilder font, Vector4F color, Vector2F topLeftPixelOrigin, float fontSize, int screenEdgePadding, TextAlign alignment)
+        public static Model[] convertStringArrayToModelArray(String[] theStrings, Font font, Vector4F color, Vector2F topLeftPixelOrigin, float fontSize, int screenEdgePadding, TextAlign alignment)
         {
             Model[] result = new Model[theStrings.Length];
             for(UInt32 i = 0; i < theStrings.Length; i++)
@@ -22,7 +23,7 @@ namespace FredrickTechDemo.SubRendering.Text
             }
             return result;
         }
-        public static Vertex[] convertStringToVertexArray(String theString, FontBuilder font, Vector4F color, Vector2F topLeftPixelOrigin, float fontSize, int screenEdgePadding, TextAlign alignment, UInt32 previousLineCount = 0)
+        public static Vertex[] convertStringToVertexArray(String theString, Font font, Vector4F color, Vector2F topLeftPixelOrigin, float fontSize, int screenEdgePadding, TextAlign alignment, UInt32 previousLineCount = 0)
         {
             Vector2F cursorPos = topLeftPixelOrigin;
             cursorPos.x += screenEdgePadding;
@@ -161,5 +162,55 @@ namespace FredrickTechDemo.SubRendering.Text
             return modelVertices;
         }
 
+
+        /*Combines all the vertex data of all of the text panels, and sends the information to the dynamic model.*/
+        public static void batchAndSubmitTextToDynamicModel(ModelDrawableDynamic dynamicModel, Dictionary<String, GUITextPanel> textPanels, UInt32 maxCharCount)
+        {
+            Vertex[] fillerVertexArray = new Vertex[maxCharCount * 4];//creating array big enough to fill max char count
+            if (textPanels.Count > 0)
+            {
+                //combine all models
+                Model[] combinedModels = null;
+
+                int totalModelCount = 0;
+
+                foreach (GUITextPanel panel in textPanels.Values)
+                {
+                    totalModelCount += panel.models.Length;
+                }
+
+                combinedModels = new Model[totalModelCount];
+
+                int modelIndex = 0;
+                foreach (GUITextPanel panel in textPanels.Values)
+                {
+                    for (int i = 0; i < panel.models.Length; i++)
+                    {
+                        combinedModels[modelIndex + i] = panel.models[i];
+                    }
+                    modelIndex += panel.models.Length;
+                }
+
+                //get and combine all vertex arrays and submit them to model
+                Vertex[] combinedVertices;
+                QuadBatcher.combineData(combinedModels, out combinedVertices);
+
+                if (combinedVertices.Length > maxCharCount * 4)
+                {
+                    Application.error("TextRenderer2D has gone over its provided limit of characters!");
+                }
+                else
+                {
+                    //fill combined vertices with zero values untill it reaches the defined maximum character limit * 4
+                    //This must be done to override the old data in the vertex buffer
+                    Array.Copy(combinedVertices, fillerVertexArray, combinedVertices.Length);
+                }
+                dynamicModel.submitData(fillerVertexArray);
+            }
+            else
+            {
+                dynamicModel.submitData(fillerVertexArray);//just fill buffer with empties to clear screen of text
+            }
+        }
     }
 }

@@ -19,35 +19,37 @@ namespace FredrickTechDemo.Models
         private static List<UInt32> indices;
 
         /*Takes in a shader,texture and obj file and returns a modeldrawable. If processing fails, will return a default debug model*/
-        public static ModelDrawable loadModelDrawableFromObjFile(String shaderDir, String textureDir, String objFilePath)
+        public static ModelDrawable loadModelDrawableFromObjFile(String shaderDir, String textureDir, String objFilePath, bool useIndices = true)
         {
-            if (objFilePath != "none")
+            if (objFilePath == "none")
             {
-                try
-                {
-                    reader = new StreamReader(objFilePath);
-                }
-                catch (Exception e)
-                {
-                    Application.error("Could not load OBJ File!\nFile Path: " + objFilePath + "\nException: " + e.Message);
-                    return DefaultDebugModel.getNewModelDrawable();//returns model by defualt or failing
-                }
-                successfullyLoaded = false;
-                vertexResult = new List<Vertex>();
-                positions = new List<Vector3F>();
-                unorderedUVs = new List<Vector2F>();
-                indices = new List<UInt32>();
-
-                processAllLines();
-
-                if (!successfullyLoaded)
-                {
-                    return DefaultDebugModel.getNewModelDrawable();//returns model by defualt or failing
-                }
-
-                return new ModelDrawable(shaderDir, textureDir, vertexResult.ToArray(), indices.ToArray());
+                return null;
             }
-            return null;
+
+            try
+            {
+                reader = new StreamReader(objFilePath);
+            }
+            catch (Exception e)
+            {
+                Application.error("Could not load OBJ File!\nFile Path: " + objFilePath + "\nException: " + e.Message);
+                return DefaultDebugModel.getNewModelDrawable();//returns model by defualt or failing
+            }
+            successfullyLoaded = false;
+            vertexResult = new List<Vertex>();
+            positions = new List<Vector3F>();
+            unorderedUVs = new List<Vector2F>();
+            indices = new List<UInt32>();
+
+            processAllLines();
+
+            if (!successfullyLoaded)
+            {
+                return DefaultDebugModel.getNewModelDrawable();//returns model by defualt or failing
+            }
+
+            return new ModelDrawable(shaderDir, textureDir, vertexResult.ToArray(), useIndices ? indices.ToArray() : null);
+
         }
 
         /*reads each line and processes it based on its tag, v is vertex position, vt is uv, and f is a face*/

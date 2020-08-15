@@ -19,19 +19,33 @@ namespace FredrickTechDemo.VFX
     {
         protected bool disposed = false;
         protected float scale = 1;//scale of the VFX
+        protected float expansionEveryTick; //how much to expand the VFX model every tick, should be converted from expansion every second
+        protected float expansionDeceleration; //how much to decelerate the expansion of the vfx every tick, should be converted from deceleration every second. Basically acts as a resistance to the VFX model expansion, in the case of particles, it can simulate cheap air resistance.
         protected double maxExistingTicks;
         protected int ticksExisted;
         protected ModelDrawable vfxModel;
         protected Matrix4F prevTickModelMatrix;
         protected Matrix4F modelMatrix;
-        private bool removalFlag = false;// true if this entity should be removed in the next tick
+        protected bool removalFlag = false;// true if this entity should be removed in the next tick
 
         protected VFXRenderType renderType;
 
-        public VFXBase(Vector3D pos, float initialScale, String shaderDir, String textureDir, String modelDir, double maxExistingSeconds = 1, VFXRenderType renderType = VFXRenderType.tirangles) : base(pos)
+        public VFXBase(Vector3D pos, float initialScale, String shaderDir, String textureDir, String modelDir, float maxExistingSeconds = 1, VFXRenderType renderType = VFXRenderType.tirangles) : base(pos)
         {
             this.scale = initialScale;
-            this.vfxModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelDir);
+            this.vfxModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelDir, renderType == VFXRenderType.points ? false : true);
+            maxExistingTicks = TicksAndFps.getNumOfTicksForSeconds(maxExistingSeconds);
+            updateVFXModel();
+            updateVFXModel();
+
+            this.renderType = renderType;
+        }
+
+        public VFXBase(Vector3D pos, float initialScale, String shaderDir, String textureDir, String modelDir,float expansionEverySecond = 0, float maxExistingSeconds = 1, VFXRenderType renderType = VFXRenderType.tirangles) : base(pos)
+        {
+            this.expansionEveryTick = expansionEverySecond / (float)TicksAndFps.getNumOfTicksForSeconds(1);
+            this.scale = initialScale;
+            this.vfxModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelDir, renderType == VFXRenderType.points ? false : true);
             maxExistingTicks = TicksAndFps.getNumOfTicksForSeconds(maxExistingSeconds);
             updateVFXModel();
             updateVFXModel();
@@ -42,7 +56,7 @@ namespace FredrickTechDemo.VFX
         {
             this.scale = initialScale;
             setVelocity(velocity);
-            this.vfxModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelDir);
+            this.vfxModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelDir, renderType == VFXRenderType.points ? false : true);
             maxExistingTicks = TicksAndFps.getNumOfTicksForSeconds(maxExistingSeconds);
             updateVFXModel();
             updateVFXModel();
@@ -68,6 +82,9 @@ namespace FredrickTechDemo.VFX
         protected virtual void updateVFXModel()
         {
             prevTickModelMatrix = modelMatrix;
+            expansionEveryTick -= expansionDeceleration;//decrease expansion rate
+            if (expansionEveryTick < 0) expansionEveryTick = 0;//clamp so does not start shrinking model
+            scale += expansionEveryTick;
             modelMatrix = Matrix4F.scale(new Vector3F(scale, scale, scale)) * Matrix4F.rotate(new Vector3F((float)pitch, (float)yaw, (float)roll)) * Matrix4F.translate(Vector3F.convert(pos));
         }
 
@@ -80,8 +97,14 @@ namespace FredrickTechDemo.VFX
             }
             else
             {
-                Application.warn("An attempt was made to render a null or disposed VFX.");
+                Application.warn("An attempt was made to render a null or disposed Base VFX.");
             }
+        }
+
+        /*Set how many units to decrease the expansion rate of this vfx every second*/
+        public virtual void setExapnsionDecelerationEverySecond(float amount)
+        {
+            expansionDeceleration = amount / (float)TicksAndFps.getNumOfTicksForSeconds(1);
         }
 
         public virtual void ceaseToExist()

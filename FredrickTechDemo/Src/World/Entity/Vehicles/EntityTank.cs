@@ -66,10 +66,7 @@ namespace FredrickTechDemo
         /*called when player left clicks while driving this vehicle*/
         public override void onLeftClick()
         {
-            for (int i = 0; i < 5; i++)
-            {
-                currentPlanet.spawnEntityInWorld(new EntityTankProjectile(getMuzzleLocation() + new Vector3D(0.5-rand.NextDouble(), 0.5 - rand.NextDouble(), 0.5 - rand.NextDouble()), getMuzzleFrontVector(), barrelPitch, bodyYaw));;
-            }
+            currentPlanet.spawnEntityInWorld(new EntityTankProjectile(getMuzzleLocation(), getMuzzleFrontVector(), barrelPitch, bodyYaw));
         }
 
         private Vector3D getMuzzleLocation()

@@ -4,7 +4,7 @@ using System;
 
 namespace FredrickTechDemo.SubRendering.Text
 {
-    class TextPanel2D
+    public class GUITextPanel
     {
         public Model[] models;
 
@@ -15,27 +15,22 @@ namespace FredrickTechDemo.SubRendering.Text
         private int screenEdgePadding;
         private String[] lines;
         private float fontSize;
-        private FontBuilder font;
+        private Font font;
 
-        public TextPanel2D(String[] lines, Vector2F pos, ColourF panelColor, float fontSize, int screenEdgePadding, FontBuilder font, TextAlign alignment)
+        public GUITextPanel(Vector2F pos, Font font, TextAlign alignment)
         {
-            this.lines = lines;
-            this.panelPos = pos;
-            this.screenEdgePadding = screenEdgePadding;
-            this.panelColour = panelColor.normalVector4F();
-            this.fontSize = fontSize;
             this.font = font;
+            this.panelPos = pos;
             this.panelPixelPos.x = panelPos.x * GameInstance.gameWindowWidth;
             this.panelPixelPos.y = panelPos.y * GameInstance.gameWindowHeight;
             this.alignment = alignment;
-            this.build();
         }
         
-        public void build()
+        public void buildOrRebuild()
         {
             this.panelPixelPos.x = panelPos.x * GameInstance.gameWindowWidth;
             this.panelPixelPos.y = panelPos.y * GameInstance.gameWindowHeight;
-            this.models = TextModelBuilder.convertStringArrayToModelArray(lines, font, panelColour, panelPixelPos, fontSize * GameInstance.dpiScale, screenEdgePadding, alignment);
+            this.models = TextModelBuilder2D.convertStringArrayToModelArray(lines, font, panelColour, panelPixelPos, fontSize * GameInstance.dpiScale, screenEdgePadding, alignment);
         }
     }
 }

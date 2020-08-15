@@ -12,6 +12,7 @@ namespace FredrickTechDemo
     public class GameInstance : GameWindow
     {
         private static GameInstance instance;
+        private static Random privateRand;
         private static int windowWidth;
         private static int windowHeight;
         private static int mouseCenterX;//the x position of the center of the game window
@@ -20,8 +21,10 @@ namespace FredrickTechDemo
         public EntityPlayer thePlayer;
         public Planet currentPlanet;
 
+
         public GameInstance(int width, int height, String title) : base(width, height, GraphicsMode.Default, title)
         {
+            GameInstance.privateRand = new Random();
             GameInstance.instance = this;
             GameInstance.windowWidth = width;
             GameInstance.windowHeight = height;
@@ -123,6 +126,7 @@ namespace FredrickTechDemo
         public static int windowCenterY { get => mouseCenterY; }
         public static float aspectRatio { get => (float)windowWidth / (float)windowHeight; }
         public static float dpiScale { get => (float)windowHeight / dpiY; }
+        public static Random rand { get => privateRand; }
         public static GameInstance get { get => instance; }
     }
 }

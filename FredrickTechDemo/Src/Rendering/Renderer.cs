@@ -23,7 +23,9 @@ namespace FredrickTechDemo
         {
             setClearColor(ColourF.black);
             GL.Enable(EnableCap.DepthTest);
-           // GL.Enable(EnableCap.CullFace);
+            // GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.VertexProgramPointSize);//allows shaders for GL_POINTS to change size of points.
+            GL.Enable(EnableCap.PointSprite);           //allows shaders for GL_POINTS to change point fragments (opentk exclusive)
             GL.Viewport(GameInstance.get.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
         }

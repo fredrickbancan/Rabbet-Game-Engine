@@ -24,7 +24,8 @@ namespace FredrickTechDemo.FredsMath
         public static ColourF darkYellow = new ColourF(153, 153, 0);
         public static ColourF lightOrange = new ColourF(255, 135, 135);
         public static ColourF orange = new ColourF(255, 135, 0);
-        public static ColourF darkOrange = new ColourF(150, 85, 0);
+        public static ColourF darkOrange = new ColourF(175, 110, 0);
+        public static ColourF ember = new ColourF(255, 100, 0);
         public static ColourF facility = new ColourF(70, 120, 90);
         public static ColourF steelBlue = new ColourF(70, 100, 120);
         public static ColourF lightBlossom = new ColourF(255, 222, 236);

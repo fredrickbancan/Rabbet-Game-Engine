@@ -142,6 +142,10 @@ namespace FredrickTechDemo
         {
             GL.Uniform1(getUniformLocation(name), val);
         }
+        public void setUniform1F(String name, float val)
+        {
+            GL.Uniform1(getUniformLocation(name), val);
+        }
 
         private int getUniformLocation(String name)// later will cache uniforms
         {
