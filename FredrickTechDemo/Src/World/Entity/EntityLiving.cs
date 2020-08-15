@@ -55,7 +55,7 @@ namespace FredrickTechDemo
             frontVector.x = (double)(Math.Cos(MathUtil.radians(yaw))) * (double)(Math.Cos(MathUtil.radians(headPitch)));
             frontVector.y = (double)Math.Sin(MathUtil.radians(headPitch));
             frontVector.z = (double)(Math.Sin(MathUtil.radians(yaw))) * (double)(Math.Cos(MathUtil.radians(headPitch)));
-            frontVector.Normalize();
+            frontVector.normalize();
         }
 
         /*Changes velocity based on state and movement vector, movement vector is changed by movement functions such as walkFowards()*/
@@ -78,7 +78,7 @@ namespace FredrickTechDemo
 
             //change velocity based on movement
             //movement vector is a unit vector.
-            movementVector.Normalize();//normalize vector so player is same speed in any direction
+            movementVector.normalize();//normalize vector so player is same speed in any direction
             velocity.x += frontVector.x * movementVector.z * walkSpeedModified;//fowards and backwards movement
             if(isFlying)velocity.y += frontVector.y * movementVector.z * walkSpeedModified;//fowards and backwards movement
             velocity.z += frontVector.z * movementVector.z * walkSpeedModified;//fowards and backwards movement

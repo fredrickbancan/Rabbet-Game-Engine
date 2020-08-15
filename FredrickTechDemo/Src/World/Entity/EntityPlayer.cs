@@ -81,6 +81,11 @@ namespace FredrickTechDemo
                 TicksAndFps.unPause();
             }
         }
+
+        public Matrix4F getViewMatrix()
+        {
+            return camera.getViewMatrix();
+        }
         public Camera getCamera()
         {
             return this.camera;

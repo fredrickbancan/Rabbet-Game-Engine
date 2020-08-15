@@ -10,6 +10,7 @@ namespace FredrickTechDemo
         private double bodyYaw;
         private double barrelPitch;
         private readonly double barrelLength = 6.75D;
+        Random rand = new Random();
         public EntityTank() : base()
         {
             this.entityModel = new EntityTankModel(this);
@@ -41,7 +42,7 @@ namespace FredrickTechDemo
             /*correcting front vector based on new pitch and yaw*/
             frontVector.x = (double)(Math.Cos(MathUtil.radians(yaw)));
             frontVector.z = (double)(Math.Sin(MathUtil.radians(yaw)));
-            frontVector.Normalize();
+            frontVector.normalize();
         }
 
         /*Called by base ontick()*/
@@ -56,7 +57,7 @@ namespace FredrickTechDemo
 
             //change velocity based on movement
             //movement vector is a unit vector.
-            movementVector.Normalize();//normalize vector so vehicle is same speed in any direction
+            movementVector.normalize();//normalize vector so vehicle is same speed in any direction
             rotateYaw((movementVector.x > 0 ? 1 : (movementVector.x < 0 ? -1 : 0))  * turnRate);//rotate wheels, if reversing then rotate tank in opposite direction
             velocity += frontVector * movementVector.z * walkSpeedModified;//fowards and backwards movement
             movementVector *= 0;//reset movement vector
@@ -65,7 +66,10 @@ namespace FredrickTechDemo
         /*called when player left clicks while driving this vehicle*/
         public override void onLeftClick()
         {
-            currentPlanet.spawnEntityInWorld(new EntityTankProjectile(getMuzzleLocation(), getMuzzleFrontVector(), barrelPitch, bodyYaw));
+            for (int i = 0; i < 5; i++)
+            {
+                currentPlanet.spawnEntityInWorld(new EntityTankProjectile(getMuzzleLocation() + new Vector3D(0.5-rand.NextDouble(), 0.5 - rand.NextDouble(), 0.5 - rand.NextDouble()), getMuzzleFrontVector(), barrelPitch, bodyYaw));;
+            }
         }
 
         private Vector3D getMuzzleLocation()
@@ -83,7 +87,7 @@ namespace FredrickTechDemo
             result.x = (double)(Math.Cos(MathUtil.radians(mountingEntity.getYaw()))) * (double)(Math.Cos(MathUtil.radians(barrelPitch)));
             result.y = (double)Math.Sin(MathUtil.radians(barrelPitch));
             result.z = (double)(Math.Sin(MathUtil.radians(mountingEntity.getYaw()))) * (double)(Math.Cos(MathUtil.radians(barrelPitch)));
-            result.Normalize();
+            result.normalize();
             return result;
         }
         public override void rotateYaw(double amount)

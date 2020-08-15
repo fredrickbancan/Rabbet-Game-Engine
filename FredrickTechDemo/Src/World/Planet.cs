@@ -1,6 +1,7 @@
 ﻿using FredrickTechDemo.FredsMath;
 using FredrickTechDemo.Models;
 using FredrickTechDemo.SubRendering;
+using FredrickTechDemo.VFX;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -16,7 +17,7 @@ namespace FredrickTechDemo
         private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
         public Dictionary<int, ICollider> colliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity, -1 if has no parent
         public Dictionary<int, Entity> entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
-        public List<VFX> vfxList = new List<VFX>();
+        public List<VFXBase> vfxList = new List<VFXBase>();
 
         public Planet()
         {
@@ -58,7 +59,7 @@ namespace FredrickTechDemo
         /*Loop through each vfx and render them with a seperate draw call (INEFFICIENT)*/
         public void drawVFX(Matrix4F viewMatrix, Matrix4F projectionMatrix)
         {
-            foreach (VFX vfx in vfxList)
+            foreach (VFXBase vfx in vfxList)
             {
                 if (vfx.exists())
                 {
@@ -66,6 +67,7 @@ namespace FredrickTechDemo
                 }
             }
         }
+
         private void buildSkyBox()
         {
             Model[] temp = new Model[6];
@@ -80,12 +82,12 @@ namespace FredrickTechDemo
 
         private void generateWorld()
         {
-            Model[] unBatchedQuads = new Model[4096];
-            for(int x = 0; x < 64; x++)
+            Model[] unBatchedQuads = new Model[262144];
+            for(int x = 0; x < 512; x++)
             {
-                for(int z = 0; z < 64; z++)
+                for(int z = 0; z < 512; z++)
                 {
-                    unBatchedQuads[x * 64 + z] = PlanePrefab.getNewModel().translateVertices(new Vector3F(x-32, 0, z-32));
+                    unBatchedQuads[x * 512 + z] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3F(20,1,20)).translateVertices(new Vector3F((x-256)*20, 0, (z-256)*20));
                 }
             }
             tempWorldModel = QuadBatcher.batchQuadModels(unBatchedQuads, PlanePrefab.getShaderDir(), PlanePrefab.getTextureDir());
@@ -113,7 +115,7 @@ namespace FredrickTechDemo
 
         private void tickVFX()
         {
-            foreach (VFX vfx in vfxList)
+            foreach (VFXBase vfx in vfxList)
             {
                 if (vfx != null)
                 {
@@ -212,7 +214,7 @@ namespace FredrickTechDemo
             spawnEntityInWorld(theEntity);
         }
 
-        public void spawnVFXInWorld(VFX vfx)
+        public void spawnVFXInWorld(VFXBase vfx)
         {
             vfxList.Add(vfx);
         }

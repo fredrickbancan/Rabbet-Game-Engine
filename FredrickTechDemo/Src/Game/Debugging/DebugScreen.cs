@@ -1,5 +1,4 @@
-﻿using FredrickTechDemo.FredsMath;
-using System;
+﻿using System;
 
 namespace FredrickTechDemo
 {
@@ -10,7 +9,7 @@ namespace FredrickTechDemo
         /*Shows and updates the debug info on the screen, Can be called every tick (Do not call every frame, too expensive)*/
         public static void displayOrClearDebugInfo(GameInstance game)
         {
-            if (GameSettings.debugScreen)
+           /* if (GameSettings.debugScreen)
             {
                 Renderer.textRenderer2D.addNewTextPanel(playerInfoName,
                        new String[]
@@ -34,7 +33,7 @@ namespace FredrickTechDemo
             else
             {
                 Renderer.textRenderer2D.removeTextPanel(playerInfoName);
-            }
+          */ // }
         }
     }
 }

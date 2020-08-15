@@ -18,8 +18,8 @@ namespace FredrickTechDemo.Models
         protected Shader shader;
 
 
-        /*takes in directory for the shader and texture for this model*/
-        public ModelDrawable(String shaderFile, String textureFile, Vertex[] vertices, UInt32[] indices) : base(vertices)
+        /*takes in directory for the shader and texture for this model, indices can be null if they wont be used*/
+        public ModelDrawable(String shaderFile, String textureFile, Vertex[] vertices, UInt32[] indices = null) : base(vertices)
         {
             this.indices = indices;
             texture = new Texture(textureFile, false);
@@ -65,11 +65,15 @@ namespace FredrickTechDemo.Models
             {
                 GL.BindVertexArray(VAO);//must be bound first before indices
             }
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBufferObject);
+            if (indices != null)
+            {
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBufferObject);
+            }
             texture.use();
             shader.use();
         }
 
+        #region drawMethods
         /*Draws this model. If its the first draw call, and firtst bind call, the model will be initialized.*/
         public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Vector3F skyTopColor, Vector3F skyHorizonColor)//for skybox
         {
@@ -127,6 +131,20 @@ namespace FredrickTechDemo.Models
             unBind();
         }
 
+        public virtual void drawPoints(Matrix4F viewMatrix, Matrix4F projectionMatrix, Matrix4F modelMatrix, Vector3F fogColor, bool ambientOcclusion)
+        {
+            bind();
+            shader.setUniformMat4F("projectionMatrix", projectionMatrix);
+            shader.setUniformMat4F("viewMatrix", viewMatrix);
+            shader.setUniformMat4F("modelMatrix", modelMatrix);
+            shader.setUniformVec3F("fogColour", fogColor);
+            shader.setUniform1I("aoc", ambientOcclusion ? 1 : 0);
+            //draw TODO
+            unBind();
+        }
+
+        #endregion drawMethods
+
         /*Unbinds this model so the renderer can render different things.*/
         public virtual void unBind()
         {
@@ -140,9 +158,12 @@ namespace FredrickTechDemo.Models
         /*Binds the indicie buffer to the VAO*/
         protected virtual void genAndBindIndices()
         {
-            indicesBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(UInt32), indices, BufferUsageHint.StaticDraw);
+            if (indices != null)
+            {
+                indicesBufferObject = GL.GenBuffer();
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBufferObject);
+                GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(UInt32), indices, BufferUsageHint.StaticDraw);
+            }
         }
 
         /*Binds the provided data to the VAO using the provided information*/

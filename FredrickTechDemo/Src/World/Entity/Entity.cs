@@ -117,7 +117,10 @@ namespace FredrickTechDemo
         //removes this entity from existance
         public virtual void ceaseToExist()
         {
-            entityModel.delete();
+            if (hasModel && entityModel != null)
+            {
+                entityModel.delete();
+            }
             removalFlag = true;
         }
 

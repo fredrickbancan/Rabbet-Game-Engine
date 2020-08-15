@@ -1,8 +1,9 @@
 ﻿using FredrickTechDemo.FredsMath;
+using System;
 
 namespace FredrickTechDemo
 {
-    class EntityProjectile : Entity
+    class EntityProjectile : Entity, IDisposable
     {
         protected double maxExistedTicks;
 
@@ -29,13 +30,19 @@ namespace FredrickTechDemo
             //do last
             if(existedTicks > maxExistedTicks)//delete this projectile if it has reached its limit of existance time
             {
-                ceaseToExist();
+                Dispose();
             }
         }
 
         public virtual void onCollideWithGround()
         {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
             ceaseToExist();
+            GC.SuppressFinalize(this);
         }
     }
 }

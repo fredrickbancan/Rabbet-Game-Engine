@@ -51,7 +51,7 @@ namespace FredrickTechDemo
             /*correcting front vector based on new pitch and yaw*/
             frontVector.x = (double)(Math.Cos(MathUtil.radians(yaw)));
             frontVector.z = (double)(Math.Sin(MathUtil.radians(yaw)));
-            frontVector.Normalize();
+            frontVector.normalize();
         }
 
         /*Changes velocity based on state and movement vector, movement vector is changed by movement functions such as walkFowards()*/
@@ -66,7 +66,7 @@ namespace FredrickTechDemo
 
             //change velocity based on movement
             //movement vector is a unit vector.
-            movementVector.Normalize();
+            movementVector.normalize();
             rotateYaw(movementVector.x * movementVector.z * turnRate);//steer vehicle, if reversing then vehicle will turn opposite way
             velocity += frontVector * movementVector.z * walkSpeedModified;//fowards and backwards movement
 

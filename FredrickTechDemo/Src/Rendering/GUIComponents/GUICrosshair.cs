@@ -11,7 +11,7 @@ namespace FredrickTechDemo
     };
     public class GUICrosshair : GUIScreenComponent
     {
-        private static String shaderDir = ResourceHelper.getShaderFileDir(@"GUI\GuiCrosshairShader.shader");
+        private static String shaderDir = ResourceHelper.getShaderFileDir(@"GUI\GuiStencilShader.shader");
         private Texture crosshairTexture;
         private float texutrePixelWidth = 0F;
         private float texutrePixelHeight = 0F;

@@ -63,5 +63,25 @@ namespace FredrickTechDemo.Models
             return this;
         }
 
+        public Model scaleUV(Vector2F scale)
+        {
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                vertices[i].uv *= scale;
+            }
+            return this;
+        }
+
+        public Model scaleVerticesAndUV(Vector3F scale)
+        {
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                Matrix4F.scaleXYZFloats(scale, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
+                vertices[i].uv.x *= scale.x;
+                vertices[i].uv.y *= scale.z;
+            }
+            return this;
+        }
+
     }
 }

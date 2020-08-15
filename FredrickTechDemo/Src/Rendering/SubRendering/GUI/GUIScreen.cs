@@ -8,10 +8,12 @@ namespace FredrickTechDemo.SubRendering
     public class GUIScreen
     {
         private Dictionary<String, GUIScreenComponent> components;
+        private TextRenderer2D textRenderer;
 
         public GUIScreen()
         {
             components = new Dictionary<String, GUIScreenComponent>();
+            textRenderer = new TextRenderer2D("Trebuchet", 1024);
         }
 
         public void addGuiComponent(String name, GUIScreenComponent component)

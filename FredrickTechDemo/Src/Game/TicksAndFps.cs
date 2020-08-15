@@ -1,5 +1,4 @@
-﻿using FredrickTechDemo.FredsMath;
-using System;
+﻿using System;
 using System.Diagnostics;
 
 namespace FredrickTechDemo
@@ -9,7 +8,6 @@ namespace FredrickTechDemo
     public static class TicksAndFps
     {
         private static Stopwatch stopwatch = new Stopwatch();
-        private static GameInstance game;
         private static long currentTime = 0;
         private static long lastTime = 0;
         private static double timer = 0;
@@ -22,9 +20,8 @@ namespace FredrickTechDemo
         private static double percentToNextTick; //a decimal value between 0 and 1 which can be used as a percentage of progress towards next tick, usefull for interpolation.
         private static bool paused = false; //true when game is paused
 
-        public static void init(double tps, GameInstance game)
+        public static void init(double tps)
         {
-            TicksAndFps.game = game;
             ticksPerSecond = tps;
             timePerTick = 1 / ticksPerSecond;
             stopwatch.Start();
@@ -99,7 +96,7 @@ namespace FredrickTechDemo
             {
                 String fpsString = fps.ToString();
                 String fpsPanelName = "fpsDisplay";
-                if (fps < 75)
+              /*  if (fps < 75)
                 {
                     Renderer.textRenderer2D.addNewTextPanel(fpsPanelName, fpsString, Vector2F.zero, ColourF.red);
                 }
@@ -110,7 +107,7 @@ namespace FredrickTechDemo
                 else
                 {
                     Renderer.textRenderer2D.addNewTextPanel(fpsPanelName, fpsString, Vector2F.zero, ColourF.green);
-                }
+                }*/
             }
 
         }

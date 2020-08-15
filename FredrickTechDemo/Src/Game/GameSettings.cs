@@ -10,15 +10,15 @@ namespace FredrickTechDemo
         public static bool vsync = false;// DO NOT set to true for now, causes game loop speed to be limited by screen refresh rate.
         public static bool displayFps = true;
         public static bool debugScreen = true;
-        public static void loadSettings(GameInstance game)
+        public static void loadSettings()
         {
             if(vsync)
             {
-                game.VSync = VSyncMode.Adaptive;
+                GameInstance.get.VSync = VSyncMode.Adaptive;
             }
             else
             {
-                game.VSync = VSyncMode.Off;
+                GameInstance.get.VSync = VSyncMode.Off;
             }
         }
     }

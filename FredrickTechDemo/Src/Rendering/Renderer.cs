@@ -1,42 +1,40 @@
 ﻿using FredrickTechDemo.FredsMath;
 using FredrickTechDemo.SubRendering;
 using OpenTK.Graphics.OpenGL;
+using System;
+using System.Collections.Generic;
 
 namespace FredrickTechDemo
 {
+    //enum for text alignment choices
+    public enum TextAlign { LEFT, CENTER, RIGHT };
     /*This class will be responsable for most of the games rendering requests. It will then send the requests to the suitable sub renderers.
       e.g, when the game requests text to be rendered on the screen, the renderer will send a request to the TextRenderer2D.
       e.g, when the game requests entity models to be rendered in the world, the renderer will send a request to the model draw function.
       This class also contains the projection matrix.*/
     public static class Renderer
     {
-        private static GameInstance gameInstance;
-        private static TextRenderer2D privateTextRenderer2D;
-        private static GUIScreen guiScreen;
+        private static Dictionary<String, GUIScreen> allGUIs;
+        private static GUIScreen currentDisplayedGUI;
         private static Matrix4F projectionMatrix;
         
         /*Called before any rendering is done*/
-        public static void init(GameInstance game)
+        public static void init()
         {
-            Renderer.gameInstance = game;
-            gameInstance.MakeCurrent();
-            privateTextRenderer2D = new TextRenderer2D("Trebuchet", 512);
-            guiScreen = new GUIScreen();
-            guiScreen.addGuiComponent("crosshair", new GUICrosshair());
             setClearColor(ColourF.black);
             GL.Enable(EnableCap.DepthTest);
            // GL.Enable(EnableCap.CullFace);
-            GL.Viewport(gameInstance.ClientRectangle);
+            GL.Viewport(GameInstance.get.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
         }
 
         /*Called each time the game window is resized*/
         public static void onResize()
         {
-            GL.Viewport(gameInstance.ClientRectangle);
+            GL.Viewport(GameInstance.get.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
-            privateTextRenderer2D.onWindowResize();
-            guiScreen.onWindowResize();
+            
+           // guiScreen.onWindowResize();
         }
 
         /*Called before all draw calls*/
@@ -57,24 +55,24 @@ namespace FredrickTechDemo
 
         private static void updateCameraAndRenderWorld()
         {
-            gameInstance.thePlayer.onCameraUpdate();//do this first
-            gameInstance.currentPlanet.drawEntities(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix);
-            gameInstance.currentPlanet.drawVFX(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix);
-            gameInstance.currentPlanet.getTerrainModel().draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, gameInstance.currentPlanet.getFogColor());
-            gameInstance.currentPlanet.getSkyboxModel().draw(gameInstance.thePlayer.getCamera().getViewMatrix(), projectionMatrix, gameInstance.currentPlanet.getSkyColor(), gameInstance.currentPlanet.getFogColor());
+            GameInstance.get.thePlayer.onCameraUpdate();//do this first
+            GameInstance.get.currentPlanet.drawEntities(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
+            GameInstance.get.currentPlanet.drawVFX(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
+            GameInstance.get.currentPlanet.getTerrainModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());
+            GameInstance.get.currentPlanet.getSkyboxModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getSkyColor(), GameInstance.get.currentPlanet.getFogColor());
            
         }
 
         private static void renderGui()
         {
-            guiScreen.drawAll();
-            privateTextRenderer2D.renderAnyText();
+           // guiScreen.drawAll();
+           // privateTextRenderer2D.renderAnyText();
         }
 
         /*Called after all draw calls*/
         private static void postRender()
         {
-            gameInstance.SwapBuffers();
+            GameInstance.get.SwapBuffers();
         }
 
         public static void setClearColor(ColourF color)
@@ -89,8 +87,8 @@ namespace FredrickTechDemo
             GL.ClearColor(colorNormalized.x, colorNormalized.y, colorNormalized.z, 1.0f);
         }
 
-        public static TextRenderer2D textRenderer2D
-        { get { return privateTextRenderer2D; } }
+       // public static TextRenderer2D textRenderer2D
+       // { get => }
     }
 }
  

@@ -1,13 +1,21 @@
 ﻿using FredrickTechDemo.FredsMath;
 using FredrickTechDemo.Models;
 using System;
-
 namespace FredrickTechDemo
+{
+    public enum VFXRenderType//used to determine how to batch vfx objects
+    {
+        tirangles,
+        points,
+        lines
+    }
+}
+namespace FredrickTechDemo.VFX
 {
     /*This class is a spawnable sort of entity which can be rendered as a certain provided effect.
       Can be a particle, sprite, ect. This class will just hold the position, velocity and tick update code.
       VFX objects are treated as disposable and should not last more than a few ticks.*/
-    public class VFX : PositionalObject, IDisposable
+    public class VFXBase : PositionalObject, IDisposable
     {
         protected bool disposed = false;
         protected float scale = 1;//scale of the VFX
@@ -18,15 +26,19 @@ namespace FredrickTechDemo
         protected Matrix4F modelMatrix;
         private bool removalFlag = false;// true if this entity should be removed in the next tick
 
-        public VFX(Vector3D pos, float initialScale, String shaderDir, String textureDir, String modelDir, double maxExistingSeconds = 1) : base(pos)
+        protected VFXRenderType renderType;
+
+        public VFXBase(Vector3D pos, float initialScale, String shaderDir, String textureDir, String modelDir, double maxExistingSeconds = 1, VFXRenderType renderType = VFXRenderType.tirangles) : base(pos)
         {
             this.scale = initialScale;
             this.vfxModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelDir);
             maxExistingTicks = TicksAndFps.getNumOfTicksForSeconds(maxExistingSeconds);
             updateVFXModel();
             updateVFXModel();
+
+            this.renderType = renderType;
         }
-        public VFX(Vector3D pos, float initialScale, Vector3D velocity, String shaderDir, String textureDir, String modelDir, double maxExistingSeconds = 1) : base (pos)
+        public VFXBase(Vector3D pos, Vector3D velocity, float initialScale, String shaderDir, String textureDir, String modelDir, double maxExistingSeconds = 1, VFXRenderType renderType = VFXRenderType.tirangles) : base (pos)
         {
             this.scale = initialScale;
             setVelocity(velocity);
@@ -34,6 +46,7 @@ namespace FredrickTechDemo
             maxExistingTicks = TicksAndFps.getNumOfTicksForSeconds(maxExistingSeconds);
             updateVFXModel();
             updateVFXModel();
+            this.renderType = renderType;
         }
 
         /*called every tick*/
@@ -98,6 +111,11 @@ namespace FredrickTechDemo
         public virtual bool exists()
         {
             return !removalFlag;
+        }
+
+        public VFXRenderType getRenderType()
+        {
+            return renderType;
         }
     }
 }

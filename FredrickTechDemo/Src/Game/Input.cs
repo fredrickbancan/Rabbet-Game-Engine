@@ -4,25 +4,15 @@ namespace FredrickTechDemo
 {
     /*This class is responsable for checking the input of the mouse and keyboard,
       and manipulating the games logic respectively. Checking should be done each tick.*/
-    static class Input
+    public static class Input
     {
         private static bool mouseHidden = false;
-        private static GameInstance gameInstance;
-        private static PlayerController playerController;
 
         private static KeyboardState previouskeyboardState;
         private static KeyboardState keyboardState;
 
         private static MouseState previousMouseState;
         private static MouseState mouseState;
-
-        /*Set the game instance for input to manipulate*/
-        public static void setGameInstance(GameInstance game)
-        {
-            gameInstance = game;
-            playerController = new PlayerController(game);
-            previouskeyboardState = Keyboard.GetState();
-        }
 
         /*called every tick to check which keys are being pressed and manipulates the provided game instance reference's logic and entities */
         public static void updateInput()
@@ -35,12 +25,12 @@ namespace FredrickTechDemo
             previousMouseState = mouseState;
             mouseState = Mouse.GetState();
             /*Only update mouse input if the game window is focused, and if any key is being pressed.*/
-            if (gameInstance.Focused && mouseState.IsAnyButtonDown)
+            if (GameInstance.get.Focused && mouseState.IsAnyButtonDown)
             {
                 //do constant input here
 
                 //this does single button input
-                playerController.updateSingleMousePressInput(mouseState);
+                PlayerController.updateSingleMousePressInput(mouseState);
             }
         }
 
@@ -50,19 +40,19 @@ namespace FredrickTechDemo
             keyboardState = Keyboard.GetState();
 
             /*Only update keyboard input if the game window is focused, and if any key is being pressed.*/
-            if (gameInstance.Focused && keyboardState.IsAnyKeyDown)
+            if (GameInstance.get.Focused && keyboardState.IsAnyKeyDown)
             {
                 //do consistant input here
-                playerController.updateInput(keyboardState);//do player input 
+                PlayerController.updateInput(keyboardState);//do player input 
 
 
 
                 //this does single key input~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                playerController.updateSinglePressInput(keyboardState);//do player single button input
+                PlayerController.updateSinglePressInput(keyboardState);//do player single button input
 
                 if (keySinglePress(Key.Escape))
                 {
-                    gameInstance.Exit();
+                    GameInstance.get.Exit();
                 }
 
                 if (keySinglePress(Key.F3))
@@ -95,12 +85,12 @@ namespace FredrickTechDemo
         {
             if(!mouseHidden)
             {
-                gameInstance.CursorVisible = false;
+                GameInstance.get.CursorVisible = false;
                 mouseHidden = true;
             }
             else
             {
-                gameInstance.CursorVisible = true;
+                GameInstance.get.CursorVisible = true;
                 mouseHidden = false;
             }
         }

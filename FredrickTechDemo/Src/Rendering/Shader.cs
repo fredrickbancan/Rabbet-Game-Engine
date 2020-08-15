@@ -138,6 +138,10 @@ namespace FredrickTechDemo
         {
             GL.Uniform2(getUniformLocation(name), vec.x, vec.y);
         }
+        public void setUniform1I(String name, int val)
+        {
+            GL.Uniform1(getUniformLocation(name), val);
+        }
 
         private int getUniformLocation(String name)// later will cache uniforms
         {

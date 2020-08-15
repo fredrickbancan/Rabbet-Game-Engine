@@ -112,7 +112,7 @@ namespace FredrickTechDemo.FredsMath
             return (double)Math.Sqrt(this.x * this.x + this.z * this.z);
         }
 
-        public void Normalize()
+        public Vector3D normalize()
         {
             double length = this.Magnitude();
             if (length != 0)
@@ -125,6 +125,7 @@ namespace FredrickTechDemo.FredsMath
             {
                 this.x = this.y = this.z = 0;
             }
+            return this;
         }
         
         public static double magnitude(Vector3D vec)

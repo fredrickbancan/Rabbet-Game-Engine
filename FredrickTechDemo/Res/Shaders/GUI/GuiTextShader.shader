@@ -29,6 +29,5 @@ void main()
 		discard;
 	gl_FragDepth = -1;//render on top
 	vec4 vcolourChanged = vcolour;
-	//vcolourChanged.rgb *= textureColor.a;
 	color = vec4(vcolourChanged.rgb, 1.0);
 }

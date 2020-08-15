@@ -8,17 +8,25 @@ namespace FredrickTechDemo
     /*this class provides a handle on any image the game wants to load as a texture.*/
     public class Texture : IDisposable
     {
+        private bool isNone = false;//is true if texture is null
         private bool disposed = false;
         private int id, width, height;
         public Texture(String path, bool enableFiltering)
         {
-            if (!enableFiltering)
+            if (path != "none")
             {
-                id = loadTexture(path, TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+                if (!enableFiltering)
+                {
+                    id = loadTexture(path, TextureMinFilter.Nearest, TextureMagFilter.Nearest);
+                }
+                else
+                {
+                    id = loadTexture(path, TextureMinFilter.Linear, TextureMagFilter.Linear);
+                }
             }
             else
             {
-                id = loadTexture(path, TextureMinFilter.Linear, TextureMagFilter.Linear);
+                isNone = true;
             }
         }
 
@@ -56,7 +64,8 @@ namespace FredrickTechDemo
 
         public void use()
         {
-            GL.BindTexture(TextureTarget.Texture2D, id);
+            if(!isNone)
+                GL.BindTexture(TextureTarget.Texture2D, id);
         }
         
 
@@ -114,7 +123,8 @@ namespace FredrickTechDemo
         {
             if (!disposed)
             {
-                GL.DeleteTexture(id);
+                if (!isNone)
+                    GL.DeleteTexture(id);
 
                 disposed = true;
             }

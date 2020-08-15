@@ -6,13 +6,12 @@ using System.Drawing;
 
 namespace FredrickTechDemo
 {
-    //enum for text alignment choices
-    public enum TextAlign { LEFT, CENTER, RIGHT };
+
 
     /*This class is the main game class. It contains all the execution code for rendering, logic loops and loading.*/
     public class GameInstance : GameWindow
     {
-
+        private static GameInstance instance;
         private static int windowWidth;
         private static int windowHeight;
         private static int mouseCenterX;//the x position of the center of the game window
@@ -23,37 +22,37 @@ namespace FredrickTechDemo
 
         public GameInstance(int width, int height, String title) : base(width, height, GraphicsMode.Default, title)
         {
-            windowWidth = width;
-            windowHeight = height;
-            mouseCenterX = this.X + this.Width / 2;
-            mouseCenterY = this.Y + this.Height / 2;
-            Graphics g = Graphics.FromHwnd(this.WindowInfo.Handle);
-            dpiY = g.DpiY;
-            g.Dispose();
+            GameInstance.instance = this;
+            GameInstance.windowWidth = width;
+            GameInstance.windowHeight = height;
+            GameInstance.mouseCenterX = this.X + this.Width / 2;
+            GameInstance.mouseCenterY = this.Y + this.Height / 2;
+            GameSettings.loadSettings();
+            initialize();
+        }
+
+        /*Called before game runs*/
+        private void initialize()
+        {
+            TicksAndFps.init(30.0);
+            Renderer.init();
+         //   Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", new Vector2F(), ColourF.darkRed, TextAlign.RIGHT);
+          //  Renderer.textRenderer2D.addNewTextPanel("label", "Fredricks OpenGL Math tech demo.", new Vector2F(0, 0.97F), ColourF.black);
+          //  Renderer.textRenderer2D.addNewTextPanel("help", new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'V' to toggle flying. Tap 'E' to release mouse.", "Walk up to tank and press F to drive, Left click to fire.", "Press 'ESC' to close game."}, new Vector2F(0.5F, 0.0F), ColourF.black, TextAlign.CENTER);
             
-            GameSettings.loadSettings(this);
+
+            setDPIScale();
+
             thePlayer = new EntityPlayer("Steve", new Vector3D(0.0, 0.0, 2.0));
             currentPlanet = new Planet();
             currentPlanet.spawnEntityInWorld(thePlayer);
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 500; i++)
             {
                 currentPlanet.spawnEntityInWorld(new EntityCactus());
             }
             currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3D(5, 10, -5)));
-        }
-
-        /*Called before game runs*/
-        public void init()
-        {
-            TicksAndFps.init(30.0, this);
-            Renderer.init(this);
-            Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", new Vector2F(), ColourF.darkRed, TextAlign.RIGHT);
-            Renderer.textRenderer2D.addNewTextPanel("label", "Fredricks OpenGL Math tech demo.", new Vector2F(0, 0.97F), ColourF.black);
-            Renderer.textRenderer2D.addNewTextPanel("help", new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'V' to toggle flying. Tap 'E' to release mouse.", "Walk up to tank and press F to drive, Left click to fire.", "Press 'ESC' to close game."}, new Vector2F(0.5F, 0.0F), ColourF.black, TextAlign.CENTER);
-            Input.setGameInstance(this);
             Input.centerMouse();
             Input.toggleHideMouse();
-            
         }
 
         /*overriding OpenTk game update function, called every frame.*/
@@ -101,22 +100,29 @@ namespace FredrickTechDemo
         {
             if (thePlayer.getIsFlying())
             {
-                Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: ON", Vector2F.zero, ColourF.darkGreen, TextAlign.RIGHT);
+         //       Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: ON", Vector2F.zero, ColourF.darkGreen, TextAlign.RIGHT);
             }
             else
             {
-                Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", Vector2F.zero, ColourF.darkRed, TextAlign.RIGHT);
+        //        Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", Vector2F.zero, ColourF.darkRed, TextAlign.RIGHT);
             }
             DebugScreen.displayOrClearDebugInfo(this);
 
-            Renderer.textRenderer2D.onTick();//do this last for gui text
+      //      Renderer.textRenderer2D.onTick();//do this last for gui text
         }
 
+        private void setDPIScale()
+        {
+            Graphics g = Graphics.FromHwnd(this.WindowInfo.Handle);
+            GameInstance.dpiY = g.DpiY;
+            g.Dispose();
+        }
         public static int gameWindowWidth { get => windowWidth; }
         public static int gameWindowHeight { get => windowHeight; }
         public static int windowCenterX { get => mouseCenterX; }
         public static int windowCenterY { get => mouseCenterY; }
         public static float aspectRatio { get => (float)windowWidth / (float)windowHeight; }
         public static float dpiScale { get => (float)windowHeight / dpiY; }
+        public static GameInstance get { get => instance; }
     }
 }
