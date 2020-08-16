@@ -1,4 +1,6 @@
 ﻿using FredrickTechDemo.FredsMath;
+using FredrickTechDemo.GUI;
+using FredrickTechDemo.GUI.Text;
 using OpenTK;
 using OpenTK.Graphics;
 using System;
@@ -11,6 +13,7 @@ namespace FredrickTechDemo
     /*This class is the main game class. It contains all the execution code for rendering, logic loops and loading.*/
     public class GameInstance : GameWindow
     {
+        public static readonly String mainGUIName = "mainGUI";
         private static GameInstance instance;
         private static Random privateRand;
         private static int windowWidth;
@@ -37,23 +40,28 @@ namespace FredrickTechDemo
         /*Called before game runs*/
         private void initialize()
         {
-            TicksAndFps.init(30.0);
-            Renderer.init();
-         //   Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", new Vector2F(), ColourF.darkRed, TextAlign.RIGHT);
-          //  Renderer.textRenderer2D.addNewTextPanel("label", "Fredricks OpenGL Math tech demo.", new Vector2F(0, 0.97F), ColourF.black);
-          //  Renderer.textRenderer2D.addNewTextPanel("help", new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'V' to toggle flying. Tap 'E' to release mouse.", "Walk up to tank and press F to drive, Left click to fire.", "Press 'ESC' to close game."}, new Vector2F(0.5F, 0.0F), ColourF.black, TextAlign.CENTER);
-            
-
+            TextUtil.loadAllFoundTextFiles();
             setDPIScale();
-
+            Renderer.init();
+            GUIHandler.addNewGUIScreen(mainGUIName, "Trebuchet");
+            TicksAndFps.init(30.0);
+            DebugScreen.init();
+            GUIHandler.addTextPanelToGUI(mainGUIName, "flying", new GUITextPanel(new TextFormat().setAlign(TextAlign.RIGHT).setLine("Flying: OFF").setPanelColor(ColourF.darkRed)));
+            GUIHandler.addTextPanelToGUI(mainGUIName, "label", new GUITextPanel(new TextFormat(0,0.97F).setLine("Fredricks OpenGL Math tech demo.").setPanelColor(ColourF.black)));
+            GUIHandler.addTextPanelToGUI(mainGUIName, "help", new GUITextPanel(new TextFormat(0.5F,0).setAlign(TextAlign.CENTER).setLines(new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'V' to toggle flying. Tap 'E' to release mouse.", "Walk up to tank and press F to drive, Left click to fire.", "Press 'ESC' to close game." }).setPanelColor(ColourF.black)));
+            GUIHandler.addGUIComponentToGUI(mainGUIName, "crossHair", new GUICrosshair());
+           
+            //create and spawn player in new world
             thePlayer = new EntityPlayer("Steve", new Vector3D(0.0, 0.0, 2.0));
             currentPlanet = new Planet();
             currentPlanet.spawnEntityInWorld(thePlayer);
-            for (int i = 0; i < 500; i++)
+            for (int i = 0; i < 10; i++)
             {
                 currentPlanet.spawnEntityInWorld(new EntityCactus());
             }
             currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3D(5, 10, -5)));
+
+            //center mouse in preperation for first person 
             Input.centerMouse();
             Input.toggleHideMouse();
         }
@@ -92,6 +100,7 @@ namespace FredrickTechDemo
         private void onTick()
         {
             Profiler.beginEndProfile(Profiler.gameLoopName);
+            GUIHandler.onTick();
             updateGUI();
             
             currentPlanet.onTick();
@@ -103,15 +112,14 @@ namespace FredrickTechDemo
         {
             if (thePlayer.getIsFlying())
             {
-         //       Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: ON", Vector2F.zero, ColourF.darkGreen, TextAlign.RIGHT);
+                GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "flying").setPanelColor(ColourF.darkGreen).setLine("Flying: ON");
             }
             else
             {
-        //        Renderer.textRenderer2D.addNewTextPanel("flying", "Flying: OFF", Vector2F.zero, ColourF.darkRed, TextAlign.RIGHT);
+                GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "flying").setPanelColor(ColourF.darkRed).setLine("Flying: OFF");
             }
-            DebugScreen.displayOrClearDebugInfo(this);
-
-      //      Renderer.textRenderer2D.onTick();//do this last for gui text
+            DebugScreen.displayOrClearDebugInfo();
+            GUIHandler.rebuildTextInGUI(mainGUIName);//do last
         }
 
         private void setDPIScale()

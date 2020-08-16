@@ -1,4 +1,7 @@
-﻿using System;
+﻿using FredrickTechDemo.FredsMath;
+using FredrickTechDemo.GUI;
+using FredrickTechDemo.GUI.Text;
+using System;
 using System.Diagnostics;
 
 namespace FredrickTechDemo
@@ -7,6 +10,7 @@ namespace FredrickTechDemo
       at a consistant rate over multiple fps rates and refresh rates.*/
     public static class TicksAndFps
     {
+        public static readonly String fpsPanelName = "fpsPanel";
         private static Stopwatch stopwatch = new Stopwatch();
         private static long currentTime = 0;
         private static long lastTime = 0;
@@ -26,6 +30,8 @@ namespace FredrickTechDemo
             timePerTick = 1 / ticksPerSecond;
             stopwatch.Start();
             lastTime = stopwatch.ElapsedMilliseconds;
+
+            GUIHandler.addTextPanelToGUI(GameInstance.mainGUIName, fpsPanelName, new GUITextPanel(new TextFormat().setLine("0")));
         }
 
         /*called every frame*/
@@ -94,22 +100,25 @@ namespace FredrickTechDemo
         {
             if (GameSettings.displayFps)
             {
+                GUIHandler.unHideTextPanelInGUI(GameInstance.mainGUIName, fpsPanelName);
                 String fpsString = fps.ToString();
-                String fpsPanelName = "fpsDisplay";
-              /*  if (fps < 75)
+                if (fps < 75)
                 {
-                    Renderer.textRenderer2D.addNewTextPanel(fpsPanelName, fpsString, Vector2F.zero, ColourF.red);
+                    GUIHandler.getTextPanelFormatFromGUI(GameInstance.mainGUIName, fpsPanelName).setLine(fpsString).setPanelColor(ColourF.red);
                 }
                 else if (fps < 120)
                 {
-                    Renderer.textRenderer2D.addNewTextPanel(fpsPanelName, fpsString, Vector2F.zero, ColourF.yellow);
+                    GUIHandler.getTextPanelFormatFromGUI(GameInstance.mainGUIName, fpsPanelName).setLine(fpsString).setPanelColor(ColourF.yellow);
                 }
                 else
                 {
-                    Renderer.textRenderer2D.addNewTextPanel(fpsPanelName, fpsString, Vector2F.zero, ColourF.green);
-                }*/
+                    GUIHandler.getTextPanelFormatFromGUI(GameInstance.mainGUIName, fpsPanelName).setLine(fpsString).setPanelColor(ColourF.green);
+                }
             }
-
+            else
+            {
+                GUIHandler.hideTextPanelInGUI(GameInstance.mainGUIName, fpsPanelName);
+            }
         }
         public static int getTicksElapsed()
         {

@@ -34,7 +34,6 @@ namespace FredrickTechDemo.VFX
             pointRadius = radius;
             pointAmbientOcclusion = ambientOcclusion;
             constructPointCloudModel();
-            setExapnsionDecelerationEverySecond(0.5F);
         }
 
         /*Builds the vertices for the point cloud to be rendered. By default this method will build a randomized point cloud
@@ -53,7 +52,7 @@ namespace FredrickTechDemo.VFX
 
         protected Vector3D getRandomParticleOffset()
         {
-            return new Vector3D(randomPointPositionSpread / 2 - randomPointPositionSpread * GameInstance.rand.NextDouble(), randomPointPositionSpread / 2 - randomPointPositionSpread * GameInstance.rand.NextDouble(), randomPointPositionSpread / 2 - randomPointPositionSpread * GameInstance.rand.NextDouble());
+            return Vector3D.normalize(new Vector3D( 0.5 - GameInstance.rand.NextDouble(), 0.5 - GameInstance.rand.NextDouble(), 0.5 - GameInstance.rand.NextDouble())) * (randomPointPositionSpread / 2);
         }
 
         protected Vector4F getPointColor()
@@ -61,7 +60,7 @@ namespace FredrickTechDemo.VFX
             if(randomBrightness)
             {
                 Vector4F colorVec = pointColor.normalVector4F();
-                float randomBrightnessAmount = 0.1F - 0.2F * (float)GameInstance.rand.NextDouble();
+                float randomBrightnessAmount = 0.2F - 0.4F * (float)GameInstance.rand.NextDouble();
                 return new Vector4F(colorVec.r + randomBrightnessAmount, colorVec.g + randomBrightnessAmount, colorVec.b + randomBrightnessAmount, 1.0F);
             }
 

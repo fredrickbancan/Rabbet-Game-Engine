@@ -1,9 +1,9 @@
 ﻿using FredrickTechDemo.FredsMath;
 using FredrickTechDemo.Models;
-using FredrickTechDemo.SubRendering;
+using FredrickTechDemo.SubRendering.GUI;
 using System;
 
-namespace FredrickTechDemo
+namespace FredrickTechDemo.GUI
 {
     public enum CrosshairType//enum for all different types of crosshairs
     {

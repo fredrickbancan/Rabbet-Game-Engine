@@ -1,10 +1,11 @@
 ﻿using FredrickTechDemo.FredsMath;
+using FredrickTechDemo.GUI.Text;
 using FredrickTechDemo.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace FredrickTechDemo.SubRendering.Text
+namespace FredrickTechDemo.SubRendering.GUI.Text
 {
     /*this class is responsable for building arrays of veritces for text on the screen.*/
     public static class TextModelBuilder2D
@@ -172,23 +173,34 @@ namespace FredrickTechDemo.SubRendering.Text
                 //combine all models
                 Model[] combinedModels = null;
 
+                //count total models in all panels excluding hidden panels
                 int totalModelCount = 0;
-
                 foreach (GUITextPanel panel in textPanels.Values)
                 {
-                    totalModelCount += panel.models.Length;
+                    if (!panel.hidden)
+                    {
+                        totalModelCount += panel.models.Length;
+                    }
                 }
 
                 combinedModels = new Model[totalModelCount];
 
+                //combine all models from all panels excluding hidden panels
                 int modelIndex = 0;
                 foreach (GUITextPanel panel in textPanels.Values)
                 {
                     for (int i = 0; i < panel.models.Length; i++)
                     {
-                        combinedModels[modelIndex + i] = panel.models[i];
+                        if (!panel.hidden)
+                        {
+                            combinedModels[modelIndex + i] = panel.models[i];
+                        }
                     }
-                    modelIndex += panel.models.Length;
+
+                    if (!panel.hidden)
+                    {
+                        modelIndex += panel.models.Length;
+                    }
                 }
 
                 //get and combine all vertex arrays and submit them to model

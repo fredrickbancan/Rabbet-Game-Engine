@@ -1,8 +1,6 @@
 ﻿using FredrickTechDemo.FredsMath;
-using FredrickTechDemo.SubRendering;
+using FredrickTechDemo.GUI;
 using OpenTK.Graphics.OpenGL;
-using System;
-using System.Collections.Generic;
 
 namespace FredrickTechDemo
 {
@@ -14,8 +12,6 @@ namespace FredrickTechDemo
       This class also contains the projection matrix.*/
     public static class Renderer
     {
-        private static Dictionary<String, GUIScreen> allGUIs;
-        private static GUIScreen currentDisplayedGUI;
         private static Matrix4F projectionMatrix;
         
         /*Called before any rendering is done*/
@@ -35,8 +31,7 @@ namespace FredrickTechDemo
         {
             GL.Viewport(GameInstance.get.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
-            
-           // guiScreen.onWindowResize();
+            GUIHandler.onWindowResize();
         }
 
         /*Called before all draw calls*/
@@ -50,7 +45,7 @@ namespace FredrickTechDemo
             Profiler.beginEndProfile(Profiler.renderingName);
             preRender();
             updateCameraAndRenderWorld();
-            renderGui();
+            GUIHandler.drawCurrentGUIScreen();
             postRender();
             Profiler.beginEndProfile(Profiler.renderingName);
         }
@@ -62,13 +57,6 @@ namespace FredrickTechDemo
             GameInstance.get.currentPlanet.drawVFX(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
             GameInstance.get.currentPlanet.getTerrainModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());
             GameInstance.get.currentPlanet.getSkyboxModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getSkyColor(), GameInstance.get.currentPlanet.getFogColor());
-           
-        }
-
-        private static void renderGui()
-        {
-           // guiScreen.drawAll();
-           // privateTextRenderer2D.renderAnyText();
         }
 
         /*Called after all draw calls*/
@@ -88,9 +76,6 @@ namespace FredrickTechDemo
         {
             GL.ClearColor(colorNormalized.x, colorNormalized.y, colorNormalized.z, 1.0f);
         }
-
-       // public static TextRenderer2D textRenderer2D
-       // { get => }
     }
 }
  

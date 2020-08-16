@@ -20,7 +20,7 @@ namespace FredrickTechDemo.VFX
         protected bool disposed = false;
         protected float scale = 1;//scale of the VFX
         protected float expansionEveryTick; //how much to expand the VFX model every tick, should be converted from expansion every second
-        protected float expansionDeceleration; //how much to decelerate the expansion of the vfx every tick, should be converted from deceleration every second. Basically acts as a resistance to the VFX model expansion, in the case of particles, it can simulate cheap air resistance.
+        protected float expansionDeceleration = 1.0F; //multiplyer decelerates the expansion of this VFX every tick
         protected double maxExistingTicks;
         protected int ticksExisted;
         protected ModelDrawable vfxModel;
@@ -79,11 +79,11 @@ namespace FredrickTechDemo.VFX
             base.postTickMovement();
         }
 
+        /*Called every tick can be overridden*/
         protected virtual void updateVFXModel()
         {
             prevTickModelMatrix = modelMatrix;
-            expansionEveryTick -= expansionDeceleration;//decrease expansion rate
-            if (expansionEveryTick < 0) expansionEveryTick = 0;//clamp so does not start shrinking model
+            expansionEveryTick *= expansionDeceleration; //decrease expansion rate
             scale += expansionEveryTick;
             modelMatrix = Matrix4F.scale(new Vector3F(scale, scale, scale)) * Matrix4F.rotate(new Vector3F((float)pitch, (float)yaw, (float)roll)) * Matrix4F.translate(Vector3F.convert(pos));
         }
@@ -101,10 +101,10 @@ namespace FredrickTechDemo.VFX
             }
         }
 
-        /*Set how many units to decrease the expansion rate of this vfx every second*/
-        public virtual void setExapnsionDecelerationEverySecond(float amount)
+        /*set deceleration muliplyer for expansion every tick*/
+        public virtual void setExpansionDeceleration(float amount)
         {
-            expansionDeceleration = amount / (float)TicksAndFps.getNumOfTicksForSeconds(1);
+            expansionDeceleration =  1 - amount;
         }
 
         public virtual void ceaseToExist()

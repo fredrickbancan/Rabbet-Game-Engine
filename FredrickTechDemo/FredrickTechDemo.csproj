@@ -64,6 +64,7 @@
   <ItemGroup>
     <None Include="Res\Shaders\VFX\PointParticleFog.shader" />
     <Compile Include="Src\Rendering\GUIComponents\GUICrosshair.cs" />
+    <Compile Include="Src\Rendering\GUIHandler.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\EntityCactusModel.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankModel.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankProjectileModel.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="Src\Rendering\SubRendering\TriangleBatcher.cs" />
     <Compile Include="Src\Rendering\VFX\VFXExplosion.cs" />
     <Compile Include="Src\Rendering\VFX\VFXPointParticles.cs" />
+    <Compile Include="Src\Rendering\VFX\VFXUtil.cs" />
     <Compile Include="Src\World\Collisions\CollisionHandler.cs" />
     <Compile Include="Src\World\Collisions\ICollider.cs" />
     <Compile Include="Src\World\Collisions\Colliders\PlaneCollider.cs" />
@@ -169,7 +171,6 @@
     <Content Include="Res\Texture\Camo.png" />
     <Content Include="Res\Texture\EntityCactus.png" />
     <Content Include="Res\Texture\Explosion.png" />
-    <Content Include="Res\Texture\glass.png" />
     <Content Include="Res\Texture\GUI\Crosshairs\CrosshairNormal.png" />
     <Content Include="Res\Texture\sand.png" />
   </ItemGroup>

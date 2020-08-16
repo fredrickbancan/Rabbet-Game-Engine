@@ -1,39 +1,54 @@
-﻿using System;
+﻿using FredrickTechDemo.FredsMath;
+using FredrickTechDemo.GUI;
+using FredrickTechDemo.GUI.Text;
+using System;
 
 namespace FredrickTechDemo
 {
     /*A class for abstracting the process of displaying debug information on the screen when active.*/
     public static class DebugScreen
     {
-        private static String playerInfoName = "DebugPlayerInfo";
-        /*Shows and updates the debug info on the screen, Can be called every tick (Do not call every frame, too expensive)*/
-        public static void displayOrClearDebugInfo(GameInstance game)
+        public static readonly String debugInfoPanelName = "debugInfo";
+
+        /*Initialize the text panel for the debug info, can only be done if the mainGUI panel is created first*/
+        public static void init()
         {
-           /* if (GameSettings.debugScreen)
+            GUIHandler.addTextPanelToGUI(GameInstance.mainGUIName, debugInfoPanelName, new GUITextPanel(new TextFormat(0.0F, 0.05F).setPanelColor(ColourF.grey)
+                .setLines(new String[]
+                        {
+                        ("press F3 to hide debug screen.")
+                        }
+                       ).setPanelColor(ColourF.grey)));
+        }
+
+        /*Shows and updates the debug info on the screen, Can be called every tick (Do not call every frame, too expensive)*/
+        public static void displayOrClearDebugInfo()
+        {
+            if (GameSettings.debugScreen && GameInstance.get.thePlayer != null)
             {
-                Renderer.textRenderer2D.addNewTextPanel(playerInfoName,
+                GUIHandler.unHideTextPanelInGUI(GameInstance.mainGUIName, debugInfoPanelName);
+                GUIHandler.getTextPanelFormatFromGUI(GameInstance.mainGUIName, debugInfoPanelName).setLines(
                        new String[]
                        {
-                        ("Player Name: " + game.thePlayer.getName()),
-                        ("X: " + game.thePlayer.getPosition().x.ToString("0.##")),
-                        ("Y: " + game.thePlayer.getPosition().y.ToString("0.##")),
-                        ("Z: " + game.thePlayer.getPosition().z.ToString("0.##")),
-                        ("Velocity X: " + game.thePlayer.getVelocity().x.ToString("0.##")),
-                        ("Velocity Y: " + game.thePlayer.getVelocity().y.ToString("0.##")),
-                        ("Velocity Z: " + game.thePlayer.getVelocity().z.ToString("0.##")),
-                        ("Head Pitch: " + game.thePlayer.getHeadPitch().ToString("0.##")),
-                        ("Yaw: " + game.thePlayer.getYaw().ToString("0.##")),
+                        ("Player Name: " + GameInstance.get.thePlayer.getName()),
+                        ("X: " + GameInstance.get.thePlayer.getPosition().x.ToString("0.##")),
+                        ("Y: " + GameInstance.get.thePlayer.getPosition().y.ToString("0.##")),
+                        ("Z: " + GameInstance.get.thePlayer.getPosition().z.ToString("0.##")),
+                        ("Velocity X: " + GameInstance.get.thePlayer.getVelocity().x.ToString("0.##")),
+                        ("Velocity Y: " + GameInstance.get.thePlayer.getVelocity().y.ToString("0.##")),
+                        ("Velocity Z: " + GameInstance.get.thePlayer.getVelocity().z.ToString("0.##")),
+                        ("Head Pitch: " + GameInstance.get.thePlayer.getHeadPitch().ToString("0.##")),
+                        ("Yaw: " + GameInstance.get.thePlayer.getYaw().ToString("0.##")),
                         ("Profiler ms averages: "),
                         ("Game loop: " + Profiler.getAveragesForProfile(Profiler.gameLoopName).ToString("0.##") + " ms."),
                         ("Render: " + Profiler.getAveragesForProfile(Profiler.renderingName).ToString("0.##") + " ms."),
-                        ("Text Renderer 2D: " + Profiler.getAveragesForProfile(Profiler.textRender2DBuildingName).ToString("0.##") + " ms."),
                         ("press F3 to hide debug screen."),
-                       }, new Vector2F(0.0F, 0.05F), ColourF.grey); 
+                       }); 
             }
             else
             {
-                Renderer.textRenderer2D.removeTextPanel(playerInfoName);
-          */ // }
+                GUIHandler.hideTextPanelInGUI(GameInstance.mainGUIName, debugInfoPanelName);
+            }
         }
     }
 }

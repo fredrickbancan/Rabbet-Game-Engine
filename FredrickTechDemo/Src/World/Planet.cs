@@ -171,14 +171,7 @@ namespace FredrickTechDemo
         public void doExplosionAt(Vector3D loc, float radius = 7, float power = 3)
         {
             //render an explosion effect
-            spawnVFXInWorld(new VFXExplosion(loc)); 
-            VFXBase smoke = new VFXPointParticles(loc, ColourF.darkGrey, 25, radius/2, 0.15F, true, false, 6F, 2F);
-            smoke.addYVelocity(0.1D);
-            VFXBase fire = new VFXPointParticles(loc, ColourF.darkOrange, 15, radius/2, 0.15F, true, false, 4F, 1F);
-            fire.addYVelocity(0.15D);
-            spawnVFXInWorld(smoke); 
-            spawnVFXInWorld(fire); 
-
+            VFXUtil.doExplosionEffect(this, loc, radius);
 
             //force away nearby entities
             foreach (Entity ent in entities.Values)

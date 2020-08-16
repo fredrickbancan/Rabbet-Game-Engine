@@ -1,7 +1,7 @@
 ﻿using FredrickTechDemo.FredsMath;
 using FredrickTechDemo.Models;
 
-namespace FredrickTechDemo.SubRendering
+namespace FredrickTechDemo.SubRendering.GUI
 {
     public class GUIScreenComponent
     {

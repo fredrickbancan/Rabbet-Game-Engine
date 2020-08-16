@@ -1,5 +1,6 @@
 ﻿using FredrickTechDemo.FredsMath;
 using FredrickTechDemo.Models;
+using FredrickTechDemo.VFX;
 using System;
 
 namespace FredrickTechDemo
@@ -15,13 +16,11 @@ namespace FredrickTechDemo
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
-            mountingOffset = new Vector3D(pos.x, pos.y + 2, pos.z);
         }
         public EntityTank(Vector3D initialPos) : base(initialPos)
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
-            mountingOffset = new Vector3D(pos.x, pos.y + 2, pos.z);
         }
 
         public override void onTick()
@@ -29,7 +28,6 @@ namespace FredrickTechDemo
             base.onTick();//do first
             if (mountingEntity != null)
             {
-                mountingOffset = new Vector3D(pos.x, pos.y + 2, pos.z);
                 bodyYaw = mountingEntity.getYaw() + 90;
                 barrelPitch = mountingEntity.getHeadPitch() + projectileHopupAngle;
             }
@@ -66,7 +64,9 @@ namespace FredrickTechDemo
         /*called when player left clicks while driving this vehicle*/
         public override void onLeftClick()
         {
-            currentPlanet.spawnEntityInWorld(new EntityTankProjectile(getMuzzleLocation(), getMuzzleFrontVector(), barrelPitch, bodyYaw));
+            Vector3D muzzleLocation = getMuzzleLocation();
+            currentPlanet.spawnEntityInWorld(new EntityTankProjectile(muzzleLocation, getMuzzleFrontVector(), barrelPitch, bodyYaw));
+            VFXUtil.doSmallSmokePuffEffect(currentPlanet, muzzleLocation);
         }
 
         private Vector3D getMuzzleLocation()

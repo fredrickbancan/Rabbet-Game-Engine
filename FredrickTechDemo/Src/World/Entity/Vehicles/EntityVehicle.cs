@@ -20,7 +20,7 @@ namespace FredrickTechDemo
             frontVector = new Vector3D(0.0F, 0.0F, -1.0F);
             upVector = new Vector3D(0.0F, 1.0F, 0.0F);
             movementVector = new Vector3D(0.0F, 0.0F, 0.0F);
-            mountingOffset = this.pos;
+            mountingOffset  = new Vector3D(0.0F, 2.0F, 0.0F);
         }
 
         public EntityVehicle(Vector3D pos) : base(pos)
@@ -29,7 +29,7 @@ namespace FredrickTechDemo
             upVector = new Vector3D(0.0F, 1.0F, 0.0F);
             movementVector = new Vector3D(0.0F, 0.0F, 0.0F);
 
-            mountingOffset = this.pos;
+            mountingOffset = new Vector3D(0.0F, 2.0F, 0.0F);
         }
 
         public override void onTick()
@@ -37,7 +37,7 @@ namespace FredrickTechDemo
             base.onTick();//do first
             if (mountingEntity != null)
             {
-                mountingEntity.setPosition(mountingOffset);
+                mountingEntity.setPosition(pos + mountingOffset);
 
                 alignVectors();
 
@@ -103,7 +103,7 @@ namespace FredrickTechDemo
             movementVector.x++;
         }
 
-        public virtual Vector3D getMountingPos()
+        public virtual Vector3D getMountingOffset()
         {
             return mountingOffset;
         }

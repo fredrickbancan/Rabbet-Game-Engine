@@ -133,7 +133,7 @@ namespace FredrickTechDemo
         {
             if (currentVehicle != null)
             {
-                pos = currentVehicle.getPosition() + new Vector3D(0, 1, 2);
+                setVelocity(new Vector3D(0));
                 currentVehicle.setMountedEntity(null);
                 currentVehicle = null;
             }
@@ -141,7 +141,7 @@ namespace FredrickTechDemo
 
         public virtual void mountVehicle(EntityVehicle theVehicle)
         {
-            this.pos = theVehicle.getMountingPos();
+            this.pos = theVehicle.getPosition() + theVehicle.getMountingOffset();
             currentVehicle = theVehicle;
             theVehicle.setMountedEntity(this);
         }
@@ -209,6 +209,13 @@ namespace FredrickTechDemo
             return this.upVector;
         }
 
-        
+        public override Vector3D getLerpPos()
+        {
+            if(currentVehicle != null)
+            {
+                return currentVehicle.getLerpPos() + currentVehicle.getMountingOffset();
+            }
+            return base.getLerpPos();
+        }
     }
 }
