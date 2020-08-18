@@ -1,5 +1,6 @@
 ﻿using FredrickTechDemo.FredsMath;
 using FredrickTechDemo.GUI;
+using FredrickTechDemo.SubRendering;
 using OpenTK.Graphics.OpenGL;
 
 namespace FredrickTechDemo
@@ -24,6 +25,7 @@ namespace FredrickTechDemo
             GL.Enable(EnableCap.PointSprite);           //allows shaders for GL_POINTS to change point fragments (opentk exclusive)
             GL.Viewport(GameInstance.get.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
+            OffScreen.init(false, 2);
         }
 
         /*Called each time the game window is resized*/
@@ -37,7 +39,7 @@ namespace FredrickTechDemo
         /*Called before all draw calls*/
         private static void preRender()
         {
-            //TODO: create offscreen buffer for SSAA (to fix stochastic transparency)
+            OffScreen.prepareForRender();//Do first
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
         
@@ -63,6 +65,7 @@ namespace FredrickTechDemo
         /*Called after all draw calls*/
         private static void postRender()
         {
+            OffScreen.postGameRender();
             GameInstance.get.SwapBuffers();
         }
 

@@ -104,6 +104,7 @@ namespace FredrickTechDemo
             overlap = -(vectorDistanceFromPlane(plane, sphere.pos) - sphere.radius);//TODO: WRONG, this will only return a maximum of the radius, meaning if the sphere's center is behind the plane then the overlap will not take its penetration depth into account!
             return overlap > 0;
         }
+
         public static bool getOverlapPlaneAABB(PlaneCollider plane, AABBCollider aabb, out double overlap)
         {
             double radiusOfTesterSphere = 0;

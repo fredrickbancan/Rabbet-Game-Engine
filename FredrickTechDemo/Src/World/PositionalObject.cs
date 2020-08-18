@@ -11,7 +11,7 @@ namespace FredrickTechDemo
         protected Vector3D acceleration;
 
         public static readonly double defaultAirResistance = 0.03572F;
-        public static readonly double defaultGroundResistance = 0.72F;
+        public static readonly double defaultGroundResistance = 0.3572F;
         public static readonly double defaultGravity = 0.03572F;
         protected double airResistance = defaultAirResistance;
         protected double groundResistance = defaultGroundResistance;

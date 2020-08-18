@@ -33,6 +33,24 @@ namespace FredrickTechDemo.Models
             shader = new Shader(shaderFile);
         }
 
+        public virtual void setNewTexture(Texture tex)
+        {
+            if(this.texture != null)
+            {
+                this.texture.Dispose();
+            }
+            this.texture = tex;
+        }
+
+        public virtual void setNewShader(Shader shad)
+        {
+            if (this.shader != null)
+            {
+                this.shader.Dispose();
+            }
+            this.shader = shad;
+        }
+
         public virtual void setUniformVec3(String name, Vector3F vec)
         {
             shader.setUniformVec3F(name, vec);

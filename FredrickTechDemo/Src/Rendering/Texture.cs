@@ -62,6 +62,11 @@ namespace FredrickTechDemo
             id = tex;
         }
 
+        public Texture(int glTextureID)
+        {
+            id = glTextureID;
+        }
+
         public void use()
         {
             if(!isNone)

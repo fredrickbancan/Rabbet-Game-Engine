@@ -13,7 +13,7 @@ namespace FredrickTechDemo
         protected Vector3D movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
         protected bool isJumping = false;
         protected double headPitch; // Pitch of the living entity head
-        public static readonly double defaultWalkSpeed = 0.3572F;
+        public static readonly double defaultWalkSpeed = 0.1572F;
         protected double walkSpeed = defaultWalkSpeed;
         public EntityLiving() : base()
         {
