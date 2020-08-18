@@ -19,7 +19,7 @@ namespace FredrickTechDemo
         {
             setClearColor(ColourF.black);
             GL.Enable(EnableCap.DepthTest);
-            // GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.VertexProgramPointSize);//allows shaders for GL_POINTS to change size of points.
             GL.Enable(EnableCap.PointSprite);           //allows shaders for GL_POINTS to change point fragments (opentk exclusive)
             GL.Viewport(GameInstance.get.ClientRectangle);
@@ -37,6 +37,7 @@ namespace FredrickTechDemo
         /*Called before all draw calls*/
         private static void preRender()
         {
+            //TODO: create offscreen buffer for SSAA (to fix stochastic transparency)
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
         

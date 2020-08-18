@@ -45,16 +45,25 @@ namespace FredrickTechDemo
 
             alignVectors();
 
-            moveByMovementVector();
+            moveByMovementVector(); 
         }
 
         /*When called, aligns vectors according to the entities state and rotations.*/
         protected virtual void alignVectors()
         {
             /*correcting front vector based on new pitch and yaw*/
-            frontVector.x = (double)(Math.Cos(MathUtil.radians(yaw))) * (double)(Math.Cos(MathUtil.radians(headPitch)));
-            frontVector.y = (double)Math.Sin(MathUtil.radians(headPitch));
-            frontVector.z = (double)(Math.Sin(MathUtil.radians(yaw))) * (double)(Math.Cos(MathUtil.radians(headPitch)));
+            if (isFlying)
+            {
+                frontVector.x = (double)(Math.Cos(MathUtil.radians(yaw)) * (double)(Math.Cos(MathUtil.radians(headPitch))));
+                frontVector.y = (double)Math.Sin(MathUtil.radians(headPitch));
+                frontVector.z = (double)(Math.Sin(MathUtil.radians(yaw)) * (double)(Math.Cos(MathUtil.radians(headPitch))));
+            }
+            else
+            {
+                frontVector.x = (double)(Math.Cos(MathUtil.radians(yaw)));
+                frontVector.y = (double)Math.Sin(MathUtil.radians(headPitch));
+                frontVector.z = (double)(Math.Sin(MathUtil.radians(yaw)));
+            }
             frontVector.normalize();
         }
 
@@ -68,11 +77,11 @@ namespace FredrickTechDemo
             {
                 if (isFlying)
                 {
-                    walkSpeedModified *= 0.05599104113337D;//reduce movespeed when flying as to not accellerate out of control
+                    walkSpeedModified *= 0.1D;//reduce movespeed when flying as to not accellerate out of control
                 }
                 else
                 {
-                    walkSpeedModified *= 0.02015677491601D;//reduce movespeed when jumping or mid air 
+                    walkSpeedModified *= 0.05D;//reduce movespeed when jumping or mid air 
                 }
             }
 
@@ -97,7 +106,6 @@ namespace FredrickTechDemo
         {
             if (isGrounded && velocity.y <= 0)
             {
-              
                 isJumping = true;
             }
         }

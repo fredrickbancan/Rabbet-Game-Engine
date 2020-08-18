@@ -5,9 +5,9 @@ namespace FredrickTechDemo
     /*A struct for doing axis aligned bounding box collisions*/
     public struct AABBCollider : ICollider
     {
-        Entity parent;
-        Vector3D minBounds;
-        Vector3D maxBounds;
+        public Entity parent;
+        public Vector3D minBounds;
+        public Vector3D maxBounds;
 
         public AABBCollider(Vector3D minBounds, Vector3D maxBounds, Entity parent = null)
         {
@@ -35,78 +35,16 @@ namespace FredrickTechDemo
             return this;
         }
 
-        /*returns true if two bounding boxes are NOT touching in any way*/
-        public static bool areBoxesNotTouching(AABBCollider boxA, AABBCollider boxB)
-        {
-            return boxA.minX > boxB.maxX || boxA.minY > boxB.maxY || boxA.minZ > boxB.maxZ
-                || boxA.maxX < boxB.minX || boxA.maxY < boxB.minY || boxA.maxZ < boxB.minZ;
-        }
-
-        public CollisionDirection getCollisionResultForColliderType(ICollider colliderToTest, out bool touching, out double overlap)
-        {
-            if(colliderToTest is AABBCollider aabb)
-            {
-                return this.getCollisionResultAABB(aabb, out  touching, out  overlap);
-            }
-
-            if (colliderToTest is PointCollider point)
-            {
-                return this.getCollisionResultPoint(point.pointPos, out touching, out overlap);
-            }
-
-            if (colliderToTest is SphereCollider sphere)
-            {
-                return this.getCollisionResultSphere(sphere, out touching, out overlap);
-            }
-
-            touching = false;
-            overlap = 0;
-            return CollisionDirection.none;
-        }
-
-        public CollisionDirection getCollisionResultAABB(AABBCollider box, out bool touching, out double overlap)
-        {
-            if ((touching = !areBoxesNotTouching(this, box)))
-            {
-               
-            }
-            overlap = 0;
-            return CollisionDirection.none;
-        }
-
-        public CollisionDirection getCollisionResultPoint(Vector3D point, out bool touching, out double overlap)
-        {
-            overlap = 0;
-            touching = false;
-            return CollisionDirection.none;
-        }
-
-        public CollisionDirection getCollisionResultSphere(SphereCollider sphere, out bool touching, out double overlap)
-        {
-            overlap = 0;
-            touching = false;
-            return CollisionDirection.none;
-        }
+        
 
         public void onTick()
         {
-            double currentMinExtentX = minExtentX;
-            double currentMinExtentY = minExtentY;
-            double currentMinExtentZ = minExtentZ;
-
-            double currentMaxExtentX = maxExtentX;
-            double currentMaxExtentY = maxExtentY;
-            double currentMaxExtentZ = maxExtentZ;
-
-            Vector3D pos = parent.getPosition();
-
-            minX = pos.x - currentMinExtentX;
-            minY = pos.y - currentMinExtentY;
-            minZ = pos.z - currentMinExtentZ;
-                   
-            maxX = pos.x - currentMaxExtentX;
-            maxY = pos.y - currentMaxExtentY;
-            maxZ = pos.z - currentMaxExtentZ;
+            if (this.getHasParent())
+            {
+                Vector3D boundDistFromCenter = (maxBounds - minBounds) / 2D;
+                maxBounds = parent.getPosition() + boundDistFromCenter;
+                minBounds = parent.getPosition() - boundDistFromCenter;
+            }
         }
 
         public bool getHasParent()
@@ -116,26 +54,15 @@ namespace FredrickTechDemo
 
         public ICollider getNextTickPredictedHitbox()
         {
-            AABBCollider result = new AABBCollider(minBounds, maxBounds, parent);
-            double currentMinExtentX = minExtentX;
-            double currentMinExtentY = minExtentY;
-            double currentMinExtentZ = minExtentZ;
-
-            double currentMaxExtentX = maxExtentX;
-            double currentMaxExtentY = maxExtentY;
-            double currentMaxExtentZ = maxExtentZ;
-
-            Vector3D nextPos = parent.getPredictedNextTickPos();
-
-            result.minX = nextPos.x - currentMinExtentX;
-            result.minY = nextPos.y - currentMinExtentY;
-            result.minZ = nextPos.z - currentMinExtentZ;
-                         
-            result.maxX = nextPos.x - currentMaxExtentX;
-            result.maxY = nextPos.y - currentMaxExtentY;
-            result.maxZ = nextPos.z - currentMaxExtentZ;
-
-            return result;
+            if(this.getHasParent())
+            {
+                Vector3D boundDistFromCenter = (maxBounds - minBounds) / 2D;
+                AABBCollider result = new AABBCollider(minBounds, maxBounds, parent);
+                result.maxBounds = parent.getPredictedNextTickPos() + boundDistFromCenter;
+                result.minBounds = parent.getPredictedNextTickPos() - boundDistFromCenter;
+                return result;
+            }
+            return this;
         }
 
         
@@ -150,12 +77,9 @@ namespace FredrickTechDemo
 
 
         //extent is how much the aabb extends from its center 
-        public double minExtentX { get => (maxBounds.x - minBounds.x) / 2D; }
-        public double minExtentY { get => (maxBounds.y - minBounds.y) / 2D; }
-        public double minExtentZ { get => (maxBounds.z - minBounds.z) / 2D; }
-
-        public double maxExtentX { get => (minBounds.x + maxBounds.x) / 2D; }
-        public double maxExtentY { get => (minBounds.y + maxBounds.y) / 2D; }
-        public double maxExtentZ { get => (minBounds.z + maxBounds.z) / 2D; }
+        public double extentX { get => (maxBounds.x - minBounds.x) / 2D; }
+        public double extentY { get => (maxBounds.y - minBounds.y) / 2D; }
+        public double extentZ { get => (maxBounds.z - minBounds.z) / 2D; }
+        public Vector3D centerVec { get => minBounds + ((maxBounds - minBounds) / 2D); }
     }
 }

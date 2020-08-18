@@ -13,23 +13,19 @@ namespace FredrickTechDemo
         private double groundPlaneHeight = 0.0000D;
         protected Planet currentPlanet;
         protected EntityModel entityModel;
-        public static readonly double defaultAirResistance = 0.03572F;
-        public static readonly double defaultGroundResistance = 0.72F;
-        public static readonly double defaultGravity = 0.03572F;
         protected bool hasModel = false;
-        protected double airResistance = defaultAirResistance;
-        protected double groundResistance = defaultGroundResistance;
-        protected double gravity = defaultGravity;
         protected bool isFlying = false;
         protected bool isGrounded = false;
         private bool removalFlag = false;// true if this entity should be removed in the next tick
         protected int existedTicks = 0;//number of ticks this entity has existed for
         public Entity() : base()
         {
+            setYAccel(-gravity);
         }
         
         public Entity(Vector3D spawnPosition) : base(spawnPosition)
         {
+            setYAccel(-gravity);
         }
 
         /*Called every tick*/
@@ -38,19 +34,9 @@ namespace FredrickTechDemo
             existedTicks++;
             if (existedTicks < 0) existedTicks = 0;//incase of int overflow
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            double resistance = 0;
-            //resist velocity differently depending on state
-            if (isGrounded) { resistance = groundResistance; } else { resistance = airResistance; }
             if (posY <= groundPlaneHeight) { isGrounded = true; } else { isGrounded = false; }//basic ground level collision detection, in this case there is a ground plane collider at 0.0000D
-
+            if (isFlying) { setYAccel(0); } else { setYAccel(-gravity); }
             base.preTickMovement();//do before movement
-            /*decelerate velocity by air resistance (not accurate to real life)*/
-            scaleXVelocity(1 - resistance);
-            scaleYVelocity(1 - airResistance);
-            scaleZVelocity(1 - resistance);
-
-            //decrease entity y velocity by gravity, will not spiral out of control due to terminal velocity.
-            if (!isFlying && !isGrounded) { addYVelocity(-gravity); }
 
             //to prevent the entity from going through  the ground plane, if the next position increased by velocity will place the entity
             //below the ground plane, it will be given a value of 0.0000D -pos.y, so when position is increased by velocity, they cancel out resulting
@@ -60,7 +46,7 @@ namespace FredrickTechDemo
                 setYVelocity(groundPlaneHeight - posY);
                 isGrounded = true;
             }
-            base.postTickMovement();//do after movement 
+            postTickMovement();//do after movement 
             
             if (hasModel)
             {
@@ -81,8 +67,6 @@ namespace FredrickTechDemo
                 collider.onTick();
             }
 
-
-
             //do last
             if (!hasDoneFirstUpdate)
             {
@@ -90,6 +74,27 @@ namespace FredrickTechDemo
             }
         }
 
+        /*Do this after manipulating any movement of this object*/
+        public override void postTickMovement()
+        {
+            if (!isGrounded)
+            {
+                velocity.x += acceleration.x - airResistance * velocity.x;
+                velocity.y += acceleration.y - airResistance * velocity.y;
+                velocity.z += acceleration.z - airResistance * velocity.z;
+            }
+            else 
+            {
+                if(acceleration.y >= 0)
+                {
+                    velocity.y += acceleration.y - airResistance * velocity.y;
+                }
+                velocity.x += acceleration.x - groundResistance * velocity.x;
+                velocity.z += acceleration.z - groundResistance * velocity.z;
+            }
+
+            pos += velocity;
+        }
         /*used for setting the collider of this entity by classes which extend entity.*/
         protected virtual void setCollider(ICollider collider)
         {

@@ -47,6 +47,7 @@ out vec4 color;
 uniform sampler2D uTexture;
 
 uniform vec3 fogColour;
+
 void main()
 {
 	vec4 textureColor = texture(uTexture, vTexCoord) * vcolour;// *texture(uTexture, vTexCoord); // mixes colour and textures
@@ -54,6 +55,7 @@ void main()
 	{
 		discard;
 	}
+	
 	color = textureColor;
-	color = mix(vec4(fogColour, color.a), color, visibility);
+	color = mix(vec4(fogColour, 1.0), color, visibility);
 }

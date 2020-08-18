@@ -24,6 +24,12 @@ namespace FredrickTechDemo
             pitch = Math.Atan2(velocityNormalVec.y, velocityNormalVec.horizontalMagnitude()) * (180D / Math.PI);
         }
 
+        public override void ceaseToExist()
+        {
+            currentPlanet.doExplosionAt(pos);
+            base.ceaseToExist();
+        }
+
         public override void onCollideWithGround()
         {
             currentPlanet.doExplosionAt(pos);

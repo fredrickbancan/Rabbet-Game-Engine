@@ -66,7 +66,7 @@ namespace FredrickTechDemo
         {
             Vector3D muzzleLocation = getMuzzleLocation();
             currentPlanet.spawnEntityInWorld(new EntityTankProjectile(muzzleLocation, getMuzzleFrontVector(), barrelPitch, bodyYaw));
-            VFXUtil.doSmallSmokePuffEffect(currentPlanet, muzzleLocation);
+            VFXUtil.doSmallSmokePuffEffect(currentPlanet, muzzleLocation, (float)barrelPitch, (float)bodyYaw);
         }
 
         private Vector3D getMuzzleLocation()
@@ -78,6 +78,7 @@ namespace FredrickTechDemo
             result.z += barrelLengthTranslationMatrix.row3.z;
             return result;
         }
+
         private Vector3D getMuzzleFrontVector()
         {
             Vector3D result = new Vector3D();

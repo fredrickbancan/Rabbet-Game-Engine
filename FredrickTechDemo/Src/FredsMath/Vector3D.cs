@@ -1,4 +1,5 @@
 ﻿using System;
+
 namespace FredrickTechDemo.FredsMath
 {
     /*This is a double precision version of Vector3F*/
@@ -34,54 +35,58 @@ namespace FredrickTechDemo.FredsMath
         }
 
         //vector vector operators
-        public static Vector3D operator + (Vector3D a, Vector3D b)
+        public static Vector3D operator +(Vector3D a, Vector3D b)
         {
-            return new Vector3D(a.x+b.x,a.y+b.y,a.z+b.z);
+            return new Vector3D(a.x + b.x, a.y + b.y, a.z + b.z);
         }
-        public static Vector3D operator - (Vector3D a, Vector3D b)
+        public static Vector3D operator -(Vector3D a, Vector3D b)
         {
             return new Vector3D(a.x - b.x, a.y - b.y, a.z - b.z);
         }
 
-        public static Vector3D operator * (Vector3D a, Vector3D b)
+        public static Vector3D operator *(Vector3D a, Vector3D b)
         {
             return new Vector3D(a.x * b.x, a.y * b.y, a.z * b.z);
         }
 
         //double operators, Post
-        public static Vector3D operator + (Vector3D a, double b)
+        public static Vector3D operator +(Vector3D a, double b)
         {
             return new Vector3D(a.x + b, a.y + b, a.z + b);
         }
 
-        public static Vector3D operator - (Vector3D a, double b)
+        public static Vector3D operator -(Vector3D a, double b)
         {
             return new Vector3D(a.x - b, a.y - b, a.z - b);
         }
 
-        public static Vector3D operator * (Vector3D a, double b)
+        public static Vector3D operator *(Vector3D a, double b)
         {
             return new Vector3D(a.x * b, a.y * b, a.z * b);
         }
+        public static Vector3D operator /(Vector3D a, double b)
+        {
+            return new Vector3D(a.x / b, a.y / b, a.z / b);
+        }
 
         //double operators, Pre
-        public static Vector3D operator + (double b, Vector3D a)
+        public static Vector3D operator +(double b, Vector3D a)
         {
             return new Vector3D(a.x + b, a.y + b, a.z + b);
         }
 
-        public static Vector3D operator - (double b, Vector3D a)
+        public static Vector3D operator -(double b, Vector3D a)
         {
             return new Vector3D(a.x - b, a.y - b, a.z - b);
         }
 
-        public static Vector3D operator * (double b, Vector3D a)
+        public static Vector3D operator *(double b, Vector3D a)
         {
             return new Vector3D(a.x * b, a.y * b, a.z * b);
         }
 
         //matrix vector operators
-        public static Vector3D operator * (Matrix3F mat, Vector3D vec)//row major? (originates from aie tests)
+        public static Vector3D operator *(Matrix3F mat, Vector3D vec)//row major? (originates from aie tests)
         {
             return new Vector3D(
                     /*X*/mat.m1 * vec.x + mat.m4 * vec.y + mat.m7 * vec.z,
@@ -127,7 +132,19 @@ namespace FredrickTechDemo.FredsMath
             }
             return this;
         }
-        
+
+        public static Vector3D clamp(Vector3D vector, Vector3D min, Vector3D max)
+        {
+            return new Vector3D(MathUtil.clamp(vector.x, min.x, max.x), MathUtil.clamp(vector.y, min.y, max.y), MathUtil.clamp(vector.z, min.z, max.z));
+        }
+
+        public static double distance(Vector3D vecA, Vector3D vecB)
+        {
+            double xsub = vecB.x - vecA.x;
+            double ysub = vecB.y - vecA.y;
+            double zsub = vecB.z - vecA.z;
+            return Math.Sqrt(xsub * xsub + ysub * ysub + zsub * zsub);
+        }
         public static double magnitude(Vector3D vec)
         {
             return Math.Sqrt(vec.x * vec.x + vec.y * vec.y + vec.z * vec.z);
@@ -161,5 +178,6 @@ namespace FredrickTechDemo.FredsMath
         {
             return vecA.x * vecB.x + vecA.y * vecB.y + vecA.z * vecB.z;
         }
+
     }
 }

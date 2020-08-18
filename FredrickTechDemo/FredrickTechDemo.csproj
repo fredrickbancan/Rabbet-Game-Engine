@@ -72,7 +72,8 @@
     <Compile Include="Src\Rendering\Models\OBJProcessing\OBJLoader.cs" />
     <Compile Include="Src\Rendering\SubRendering\GUI\GUIScreen.cs" />
     <Compile Include="Src\Rendering\SubRendering\GUI\GUIScreenComponent.cs" />
-    <Compile Include="Src\Rendering\SubRendering\TriangleBatcher.cs" />
+    <Compile Include="Src\Rendering\SubRendering\Batching\TriangleBatcher.cs" />
+    <Compile Include="Src\Rendering\SubRendering\OffScreen.cs" />
     <Compile Include="Src\Rendering\VFX\VFXExplosion.cs" />
     <Compile Include="Src\Rendering\VFX\VFXPointParticles.cs" />
     <Compile Include="Src\Rendering\VFX\VFXUtil.cs" />
@@ -115,7 +116,7 @@
     <Compile Include="Src\Rendering\Models\ModelDrawable.cs" />
     <Compile Include="Src\Rendering\Models\ModelDrawableDynamic.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\PlanePrefab.cs" />
-    <Compile Include="Src\Rendering\SubRendering\QuadBatcher.cs" />
+    <Compile Include="Src\Rendering\SubRendering\Batching\QuadBatcher.cs" />
     <Compile Include="Src\Rendering\SubRendering\GUI\Text\GUITextPanel.cs" />
     <Compile Include="Src\Rendering\SubRendering\GUI\Text\TextProcessing\Character.cs" />
     <Compile Include="Src\Rendering\SubRendering\GUI\Text\TextProcessing\Font.cs" />

@@ -14,19 +14,22 @@ namespace FredrickTechDemo.VFX
         protected bool randomBrightness = false;
         protected bool pointAmbientOcclusion = false;//if ambient occlusion is true, the point will be rendered with a spherical ambient occlusion giving the illusion of a sphere instead of a 2d circular point
         protected int particleCount;
+        protected float colorAlpha;
        
 
         /*this constructor is for creating a point particle based VFX which does not create a random point cloud. maybe you will want to construct the points in a specific manner with colors or use a model.*/
-        public VFXPointParticles(Vector3D pos, ColourF color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
+        public VFXPointParticles(Vector3D pos, ColourF color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
         {
+            colorAlpha = alpha;
             pointColor = color;
             pointRadius = radius;
             pointAmbientOcclusion = ambientOcclusion;
         }
 
         /*this constructor is for creating a randomized particle cloud at the position using the provided parameters*/
-        public VFXPointParticles(Vector3D pos, ColourF color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float expansionEverySecond = 0, float maxExistingSeconds = 2F) : base(pos, 1.0F, defaultShaderDir, "none", "none", expansionEverySecond, maxExistingSeconds, VFXRenderType.points)
+        public VFXPointParticles(Vector3D pos, ColourF color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
         {
+            colorAlpha = alpha;
             this.randomBrightness = randomBrightness;
             this.particleCount = particleCount;
             pointColor = color;
@@ -52,7 +55,7 @@ namespace FredrickTechDemo.VFX
 
         protected Vector3D getRandomParticleOffset()
         {
-            return Vector3D.normalize(new Vector3D( 0.5 - GameInstance.rand.NextDouble(), 0.5 - GameInstance.rand.NextDouble(), 0.5 - GameInstance.rand.NextDouble())) * (randomPointPositionSpread / 2);
+            return Vector3D.normalize(new Vector3D( 0.5 - GameInstance.rand.NextDouble(), 0.5 - GameInstance.rand.NextDouble(), 0.5 - GameInstance.rand.NextDouble())) * (randomPointPositionSpread / 2 +( randomPointPositionSpread / 4 + randomPointPositionSpread / 2 *  GameInstance.rand.NextDouble())  );
         }
 
         protected Vector4F getPointColor()
@@ -61,10 +64,11 @@ namespace FredrickTechDemo.VFX
             {
                 Vector4F colorVec = pointColor.normalVector4F();
                 float randomBrightnessAmount = 0.2F - 0.4F * (float)GameInstance.rand.NextDouble();
-                return new Vector4F(colorVec.r + randomBrightnessAmount, colorVec.g + randomBrightnessAmount, colorVec.b + randomBrightnessAmount, 1.0F);
+                return new Vector4F(colorVec.r + randomBrightnessAmount, colorVec.g + randomBrightnessAmount, colorVec.b + randomBrightnessAmount, colorAlpha);
             }
-
-            return pointColor.normalVector4F();
+            Vector4F nonRandBrightColor =  pointColor.normalVector4F();
+            nonRandBrightColor.a = colorAlpha;
+            return nonRandBrightColor;
         }
 
         public override void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Vector3F fogColor)

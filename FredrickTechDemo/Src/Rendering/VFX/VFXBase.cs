@@ -19,8 +19,12 @@ namespace FredrickTechDemo.VFX
     {
         protected bool disposed = false;
         protected float scale = 1;//scale of the VFX
-        protected float expansionEveryTick; //how much to expand the VFX model every tick, should be converted from expansion every second
-        protected float expansionDeceleration = 1.0F; //multiplyer decelerates the expansion of this VFX every tick
+        protected float scaleVelocity; //how much to expand the VFX model every tick, should be converted from expansion every second
+        protected float scaleAcceleration; //how much to expand the VFX model every tick, should be converted from expansion every second
+        protected float scaleResistance = 0.03572F; //multiplyer decelerates the expansion of this VFX every tick
+        protected float scaleXModifyer = 1;
+        protected float scaleYModifyer = 1;
+        protected float scaleZModifyer = 1;
         protected double maxExistingTicks;
         protected int ticksExisted;
         protected ModelDrawable vfxModel;
@@ -29,7 +33,6 @@ namespace FredrickTechDemo.VFX
         protected bool removalFlag = false;// true if this entity should be removed in the next tick
 
         protected VFXRenderType renderType;
-
         public VFXBase(Vector3D pos, float initialScale, String shaderDir, String textureDir, String modelDir, float maxExistingSeconds = 1, VFXRenderType renderType = VFXRenderType.tirangles) : base(pos)
         {
             this.scale = initialScale;
@@ -38,28 +41,6 @@ namespace FredrickTechDemo.VFX
             updateVFXModel();
             updateVFXModel();
 
-            this.renderType = renderType;
-        }
-
-        public VFXBase(Vector3D pos, float initialScale, String shaderDir, String textureDir, String modelDir,float expansionEverySecond = 0, float maxExistingSeconds = 1, VFXRenderType renderType = VFXRenderType.tirangles) : base(pos)
-        {
-            this.expansionEveryTick = expansionEverySecond / (float)TicksAndFps.getNumOfTicksForSeconds(1);
-            this.scale = initialScale;
-            this.vfxModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelDir, renderType == VFXRenderType.points ? false : true);
-            maxExistingTicks = TicksAndFps.getNumOfTicksForSeconds(maxExistingSeconds);
-            updateVFXModel();
-            updateVFXModel();
-
-            this.renderType = renderType;
-        }
-        public VFXBase(Vector3D pos, Vector3D velocity, float initialScale, String shaderDir, String textureDir, String modelDir, double maxExistingSeconds = 1, VFXRenderType renderType = VFXRenderType.tirangles) : base (pos)
-        {
-            this.scale = initialScale;
-            setVelocity(velocity);
-            this.vfxModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelDir, renderType == VFXRenderType.points ? false : true);
-            maxExistingTicks = TicksAndFps.getNumOfTicksForSeconds(maxExistingSeconds);
-            updateVFXModel();
-            updateVFXModel();
             this.renderType = renderType;
         }
 
@@ -83,9 +64,9 @@ namespace FredrickTechDemo.VFX
         protected virtual void updateVFXModel()
         {
             prevTickModelMatrix = modelMatrix;
-            expansionEveryTick *= expansionDeceleration; //decrease expansion rate
-            scale += expansionEveryTick;
-            modelMatrix = Matrix4F.scale(new Vector3F(scale, scale, scale)) * Matrix4F.rotate(new Vector3F((float)pitch, (float)yaw, (float)roll)) * Matrix4F.translate(Vector3F.convert(pos));
+            scaleVelocity += scaleAcceleration - scaleResistance * scaleVelocity; //decrease expansion rate
+            scale += scaleVelocity;
+            modelMatrix = Matrix4F.scale(new Vector3F(scale * scaleXModifyer, scale * scaleYModifyer, scale * scaleZModifyer)) * Matrix4F.rotate(new Vector3F((float)pitch, -(float)yaw, (float)roll)) * Matrix4F.translate(Vector3F.convert(pos));
         }
 
         /*draws this vfx, can be overridden*/
@@ -102,11 +83,32 @@ namespace FredrickTechDemo.VFX
         }
 
         /*set deceleration muliplyer for expansion every tick*/
-        public virtual void setExpansionDeceleration(float amount)
+        public virtual void setExpansionResistance(float amount)
         {
-            expansionDeceleration =  1 - amount;
+            scaleResistance =  amount;
         }
 
+        public virtual void setExpansionAccel(float expansionEverySecond)
+        {
+            this.scaleAcceleration = expansionEverySecond;
+        }
+        public virtual void setExpansionVelocity(float expansionvel)
+        {
+            this.scaleVelocity = expansionvel;
+        }
+
+        public virtual void setExpansionXModifyer(float modifyer)
+        {
+            scaleXModifyer = modifyer;
+        }
+        public virtual void setExpansionYModifyer(float modifyer)
+        {
+            scaleYModifyer = modifyer;
+        }
+        public virtual void setExpansionZModifyer(float modifyer)
+        {
+            scaleZModifyer = modifyer;
+        }
         public virtual void ceaseToExist()
         {
             Dispose();

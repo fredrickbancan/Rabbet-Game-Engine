@@ -1,6 +1,7 @@
 ﻿using FredrickTechDemo.FredsMath;
 using FredrickTechDemo.GUI;
 using FredrickTechDemo.GUI.Text;
+using FredrickTechDemo.VFX;
 using OpenTK;
 using OpenTK.Graphics;
 using System;
@@ -55,7 +56,7 @@ namespace FredrickTechDemo
             thePlayer = new EntityPlayer("Steve", new Vector3D(0.0, 0.0, 2.0));
             currentPlanet = new Planet();
             currentPlanet.spawnEntityInWorld(thePlayer);
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 2; i++)
             {
                 currentPlanet.spawnEntityInWorld(new EntityCactus());
             }
@@ -102,7 +103,7 @@ namespace FredrickTechDemo
             Profiler.beginEndProfile(Profiler.gameLoopName);
             GUIHandler.onTick();
             updateGUI();
-            
+            VFXUtil.doDebugSmokeEffect(currentPlanet);
             currentPlanet.onTick();
 
             Profiler.beginEndProfile(Profiler.gameLoopName);

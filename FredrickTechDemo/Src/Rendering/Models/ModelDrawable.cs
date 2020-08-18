@@ -180,7 +180,7 @@ namespace FredrickTechDemo.Models
         {
             int vbo = GL.GenBuffer();
             VBOS.Add(vbo);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);//TODO store buffer id's in an array so they can be deleted on model unload
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
             GL.BufferData(BufferTarget.ArrayBuffer, data.Length * sizeof(float), data, BufferUsageHint.StaticDraw);
             /*Stride: the size in bytes between the start of one vertex to the start of another.
               Offset: the size in byts between the start of the vertex to the first bit of information for this specific attribute.*/
@@ -193,7 +193,7 @@ namespace FredrickTechDemo.Models
         {
             int vbo = GL.GenBuffer();
             VBOS.Add(vbo);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);//TODO store buffer id's in an array so they can be deleted on model unload
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * Vertex.vertexByteSize, vertices, BufferUsageHint.StaticDraw);
             /*Stride: the size in bytes between the start of one vertex to the start of another.
               Offset: the size in byts between the start of the vertex to the first bit of information for this specific attribute.*/

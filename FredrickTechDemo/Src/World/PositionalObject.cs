@@ -8,12 +8,22 @@ namespace FredrickTechDemo
         protected Vector3D previousTickPos;
         protected Vector3D pos;
         protected Vector3D velocity;
+        protected Vector3D acceleration;
+
+        public static readonly double defaultAirResistance = 0.03572F;
+        public static readonly double defaultGroundResistance = 0.72F;
+        public static readonly double defaultGravity = 0.03572F;
+        protected double airResistance = defaultAirResistance;
+        protected double groundResistance = defaultGroundResistance;
+        public double gravity = defaultGravity;
+
         protected double pitch;
         protected double yaw;
         protected double roll;
         protected double prevTickPitch;
         protected double prevTickYaw;
         protected double prevTickRoll;
+
         protected bool hasDoneFirstUpdate = false;
 
         public PositionalObject()
@@ -30,7 +40,7 @@ namespace FredrickTechDemo
         }
 
         /*Do this before manipulating any movement of this object*/
-        public void preTickMovement()
+        public virtual void preTickMovement()
         {
             previousTickPos = pos;
             prevTickPitch = pitch;
@@ -40,8 +50,9 @@ namespace FredrickTechDemo
 
 
         /*Do this after manipulating any movement of this object*/
-        public void postTickMovement()
+        public virtual void postTickMovement()
         {
+            velocity += acceleration - airResistance * velocity;
             pos += velocity;
         }
 
@@ -49,7 +60,7 @@ namespace FredrickTechDemo
         public virtual void applyImpulseFromLocation(Vector3D loc, double power)
         {
             //adding a tiny pos y bias to the impulses for now, because all entities are exactly on the 0 y plane so they wont get launched at all otherwise
-            velocity += Vector3D.normalize((pos += new Vector3D(0, 0.5, 0)) - loc) * power;
+            velocity += Vector3D.normalize((pos + new Vector3D(0, 0.5, 0)) - loc) * power;
         }
 
         public virtual void rotateRoll(double amount)
@@ -149,6 +160,29 @@ namespace FredrickTechDemo
         {
             velocity = v;
         }
+
+        public virtual void setAccel(Vector3D v)
+        {
+            acceleration = v;
+        }
+        public virtual void setXAccel(double v)
+        {
+            acceleration.x = v;
+        }
+        public virtual void setYAccel(double v)
+        {
+            acceleration.y = v;
+        }
+        public virtual void setZAccel(double v)
+        {
+            acceleration.z = v;
+        }
+
+        public virtual void setAirResistance(double d)
+        {
+            airResistance = d;
+        }
+
         public virtual void setPosition(Vector3D newPos)
         {
             this.pos = newPos;

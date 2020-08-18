@@ -19,7 +19,7 @@ namespace FredrickTechDemo.Models
         {
             int vbo = GL.GenBuffer();
             VBOS.Add(vbo);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);//TODO store buffer id's in an array so they can be deleted on model unload
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
             
             GL.BufferData(BufferTarget.ArrayBuffer, maxVertexCount * Vertex.vertexByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
             /*Stride: the size in bytes between the start of one vertex to the start of another.

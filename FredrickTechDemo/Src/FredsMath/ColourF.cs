@@ -22,10 +22,11 @@ namespace FredrickTechDemo.FredsMath
         public static ColourF lightYellow = new ColourF(255, 255, 135);
         public static ColourF yellow = new ColourF(255, 255, 0);
         public static ColourF darkYellow = new ColourF(153, 153, 0);
-        public static ColourF lightOrange = new ColourF(255, 135, 135);
+        public static ColourF lightOrange = new ColourF(255, 175, 85);
         public static ColourF orange = new ColourF(255, 135, 0);
         public static ColourF darkOrange = new ColourF(175, 110, 0);
         public static ColourF ember = new ColourF(255, 100, 0);
+        public static ColourF flame = new ColourF(255, 175, 0);
         public static ColourF facility = new ColourF(70, 120, 90);
         public static ColourF steelBlue = new ColourF(70, 100, 120);
         public static ColourF lightBlossom = new ColourF(255, 222, 236);
@@ -100,9 +101,10 @@ namespace FredrickTechDemo.FredsMath
         {
             colour |= (UInt32)blue << 8;
         }
-        public void SetAlpha(byte alpha)
+        public ColourF SetAlpha(byte alpha)
         {
             colour |= (UInt32)alpha;
+            return new ColourF(this.GetRed(), this.GetGreen(), this.GetBlue(), this.GetAlpha());
         }
     }
 }

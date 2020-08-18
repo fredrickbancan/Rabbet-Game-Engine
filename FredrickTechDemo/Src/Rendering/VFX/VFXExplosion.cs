@@ -9,7 +9,7 @@ namespace FredrickTechDemo.VFX
         protected static readonly String textureDir = ResourceHelper.getTextureFileDir("Explosion.png");
         protected static readonly String modelDir = ResourceHelper.getOBJFileDir("IcoSphere.obj");
         private static Random rand = new Random();
-        public VFXExplosion(Vector3D pos) : base(pos, 1.0F, shaderDir, textureDir, modelDir, 2.0F, 0.5F, VFXRenderType.tirangles)
+        public VFXExplosion(Vector3D pos) : base(pos, 1.0F, shaderDir, textureDir, modelDir, 0.5F, VFXRenderType.tirangles)
         {
             scale = 3.0F;
             setPitch((float)rand.NextDouble() * 180D);

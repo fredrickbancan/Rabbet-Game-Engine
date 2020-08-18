@@ -1,4 +1,6 @@
-﻿namespace FredrickTechDemo.FredsMath
+﻿using System;
+
+namespace FredrickTechDemo.FredsMath
 {
     static class MathUtil
     {
@@ -10,6 +12,13 @@
         public static float normalizeCustom(float mapMin, float mapMax, float min, float max, float val)//returns a float in between mapMin and mapMax representing the percentage that VAL is from Min to Max e.g: min of 0 and max of 100 with value 50 will return 0
         {
             return (mapMax - mapMin) * normalize(min, max, val) + mapMin;
+        }
+
+        public static double clamp(double val, double min, double max)
+        {
+            if (val < min) val = min;
+            if (val > max) val = max;
+            return val;
         }
 
         public static double radians(double degrees)
@@ -26,6 +35,11 @@
         public static double dotDoubles(double xA, double yA, double zA, double xB, double yB, double zB)
         {
             return xA * xB + yA * yB + zA * zB;
+        }
+
+        public static double hypotenuse(double a, double b)
+        {
+            return Math.Sqrt(a*a + b*b);
         }
     
     }

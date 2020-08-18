@@ -47,7 +47,7 @@ namespace FredrickTechDemo.Models
             {
                 return DefaultDebugModel.getNewModelDrawable();//returns model by defualt or failing
             }
-
+            reader.Close();
             return new ModelDrawable(shaderDir, textureDir, vertexResult.ToArray(), useIndices ? indices.ToArray() : null);
 
         }
