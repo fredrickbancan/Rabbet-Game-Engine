@@ -1,5 +1,4 @@
-﻿using FredrickTechDemo.FredsMath;
-using System;
+﻿using System;
 
 namespace FredrickTechDemo
 {
@@ -11,10 +10,6 @@ namespace FredrickTechDemo
 
         static void Main(string[] args)
         {
-            AABBCollider ab1 = new AABBCollider(new Vector3D(-1, -1, -1), new Vector3D(1,1,1));
-            Application.debug(ab1.maxBounds.x - ab1.minBounds.x);
-            Application.debug(ab1.extentZ);
-            Application.debug(Math.Sqrt(ab1.extentX * ab1.extentX + ab1.extentZ * ab1.extentZ));
             GameInstance game = new GameInstance(1920, 1080, "Fredrick Math Library OpenGL Tech Demo (Using OpenTk library, excluding maths)");
             game.Run(); //Will start the OpenTk Game instance running. Eeach frame will call OnUpdateFrame and OnRenderFrame. I am using my own tickrate class to controll ticks (TicksAndFps.cs)  
         }

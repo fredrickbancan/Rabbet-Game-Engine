@@ -10,6 +10,7 @@ namespace FredrickTechDemo
     /*This class will be the abstraction of any environment constructed for the player and entities to exist in.*/
     public class Planet
     {
+        private ModelDrawableDynamic particleModel;//TODO: impliment dynamic global particle model for batching
         private ModelDrawable tempWorldModel;
         private ModelDrawable skyboxModel;
         private Vector3F skyColor;
@@ -57,13 +58,13 @@ namespace FredrickTechDemo
         }
 
         /*Loop through each vfx and render them with a seperate draw call (INEFFICIENT)*/
-        public void drawVFX(Matrix4F viewMatrix, Matrix4F projectionMatrix)
+        public void drawVFX(Matrix4F viewMatrix, Matrix4F projectionMatrix, int pass = 1)
         {
             foreach (VFXBase vfx in vfxList)
             {
                 if (vfx.exists())
                 {
-                    vfx.draw(viewMatrix, projectionMatrix, fogColor);
+                    vfx.draw(viewMatrix, projectionMatrix, fogColor, pass);
                 }
             }
         }
@@ -82,12 +83,12 @@ namespace FredrickTechDemo
 
         private void generateWorld()
         {
-            Model[] unBatchedQuads = new Model[262144];
-            for(int x = 0; x < 512; x++)
+            Model[] unBatchedQuads = new Model[4096];
+            for(int x = 0; x < 64; x++)
             {
-                for(int z = 0; z < 512; z++)
+                for(int z = 0; z < 64; z++)
                 {
-                    unBatchedQuads[x * 512 + z] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3F(20,1,20)).translateVertices(new Vector3F((x-256)*20, 0, (z-256)*20));
+                    unBatchedQuads[x * 64 + z] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3F(20,1,20)).translateVertices(new Vector3F((x-32)*20, 0, (z-32)*20));
                 }
             }
             tempWorldModel = QuadBatcher.batchQuadModels(unBatchedQuads, PlanePrefab.getShaderDir(), PlanePrefab.getTextureDir());
@@ -168,7 +169,7 @@ namespace FredrickTechDemo
 
         /*creates an impulse at the given location which will push entities away, 
           like an explosion.*/
-        public void doExplosionAt(Vector3D loc, float radius = 7, float power = 3)
+        public void doExplosionAt(Vector3D loc, float radius = 7, float power = 1)
         {
             //render an explosion effect
             VFXUtil.doExplosionEffect(this, loc, radius);

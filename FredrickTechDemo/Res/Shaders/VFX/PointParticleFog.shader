@@ -54,10 +54,10 @@ layout(location = 0) out vec4 color;
 in float visibility;
 in vec4 vcolour;
 
+uniform int renderPass = 0;
 uniform vec3 fogColour;
-uniform bool aoc;
-//vector of viewport dimensions
-uniform vec2 viewPortSize;
+uniform bool aoc = false;
+uniform vec2 viewPortSize;//vector of viewport dimensions
 
 float ambientOcclusion;//variable for applying a shadowing effect towards the edges of the point to give the illusion of a sphereical shape
 
@@ -76,14 +76,13 @@ float hash(uint n)//returns random float value from 0 to 1
     n = n * (n * n * 15731U + 789221U) + 1376312589U;
     return float(n & uvec3(0x7fffffffU)) / float(0x7fffffff);
 }
-
 void makeCircle()
 {
     //clamps fragments to circle shape. 
     vec2 centerVec = gl_PointCoord - vec2(0.5);//get a vector from center of square to coord
     float coordLength = length(centerVec);
 
-    if (coordLength > 0.5)
+    if (coordLength >= 0.5)
     {//discard if the vectors length is more than 0.5
         discard;
     }
@@ -97,24 +96,36 @@ void makeCircle()
 void main()
 {
     makeCircle();
+    vec4 colorModified;
+    if (aoc)
+    {
+        colorModified = vcolour;
+        //add ambient occlusion shading
+        colorModified.r *= ambientOcclusion;
+        colorModified.g *= ambientOcclusion;
+        colorModified.b *= ambientOcclusion;
+    }
+
+    if (vcolour.a < 1.0F)
+    {
+        uint fragX = uint(gl_FragCoord.x);
+        uint fragY = uint(gl_FragCoord.y);
+        float randomFloat = hash(fragX + uint(viewPortSize.x) * fragY + (uint(viewPortSize.x) * uint(viewPortSize.y)) * uint((gl_FragCoord.z / (renderPass + 1)) * 1376312589F));
+
+        if (randomFloat > vcolour.a)//do stochastic transparency, noise can be reduced with sampling. 
+        {
+            discard;
+        }
+    }
 
     if (aoc)
     {
-        //add ambient occlusion shading
-        color.r *= ambientOcclusion;
-        color.g *= ambientOcclusion;
-        color.b *= ambientOcclusion;
+        //add fog effect to frag
+        color = mix(vec4(fogColour, 1.0), vec4(colorModified.rgb, 1.0), visibility);
     }
-
-    uint fragX = uint(gl_FragCoord.x);
-    uint fragY = uint(gl_FragCoord.y);
-    float randomFloat = hash(fragX + uint(viewPortSize.x) * fragY + (uint(viewPortSize.x) * uint(viewPortSize.y)) * uint(gl_FragCoord.z * 1376312589));
-    
-    if (randomFloat > vcolour.a)//do stochastic transparency, noise can be reduced with sampling. 
+    else
     {
-        discard;
+        //add fog effect to frag
+        color = mix(vec4(fogColour, 1.0), vec4(vcolour.rgb, 1.0), visibility);
     }
-
-    //add fog effect to frag
-    color = mix(vec4(fogColour, 1.0), vec4(vcolour.rgb, 1.0), visibility);
 }

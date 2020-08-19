@@ -74,7 +74,7 @@ namespace FredrickTechDemo.Models
         }
 
         /*Binds the models texture and shader, can be used for more*/
-        public virtual void bind()
+        public virtual void bind(bool useTexture = true, bool useShader = true)
         {
             if (!hasInitialized)
             {
@@ -88,8 +88,8 @@ namespace FredrickTechDemo.Models
             {
                 GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBufferObject);
             }
-            texture.use();
-            shader.use();
+            if(useTexture)texture.use();
+            if(useShader)shader.use();
         }
 
         #region drawMethods
@@ -126,6 +126,16 @@ namespace FredrickTechDemo.Models
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
+        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Matrix4F modelMatrix)
+        {
+            bind();
+            shader.setUniformMat4F("projectionMatrix", projectionMatrix);
+            shader.setUniformMat4F("viewMatrix", viewMatrix);
+            shader.setUniformMat4F("modelMatrix", modelMatrix);
+
+            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+            unBind();
+        }
 
         public virtual void draw(Matrix4F projectionMatrix, Matrix4F modelMatrix)
         {
@@ -143,6 +153,13 @@ namespace FredrickTechDemo.Models
             unBind();
         }
 
+        public virtual void draw(int textureID)
+        {
+            bind(false);
+            shader.setUniform1I("renderedTexture", textureID);
+            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+            unBind();
+        }
         public virtual void draw()
         {
             bind();
@@ -150,7 +167,7 @@ namespace FredrickTechDemo.Models
             unBind();
         }
 
-        public virtual void drawPoints(Matrix4F viewMatrix, Matrix4F projectionMatrix, Matrix4F modelMatrix, Vector3F fogColor, float pointRadius, bool ambientOcclusion)
+        public virtual void drawPoints(Matrix4F viewMatrix, Matrix4F projectionMatrix, Matrix4F modelMatrix, Vector3F fogColor, float pointRadius, bool ambientOcclusion, int pass = 1)
         {
             if (!drawErrorPrinted && indices != null && GL.IsBuffer(indicesBufferObject))
             {
@@ -165,6 +182,7 @@ namespace FredrickTechDemo.Models
             shader.setUniformVec2F("viewPortSize", new Vector2F(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
             shader.setUniform1F("pointRadius", pointRadius);
             shader.setUniform1I("aoc", ambientOcclusion ? 1 : 0);
+            //shader.setUniform1I("renderPass", pass);
             GL.DrawArrays(PrimitiveType.Points, 0, vertices.Length);
             unBind();
         }

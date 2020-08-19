@@ -80,6 +80,11 @@ namespace FredrickTechDemo
         public double extentX { get => (maxBounds.x - minBounds.x) / 2D; }
         public double extentY { get => (maxBounds.y - minBounds.y) / 2D; }
         public double extentZ { get => (maxBounds.z - minBounds.z) / 2D; }
-        public Vector3D centerVec { get => minBounds + ((maxBounds - minBounds) / 2D); }
+        public Vector3D centerVec { get => minBounds + ((maxBounds - minBounds) / 2D); }//relative to world
+
+        //vector from center of aabb to one of the corners, can negate for bottom corners. Vector is relative to aabb, not world
+        public Vector3D maxXmaxYmaxZ { get => maxBounds; }
+        public Vector3D minXmaxYmaxZ { get => new Vector3D(minBounds.x, maxBounds.y, maxBounds.z); }
+        public Vector3D maxXmaxYminZ { get => new Vector3D(maxBounds.x, maxBounds.y, minBounds.z); }
     }
 }

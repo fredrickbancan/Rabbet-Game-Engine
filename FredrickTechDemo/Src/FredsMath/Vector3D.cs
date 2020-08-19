@@ -43,6 +43,10 @@ namespace FredrickTechDemo.FredsMath
         {
             return new Vector3D(a.x - b.x, a.y - b.y, a.z - b.z);
         }
+        public static Vector3D operator -(Vector3D vec)
+        {
+            return new Vector3D(-vec.x, -vec.y, -vec.z);
+        }
 
         public static Vector3D operator *(Vector3D a, Vector3D b)
         {

@@ -121,11 +121,11 @@ namespace FredrickTechDemo
             {
                 radiusOfTesterSphere = aabb.extentZ;
             }
-
-            //TODO calculate radius for all other angles, for now the radius will be set to the corners of the aabb otherwise.
             else
             {
-                radiusOfTesterSphere = Vector3D.distance(aabb.minBounds, aabb.maxBounds) / 2D;//edge of sphere aligns with aabb corners.
+                radiusOfTesterSphere = MathUtil.max6(
+                    Vector3D.dot(aabb.maxXmaxYmaxZ, plane.normal), Vector3D.dot(aabb.minXmaxYmaxZ, plane.normal), Vector3D.dot(aabb.maxXmaxYminZ, plane.normal),
+                    Vector3D.dot(-aabb.maxXmaxYmaxZ, plane.normal), Vector3D.dot(-aabb.minXmaxYmaxZ, plane.normal), Vector3D.dot(-aabb.maxXmaxYminZ, plane.normal));
             }
             return getOverlapPlaneSphere(plane, new SphereCollider(aabb.centerVec, radiusOfTesterSphere), out overlap);
         }
@@ -138,7 +138,7 @@ namespace FredrickTechDemo
 
         public static double vectorDistanceFromPlane(PlaneCollider plane, Vector3D vec)
         {
-            return Vector3D.dot(vec, plane.normal) + plane.scalar;
+            return Vector3D.dot(vec, plane.normal) - plane.scalar;
         }
 
         #endregion planeCollisions

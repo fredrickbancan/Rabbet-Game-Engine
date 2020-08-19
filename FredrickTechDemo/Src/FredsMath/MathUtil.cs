@@ -41,6 +41,44 @@ namespace FredrickTechDemo.FredsMath
         {
             return Math.Sqrt(a*a + b*b);
         }
+
+        public static double max3(double a, double b, double c)
+        {
+            if(a >= b && a >= c)
+            {
+                return a;
+            }
+            if(b >= a && b >= c)
+            {
+                return b;
+            }
+            return c;
+        }
+
+        public static double max6(double a, double b, double c, double d, double e, double f)
+        {
+            if (a >= b && a >= c && a >= d && a >= e && a >= f)
+            {
+                return a;
+            }
+            if (b >= a && b >= c && b >= d && b >= e && b >= f)
+            {
+                return b;
+            }
+            if (c >= a && c >= b && c >= d && c >= e && c >= f)
+            {
+                return c;
+            }
+            if (d >= a && d >= b && d >= c && d >= e && d >= f)
+            {
+                return d;
+            }
+            if (e >= a && e >= b && e >= c && e >= d && e >= f)
+            {
+                return e;
+            }
+            return f;
+        }
     
     }
 }

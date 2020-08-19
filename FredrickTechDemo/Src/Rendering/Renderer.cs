@@ -18,14 +18,14 @@ namespace FredrickTechDemo
         /*Called before any rendering is done*/
         public static void init()
         {
-            setClearColor(ColourF.black);
+            setClearColor(ColourF.skyBlue);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.VertexProgramPointSize);//allows shaders for GL_POINTS to change size of points.
             GL.Enable(EnableCap.PointSprite);           //allows shaders for GL_POINTS to change point fragments (opentk exclusive)
             GL.Viewport(GameInstance.get.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
-            OffScreen.init(false, 2);
+            OffScreen.init(1.5F);
         }
 
         /*Called each time the game window is resized*/
@@ -39,7 +39,8 @@ namespace FredrickTechDemo
         /*Called before all draw calls*/
         private static void preRender()
         {
-            OffScreen.prepareForRender();//Do first
+            OffScreen.prepareForRender();
+            setClearColor(ColourF.skyBlue);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
         
@@ -61,7 +62,6 @@ namespace FredrickTechDemo
             GameInstance.get.currentPlanet.getTerrainModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());
             GameInstance.get.currentPlanet.getSkyboxModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getSkyColor(), GameInstance.get.currentPlanet.getFogColor());
         }
-
         /*Called after all draw calls*/
         private static void postRender()
         {

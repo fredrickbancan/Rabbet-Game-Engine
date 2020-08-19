@@ -32,7 +32,7 @@ namespace FredrickTechDemo.Models
         public EntityModel(Entity parent,String shaderDir, String textureDir, String modelPath)
         {
             this.parent = parent;
-            theModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelPath);
+            theModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelPath);//TODO: Inefficient. This will mean we have to load model data each time a model for an entity etc is spawned!, maybe make a list of pre loaded models?
             modelMatrix = new Matrix4F(1.0F);
             prevTickModelMatrix = new Matrix4F(1.0F);
             updateModel();//updating model twice to set first frame render position to the entity position.

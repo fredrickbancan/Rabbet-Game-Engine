@@ -14,6 +14,7 @@ namespace FredrickTechDemo
     /*This class is the main game class. It contains all the execution code for rendering, logic loops and loading.*/
     public class GameInstance : GameWindow
     {
+        public static int temp = 0;
         public static readonly String mainGUIName = "mainGUI";
         private static GameInstance instance;
         private static Random privateRand;
@@ -65,6 +66,8 @@ namespace FredrickTechDemo
             //center mouse in preperation for first person 
             Input.centerMouse();
             Input.toggleHideMouse();
+
+            
         }
 
         /*overriding OpenTk game update function, called every frame.*/

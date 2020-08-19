@@ -19,11 +19,11 @@ void main()
 #version 330 core
 
 in vec2 vTexCoord;
-out vec4 color;
+layout(location = 0) out vec4 color;
 
-uniform sampler2D uTexture;
+uniform sampler2D renderedTexture;
 
 void main()
 {
-	color = texture(uTexture, vTexCoord);
+	color = vec4(texture(renderedTexture, vTexCoord).rgb, 1.0);
 }

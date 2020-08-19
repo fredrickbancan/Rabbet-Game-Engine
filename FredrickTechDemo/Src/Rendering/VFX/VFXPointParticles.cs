@@ -71,11 +71,12 @@ namespace FredrickTechDemo.VFX
             return nonRandBrightColor;
         }
 
-        public override void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Vector3F fogColor)
+        public override void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Vector3F fogColor, int pass = 1)
         {
             if (vfxModel != null && !removalFlag)
             {
-                vfxModel.drawPoints(viewMatrix, projectionMatrix, prevTickModelMatrix + (modelMatrix - prevTickModelMatrix) * TicksAndFps.getPercentageToNextTick(), fogColor, pointRadius, pointAmbientOcclusion);
+                //TODO: Inefficient. There needs to be a dynamic model for all point VFX in the world. Each new point vfx vertices are added to it and it can be rendered in one single draw!
+                vfxModel.drawPoints(viewMatrix, projectionMatrix, prevTickModelMatrix + (modelMatrix - prevTickModelMatrix) * TicksAndFps.getPercentageToNextTick(), fogColor, pointRadius, pointAmbientOcclusion, pass);
             }
             else
             {

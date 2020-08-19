@@ -9,6 +9,8 @@ namespace FredrickTechDemo.VFX
         protected static readonly String textureDir = ResourceHelper.getTextureFileDir("Explosion.png");
         protected static readonly String modelDir = ResourceHelper.getOBJFileDir("IcoSphere.obj");
         private static Random rand = new Random();
+
+        [Obsolete("This vfx was used for explosions before the addition of point particle vfx")]
         public VFXExplosion(Vector3D pos) : base(pos, 1.0F, shaderDir, textureDir, modelDir, 0.5F, VFXRenderType.tirangles)
         {
             scale = 3.0F;

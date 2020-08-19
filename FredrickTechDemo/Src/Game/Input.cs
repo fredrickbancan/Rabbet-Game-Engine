@@ -60,6 +60,12 @@ namespace FredrickTechDemo
                     toggleDebugScreen();
                 }
 
+                if (keySinglePress(Key.Up))
+                {
+                    GameInstance.temp++;
+                    Application.debug(GameInstance.temp);
+                }
+
             }
         }
         /*Places the mouse cursor at the center of the game window*/

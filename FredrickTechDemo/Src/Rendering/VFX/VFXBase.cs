@@ -36,7 +36,7 @@ namespace FredrickTechDemo.VFX
         public VFXBase(Vector3D pos, float initialScale, String shaderDir, String textureDir, String modelDir, float maxExistingSeconds = 1, VFXRenderType renderType = VFXRenderType.tirangles) : base(pos)
         {
             this.scale = initialScale;
-            this.vfxModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelDir, renderType == VFXRenderType.points ? false : true);
+            this.vfxModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelDir, renderType == VFXRenderType.points ? false : true);//TODO:Inneficcient. This will mean we have to load the data every time a VFX is spawned. maybe a list of pre loaded models is needed?
             maxExistingTicks = TicksAndFps.getNumOfTicksForSeconds(maxExistingSeconds);
             updateVFXModel();
             updateVFXModel();
@@ -70,7 +70,7 @@ namespace FredrickTechDemo.VFX
         }
 
         /*draws this vfx, can be overridden*/
-        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Vector3F fogColor)
+        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Vector3F fogColor, int pass = 1)
         {
             if (vfxModel != null && !removalFlag)
             {
