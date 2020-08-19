@@ -1,4 +1,5 @@
 ﻿using FredrickTechDemo.FredsMath;
+using FredrickTechDemo.SubRendering;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -160,9 +161,9 @@ namespace FredrickTechDemo.Models
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
-        public virtual void draw()
+        public virtual void draw(bool useTex = true)
         {
-            bind();
+            bind(useTex);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
@@ -179,7 +180,7 @@ namespace FredrickTechDemo.Models
             shader.setUniformMat4F("viewMatrix", viewMatrix);
             shader.setUniformMat4F("modelMatrix", modelMatrix);
             shader.setUniformVec3F("fogColour", fogColor);
-            shader.setUniformVec2F("viewPortSize", new Vector2F(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
+            shader.setUniformVec2F("viewPortSize", new Vector2F(OffScreen.getWidth, OffScreen.getHeight));
             shader.setUniform1F("pointRadius", pointRadius);
             shader.setUniform1I("aoc", ambientOcclusion ? 1 : 0);
             //shader.setUniform1I("renderPass", pass);

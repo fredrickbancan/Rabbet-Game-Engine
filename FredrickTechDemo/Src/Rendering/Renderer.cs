@@ -5,8 +5,7 @@ using OpenTK.Graphics.OpenGL;
 
 namespace FredrickTechDemo
 {
-    //enum for text alignment choices
-    public enum TextAlign { LEFT, CENTER, RIGHT };
+
     /*This class will be responsable for most of the games rendering requests. It will then send the requests to the suitable sub renderers.
       e.g, when the game requests text to be rendered on the screen, the renderer will send a request to the TextRenderer2D.
       e.g, when the game requests entity models to be rendered in the world, the renderer will send a request to the model draw function.
@@ -25,7 +24,7 @@ namespace FredrickTechDemo
             GL.Enable(EnableCap.PointSprite);           //allows shaders for GL_POINTS to change point fragments (opentk exclusive)
             GL.Viewport(GameInstance.get.ClientRectangle);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
-            OffScreen.init(1.5F);
+            OffScreen.init(2F);
         }
 
         /*Called each time the game window is resized*/

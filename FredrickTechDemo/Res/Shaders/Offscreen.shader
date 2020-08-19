@@ -9,7 +9,7 @@ layout(location = 2) in vec2 texCoord;
 out vec2 vTexCoord;
 void main()
 {
-	gl_Position = position;
+	gl_Position = vec4(position.x, position.y, 0.0, 1.0);
 	vTexCoord = texCoord;
 }
 

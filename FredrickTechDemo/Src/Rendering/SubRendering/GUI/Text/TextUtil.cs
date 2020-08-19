@@ -5,6 +5,8 @@ using System.IO;
 
 namespace FredrickTechDemo.GUI.Text
 {
+    //enum for text alignment choices
+    public enum TextAlign { LEFT, CENTER, RIGHT };
     public static class TextUtil
     {
         public static readonly String textShaderDir = ResourceHelper.getShaderFileDir(@"GUI\GuiTextShader.shader");

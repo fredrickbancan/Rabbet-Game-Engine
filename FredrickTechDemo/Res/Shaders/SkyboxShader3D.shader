@@ -35,7 +35,7 @@ uniform vec3 skyHorizon;
 
 void main()
 {
-	gl_FragDepth = 0.9999999F;//force fragdepth to be in background at all times
+	gl_FragDepth = 0.9999F;//force fragdepth to be in background at all times
 	vec3 pointOnSphere = normalize(worldSpacePos.xyz);//normalizing the position of the frag to form a spherical depth from the camera, leaving out the w coordinate
 	float gradient = pointOnSphere.y; //The higher the fragment is on the skybox, the more it will be coloured as skyTop, and vice versa for skyHorizon
 	gradient = clamp(gradient, 0, 1);//clamp the gradient so it does not go over or under the skytop and skyhorizon values causing the colours to change
