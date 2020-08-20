@@ -180,6 +180,7 @@ namespace FredrickTechDemo.GUI
                 Application.error("GUIHandler.rebuildTextInGUI() could not get the GUIScren from name provided: " + guiName);
             }
         }
+
         public static void rebuildTextInCurrentGUI()
         {
             if(currentDisplayedScreen != null)

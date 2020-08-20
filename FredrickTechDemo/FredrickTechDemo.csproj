@@ -60,6 +60,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Res\Shaders\Offscreen.shader" />

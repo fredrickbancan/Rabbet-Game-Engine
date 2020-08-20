@@ -10,7 +10,7 @@ namespace FredrickTechDemo
         public String vertexSource;
         public String fragmentSource;
     };
-    enum Type // simple enum for sorting lines of shader code
+    enum shaderType // simple enum for sorting lines of shader code
     {
         NONE,
         VERTEX,
@@ -41,7 +41,7 @@ namespace FredrickTechDemo
 
         private shaderProgramSource parseShaderFile(String path)
         {
-            Type type = Type.NONE;
+            shaderType type = shaderType.NONE;
             String currentLine = "";
             String vertexSource = "";
             String fragmentSource = "";
@@ -56,18 +56,18 @@ namespace FredrickTechDemo
                     {
                         if (currentLine.Contains("vertex"))
                         {
-                            type = Type.VERTEX;
+                            type = shaderType.VERTEX;
                         }
                         else if (currentLine.Contains("fragment"))
                         {
-                            type = Type.FRAGMENT;
+                            type = shaderType.FRAGMENT;
                         }
                     }
-                    else if (type == Type.VERTEX)
+                    else if (type == shaderType.VERTEX)
                     {
                         vertexSource += (currentLine + "\n");
                     }
-                    else if (type == Type.FRAGMENT)
+                    else if (type == shaderType.FRAGMENT)
                     {
                         fragmentSource += (currentLine + "\n");
                     }
@@ -90,8 +90,8 @@ namespace FredrickTechDemo
         private int createShader(shaderProgramSource source)//creates a shader program from both the fragment and vertex shader source provided in the struct, returns program id
         {
             int program = GL.CreateProgram();
-            int vsh = compileShader(ShaderType.VertexShader, source.vertexSource);
-            int fsh = compileShader(ShaderType.FragmentShader, source.fragmentSource);
+            int vsh = compileShader(OpenTK.Graphics.OpenGL.ShaderType.VertexShader, source.vertexSource);
+            int fsh = compileShader(OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, source.fragmentSource);
 
             GL.AttachShader(program, vsh);
             GL.AttachShader(program, fsh);
@@ -103,7 +103,7 @@ namespace FredrickTechDemo
             return program;
         }
 
-        private int compileShader(ShaderType type, String source)//compiles the given source code depending on the given type and returns the shader id
+        private int compileShader(OpenTK.Graphics.OpenGL.ShaderType type, String source)//compiles the given source code depending on the given type and returns the shader id
         {
             int id = GL.CreateShader(type);
             GL.ShaderSource(id, source);
@@ -113,7 +113,7 @@ namespace FredrickTechDemo
             String infoLog = GL.GetShaderInfoLog(id);
             if (infoLog != System.String.Empty)
             {
-                Application.error("Error when compiling shader!\ntype: " + (type == ShaderType.VertexShader ? "vertex shader" : "fragment shader") + "\nmessage log: " + infoLog + "\nShader File Path: " + debugShaderPath);
+                Application.error("Error when compiling shader!\ntype: " + (type == OpenTK.Graphics.OpenGL.ShaderType.VertexShader ? "vertex shader" : "fragment shader") + "\nmessage log: " + infoLog + "\nShader File Path: " + debugShaderPath);
                 return 0;
             }
 

@@ -16,11 +16,13 @@ namespace FredrickTechDemo
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
+            this.setCollider(new PointCollider(pos, this));//TODO: temp, experiment. Remove.
         }
         public EntityTank(Vector3D initialPos) : base(initialPos)
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
+            this.setCollider(new PointCollider(pos, this));//TODO: temp, experiment. Remove.
         }
 
         public override void onTick()

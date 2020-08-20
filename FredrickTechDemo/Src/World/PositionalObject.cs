@@ -52,8 +52,23 @@ namespace FredrickTechDemo
         /*Do this after manipulating any movement of this object*/
         public virtual void postTickMovement()
         {
-            velocity += acceleration - airResistance * velocity;
+            velocity += acceleration;
+            velocity *= (1 - airResistance);
             pos += velocity;
+        }
+
+        /*Done after the entity has ticked, so will correct for overlap AFTER movement. Will change velocity, accelleration and positon.
+          Can be overritten.*/
+        public virtual void applyCollision(Vector3D direction, double overlap)
+        {
+            //make sure direction is normal vec
+            direction.normalize();
+
+            //correct position
+            pos += direction * overlap;
+
+            //clip velocity
+            velocity *= direction.oneMinus();//TODO: make clipping work in only one direction. i.e, instead of setting y velocity to zero, make so y cannot increase in the opposite direction of direction.y (in the case of the ground plane pointing up.)
         }
 
         /*Apply a force to this entity from the location with the power.*/

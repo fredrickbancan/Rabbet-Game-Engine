@@ -9,6 +9,9 @@ namespace FredrickTechDemo.GUI
     {
         normal
     };
+
+    /*A simple crosshair component class. can specify an enum for what type of crosshair and the corrosponding 
+      crosshair texture will be gotten.*/
     public class GUICrosshair : GUIScreenComponent
     {
         private static String shaderDir = ResourceHelper.getShaderFileDir(@"GUI\GuiStencilShader.shader");

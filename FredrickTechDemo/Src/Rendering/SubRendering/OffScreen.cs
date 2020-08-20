@@ -25,8 +25,8 @@ namespace FredrickTechDemo.SubRendering
             depthBuffer = GL.GenRenderbuffer();
             texColorBuffer = GL.GenTexture();
 
-            width = (int)(GameInstance.gameWindowWidth * superSamplingMultiplyer);//*2 on width and height for 4x super sampling
-            height = (int)(GameInstance.gameWindowHeight * superSamplingMultiplyer);
+            width = (int)(GameInstance.realScreenWidth * superSamplingMultiplyer);//*2 on width and height for 4x super sampling
+            height = (int)(GameInstance.realScreenHeight     * superSamplingMultiplyer);
 
             Application.debug("Offscreen resolution width: " + width);
             Application.debug("Offscreen resolution height: " + height);

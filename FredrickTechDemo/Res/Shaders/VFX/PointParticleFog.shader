@@ -21,8 +21,8 @@ uniform mat4 modelMatrix;
 //vector of viewport dimensions
 uniform vec2 viewPortSize;
 
-uniform float pointRadius = 0.1F;
-float positionResolution = 256.0F;
+uniform float pointRadius = 0.1;
+float positionResolution = 256.0;
 void main()
 {
     vec4 worldPosition = modelMatrix * position;
@@ -106,11 +106,11 @@ void main()
         colorModified.b *= ambientOcclusion;
     }
 
-    if (vcolour.a < 1.0F)
+    if (vcolour.a < 1.0)
     {
         uint fragX = uint(gl_FragCoord.x);
         uint fragY = uint(gl_FragCoord.y);
-        float randomFloat = hash(fragX + uint(viewPortSize.x) * fragY + uint(viewPortSize.x) * uint(viewPortSize.y) * uint((gl_FragCoord.z / (renderPass + 1)) * 1376312589F));
+        float randomFloat = hash(fragX + uint(viewPortSize.x) * fragY + uint(viewPortSize.x) * uint(viewPortSize.y) * uint((gl_FragCoord.z / (renderPass + 1)) * 7000.0));
 
         if (randomFloat > vcolour.a)//do stochastic transparency, noise can be reduced with sampling. 
         {

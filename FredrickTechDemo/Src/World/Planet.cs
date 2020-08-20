@@ -16,8 +16,9 @@ namespace FredrickTechDemo
         private Vector3F skyColor;
         private Vector3F fogColor;
         private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
-        public Dictionary<int, ICollider> colliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity, -1 if has no parent
         public Dictionary<int, Entity> entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
+        public Dictionary<int, ICollider> entityColliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity
+        public List<ICollider> worldColliders = new List<ICollider>();//list of colliders with no parent, ie, walls, ground planes.
         public List<VFXBase> vfxList = new List<VFXBase>();
 
         public Planet()
@@ -92,15 +93,17 @@ namespace FredrickTechDemo
                 }
             }
             tempWorldModel = QuadBatcher.batchQuadModels(unBatchedQuads, PlanePrefab.getShaderDir(), PlanePrefab.getTextureDir());
+
+            this.addWorldCollider(new PlaneCollider(new Vector3D(0,1,0), 0));//ground plane at y 0
         }
         
         public void onTick()
         {
             removeMarkedEntities();
             removeMarkedVFX();
-            doCollisions();
             tickEntities();
             tickVFX();
+            doCollisions();//I THINK this should be done LAST.....
         }
 
         private void tickEntities()
@@ -125,16 +128,27 @@ namespace FredrickTechDemo
             }
         }
 
+        /*Loops through all the different colliders in the world in the right order and applies physics to the
+          parent entities.*/
         private void doCollisions()
         {
-            if(colliders.Count >= 2)
-            CollisionHandler.doCollisions(colliders);
+            Profiler.beginEndProfile(Profiler.collisionsName);
+            if(worldColliders.Count > 0 && entityColliders.Count >= 1)
+            {
+                CollisionHandler.doWorldCollisions(worldColliders, entityColliders);
+            }
+
+            if (entityColliders.Count >= 2)
+            {
+                CollisionHandler.doEntityCollisions(entityColliders);
+            }
+            Profiler.beginEndProfile(Profiler.collisionsName);
         }
 
         /*For adding colliders with no entity parent, eg, for map collisions, inanimate immovable uncolliding objects.*/
-        public void addNonParentCollider(ICollider collider)
+        public void addWorldCollider(ICollider collider)
         {
-            colliders.Add(-1, collider);
+            worldColliders.Add(collider);
         }
 
         private void removeMarkedEntities()
@@ -148,7 +162,7 @@ namespace FredrickTechDemo
                     entAt.setCurrentPlanet(null);
                     if(entAt.getHasCollider())
                     {
-                        colliders.Remove(entities.ElementAt(i).Key);
+                        entityColliders.Remove(entities.ElementAt(i).Key);
                     }
                     entities.Remove(entities.ElementAt(i).Key);
                     
@@ -202,12 +216,14 @@ namespace FredrickTechDemo
         {
             theEntity.setCurrentPlanet(this);
 
-            entities.Add(entityIDItterator++, theEntity);
+            entities.Add(entityIDItterator, theEntity);
 
             if(theEntity.getHasCollider())
             {
-                colliders.Add(entityIDItterator - 1, theEntity.getCollider());
+                entityColliders.Add(entityIDItterator, theEntity.getCollider());
             }
+
+            entityIDItterator++;
         }
 
         public void spawnEntityInWorldAtPosition(Entity theEntity, Vector3D atPosition)

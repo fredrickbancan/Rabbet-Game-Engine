@@ -20,12 +20,28 @@ namespace FredrickTechDemo
 
         public ICollider getNextTickPredictedHitbox()
         {
-            throw new System.NotImplementedException();
+            if (parent != null)
+            {
+                PointCollider result = new PointCollider(pos);
+                result.pos += parent.getPredictedNextTickPos();
+                return result;
+            }
+            return this;
+        }
+
+        public Entity getParent()
+        {
+            return parent;
         }
 
         public void onTick()
         {
-            throw new System.NotImplementedException();
+            pos = parent.getPosition();
+        }
+
+        public ColliderType getType()
+        {
+            return ColliderType.point;
         }
     }
 }

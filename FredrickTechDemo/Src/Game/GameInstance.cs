@@ -20,6 +20,8 @@ namespace FredrickTechDemo
         private static Random privateRand;
         private static int windowWidth;
         private static int windowHeight;
+        private static int screenWidth;
+        private static int screenHeight;
         private static int mouseCenterX;//the x position of the center of the game window
         private static int mouseCenterY;//the y position of the center of the game window
         private static float dpiY;
@@ -27,14 +29,16 @@ namespace FredrickTechDemo
         public Planet currentPlanet;
 
 
-        public GameInstance(int width, int height, String title) : base(width, height, GraphicsMode.Default, title)
+        public GameInstance(int screenWidth, int screenHeight, int initialWidth, int initialHeight, String title) : base(initialWidth, initialHeight, new GraphicsMode(32,24,0,8), title)
         {
-            Application.debug("Game window width: " + width);
-            Application.debug("Game window height: " + height);
+            Application.debug("Game window width: " + initialWidth);
+            Application.debug("Game window height: " + initialHeight);
             GameInstance.privateRand = new Random();
             GameInstance.instance = this;
-            GameInstance.windowWidth = width;
-            GameInstance.windowHeight = height;
+            GameInstance.windowWidth = initialWidth;
+            GameInstance.windowHeight = initialHeight;
+            GameInstance.screenHeight = screenHeight;
+            GameInstance.screenWidth = screenWidth;
             GameInstance.mouseCenterX = this.X + this.Width / 2;
             GameInstance.mouseCenterY = this.Y + this.Height / 2;
             GameSettings.loadSettings();
@@ -59,7 +63,7 @@ namespace FredrickTechDemo
             thePlayer = new EntityPlayer("Steve", new Vector3D(0.0, 0.0, 2.0));
             currentPlanet = new Planet();
             currentPlanet.spawnEntityInWorld(thePlayer);
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < 30; i++)
             {
                 currentPlanet.spawnEntityInWorld(new EntityCactus());
             }
@@ -68,8 +72,6 @@ namespace FredrickTechDemo
             //center mouse in preperation for first person 
             Input.centerMouse();
             Input.toggleHideMouse();
-
-            
         }
 
         /*overriding OpenTk game update function, called every frame.*/
@@ -114,6 +116,7 @@ namespace FredrickTechDemo
             Profiler.beginEndProfile(Profiler.gameLoopName);
         }
 
+        /*update the gui*/
         private void updateGUI()
         {
             if (thePlayer.getIsFlying())
@@ -125,7 +128,7 @@ namespace FredrickTechDemo
                 GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "flying").setPanelColor(ColourF.darkRed).setLine("Flying: OFF");
             }
             DebugScreen.displayOrClearDebugInfo();
-            GUIHandler.rebuildTextInGUI(mainGUIName);//do last
+            GUIHandler.rebuildTextInGUI(mainGUIName);//do last, applies any changes to the text on screen.
         }
 
         private void setDPIScale()
@@ -136,6 +139,8 @@ namespace FredrickTechDemo
         }
         public static int gameWindowWidth { get => windowWidth; }
         public static int gameWindowHeight { get => windowHeight; }
+        public static int realScreenWidth { get => screenWidth; }
+        public static int realScreenHeight { get => screenHeight; }
         public static int windowCenterX { get => mouseCenterX; }
         public static int windowCenterY { get => mouseCenterY; }
         public static float aspectRatio { get => (float)windowWidth / (float)windowHeight; }

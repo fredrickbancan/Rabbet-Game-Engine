@@ -8,6 +8,7 @@ namespace FredrickTechDemo
     {
         public static String textRender2DBuildingName = "TextRenderer2D Building";
         public static String gameLoopName = "Game Loop";
+        public static String collisionsName = "Collisions";
         public static String renderingName = "Rendering";
         private static Dictionary<String, Profile> profiles = new Dictionary<String, Profile>();
 
@@ -44,7 +45,7 @@ namespace FredrickTechDemo
         }
 
         
-
+        /*private class for profiles.*/
         private class Profile
         {
             private long startTime;

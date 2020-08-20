@@ -40,8 +40,9 @@ namespace FredrickTechDemo
                         ("Head Pitch: " + GameInstance.get.thePlayer.getHeadPitch().ToString("0.##")),
                         ("Yaw: " + GameInstance.get.thePlayer.getYaw().ToString("0.##")),
                         ("Profiler ms averages: "),
-                        ("Game loop: " + Profiler.getAveragesForProfile(Profiler.gameLoopName).ToString("0.##") + " ms."),
                         ("Render: " + Profiler.getAveragesForProfile(Profiler.renderingName).ToString("0.##") + " ms."),
+                        ("Game loop: " + Profiler.getAveragesForProfile(Profiler.gameLoopName).ToString("0.##") + " ms."),
+                        ("Collisions: " + Profiler.getAveragesForProfile(Profiler.collisionsName).ToString("0.##") + " ms."),
                         ("press F3 to hide debug screen."),
                        }); 
             }

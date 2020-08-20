@@ -34,12 +34,21 @@ namespace FredrickTechDemo
             return this;
         }
 
+        public Entity getParent()
+        {
+            return parent;
+        }
+
         public void onTick()
         {
             if (parent != null)
             {
                 pos = parent.getPosition();
             }
+        }
+        public ColliderType getType()
+        {
+            return ColliderType.sphere;
         }
     }
 }

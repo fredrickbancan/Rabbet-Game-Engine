@@ -32,7 +32,7 @@ namespace FredrickTechDemo
 
         public static void updateSingleMousePressInput(MouseState mouse)
         {
-            if(Input.mosueKeySinglePress(MouseButton.Left))//left mouse click
+            if(Input.mouseSingleKeyPress(MouseButton.Left))//left mouse click
             {
                 GameInstance.get.thePlayer.onLeftClick();
             }

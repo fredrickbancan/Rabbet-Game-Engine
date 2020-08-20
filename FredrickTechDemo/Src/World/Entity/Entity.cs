@@ -34,18 +34,9 @@ namespace FredrickTechDemo
             existedTicks++;
             if (existedTicks < 0) existedTicks = 0;//incase of int overflow
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            if (posY <= groundPlaneHeight) { isGrounded = true; } else { isGrounded = false; }//basic ground level collision detection, in this case there is a ground plane collider at 0.0000D
             if (isFlying) { setYAccel(0); } else { setYAccel(-gravity); }
             base.preTickMovement();//do before movement
 
-            //to prevent the entity from going through  the ground plane, if the next position increased by velocity will place the entity
-            //below the ground plane, it will be given a value of 0.0000D -pos.y, so when position is increased by velocity, they cancel out resulting
-            //in perfect 0, which stops the entity perfectly on the ground plane.
-            if (getPredictedNextTickPos().y < groundPlaneHeight)
-            {
-                setYVelocity(groundPlaneHeight - posY);
-                isGrounded = true;
-            }
             postTickMovement();//do after movement 
             
             if (hasModel)
@@ -79,22 +70,20 @@ namespace FredrickTechDemo
         {
             if (!isGrounded)
             {
-                velocity.x += acceleration.x - airResistance * velocity.x;
-                velocity.y += acceleration.y - airResistance * velocity.y;
-                velocity.z += acceleration.z - airResistance * velocity.z;
+                velocity += acceleration;
+                velocity *= (1 - airResistance);
             }
             else 
             {
-                if(acceleration.y >= 0)
-                {
-                    velocity.y += acceleration.y - airResistance * velocity.y;
-                }
-                velocity.x += acceleration.x - groundResistance * velocity.x;
-                velocity.z += acceleration.z - groundResistance * velocity.z;
+                velocity += acceleration;
+                velocity.x *= (1 - groundResistance);
+                velocity.y *= (1 - airResistance);
+                velocity.z *= (1 - groundResistance);
             }
 
             pos += velocity;
         }
+
         /*used for setting the collider of this entity by classes which extend entity.*/
         protected virtual void setCollider(ICollider collider)
         {
@@ -104,7 +93,15 @@ namespace FredrickTechDemo
                 this.hasCollider = true;
             }
         }
-
+        
+        public override void applyCollision(Vector3D direction, double overlap)
+        {
+            if (direction.y >= 0.35D)//if the entity is being collided from a generally upwards direction
+            {
+                isGrounded = true;//TODO: make so when the entity is NOT colliding from the bottom
+            }
+            base.applyCollision(direction, overlap);
+        }
         public virtual bool getHasCollider()
         {
             return hasCollider;

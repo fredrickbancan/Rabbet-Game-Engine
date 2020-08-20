@@ -18,6 +18,10 @@ namespace FredrickTechDemo
             return false;
         }
 
+        public Entity getParent()
+        {
+            return null;
+        }
         public ICollider getNextTickPredictedHitbox()
         {
             return this;
@@ -26,6 +30,10 @@ namespace FredrickTechDemo
         public void onTick()
         {
          
+        }
+        public ColliderType getType()
+        {
+            return ColliderType.plane;
         }
     }
 }

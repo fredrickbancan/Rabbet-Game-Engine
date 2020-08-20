@@ -15,11 +15,13 @@ namespace FredrickTechDemo
         {
             this.playerName = name;
             camera = new Camera(this);
+            setCollider(new PointCollider(pos, this));//TODO: temp, experiment. Remove.
         }
         public EntityPlayer(String name, Vector3D spawnPosition) : base(spawnPosition)
         {
             this.playerName = name;
             camera = new Camera(this);
+            setCollider(new PointCollider(pos, this));//TODO: temp, experiment. Remove.
         }
 
         public override void onTick()

@@ -12,6 +12,7 @@ namespace FredrickTechDemo
             airResistance = 0.001F;
             velocity += direction * initialVelocity;
             this.maxExistedTicks = TicksAndFps.getNumOfTicksForSeconds(maxLivingSeconds);
+            this.setCollider(new PointCollider(pos, this));//TODO: temp, experiment. Remove.
         }
 
         public override void onTick()
@@ -38,6 +39,8 @@ namespace FredrickTechDemo
         {
             Dispose();
         }
+
+        
 
         public void Dispose()
         {

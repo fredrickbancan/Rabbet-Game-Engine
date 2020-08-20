@@ -12,12 +12,14 @@ namespace FredrickTechDemo
         {
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
+            this.setCollider(new PointCollider(pos, this));//TODO: temp, experiment. Remove.
             yaw = rand.NextDouble() * 360;
         }
         public EntityCactus(Vector3D pos) : base(pos)
         {
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
+            this.setCollider(new PointCollider(pos, this));//TODO: temp, experiment. Remove.
             yaw = rand.NextDouble() * 360;
         }
 

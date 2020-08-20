@@ -60,12 +60,6 @@ namespace FredrickTechDemo
                     toggleDebugScreen();
                 }
 
-                if (keySinglePress(Key.Up))
-                {
-                    GameInstance.temp++;
-                    Application.debug(GameInstance.temp);
-                }
-
             }
         }
         /*Places the mouse cursor at the center of the game window*/
@@ -111,7 +105,7 @@ namespace FredrickTechDemo
             //returns true if this key is pressed, and only for the first update.
             return (keyboardState[key] && (keyboardState[key] != previouskeyboardState[key]));
         }
-        public static bool mosueKeySinglePress(MouseButton key)
+        public static bool mouseSingleKeyPress(MouseButton key)
         {
             //returns true if this key is pressed, and only for the first update.
             return (mouseState[key] && (mouseState[key] != previousMouseState[key]));

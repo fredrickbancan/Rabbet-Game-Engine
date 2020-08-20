@@ -9,7 +9,11 @@
         //returns a bool determining if this collider has a parent entity and/or if the parent entity is not equal to null
         bool getHasParent();
 
+        Entity getParent();
+
         /*gets this hitbox moved by one tick*/
         ICollider getNextTickPredictedHitbox();
+
+        ColliderType getType();
     }
 }

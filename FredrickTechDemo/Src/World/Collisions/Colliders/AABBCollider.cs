@@ -65,7 +65,15 @@ namespace FredrickTechDemo
             return this;
         }
 
-        
+        public ColliderType getType()
+        {
+            return ColliderType.aabb;
+        }
+
+        public Entity getParent()
+        {
+            return parent;
+        }
 
         public double minX { get => minBounds.x; set => minBounds.x = value; }
         public double minY { get => minBounds.y; set => minBounds.y = value; }

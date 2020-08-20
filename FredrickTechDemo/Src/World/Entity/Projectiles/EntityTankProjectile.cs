@@ -29,6 +29,10 @@ namespace FredrickTechDemo
             currentPlanet.doExplosionAt(pos);
             base.ceaseToExist();
         }
+        public override void applyCollision(Vector3D direction, double overlap)
+        {
+            ceaseToExist();
+        }
 
         public override void onCollideWithGround()
         {

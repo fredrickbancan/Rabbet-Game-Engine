@@ -137,6 +137,15 @@ namespace FredrickTechDemo.FredsMath
             return this;
         }
 
+        public Vector3D oneMinus()
+        {
+            Vector3D result;
+            result.x = 1 - this.x;
+            result.y = 1 - this.y;
+            result.z = 1 - this.z;
+            return result;
+        }
+
         public static Vector3D clamp(Vector3D vector, Vector3D min, Vector3D max)
         {
             return new Vector3D(MathUtil.clamp(vector.x, min.x, max.x), MathUtil.clamp(vector.y, min.y, max.y), MathUtil.clamp(vector.z, min.z, max.z));
