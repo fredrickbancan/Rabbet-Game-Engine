@@ -29,6 +29,8 @@ namespace FredrickTechDemo
 
         public GameInstance(int width, int height, String title) : base(width, height, GraphicsMode.Default, title)
         {
+            Application.debug("Game window width: " + width);
+            Application.debug("Game window height: " + height);
             GameInstance.privateRand = new Random();
             GameInstance.instance = this;
             GameInstance.windowWidth = width;

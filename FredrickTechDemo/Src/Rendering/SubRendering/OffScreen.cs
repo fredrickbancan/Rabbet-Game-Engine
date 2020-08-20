@@ -28,6 +28,9 @@ namespace FredrickTechDemo.SubRendering
             width = (int)(GameInstance.gameWindowWidth * superSamplingMultiplyer);//*2 on width and height for 4x super sampling
             height = (int)(GameInstance.gameWindowHeight * superSamplingMultiplyer);
 
+            Application.debug("Offscreen resolution width: " + width);
+            Application.debug("Offscreen resolution height: " + height);
+
             GL.BindTexture(TextureTarget.Texture2D, texColorBuffer);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);

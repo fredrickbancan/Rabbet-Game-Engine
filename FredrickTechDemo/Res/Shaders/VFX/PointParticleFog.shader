@@ -30,7 +30,7 @@ void main()
     gl_Position = projectionMatrix * positionRelativeToCam;
 
     //keeps the point size consistent with distance AND resolution.
-    gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * pointRadius / gl_Position.w;
+    gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * pointRadius / gl_Position.w;//TODO: this does not take into account aspect ratio and can cause points to be elipsical in shape.
 
     //position jitter for retro feel
     float aspectRatio = viewPortSize.x / viewPortSize.y;
@@ -110,7 +110,7 @@ void main()
     {
         uint fragX = uint(gl_FragCoord.x);
         uint fragY = uint(gl_FragCoord.y);
-        float randomFloat = hash(fragX + uint(viewPortSize.x) * fragY + (uint(viewPortSize.x) * uint(viewPortSize.y)) * uint((gl_FragCoord.z / (renderPass + 1)) * 1376312589F));
+        float randomFloat = hash(fragX + uint(viewPortSize.x) * fragY + uint(viewPortSize.x) * uint(viewPortSize.y) * uint((gl_FragCoord.z / (renderPass + 1)) * 1376312589F));
 
         if (randomFloat > vcolour.a)//do stochastic transparency, noise can be reduced with sampling. 
         {
