@@ -68,7 +68,8 @@ namespace FredrickTechDemo
             pos += direction * overlap;
 
             //clip velocity
-            velocity *= direction.oneMinus();//TODO: make clipping work in only one direction. i.e, instead of setting y velocity to zero, make so y cannot increase in the opposite direction of direction.y (in the case of the ground plane pointing up.)
+            velocity *= direction.oneMinusAbsolute();//not COMPLETELY confident why this works, but basically this clips the velocity, setting its direction values to be the same, except 0 in the plane direction. Confusing!!!!!
+            //figured it out myself somehow??????
         }
 
         /*Apply a force to this entity from the location with the power.*/

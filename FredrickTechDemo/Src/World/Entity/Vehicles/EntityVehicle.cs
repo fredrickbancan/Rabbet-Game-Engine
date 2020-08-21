@@ -32,16 +32,35 @@ namespace FredrickTechDemo
             mountingOffset = new Vector3D(0.0F, 2.0F, 0.0F);
         }
 
+
         public override void onTick()
         {
             base.onTick();//do first
             if (mountingEntity != null)
             {
-                mountingEntity.setPosition(pos + mountingOffset);
-
                 alignVectors();
 
                 moveByMovementVector();
+            }
+        }
+
+        public override void postTickMovement()
+        {
+            base.postTickMovement();
+            if (mountingEntity != null)
+            {
+                mountingEntity.setPosition(pos + mountingOffset);
+                mountingEntity.setVelocity(velocity);
+            }
+        }
+
+        public override void applyCollision(Vector3D direction, double overlap)
+        {
+            base.applyCollision(direction, overlap);
+            if (mountingEntity != null)
+            {
+                mountingEntity.setPosition(pos + mountingOffset);
+                mountingEntity.setVelocity(velocity);
             }
         }
 

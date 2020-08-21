@@ -6,7 +6,7 @@ namespace FredrickTechDemo.VFX
       change certain VFX*/
     public static class VFXUtil
     {
-        public static void doExplosionEffect(Planet planet, Vector3D location, float radius, float pitch = 0, float yaw = -90, float roll = 0)
+        public static void doExplosionEffect(World planet, Vector3D location, float radius, float pitch = 0, float yaw = -90, float roll = 0)
         {
             VFXBase smoke = new VFXPointParticles(location, ColourF.darkGrey, (25 - (int)radius / 2) + (int)(radius / 2 * radius / 2), radius / 15, 0.15F, true, false, 2F, 0.8F);
 
@@ -35,7 +35,7 @@ namespace FredrickTechDemo.VFX
             planet.spawnVFXInWorld(explosion2);
         }
 
-        public static void doSmallSmokePuffEffect(Planet planet, Vector3D location, float pitch = 0, float yaw = -90, float roll = 0)
+        public static void doSmallSmokePuffEffect(World planet, Vector3D location, float pitch = 0, float yaw = -90, float roll = 0)
         {
             VFXBase smoke = new VFXPointParticles(location, ColourF.darkGrey, 7, 0.1F, 0.075F, true, false, 2F, 0.8F);
 
@@ -51,7 +51,7 @@ namespace FredrickTechDemo.VFX
             planet.spawnVFXInWorld(smoke);
         }
 
-        public static void doDebugSmokeEffect(Planet planet)
+        public static void doDebugSmokeEffect(World planet)
         {
             VFXBase smoke = new VFXPointParticles(Vector3D.zero + 2, ColourF.darkGrey, 5, 0.5F, 0.5F, true, false, 2F, 0.5F);
             smoke.setExpansionResistance(0.05F);

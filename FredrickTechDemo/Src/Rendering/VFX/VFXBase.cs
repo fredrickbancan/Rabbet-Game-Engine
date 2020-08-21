@@ -54,10 +54,6 @@ namespace FredrickTechDemo.VFX
                 ceaseToExist();
             }
             updateVFXModel();
-
-            base.preTickMovement();
-            //do movement
-            base.postTickMovement();
         }
 
         /*Called every tick can be overridden*/

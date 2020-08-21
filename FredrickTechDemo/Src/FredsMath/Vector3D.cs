@@ -137,12 +137,13 @@ namespace FredrickTechDemo.FredsMath
             return this;
         }
 
-        public Vector3D oneMinus()
+        /*For use with unit vectors. returns a vector with values equal to 1 - absolute of original values. E.G, <0.33,0.33,0.33> will return <0.77,0.77,0.77>*/
+        public Vector3D oneMinusAbsolute()
         {
             Vector3D result;
-            result.x = 1 - this.x;
-            result.y = 1 - this.y;
-            result.z = 1 - this.z;
+            result.x = 1 - Math.Abs(this.x);
+            result.y = 1 - Math.Abs(this.y);
+            result.z = 1 - Math.Abs(this.z);
             return result;
         }
 

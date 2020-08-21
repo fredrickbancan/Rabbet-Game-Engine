@@ -29,7 +29,7 @@ namespace FredrickTechDemo
 
             if(rand.Next(0, 25) == 1)
             {
-                //turn = !turn;
+                turn = !turn;
             }
 
             if (turn) rotateYaw(-5.0F); else rotateYaw(5.0F);
@@ -38,7 +38,7 @@ namespace FredrickTechDemo
 
             if (rand.Next(0, 50) == 1)
             {
-               // jump();
+                jump();
             }
         }
     }

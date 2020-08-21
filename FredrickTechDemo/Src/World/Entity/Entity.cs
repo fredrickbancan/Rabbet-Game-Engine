@@ -11,7 +11,7 @@ namespace FredrickTechDemo
         protected ICollider collider = null;
         protected bool hasCollider = false;
         private double groundPlaneHeight = 0.0000D;
-        protected Planet currentPlanet;
+        protected World currentPlanet;
         protected EntityModel entityModel;
         protected bool hasModel = false;
         protected bool isFlying = false;
@@ -35,10 +35,7 @@ namespace FredrickTechDemo
             if (existedTicks < 0) existedTicks = 0;//incase of int overflow
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             if (isFlying) { setYAccel(0); } else { setYAccel(-gravity); }
-            base.preTickMovement();//do before movement
-
-            postTickMovement();//do after movement 
-            
+            if (velocity.y > 0) isGrounded = false;
             if (hasModel)
             {
                 if (entityModel.exists())
@@ -51,12 +48,7 @@ namespace FredrickTechDemo
                 }
             }
 
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            //updating hitboxes below
-            if(hasCollider && collider != null)
-            {
-                collider.onTick();
-            }
+            
 
             //do last
             if (!hasDoneFirstUpdate)
@@ -66,7 +58,7 @@ namespace FredrickTechDemo
         }
 
         /*Do this after manipulating any movement of this object*/
-        public override void postTickMovement()
+        public override void postTickMovement()//Overriding in entity so we can apply different frictions on axis depending on state of entity.
         {
             if (!isGrounded)
             {
@@ -82,6 +74,13 @@ namespace FredrickTechDemo
             }
 
             pos += velocity;
+
+            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+            //updating hitboxes 
+            if (hasCollider && collider != null)
+            {
+                collider.onTick();
+            }
         }
 
         /*used for setting the collider of this entity by classes which extend entity.*/
@@ -102,6 +101,7 @@ namespace FredrickTechDemo
             }
             base.applyCollision(direction, overlap);
         }
+
         public virtual bool getHasCollider()
         {
             return hasCollider;
@@ -111,7 +111,7 @@ namespace FredrickTechDemo
         {
             return collider;
         }
-        public virtual void setCurrentPlanet(Planet p)
+        public virtual void setCurrentPlanet(World p)
         {
             this.currentPlanet = p;
         }

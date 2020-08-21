@@ -26,7 +26,7 @@ namespace FredrickTechDemo
         private static int mouseCenterY;//the y position of the center of the game window
         private static float dpiY;
         public EntityPlayer thePlayer;
-        public Planet currentPlanet;
+        public World currentPlanet;
 
 
         public GameInstance(int screenWidth, int screenHeight, int initialWidth, int initialHeight, String title) : base(initialWidth, initialHeight, new GraphicsMode(32,24,0,8), title)
@@ -61,7 +61,7 @@ namespace FredrickTechDemo
            
             //create and spawn player in new world
             thePlayer = new EntityPlayer("Steve", new Vector3D(0.0, 0.0, 2.0));
-            currentPlanet = new Planet();
+            currentPlanet = new World();
             currentPlanet.spawnEntityInWorld(thePlayer);
             for (int i = 0; i < 30; i++)
             {

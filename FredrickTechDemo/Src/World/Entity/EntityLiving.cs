@@ -88,8 +88,9 @@ namespace FredrickTechDemo
             //change velocity based on movement
             //movement vector is a unit vector.
             movementVector.normalize();//normalize vector so player is same speed in any direction
+
             velocity.x += frontVector.x * movementVector.z * walkSpeedModified;//fowards and backwards movement
-            if(isFlying)velocity.y += frontVector.y * movementVector.z * walkSpeedModified;//fowards and backwards movement
+            if(isFlying)velocity.y += frontVector.y * movementVector.z * walkSpeedModified;//fowards and backwards movement for flying
             velocity.z += frontVector.z * movementVector.z * walkSpeedModified;//fowards and backwards movement
             velocity += Vector3D.normalize(Vector3D.cross(frontVector, upVector)) * movementVector.x * walkSpeedModified;//strafing movement
 
@@ -99,6 +100,15 @@ namespace FredrickTechDemo
             {
                 velocity.y += 0.32D;//jump 
                 isJumping = false;
+                isGrounded = false;
+            }
+        }
+
+        public override void applyCollision(Vector3D direction, double overlap)
+        {
+            if (currentVehicle == null)
+            {
+                base.applyCollision(direction, overlap);
             }
         }
 
