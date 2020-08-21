@@ -12,15 +12,17 @@ namespace FredrickTechDemo
         {
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
-            this.setCollider(new PointCollider(pos, this));//TODO: temp, experiment. Remove.
+            this.setCollider(new AABBCollider(new Vector3D(-0.5, -0.5, -0.5), new Vector3D(0.5, 0.5, 0.5), this), 1);
             yaw = rand.NextDouble() * 360;
+            walkFowards();
         }
         public EntityCactus(Vector3D pos) : base(pos)
         {
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
-            this.setCollider(new PointCollider(pos, this));//TODO: temp, experiment. Remove.
+            this.setCollider(new AABBCollider(new Vector3D(-0.5, -0.5, -0.5), new Vector3D(0.5, 0.5, 0.5), this), 1);
             yaw = rand.NextDouble() * 360;
+            walkFowards();
         }
 
         public override void onTick()
@@ -32,7 +34,7 @@ namespace FredrickTechDemo
                 turn = !turn;
             }
 
-            if (turn) rotateYaw(-5.0F); else rotateYaw(5.0F);
+            if (turn) rotateYaw(-3.0F); else rotateYaw(3.0F);
 
             walkFowards();
 
@@ -40,6 +42,19 @@ namespace FredrickTechDemo
             {
                 jump();
             }
+        }
+        public override void onCollidedBy(PositionalObject other)
+        {
+            /*TEMPORARY, for arcade effects*/
+            if (other is EntityProjectile )
+            {
+                GameInstance.onDirectHit();
+                if (!getIsGrounded())
+                {
+                    GameInstance.onAirShot();
+                }
+            }
+            base.onCollidedBy(other);
         }
     }
 }

@@ -10,18 +10,18 @@ namespace FredrickTechDemo
         private Camera camera;
         public bool paused = false;
         public bool debugScreenOn = false;
-        public static readonly Vector3D eyeOffset = new Vector3D(0.0D, 1.62D, 0.0D);
+        public static readonly Vector3D eyeOffset = new Vector3D(0.0D, 0.62D, 0.0D);
         public EntityPlayer(String name) : base()
         {
             this.playerName = name;
             camera = new Camera(this);
-            setCollider(new PointCollider(pos, this));//TODO: temp, experiment. Remove.
+            this.setCollider(new AABBCollider(new Vector3D(-0.5, -1, -0.5), new Vector3D(0.5, 1, 0.5), this));
         }
         public EntityPlayer(String name, Vector3D spawnPosition) : base(spawnPosition)
         {
             this.playerName = name;
             camera = new Camera(this);
-            setCollider(new PointCollider(pos, this));//TODO: temp, experiment. Remove.
+            this.setCollider(new AABBCollider(new Vector3D(-0.5, -1, -0.5), new Vector3D(0.5, 1, 0.5), this));
         }
 
         public override void onTick()
@@ -53,10 +53,12 @@ namespace FredrickTechDemo
         {
             return pos + EntityPlayer.eyeOffset;
         }
+
         public Vector3D getLerpEyePos()
         {
             return this.getLerpPos() + EntityPlayer.eyeOffset;
         }
+
         /*Called before game renders, each frame.*/
         public void onCameraUpdate()
         {
@@ -83,7 +85,6 @@ namespace FredrickTechDemo
                 TicksAndFps.unPause();
             }
         }
-
         public Matrix4F getViewMatrix()
         {
             return camera.getViewMatrix();

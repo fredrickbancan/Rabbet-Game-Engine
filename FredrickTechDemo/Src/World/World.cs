@@ -86,13 +86,13 @@ namespace FredrickTechDemo
             skyboxModel = QuadBatcher.batchQuadModels(temp, ResourceHelper.getShaderFileDir("SkyboxShader3D.shader"), QuadPrefab.getTextureDir());
         }
 
-        private void generateWorld()
+        private void generateWorld()//creates the playground and world colliders
         {
             float groundHeight = 0;
             float playgroundLength = 72;//"playground" is the term i am using for the playable area of the world
             float playgroundWidth = 50;
-            float wallHeight = 8;
-            Model[] unbatchedGroundQuads = new Model[4096];//all ground and wall quads, walls are divided into 4 quads each.
+            float wallHeight = 5;
+            Model[] unbatchedGroundQuads = new Model[4101];//all ground and wall quads, walls are divided into 4 quads each.
             Model[] unbatchedWallQuads = new Model[16];
 
             //Generating ground quads
@@ -103,41 +103,59 @@ namespace FredrickTechDemo
                     unbatchedGroundQuads[x * 64 + z] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3F(20,1,20)).translateVertices(new Vector3F((x-32)*20, groundHeight, (z-32)*20));
                 }
             }
+
+            //building the lump in middle of map, quads added after all the flat plane quads.
+
+            //top face
+            unbatchedGroundQuads[4096] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3F(2,1,2)).translateVertices(new Vector3F(0, 1F, 0));
+
+            //negZ face
+            unbatchedGroundQuads[4097] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3F(2, 1, 1)).rotateVertices(new Vector3F(90,0,0)).translateVertices(new Vector3F(0, 0.5F, -1F)).setColor(new Vector4F(0.8F, 0.8F, 0.8F, 1.0F));//pseudoLighting
+            
+            //posZ face
+            unbatchedGroundQuads[4098] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3F(2, 1, 1)).rotateVertices(new Vector3F(-90,0,0)).translateVertices(new Vector3F(0, 0.5F, 1F)).setColor(new Vector4F(0.7F, 0.7F, 0.7F, 1.0F));
+
+            //negX face
+            unbatchedGroundQuads[4099] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3F(1, 1, 2)).rotateVertices(new Vector3F(0,0,-90)).translateVertices(new Vector3F(-1f, 0.5F, 0)).setColor(new Vector4F(0.9F, 0.9F, 0.9F, 1.0F));
+
+            //posX face
+            unbatchedGroundQuads[4100] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3F(1, 1, 2)).rotateVertices(new Vector3F(0,0,90)).translateVertices(new Vector3F(1f, 0.5F, 0)).setColor(new Vector4F(0.65F, 0.65F, 0.65F, 1.0F));
             groundModel = QuadBatcher.batchQuadModels(unbatchedGroundQuads, PlanePrefab.getShaderDir(), PlanePrefab.getTextureDir()); 
 
 
             //build negZ wall
             for(int i = 0; i < 4; i++)
             {
-                unbatchedWallQuads[i] = QuadPrefab.getNewModel().scaleVertices(new Vector3F(playgroundWidth/4, wallHeight, 1)).scaleUV(new Vector2F(playgroundWidth / (wallHeight * 4), 1)).translateVertices(new Vector3F((-playgroundWidth/2) + ((playgroundWidth/4)/2) + ((playgroundWidth / 4) * i), groundHeight + wallHeight / 2, -playgroundLength/2));
+                unbatchedWallQuads[i] = QuadPrefab.getNewModel().scaleVertices(new Vector3F(playgroundWidth/4, wallHeight, 1)).scaleUV(new Vector2F(playgroundWidth / (wallHeight * 4), 1)).translateVertices(new Vector3F((-playgroundWidth/2) + ((playgroundWidth/4)/2) + ((playgroundWidth / 4) * i), groundHeight + wallHeight / 2, -playgroundLength/2)).setColor(new Vector4F(0.7F, 0.7F, 0.7F, 1.0F));
             }
 
             //build posZ wall
             for (int i = 0; i < 4; i++)
             {
-                unbatchedWallQuads[ 4 + i] = QuadPrefab.getNewModel().scaleVertices(new Vector3F(playgroundWidth / 4, wallHeight, 1)).scaleUV(new Vector2F(playgroundWidth / (wallHeight * 4), 1)).rotateVertices(new Vector3F(0, 180, 0)).translateVertices(new Vector3F((playgroundWidth / 2) - ((playgroundWidth / 4) / 2) - ((playgroundWidth / 4) * i), groundHeight + wallHeight / 2, playgroundLength / 2));
+                unbatchedWallQuads[ 4 + i] = QuadPrefab.getNewModel().scaleVertices(new Vector3F(playgroundWidth / 4, wallHeight, 1)).scaleUV(new Vector2F(playgroundWidth / (wallHeight * 4), 1)).rotateVertices(new Vector3F(0, 180, 0)).translateVertices(new Vector3F((playgroundWidth / 2) - ((playgroundWidth / 4) / 2) - ((playgroundWidth / 4) * i), groundHeight + wallHeight / 2, playgroundLength / 2)).setColor(new Vector4F(0.8F, 0.8F, 0.8F, 1.0F)); ;
             }
 
             //build negX wall
             for (int i = 0; i < 4; i++)
             {
-                unbatchedWallQuads[8 + i] = QuadPrefab.getNewModel().scaleVertices(new Vector3F(playgroundLength / 4, wallHeight, 1)).scaleUV(new Vector2F(playgroundLength / (wallHeight * 4), 1)).rotateVertices(new Vector3F(0, -90, 0)).translateVertices(new Vector3F(-playgroundWidth / 2, groundHeight + wallHeight / 2, (-playgroundLength / 2) + ((playgroundLength / 4) / 2) + ((playgroundLength / 4) * i)));
+                unbatchedWallQuads[8 + i] = QuadPrefab.getNewModel().scaleVertices(new Vector3F(playgroundLength / 4, wallHeight, 1)).scaleUV(new Vector2F(playgroundLength / (wallHeight * 4), 1)).rotateVertices(new Vector3F(0, -90, 0)).translateVertices(new Vector3F(-playgroundWidth / 2, groundHeight + wallHeight / 2, (-playgroundLength / 2) + ((playgroundLength / 4) / 2) + ((playgroundLength / 4) * i))).setColor(new Vector4F(0.65F, 0.65F, 0.65F, 1.0F));
             }
 
             //build posX wall
             for (int i = 0; i < 4; i++)
             {
-                unbatchedWallQuads[12 + i] = QuadPrefab.getNewModel().scaleVertices(new Vector3F(playgroundLength / 4, wallHeight, 1)).scaleUV(new Vector2F(playgroundLength / (wallHeight * 4), 1)).rotateVertices(new Vector3F(0, 90, 0)).translateVertices(new Vector3F(playgroundWidth / 2, groundHeight + wallHeight / 2, (playgroundLength / 2) - ((playgroundLength / 4) / 2) - ((playgroundLength / 4) * i)));
+                unbatchedWallQuads[12 + i] = QuadPrefab.getNewModel().scaleVertices(new Vector3F(playgroundLength / 4, wallHeight, 1)).scaleUV(new Vector2F(playgroundLength / (wallHeight * 4), 1)).rotateVertices(new Vector3F(0, 90, 0)).translateVertices(new Vector3F(playgroundWidth / 2, groundHeight + wallHeight / 2, (playgroundLength / 2) - ((playgroundLength / 4) / 2) - ((playgroundLength / 4) * i))).setColor(new Vector4F(0.9F, 0.9F, 0.9F, 1.0F));
             }
 
 
             wallsModel = QuadBatcher.batchQuadModels(unbatchedWallQuads, QuadPrefab.getShaderDir(), wallTextureDir);
             //adding all world collider planes
-            this.addWorldCollider(new PlaneCollider(new Vector3D(0,1,0), groundHeight));//ground plane at y groundHeight, facing positive Y
+            this.addWorldCollider(new PlaneCollider(new Vector3D(0, 1, 0), groundHeight));//ground plane at y groundHeight, facing positive Y
             this.addWorldCollider(new PlaneCollider(new Vector3D(0,0,1), -playgroundLength / 2));//Wall at negZ, playgroundLength / 2 units away, facing pos Z
             this.addWorldCollider(new PlaneCollider(new Vector3D(0,0,-1), -playgroundLength / 2));//Wall at posZ, playgroundLength / 2 units away, facing negZ
             this.addWorldCollider(new PlaneCollider(new Vector3D(1,0,0), -playgroundWidth / 2));//Wall at negX, playgroundWidth / 2 units away, facing pos X
             this.addWorldCollider(new PlaneCollider(new Vector3D(-1,0,0), -playgroundWidth / 2));//Wall at posX, playgroundWidth / 2 units away, facint negX
+            this.addWorldCollider(new AABBCollider(new Vector3D(-1,0,-1), new Vector3D(1,1,1)));//2x2 lump in middle of playground
         }
         
         public void onTick()
@@ -180,15 +198,15 @@ namespace FredrickTechDemo
         private void doCollisions()
         {
             Profiler.beginEndProfile(Profiler.collisionsName);
+            if (entityColliders.Count >= 2)
+            {
+                CollisionHandler.doEntityCollisions(entityColliders);
+            }
             if(worldColliders.Count > 0 && entityColliders.Count >= 1)
             {
                 CollisionHandler.doWorldCollisions(worldColliders, entityColliders);
             }
 
-            if (entityColliders.Count >= 2)
-            {
-                CollisionHandler.doEntityCollisions(entityColliders);
-            }
             Profiler.beginEndProfile(Profiler.collisionsName);
         }
 
@@ -238,7 +256,7 @@ namespace FredrickTechDemo
 
         /*creates an impulse at the given location which will push entities away, 
           like an explosion.*/
-        public void doExplosionAt(Vector3D loc, float radius = 7, float power = 1)
+        public void doExplosionAt(Vector3D loc, float radius = 7, float power = 2)
         {
             //render an explosion effect
             VFXUtil.doExplosionEffect(this, loc, radius);

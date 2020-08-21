@@ -137,7 +137,9 @@ namespace FredrickTechDemo.FredsMath
             return this;
         }
 
-        /*For use with unit vectors. returns a vector with values equal to 1 - absolute of original values. E.G, <0.33,0.33,0.33> will return <0.77,0.77,0.77>*/
+        /*For use with axis-aligned unit vectors.. returns a vector with values equal to 1 - absolute of original values.
+          E.G <0,1,0> will be <1,0,1> and <0,-1,0> will be <1,0,1>*/
+        /*This can be used for velocity clipping in a purely axis-aligned collision system. Otherwise it will have some slight issues.*/
         public Vector3D oneMinusAbsolute()
         {
             Vector3D result;

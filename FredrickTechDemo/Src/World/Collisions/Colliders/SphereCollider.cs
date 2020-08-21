@@ -4,11 +4,11 @@ namespace FredrickTechDemo
 {
     public struct SphereCollider : ICollider
     {
-        public Entity parent;
+        public PositionalObject parent;
         public Vector3D pos;
         public double radius;
 
-        public SphereCollider(Vector3D pos, double radius, Entity parent = null)
+        public SphereCollider(Vector3D pos, double radius, PositionalObject parent = null)
         {
             this.pos = pos;
             this.radius = radius;
@@ -34,9 +34,19 @@ namespace FredrickTechDemo
             return this;
         }
 
-        public Entity getParent()
+        public PositionalObject getParent()
         {
             return parent;
+        }
+
+        public int getCollisionWeight()
+        {
+            if (getHasParent())
+            {
+                return parent.getCollisionWeight();
+            }
+
+            return 0;
         }
 
         public void onTick()

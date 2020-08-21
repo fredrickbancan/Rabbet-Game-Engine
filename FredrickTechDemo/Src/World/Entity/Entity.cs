@@ -8,8 +8,7 @@ namespace FredrickTechDemo
 
     public class Entity : PositionalObject
     {
-        protected ICollider collider = null;
-        protected bool hasCollider = false;
+        
         private double groundPlaneHeight = 0.0000D;
         protected World currentPlanet;
         protected EntityModel entityModel;
@@ -83,15 +82,7 @@ namespace FredrickTechDemo
             }
         }
 
-        /*used for setting the collider of this entity by classes which extend entity.*/
-        protected virtual void setCollider(ICollider collider)
-        {
-            this.collider = collider;
-            if(this.collider != null)
-            {
-                this.hasCollider = true;
-            }
-        }
+        
         
         public override void applyCollision(Vector3D direction, double overlap)
         {
@@ -149,6 +140,10 @@ namespace FredrickTechDemo
             return isFlying;
         }
 
+        public virtual bool getIsGrounded()
+        {
+            return isGrounded;
+        }
         public virtual void setFlying(bool flag)
         {
             this.isFlying = flag;

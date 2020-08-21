@@ -24,6 +24,10 @@ namespace FredrickTechDemo
         protected double prevTickYaw;
         protected double prevTickRoll;
 
+        protected ICollider collider = null;
+        protected bool hasCollider = false;
+        protected int collisionWeight; //Objects with more collisionweight than other objects have priority in doing coliisions. If they are equal, they can push eachother.
+
         protected bool hasDoneFirstUpdate = false;
 
         public PositionalObject()
@@ -55,6 +59,11 @@ namespace FredrickTechDemo
             velocity += acceleration;
             velocity *= (1 - airResistance);
             pos += velocity;
+
+            if (hasCollider && collider != null)
+            {
+                collider.onTick();
+            }
         }
 
         /*Done after the entity has ticked, so will correct for overlap AFTER movement. Will change velocity, accelleration and positon.
@@ -68,15 +77,36 @@ namespace FredrickTechDemo
             pos += direction * overlap;
 
             //clip velocity
-            velocity *= direction.oneMinusAbsolute();//not COMPLETELY confident why this works, but basically this clips the velocity, setting its direction values to be the same, except 0 in the plane direction. Confusing!!!!!
-            //figured it out myself somehow??????
+            velocity *= direction.oneMinusAbsolute();//TODO: Only works with axis-aligned collision directions. anything else, will still work, but velocity will be slowed in wrong directions.
         }
 
         /*Apply a force to this entity from the location with the power.*/
         public virtual void applyImpulseFromLocation(Vector3D loc, double power)
         {
-            //adding a tiny pos y bias to the impulses for now, because all entities are exactly on the 0 y plane so they wont get launched at all otherwise
+            //adding a tiny pos y bias to the impulses
             velocity += Vector3D.normalize((pos + new Vector3D(0, 0.5, 0)) - loc) * power;
+        }
+
+        /*used for setting the collider of this object*/
+        protected virtual void setCollider(ICollider collider, int collisionWeight = 0)
+        {
+            this.collider = collider;
+            if (this.collider != null)
+            {
+                this.hasCollider = true;
+                this.collisionWeight = collisionWeight;
+            }
+        }
+
+        /*Called when an object touches another. Can be used for doing things such as detecting direct hits with projectiles, damage on touching a damaging trigger etc.*/
+        public virtual void onCollidedBy(PositionalObject other)
+        {
+
+        }
+
+        public virtual int getCollisionWeight()
+        {
+            return collisionWeight;
         }
 
         public virtual void rotateRoll(double amount)

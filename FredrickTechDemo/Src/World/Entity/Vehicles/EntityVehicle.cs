@@ -11,7 +11,7 @@ namespace FredrickTechDemo
         protected Vector3D upVector;
         protected Vector3D movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
         public static readonly double defaultTurnRate = 2.5F;//degrees per tick
-        public static readonly double defaultDriveSpeed = 0.4F;
+        public static readonly double defaultDriveSpeed = 0.2F;
         protected double driveSpeed = defaultDriveSpeed;
         protected double turnRate = defaultTurnRate;
 
@@ -20,7 +20,7 @@ namespace FredrickTechDemo
             frontVector = new Vector3D(0.0F, 0.0F, -1.0F);
             upVector = new Vector3D(0.0F, 1.0F, 0.0F);
             movementVector = new Vector3D(0.0F, 0.0F, 0.0F);
-            mountingOffset  = new Vector3D(0.0F, 2.0F, 0.0F);
+            mountingOffset  = new Vector3D(0.0F, 1.9F, 0.0F);
         }
 
         public EntityVehicle(Vector3D pos) : base(pos)
@@ -29,7 +29,7 @@ namespace FredrickTechDemo
             upVector = new Vector3D(0.0F, 1.0F, 0.0F);
             movementVector = new Vector3D(0.0F, 0.0F, 0.0F);
 
-            mountingOffset = new Vector3D(0.0F, 2.0F, 0.0F);
+            mountingOffset = new Vector3D(0.0F, 1.9F, 0.0F);
         }
 
 

@@ -54,6 +54,18 @@ namespace FredrickTechDemo.FredsMath
             }
             return c;
         }
+        public static double min3(double a, double b, double c)
+        {
+            if (a <= b && a <= c)
+            {
+                return a;
+            }
+            if (b <= a && b <= c)
+            {
+                return b;
+            }
+            return c;
+        }
 
         public static double max6(double a, double b, double c, double d, double e, double f)
         {

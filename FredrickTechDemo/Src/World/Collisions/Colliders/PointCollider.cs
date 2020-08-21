@@ -5,9 +5,9 @@ namespace FredrickTechDemo
     public struct PointCollider : ICollider
     {
         public Vector3D pos;
-        public Entity parent;
+        public PositionalObject parent;
 
-        public PointCollider(Vector3D pos, Entity parent = null)
+        public PointCollider(Vector3D pos, PositionalObject parent = null)
         {
             this.pos = pos;
             this.parent = parent;
@@ -29,7 +29,17 @@ namespace FredrickTechDemo
             return this;
         }
 
-        public Entity getParent()
+        public int getCollisionWeight()
+        {
+            if (getHasParent())
+            {
+                return parent.getCollisionWeight();
+            }
+
+            return 0;
+        }
+
+        public PositionalObject getParent()
         {
             return parent;
         }

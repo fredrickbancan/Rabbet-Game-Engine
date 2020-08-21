@@ -12,13 +12,22 @@ namespace FredrickTechDemo
             this.normal = Vector3D.normalize(normal);
             this.scalar = scalar;
         }
-     
+
+        public static double vectorDistanceFromPlane(PlaneCollider plane, Vector3D vec)
+        {
+            return Vector3D.dot(vec, plane.normal) - plane.scalar;
+        }
         public bool getHasParent()
         {
             return false;
         }
 
-        public Entity getParent()
+        public int getCollisionWeight()
+        {
+            return int.MaxValue;
+        }
+
+        public PositionalObject getParent()
         {
             return null;
         }

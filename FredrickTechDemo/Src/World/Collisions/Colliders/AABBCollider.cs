@@ -5,21 +5,32 @@ namespace FredrickTechDemo
     /*A struct for doing axis aligned bounding box collisions*/
     public struct AABBCollider : ICollider
     {
-        public Entity parent;
+        public PositionalObject parent;
         public Vector3D minBounds;
         public Vector3D maxBounds;
 
-        public AABBCollider(Vector3D minBounds, Vector3D maxBounds, Entity parent = null)
+        /*these vectors are in aabb relative space. They point from
+          the center of the aabb to the direction specified.
+          They can be used for collision detection. If the aabb
+          is resized, these must be recalculated.*/
+        public Vector3D vecToBackRight;
+        public Vector3D vecToBackLeft;
+        public Vector3D vecToFrontRight;
+
+        public AABBCollider(Vector3D minBounds, Vector3D maxBounds, PositionalObject parent = null)
         {
             this.minBounds = Vector3D.zero;
             this.maxBounds = Vector3D.zero;
+            vecToBackRight = Vector3D.zero;
+            vecToBackLeft = Vector3D.zero;
+            vecToFrontRight = Vector3D.zero;
             this.parent = parent;
             setBounds(minBounds, maxBounds, parent);
         }
 
         /*sets the bounds for this aabb. if the parent entity is provided and is not null, the bounds will be relative to the parent entity as a center origin
           otherwise the bounds will be absolutely world space orientated.*/
-        public AABBCollider setBounds(Vector3D minBounds, Vector3D maxBounds, Entity parent = null)
+        public AABBCollider setBounds(Vector3D minBounds, Vector3D maxBounds, PositionalObject parent = null)
         {
             
             if(parent != null)
@@ -32,11 +43,27 @@ namespace FredrickTechDemo
                 this.minBounds = minBounds;
                 this.maxBounds = maxBounds;
             }
+            
+            vecToBackRight = (maxBounds - minBounds) / 2D;
+            vecToBackLeft = new Vector3D(-(maxBounds.x - minBounds.x) / 2D, (maxBounds.y - minBounds.y) / 2D, (maxBounds.z - minBounds.z) / 2D);
+            vecToFrontRight = new Vector3D((maxBounds.x - minBounds.x) / 2D, (maxBounds.y - minBounds.y) / 2D, -(maxBounds.z - minBounds.z) / 2D);
             return this;
         }
 
-        
+        /*returns true if two bounding boxes are NOT touching in any way*/
+        public static bool areBoxesNotTouching(AABBCollider boxA, AABBCollider boxB)
+        {
+            return boxA.minX > boxB.maxX || boxA.minY > boxB.maxY || boxA.minZ > boxB.maxZ
+                || boxA.maxX < boxB.minX || boxA.maxY < boxB.minY || boxA.maxZ < boxB.minZ;
+        }
 
+        /*returns true if a vector is NOT within a box's bounds*/
+        public static bool isPositionNotInsideBox(AABBCollider box, Vector3D position)
+        {
+            return position.x > box.maxX || position.x < box.minX
+                || position.y > box.maxY || position.y < box.minY
+                || position.z > box.maxZ || position.z < box.minZ;
+        }
         public void onTick()
         {
             if (this.getHasParent())
@@ -50,6 +77,16 @@ namespace FredrickTechDemo
         public bool getHasParent()
         {
             return parent != null;
+        }
+        
+        public int getCollisionWeight()
+        {
+            if(getHasParent())
+            {
+                return parent.getCollisionWeight();
+            }
+
+            return 0;
         }
 
         public ICollider getNextTickPredictedHitbox()
@@ -70,7 +107,7 @@ namespace FredrickTechDemo
             return ColliderType.aabb;
         }
 
-        public Entity getParent()
+        public PositionalObject getParent()
         {
             return parent;
         }
@@ -89,10 +126,5 @@ namespace FredrickTechDemo
         public double extentY { get => (maxBounds.y - minBounds.y) / 2D; }
         public double extentZ { get => (maxBounds.z - minBounds.z) / 2D; }
         public Vector3D centerVec { get => minBounds + ((maxBounds - minBounds) / 2D); }//relative to world
-
-        //vector from center of aabb to one of the corners, can negate for bottom corners. Vector is relative to aabb, not world
-        public Vector3D maxXmaxYmaxZ { get => maxBounds; }
-        public Vector3D minXmaxYmaxZ { get => new Vector3D(minBounds.x, maxBounds.y, maxBounds.z); }
-        public Vector3D maxXmaxYminZ { get => new Vector3D(maxBounds.x, maxBounds.y, minBounds.z); }
     }
 }

@@ -33,9 +33,9 @@ void main()
     gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * pointRadius / gl_Position.w;//TODO: this does not take into account aspect ratio and can cause points to be elipsical in shape.
 
     //position jitter for retro feel
-    float aspectRatio = viewPortSize.x / viewPortSize.y;
-    gl_Position.x = floor(gl_Position.x * (positionResolution / gl_Position.w)) / (positionResolution / gl_Position.w);
-    gl_Position.y = floor(gl_Position.y * (positionResolution / (gl_Position.w * aspectRatio))) / (positionResolution / (gl_Position.w  * aspectRatio));
+   // float aspectRatio = viewPortSize.x / viewPortSize.y;
+   // gl_Position.x = floor(gl_Position.x * (positionResolution / gl_Position.w)) / (positionResolution / gl_Position.w);
+  //  gl_Position.y = floor(gl_Position.y * (positionResolution / (gl_Position.w * aspectRatio))) / (positionResolution / (gl_Position.w  * aspectRatio));
 
     float distanceFromCam = length(positionRelativeToCam.xyz);
     visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));

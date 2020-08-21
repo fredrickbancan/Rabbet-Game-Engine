@@ -41,7 +41,7 @@ namespace FredrickTechDemo.Models
             //barrel also needs to be translated to a specific spot on the body model
             tankWheelsModelMatrix = Matrix4F.scale(new Vector3F(0.5F, 0.5F, 0.5F)) * Matrix4F.rotate(new Vector3F((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) * Matrix4F.translate(Vector3F.convert(parent.getPosition()));
             tankBodyModelMatrix = Matrix4F.rotate(new Vector3F(0, 90 + (float)parent.getYaw() - (float)parent.getBodyYaw, 0)) * tankWheelsModelMatrix;
-            tankBarrelModelMatrix = Matrix4F.rotate(new Vector3F((float)parent.getBarrelPitch, 0, 0)) * Matrix4F.translate(new Vector3F(0, 4, -2F)) * tankBodyModelMatrix;
+            tankBarrelModelMatrix = Matrix4F.rotate(new Vector3F((float)parent.getBarrelPitch, 0, 0)) * Matrix4F.translate(new Vector3F(0, 1.7F, -2F)) * tankBodyModelMatrix;
 
         }
 

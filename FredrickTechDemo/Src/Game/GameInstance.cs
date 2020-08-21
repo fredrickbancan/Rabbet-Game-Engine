@@ -1,7 +1,6 @@
 ﻿using FredrickTechDemo.FredsMath;
 using FredrickTechDemo.GUI;
 using FredrickTechDemo.GUI.Text;
-using FredrickTechDemo.VFX;
 using OpenTK;
 using OpenTK.Graphics;
 using System;
@@ -28,6 +27,16 @@ namespace FredrickTechDemo
         public EntityPlayer thePlayer;
         public World currentPlanet;
 
+        /*Temporary arcade vars*/
+        private static int directHitCounter = 0;
+        private static int airShotCounter = 0;
+        private static int ticksSinceDirectHitPopup = 0;
+        private static int ticksSinceAirShotPopup = 0;
+        private static bool showingDirectHitPopup = false;
+        private static bool showingAirShotPopup = false;
+        private static int maxPopupTicks = 0;
+        private static int directHitPopupTicks = 0;
+        private static int airShotPopupTicks = 0;
 
         public GameInstance(int screenWidth, int screenHeight, int initialWidth, int initialHeight, String title) : base(initialWidth, initialHeight, new GraphicsMode(32,24,0,8), title)
         {
@@ -44,6 +53,7 @@ namespace FredrickTechDemo
             GameSettings.loadSettings();
             initialize();
         }
+        
 
         /*Called before game runs*/
         private void initialize()
@@ -58,20 +68,33 @@ namespace FredrickTechDemo
             GUIHandler.addTextPanelToGUI(mainGUIName, "label", new GUITextPanel(new TextFormat(0,0.97F).setLine("Fredricks OpenGL Math tech demo.").setPanelColor(ColourF.black)));
             GUIHandler.addTextPanelToGUI(mainGUIName, "help", new GUITextPanel(new TextFormat(0.5F,0).setAlign(TextAlign.CENTER).setLines(new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'V' to toggle flying. Tap 'E' to release mouse.", "Walk up to tank and press F to drive, Left click to fire.", "Press 'ESC' to close game." }).setPanelColor(ColourF.black)));
             GUIHandler.addGUIComponentToGUI(mainGUIName, "crossHair", new GUICrosshair());
+
+            /*TEMPORARY, just for arcade stuff*/
+            GUIHandler.addTextPanelToGUI(mainGUIName, "directHit", new GUITextPanel(new TextFormat(0.5F, 0.64F).setAlign(TextAlign.CENTER).setLine("Direct Hit!").setPanelColor(ColourF.flame)));
+            GUIHandler.hideTextPanelInGUI(mainGUIName, "directHit");
+
+            GUIHandler.addTextPanelToGUI(mainGUIName, "airShot", new GUITextPanel(new TextFormat(0.5F, 0.67F).setAlign(TextAlign.CENTER).setLine("AIR SHOT!").setPanelColor(ColourF.red)));
+            GUIHandler.hideTextPanelInGUI(mainGUIName, "airShot");
+
+            GUIHandler.addTextPanelToGUI(mainGUIName, "directHitCount", new GUITextPanel(new TextFormat(0.1F, 0.15F).setAlign(TextAlign.RIGHT).setLine("Direct Hits: " + directHitCounter).setPanelColor(ColourF.flame)));
+            GUIHandler.addTextPanelToGUI(mainGUIName, "airShotCount", new GUITextPanel(new TextFormat(0.1F, 0.18F).setAlign(TextAlign.RIGHT).setLine("Air Shots: " + airShotCounter).setPanelColor(ColourF.red)));
            
             //create and spawn player in new world
             thePlayer = new EntityPlayer("Steve", new Vector3D(0.0, 0.0, 2.0));
             currentPlanet = new World();
-            currentPlanet.spawnEntityInWorld(thePlayer);
             for (int i = 0; i < 30; i++)
             {
-                currentPlanet.spawnEntityInWorld(new EntityCactus());
+                currentPlanet.spawnEntityInWorld(new EntityCactus(new Vector3D(0, 10, 0)));
             }
+            currentPlanet.spawnEntityInWorld(thePlayer);
             currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3D(5, 10, -5)));
 
             //center mouse in preperation for first person 
             Input.centerMouse();
             Input.toggleHideMouse();
+
+            /*Temp arcade stuff*/
+            maxPopupTicks = (int)TicksAndFps.getNumOfTicksForSeconds(1.5F);
         }
 
         /*overriding OpenTk game update function, called every frame.*/
@@ -110,10 +133,48 @@ namespace FredrickTechDemo
             Profiler.beginEndProfile(Profiler.gameLoopName);
             GUIHandler.onTick();
             updateGUI();
-            VFXUtil.doDebugSmokeEffect(currentPlanet);
             currentPlanet.onTick();
 
+            /*Temporary, for arcade popups.*/
+            if(showingDirectHitPopup)
+            {
+                directHitPopupTicks++;
+                if (directHitPopupTicks >= maxPopupTicks)
+                {
+                    showingDirectHitPopup = false;
+                    directHitPopupTicks = 0;
+                }
+            }
+
+            if (showingAirShotPopup)
+            {
+                airShotPopupTicks++;
+                if(airShotPopupTicks >= maxPopupTicks)
+                {
+                    showingAirShotPopup = false;
+                    airShotPopupTicks = 0;
+                }
+            }
+
+
+
             Profiler.beginEndProfile(Profiler.gameLoopName);
+        }
+
+        /*Called when player lands direct hit on a cactus, TEMPORARY!*/
+        public static void onDirectHit()
+        {
+            directHitCounter++;
+            directHitPopupTicks = 0;
+            showingDirectHitPopup = true;
+        }
+
+        /*Called when player lands air shot on a cactus, TEMPORARY!*/
+        public static void onAirShot()
+        {
+            airShotCounter++;
+            airShotPopupTicks = 0;
+            showingAirShotPopup = true;
         }
 
         /*update the gui*/
@@ -127,6 +188,27 @@ namespace FredrickTechDemo
             {
                 GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "flying").setPanelColor(ColourF.darkRed).setLine("Flying: OFF");
             }
+
+            GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "directHitCount").setLine("Direct Hits: " + directHitCounter);
+            GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "airShotCount").setLine("AirShots: " + airShotCounter);
+
+            if (showingDirectHitPopup)
+            {
+                GUIHandler.unHideTextPanelInGUI(mainGUIName, "directHit");
+            }
+            else 
+            { 
+                GUIHandler.hideTextPanelInGUI(mainGUIName, "directHit");
+            }
+            if (showingAirShotPopup)
+            {
+                GUIHandler.unHideTextPanelInGUI(mainGUIName, "airShot");
+            }
+            else 
+            { 
+                GUIHandler.hideTextPanelInGUI(mainGUIName, "airShot");
+            }
+
             DebugScreen.displayOrClearDebugInfo();
             GUIHandler.rebuildTextInGUI(mainGUIName);//do last, applies any changes to the text on screen.
         }
