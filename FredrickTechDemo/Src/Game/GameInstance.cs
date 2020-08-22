@@ -26,8 +26,8 @@ namespace FredrickTechDemo
         private static float dpiY;
         public EntityPlayer thePlayer;
         public World currentPlanet;
-
         /*Temporary arcade vars*/
+
         private static int directHitCounter = 0;
         private static int airShotCounter = 0;
         private static int ticksSinceDirectHitPopup = 0;

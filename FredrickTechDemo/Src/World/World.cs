@@ -89,9 +89,9 @@ namespace FredrickTechDemo
         private void generateWorld()//creates the playground and world colliders
         {
             float groundHeight = 0;
-            float playgroundLength = 72;//"playground" is the term i am using for the playable area of the world
-            float playgroundWidth = 50;
-            float wallHeight = 5;
+            float playgroundLength = 200;//"playground" is the term i am using for the playable area of the world
+            float playgroundWidth = 100;
+            float wallHeight = 20;
             Model[] unbatchedGroundQuads = new Model[4101];//all ground and wall quads, walls are divided into 4 quads each.
             Model[] unbatchedWallQuads = new Model[16];
 
@@ -165,6 +165,12 @@ namespace FredrickTechDemo
             tickEntities();
             tickVFX();
             doCollisions();//this should be done last
+        }
+
+        /*Called every frame.*/
+        public void onFrame()
+        {
+
         }
 
         private void tickEntities()
