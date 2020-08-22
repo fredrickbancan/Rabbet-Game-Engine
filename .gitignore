@@ -71,7 +71,7 @@ StyleCopReport.xml
 *.ilk
 *.meta
 #*.obj#Since we are storing models as .obj files, we do not want to ignore them.
-FredrickTechDemo/obj/
+Coictus/obj/
 *.iobj
 *.pch
 *.pdb
