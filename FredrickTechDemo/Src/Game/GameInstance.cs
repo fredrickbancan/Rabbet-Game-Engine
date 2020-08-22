@@ -62,7 +62,7 @@ namespace FredrickTechDemo
             setDPIScale();
             Renderer.init();
             GUIHandler.addNewGUIScreen(mainGUIName, "Trebuchet");
-            TicksAndFps.init(30.0);
+            TicksAndFps.init(15.0);
             DebugScreen.init();
             GUIHandler.addTextPanelToGUI(mainGUIName, "flying", new GUITextPanel(new TextFormat().setAlign(TextAlign.RIGHT).setLine("Flying: OFF").setPanelColor(ColourF.darkRed)));
             GUIHandler.addTextPanelToGUI(mainGUIName, "label", new GUITextPanel(new TextFormat(0,0.97F).setLine("Fredricks OpenGL Math tech demo.").setPanelColor(ColourF.black)));

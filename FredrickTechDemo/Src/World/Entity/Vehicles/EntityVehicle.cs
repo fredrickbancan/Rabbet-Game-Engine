@@ -11,7 +11,7 @@ namespace FredrickTechDemo
         protected Vector3D upVector;
         protected Vector3D movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
         public static readonly double defaultTurnRate = 2.5F;//degrees per tick
-        public static readonly double defaultDriveSpeed = 0.2F;
+        public static readonly double defaultDriveSpeed = 0.1F;
         protected double driveSpeed = defaultDriveSpeed;
         protected double turnRate = defaultTurnRate;
 

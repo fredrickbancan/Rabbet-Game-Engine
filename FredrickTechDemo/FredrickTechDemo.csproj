@@ -80,6 +80,7 @@
     <Compile Include="Src\Rendering\VFX\VFXPointParticles.cs" />
     <Compile Include="Src\Rendering\VFX\VFXUtil.cs" />
     <Compile Include="Src\World\Collisions\CollisionHandler.cs" />
+    <Compile Include="Src\World\Collisions\CollisionUtil.cs" />
     <Compile Include="Src\World\Collisions\ICollider.cs" />
     <Compile Include="Src\World\Collisions\Colliders\PlaneCollider.cs" />
     <Compile Include="Src\World\Collisions\Colliders\PointCollider.cs" />

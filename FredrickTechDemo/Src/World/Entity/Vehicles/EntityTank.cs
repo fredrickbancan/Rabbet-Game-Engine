@@ -31,7 +31,7 @@ namespace FredrickTechDemo
             if (mountingEntity != null)
             {
                 bodyYaw = mountingEntity.getYaw() + 90;
-                barrelPitch = mountingEntity.getHeadPitch() + projectileHopupAngle;
+                barrelPitch = mountingEntity.getHeadPitch() + projectileHopupAngle;//TODO: make tank barrel and body follow camera with frame precision for improved accuracy
             }
         }
 
