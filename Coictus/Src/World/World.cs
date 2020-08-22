@@ -11,7 +11,6 @@ namespace Coictus
     /*This class will be the abstraction of any environment constructed for the player and entities to exist in.*/
     public class World
     {
-        private ModelDrawableDynamic particleModel;//TODO: impliment dynamic global particle model for batching
         private ModelDrawable groundModel;
         private ModelDrawable wallsModel;
         private ModelDrawable skyboxModel;

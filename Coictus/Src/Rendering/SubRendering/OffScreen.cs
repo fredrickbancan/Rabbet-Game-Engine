@@ -9,7 +9,6 @@ namespace Coictus.SubRendering
     public static class OffScreen
     {
         private static ModelDrawable screenQuad;
-        private static Texture screenTexture;
         private static Shader screenShader;
         private static readonly String screenShaderDir = ResourceHelper.getShaderFileDir("Offscreen.shader");
         private static int texColorBuffer;
@@ -26,14 +25,14 @@ namespace Coictus.SubRendering
             texColorBuffer = GL.GenTexture();
 
             width = (int)(GameInstance.realScreenWidth * superSamplingMultiplyer);//*2 on width and height for 4x super sampling
-            height = (int)(GameInstance.realScreenHeight     * superSamplingMultiplyer);
+            height = (int)(GameInstance.realScreenHeight * superSamplingMultiplyer);
 
             Application.debug("Offscreen resolution width: " + width);
             Application.debug("Offscreen resolution height: " + height);
 
             GL.BindTexture(TextureTarget.Texture2D, texColorBuffer);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Linear);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba16, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
 
             screenShader = new Shader(screenShaderDir);

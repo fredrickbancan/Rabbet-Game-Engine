@@ -76,6 +76,11 @@ float hash(uint n)//returns random float value from 0 to 1
     n = n * (n * n * 15731U + 789221U) + 1376312589U;
     return float(n & uvec3(0x7fffffffU)) / float(0x7fffffff);
 }
+
+float rand3D(in vec3 co) {
+    return fract(sin(dot(co.xyz, vec3(12.9898, 78.233, 144.7272))) * 43758.5453);
+}
+
 void makeCircle()
 {
     //clamps fragments to circle shape. 
@@ -108,10 +113,10 @@ void main()
 
     if (vcolour.a < 1.0)
     {
-        uint fragX = uint(gl_FragCoord.x);
-        uint fragY = uint(gl_FragCoord.y);
-        float randomFloat = hash(fragX + uint(viewPortSize.x) * fragY + uint(viewPortSize.x) * uint(viewPortSize.y) * uint((gl_FragCoord.z / (renderPass + 1)) * 7000.0));
-
+       // uint fragX = uint(gl_FragCoord.x);
+        //uint fragY = uint(gl_FragCoord.y);
+        //float randomFloat = hash(fragX + uint(viewPortSize.x) * fragY + uint(viewPortSize.x) * uint(viewPortSize.y) * uint((gl_FragCoord.z / (renderPass + 1)) * 7000.0));
+        float randomFloat = rand3D(gl_FragCoord.xyz);
         if (randomFloat > vcolour.a)//do stochastic transparency, noise can be reduced with sampling. 
         {
             discard;

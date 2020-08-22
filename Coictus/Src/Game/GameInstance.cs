@@ -14,7 +14,6 @@ namespace Coictus
     public class GameInstance : GameWindow
     {
         public static int temp = 0;
-        public static readonly String mainGUIName = "mainGUI";
         private static GameInstance instance;
         private static Random privateRand;
         private static int windowWidth;
@@ -26,17 +25,7 @@ namespace Coictus
         private static float dpiY;
         public EntityPlayer thePlayer;
         public World currentPlanet;
-        /*Temporary arcade vars*/
-
-        private static int directHitCounter = 0;
-        private static int airShotCounter = 0;
-        private static int ticksSinceDirectHitPopup = 0;
-        private static int ticksSinceAirShotPopup = 0;
-        private static bool showingDirectHitPopup = false;
-        private static bool showingAirShotPopup = false;
-        private static int maxPopupTicks = 0;
-        private static int directHitPopupTicks = 0;
-        private static int airShotPopupTicks = 0;
+       
 
         public GameInstance(int screenWidth, int screenHeight, int initialWidth, int initialHeight, String title) : base(initialWidth, initialHeight, new GraphicsMode(32,24,0,8), title)
         {
@@ -61,24 +50,9 @@ namespace Coictus
             TextUtil.loadAllFoundTextFiles();
             setDPIScale();
             Renderer.init();
-            GUIHandler.addNewGUIScreen(mainGUIName, "Trebuchet");
-            TicksAndFps.init(15.0);
-            DebugScreen.init();
-            GUIHandler.addTextPanelToGUI(mainGUIName, "flying", new GUITextPanel(new TextFormat().setAlign(TextAlign.RIGHT).setLine("Flying: OFF").setPanelColor(ColourF.darkRed)));
-            GUIHandler.addTextPanelToGUI(mainGUIName, "label", new GUITextPanel(new TextFormat(0,0.97F).setLine("Coictus Version " + Application.version).setPanelColor(ColourF.black)));
-            GUIHandler.addTextPanelToGUI(mainGUIName, "help", new GUITextPanel(new TextFormat(0.5F,0).setAlign(TextAlign.CENTER).setLines(new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'V' to toggle flying. Tap 'E' to release mouse.", "Walk up to tank and press F to drive, Left click to fire.", "Press 'ESC' to close game." }).setPanelColor(ColourF.black)));
-            GUIHandler.addGUIComponentToGUI(mainGUIName, "crossHair", new GUICrosshair());
-
-            /*TEMPORARY, just for arcade stuff*/
-            GUIHandler.addTextPanelToGUI(mainGUIName, "directHit", new GUITextPanel(new TextFormat(0.5F, 0.64F).setAlign(TextAlign.CENTER).setLine("Direct Hit!").setPanelColor(ColourF.flame)));
-            GUIHandler.hideTextPanelInGUI(mainGUIName, "directHit");
-
-            GUIHandler.addTextPanelToGUI(mainGUIName, "airShot", new GUITextPanel(new TextFormat(0.5F, 0.67F).setAlign(TextAlign.CENTER).setLine("AIR SHOT!").setPanelColor(ColourF.red)));
-            GUIHandler.hideTextPanelInGUI(mainGUIName, "airShot");
-
-            GUIHandler.addTextPanelToGUI(mainGUIName, "directHitCount", new GUITextPanel(new TextFormat(0.1F, 0.15F).setAlign(TextAlign.RIGHT).setLine("Direct Hits: " + directHitCounter).setPanelColor(ColourF.flame)));
-            GUIHandler.addTextPanelToGUI(mainGUIName, "airShotCount", new GUITextPanel(new TextFormat(0.1F, 0.18F).setAlign(TextAlign.RIGHT).setLine("Air Shots: " + airShotCounter).setPanelColor(ColourF.red)));
-           
+            TicksAndFps.init(30.0);
+            MainGUI.init();
+            DebugInfo.init();
             //create and spawn player in new world
             thePlayer = new EntityPlayer("Steve", new Vector3D(0.0, 0.0, 2.0));
             currentPlanet = new World();
@@ -92,9 +66,7 @@ namespace Coictus
             //center mouse in preperation for first person 
             Input.centerMouse();
             Input.toggleHideMouse();
-
-            /*Temp arcade stuff*/
-            maxPopupTicks = (int)TicksAndFps.getNumOfTicksForSeconds(1.5F);
+            
         }
 
         /*overriding OpenTk game update function, called every frame.*/
@@ -108,6 +80,7 @@ namespace Coictus
                 onTick();
             }
             Input.updateInput();
+            currentPlanet.onFrame();
         }
 
         /*overriding OpenTk render update function, called every frame.*/
@@ -132,86 +105,23 @@ namespace Coictus
         {
             Profiler.beginEndProfile(Profiler.gameLoopName);
             GUIHandler.onTick();
-            updateGUI();
+            MainGUI.onTick();
             currentPlanet.onTick();
-
-            /*Temporary, for arcade popups.*/
-            if(showingDirectHitPopup)
-            {
-                directHitPopupTicks++;
-                if (directHitPopupTicks >= maxPopupTicks)
-                {
-                    showingDirectHitPopup = false;
-                    directHitPopupTicks = 0;
-                }
-            }
-
-            if (showingAirShotPopup)
-            {
-                airShotPopupTicks++;
-                if(airShotPopupTicks >= maxPopupTicks)
-                {
-                    showingAirShotPopup = false;
-                    airShotPopupTicks = 0;
-                }
-            }
-
-
-
             Profiler.beginEndProfile(Profiler.gameLoopName);
         }
 
         /*Called when player lands direct hit on a cactus, TEMPORARY!*/
         public static void onDirectHit()
         {
-            directHitCounter++;
-            directHitPopupTicks = 0;
-            showingDirectHitPopup = true;
+            MainGUI.onDirectHit();
         }
 
         /*Called when player lands air shot on a cactus, TEMPORARY!*/
         public static void onAirShot()
         {
-            airShotCounter++;
-            airShotPopupTicks = 0;
-            showingAirShotPopup = true;
+            MainGUI.onAirShot();//TODO: Create event system for handling such events
         }
-
-        /*update the gui*/
-        private void updateGUI()
-        {
-            if (thePlayer.getIsFlying())
-            {
-                GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "flying").setPanelColor(ColourF.darkGreen).setLine("Flying: ON");
-            }
-            else
-            {
-                GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "flying").setPanelColor(ColourF.darkRed).setLine("Flying: OFF");
-            }
-
-            GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "directHitCount").setLine("Direct Hits: " + directHitCounter);
-            GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "airShotCount").setLine("AirShots: " + airShotCounter);
-
-            if (showingDirectHitPopup)
-            {
-                GUIHandler.unHideTextPanelInGUI(mainGUIName, "directHit");
-            }
-            else 
-            { 
-                GUIHandler.hideTextPanelInGUI(mainGUIName, "directHit");
-            }
-            if (showingAirShotPopup)
-            {
-                GUIHandler.unHideTextPanelInGUI(mainGUIName, "airShot");
-            }
-            else 
-            { 
-                GUIHandler.hideTextPanelInGUI(mainGUIName, "airShot");
-            }
-
-            DebugScreen.displayOrClearDebugInfo();
-            GUIHandler.rebuildTextInGUI(mainGUIName);//do last, applies any changes to the text on screen.
-        }
+        
 
         private void setDPIScale()
         {

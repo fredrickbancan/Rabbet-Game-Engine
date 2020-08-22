@@ -1,8 +1,4 @@
-﻿using Coictus.FredsMath;
-using Coictus.GUI;
-using Coictus.GUI.Text;
-using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace Coictus
 {
@@ -10,7 +6,6 @@ namespace Coictus
       at a consistant rate over multiple fps rates and refresh rates.*/
     public static class TicksAndFps
     {
-        public static readonly String fpsPanelName = "fpsPanel";
         private static Stopwatch stopwatch = new Stopwatch();
         private static long currentTime = 0;
         private static long lastTime = 0;
@@ -30,8 +25,6 @@ namespace Coictus
             timePerTick = 1 / ticksPerSecond;
             stopwatch.Start();
             lastTime = stopwatch.ElapsedMilliseconds;
-
-            GUIHandler.addTextPanelToGUI(GameInstance.mainGUIName, fpsPanelName, new GUITextPanel(new TextFormat().setLine("0")));
         }
 
         /*called every frame*/
@@ -47,7 +40,7 @@ namespace Coictus
                 fps = frames;
                 frames = 0;
                 timer -= 1;
-                displayFps();
+                MainGUI.displayFps(fps);
             }
             frames++;
 
@@ -94,32 +87,7 @@ namespace Coictus
         {
             paused = false;
         }
-
-        /*Called every second by the TicksAndFps class to display new fps if setting is on*/
-        public static void displayFps()
-        {
-            if (GameSettings.displayFps)
-            {
-                GUIHandler.unHideTextPanelInGUI(GameInstance.mainGUIName, fpsPanelName);
-                String fpsString = fps.ToString();
-                if (fps < 75)
-                {
-                    GUIHandler.getTextPanelFormatFromGUI(GameInstance.mainGUIName, fpsPanelName).setLine(fpsString).setPanelColor(ColourF.red);
-                }
-                else if (fps < 120)
-                {
-                    GUIHandler.getTextPanelFormatFromGUI(GameInstance.mainGUIName, fpsPanelName).setLine(fpsString).setPanelColor(ColourF.yellow);
-                }
-                else
-                {
-                    GUIHandler.getTextPanelFormatFromGUI(GameInstance.mainGUIName, fpsPanelName).setLine(fpsString).setPanelColor(ColourF.green);
-                }
-            }
-            else
-            {
-                GUIHandler.hideTextPanelInGUI(GameInstance.mainGUIName, fpsPanelName);
-            }
-        }
+       
         public static int getTicksElapsed()
         {
             return ticksElapsed;

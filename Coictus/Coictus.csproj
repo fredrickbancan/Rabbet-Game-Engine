@@ -65,6 +65,8 @@
   <ItemGroup>
     <None Include="Res\Shaders\Offscreen.shader" />
     <None Include="Res\Shaders\VFX\PointParticleFog.shader" />
+    <Compile Include="Src\FredsMath\QuaternionF.cs" />
+    <Compile Include="Src\Game\GUI\MainGUI.cs" />
     <Compile Include="Src\Rendering\GUIComponents\GUICrosshair.cs" />
     <Compile Include="Src\Rendering\GUIHandler.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\EntityCactusModel.cs" />
@@ -99,7 +101,7 @@
     <Compile Include="Src\FredsMath\Vector3F.cs" />
     <Compile Include="Src\FredsMath\Vector4F.cs" />
     <Compile Include="Src\World\Collisions\Colliders\AABBCollider.cs" />
-    <Compile Include="Src\Game\Debugging\DebugScreen.cs" />
+    <Compile Include="Src\Game\Debugging\DebugInfo.cs" />
     <Compile Include="Src\Game\GameInstance.cs" />
     <Compile Include="Src\Application.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

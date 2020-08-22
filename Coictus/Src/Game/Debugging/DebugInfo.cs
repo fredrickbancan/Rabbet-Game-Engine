@@ -6,14 +6,14 @@ using System;
 namespace Coictus
 {
     /*A class for abstracting the process of displaying debug information on the screen when active.*/
-    public static class DebugScreen
+    public static class DebugInfo
     {
         public static readonly String debugInfoPanelName = "debugInfo";
 
         /*Initialize the text panel for the debug info, can only be done if the mainGUI panel is created first*/
         public static void init()
         {
-            GUIHandler.addTextPanelToGUI(GameInstance.mainGUIName, debugInfoPanelName, new GUITextPanel(new TextFormat(0.0F, 0.05F).setPanelColor(ColourF.grey)
+            GUIHandler.addTextPanelToGUI(MainGUI.mainGUIName, debugInfoPanelName, new GUITextPanel(new TextFormat(0.0F, 0.05F).setPanelColor(ColourF.grey)
                 .setLines(new String[]
                         {
                         ("press F3 to hide debug screen.")
@@ -26,8 +26,8 @@ namespace Coictus
         {
             if (GameSettings.debugScreen && GameInstance.get.thePlayer != null)
             {
-                GUIHandler.unHideTextPanelInGUI(GameInstance.mainGUIName, debugInfoPanelName);
-                GUIHandler.getTextPanelFormatFromGUI(GameInstance.mainGUIName, debugInfoPanelName).setLines(
+                GUIHandler.unHideTextPanelInGUI(MainGUI.mainGUIName, debugInfoPanelName);
+                GUIHandler.getTextPanelFormatFromGUI(MainGUI.mainGUIName, debugInfoPanelName).setLines(
                        new String[]
                        {
                         ("Player Name: " + GameInstance.get.thePlayer.getName()),
@@ -48,7 +48,7 @@ namespace Coictus
             }
             else
             {
-                GUIHandler.hideTextPanelInGUI(GameInstance.mainGUIName, debugInfoPanelName);
+                GUIHandler.hideTextPanelInGUI(MainGUI.mainGUIName, debugInfoPanelName);
             }
         }
     }
