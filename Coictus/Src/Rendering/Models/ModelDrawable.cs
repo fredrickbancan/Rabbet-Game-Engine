@@ -34,6 +34,11 @@ namespace Coictus.Models
             shader = new Shader(shaderFile);
         }
 
+        public virtual void setIndices(UInt32[] newind)
+        {
+            indices = newind;
+        }
+
         public virtual void setNewTexture(Texture tex)
         {
             if(this.texture != null)
@@ -60,8 +65,8 @@ namespace Coictus.Models
         /*called when model is first bound. can be used for more*/
         protected virtual void init()
         {
-            hasInitialized = true;
             genBuffers();
+            hasInitialized = true;
         }
 
         /*Generates the attributes for each array of data and stores them in this model's VAO.*/
@@ -69,12 +74,14 @@ namespace Coictus.Models
         {
             VAO = GL.GenVertexArray();
             GL.BindVertexArray(VAO);
-            
-            genAndBindIndices(); //for indices
+            if (indices != null)
+            {
+                genAndBindIndices(); //for indices
+            }
             storeVertexDataInAttributeList();
         }
 
-        /*Binds the models texture and shader, can be used for more*/
+        /*Binds the models texture and shader, if its the first time binding, will gen buffers. Can be overwritten and used for more*/
         public virtual void bind(bool useTexture = true, bool useShader = true)
         {
             if (!hasInitialized)
@@ -125,6 +132,16 @@ namespace Coictus.Models
             shader.setUniformVec3F("fogColour", fogColor);
 
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+            unBind();
+        }
+        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Matrix4F modelMatrix, PrimitiveType primitive)
+        {
+            bind();
+            shader.setUniformMat4F("projectionMatrix", projectionMatrix);
+            shader.setUniformMat4F("viewMatrix", viewMatrix);
+            shader.setUniformMat4F("modelMatrix", modelMatrix);
+
+            GL.DrawElements(primitive, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
         public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Matrix4F modelMatrix)

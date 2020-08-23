@@ -10,6 +10,7 @@ namespace Coictus
         public static bool vsync = false;// DO NOT set to true for now, causes game loop speed to be limited by screen refresh rate.
         public static bool displayFps = true;
         public static bool debugScreen = true;
+        public static bool drawHitboxes = true;
         public static bool superSampling = true;
         public static void loadSettings()
         {

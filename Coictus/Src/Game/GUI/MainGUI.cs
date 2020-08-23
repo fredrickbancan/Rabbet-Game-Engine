@@ -1,4 +1,5 @@
-﻿using Coictus.FredsMath;
+﻿using Coictus.Debugging;
+using Coictus.FredsMath;
 using Coictus.GUI;
 using Coictus.GUI.Text;
 using System;

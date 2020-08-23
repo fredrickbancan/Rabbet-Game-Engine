@@ -113,7 +113,7 @@ void main()
 
     if (vcolour.a < 1.0)
     {
-       // uint fragX = uint(gl_FragCoord.x);
+        //uint fragX = uint(gl_FragCoord.x);
         //uint fragY = uint(gl_FragCoord.y);
         //float randomFloat = hash(fragX + uint(viewPortSize.x) * fragY + uint(viewPortSize.x) * uint(viewPortSize.y) * uint((gl_FragCoord.z / (renderPass + 1)) * 7000.0));
         float randomFloat = rand3D(gl_FragCoord.xyz);

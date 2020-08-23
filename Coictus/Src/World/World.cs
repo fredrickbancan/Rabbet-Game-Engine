@@ -1,4 +1,5 @@
-﻿using Coictus.FredsMath;
+﻿using Coictus.Debugging;
+using Coictus.FredsMath;
 using Coictus.Models;
 using Coictus.SubRendering;
 using Coictus.VFX;
@@ -71,6 +72,11 @@ namespace Coictus
                     vfx.draw(viewMatrix, projectionMatrix, fogColor, pass);
                 }
             }
+        }
+
+        public void drawDebugHitboxes()
+        {
+            HitboxRenderer.renderAllHitboxes(worldColliders, entityColliders);
         }
 
         private void buildSkyBox()
@@ -169,7 +175,13 @@ namespace Coictus
         /*Called every frame.*/
         public void onFrame()
         {
-
+            foreach (Entity ent in entities.Values)
+            {
+                if (ent != null)
+                {
+                    ent.onFrame();
+                }
+            }
         }
 
         private void tickEntities()

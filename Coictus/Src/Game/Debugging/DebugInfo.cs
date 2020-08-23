@@ -3,7 +3,7 @@ using Coictus.GUI;
 using Coictus.GUI.Text;
 using System;
 
-namespace Coictus
+namespace Coictus.Debugging
 {
     /*A class for abstracting the process of displaying debug information on the screen when active.*/
     public static class DebugInfo

@@ -63,9 +63,11 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Res\Shaders\Color3D.shader" />
     <None Include="Res\Shaders\Offscreen.shader" />
     <None Include="Res\Shaders\VFX\PointParticleFog.shader" />
     <Compile Include="Src\FredsMath\QuaternionF.cs" />
+    <Compile Include="Src\Game\Debugging\HitboxRenderer.cs" />
     <Compile Include="Src\Game\GUI\MainGUI.cs" />
     <Compile Include="Src\Rendering\GUIComponents\GUICrosshair.cs" />
     <Compile Include="Src\Rendering\GUIHandler.cs" />
@@ -74,6 +76,7 @@
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankProjectileModel.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\DefaultDebugModel.cs" />
     <Compile Include="Src\Rendering\Models\OBJProcessing\OBJLoader.cs" />
+    <Compile Include="Src\Rendering\SubRendering\Batching\LineBatcher.cs" />
     <Compile Include="Src\Rendering\SubRendering\GUI\GUIScreen.cs" />
     <Compile Include="Src\Rendering\SubRendering\GUI\GUIScreenComponent.cs" />
     <Compile Include="Src\Rendering\SubRendering\Batching\TriangleBatcher.cs" />
@@ -109,7 +112,7 @@
     <Compile Include="Src\Game\Input.cs" />
     <Compile Include="Src\Game\PlayerController.cs" />
     <Compile Include="Src\Game\Debugging\Profiler.cs" />
-    <Compile Include="Src\Game\Debugging\ResourceHelper.cs" />
+    <Compile Include="Src\Game\ResourceHelper.cs" />
     <Compile Include="Src\Game\TicksAndFps.cs" />
     <Compile Include="Src\World\Entity\Projectiles\EntityProjectile.cs" />
     <Compile Include="Src\World\Entity\Projectiles\EntityTankProjectile.cs" />

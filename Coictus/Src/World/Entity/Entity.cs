@@ -8,8 +8,6 @@ namespace Coictus
 
     public class Entity : PositionalObject
     {
-        
-        private double groundPlaneHeight = 0.0000D;
         protected World currentPlanet;
         protected EntityModel entityModel;
         protected bool hasModel = false;
@@ -34,7 +32,7 @@ namespace Coictus
             if (existedTicks < 0) existedTicks = 0;//incase of int overflow
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             if (isFlying) { setYAccel(0); } else { setYAccel(-gravity); }
-            if (velocity.y > 0) isGrounded = false;
+            if (velocity.y != 0) isGrounded = false;//simple detection of being on the ground. Very basic.
             if (hasModel)
             {
                 if (entityModel.exists())

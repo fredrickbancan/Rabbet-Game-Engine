@@ -1,4 +1,5 @@
-﻿using Coictus.FredsMath;
+﻿using Coictus.Debugging;
+using Coictus.FredsMath;
 using Coictus.GUI;
 using Coictus.SubRendering;
 using OpenTK.Graphics.OpenGL;
@@ -13,7 +14,6 @@ namespace Coictus
     public static class Renderer
     {
         private static Matrix4F projectionMatrix;
-        
         /*Called before any rendering is done*/
         public static void init()
         {
@@ -43,7 +43,7 @@ namespace Coictus
         /*Called before all draw calls*/
         private static void preRender()
         {
-            OffScreen.prepareForRender();
+            OffScreen.prepareToRenderToOffScreenTexture();
             setClearColor(ColourF.skyBlue);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
@@ -66,11 +66,13 @@ namespace Coictus
             GameInstance.get.currentPlanet.getGroundModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());
             GameInstance.get.currentPlanet.getWallsModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());
             GameInstance.get.currentPlanet.getSkyboxModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getSkyColor(), GameInstance.get.currentPlanet.getFogColor());
+            if(GameSettings.drawHitboxes)GameInstance.get.currentPlanet.drawDebugHitboxes();
+            
         }
         /*Called after all draw calls*/
         private static void postRender()
         {
-            OffScreen.postGameRender();
+            OffScreen.renderOffScreenTexture();
             GameInstance.get.SwapBuffers();
         }
 
@@ -85,6 +87,8 @@ namespace Coictus
         {
             GL.ClearColor(colorNormalized.x, colorNormalized.y, colorNormalized.z, 1.0f);
         }
+
+        public static Matrix4F projMatrix { get => projectionMatrix; }
     }
 }
  

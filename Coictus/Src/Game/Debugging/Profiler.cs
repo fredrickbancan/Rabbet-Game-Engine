@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Coictus
+namespace Coictus.Debugging
 {
     /*This class will be responsable for debugging, measuring and testing performance of the subsystems in this program.*/
     public static class Profiler

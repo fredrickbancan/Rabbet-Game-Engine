@@ -58,18 +58,18 @@ namespace Coictus.SubRendering
                 Application.debug("Offscreen frame buffer successfully initialized!");
             }
 
-            screenQuad = (ModelDrawable)QuadPrefab.getNewModelDrawable().scaleVertices(new Vector3F(2.0F, 2.0F, 1.0F));
+            screenQuad = (ModelDrawable)QuadPrefab.getNewModelDrawable().scaleVertices(new Vector3F(2.0F, 2.0F, 1.0F));//scale quad to fit screen
             screenQuad.setNewShader(screenShader);
         }
 
-        public static void prepareForRender()
+        public static void prepareToRenderToOffScreenTexture()
         {
             GL.Enable(EnableCap.DepthTest);
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, frameBuffer);
             GL.Viewport(0, 0, width, height);
         }
 
-        public static void postGameRender()
+        public static void renderOffScreenTexture()
         {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.Viewport(0, 0, GameInstance.gameWindowWidth, GameInstance.gameWindowHeight);

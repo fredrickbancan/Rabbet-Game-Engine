@@ -69,7 +69,7 @@ namespace Coictus
         /*Called every frame, can be overwritten*/
         public virtual void onFrame()
         {
-
+            
         }
 
         /*Done after the entity has ticked, so will correct for overlap AFTER movement. Will change velocity, accelleration and positon.

@@ -5,9 +5,9 @@
     {
         public Vector4F values;
 
-        public QuaternionF(Vector4F rotationVector)
+        public QuaternionF(Vector4F values)
         {
-            this.values = rotationVector;
+            this.values = values;
         }
 
         public QuaternionF(float x, float y, float z, float w)
@@ -17,7 +17,7 @@
 
         public static QuaternionF operator * (QuaternionF quatA, QuaternionF quatB)
         {
-
+            return new QuaternionF();
         }
 
         public float length()

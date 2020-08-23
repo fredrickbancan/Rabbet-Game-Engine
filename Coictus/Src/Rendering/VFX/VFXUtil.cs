@@ -37,7 +37,7 @@ namespace Coictus.VFX
 
         public static void doSmallSmokePuffEffect(World planet, Vector3D location, float pitch = 0, float yaw = -90, float roll = 0)
         {
-            VFXBase smoke = new VFXPointParticles(location, ColourF.darkGrey, 7, 0.1F, 0.075F, true, false, 2F, 0.8F);
+            VFXBase smoke = new VFXPointParticles(location, ColourF.darkGrey, 7, 0.05F, 0.05F, true, false, 2F, 0.8F);
 
             smoke.setPitch(pitch);
             smoke.setYaw(yaw);
