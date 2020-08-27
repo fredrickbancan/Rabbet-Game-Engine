@@ -80,13 +80,22 @@ namespace Coictus
             }
         }
 
-        
+        /*This method can be called to update the collider of this entity manually.
+          e.g, this is useful for correcting hitboxes after collisions so they are ready to be 
+          rendered for debugging*/
+        public virtual void tickUpdateCollider()
+        {
+            if (hasCollider && collider != null)
+            {
+                collider.onTick();
+            }
+        }
         
         public override void applyCollision(Vector3D direction, double overlap)
         {
             if (direction.y >= 0.35D)//if the entity is being collided from a generally upwards direction
             {
-                isGrounded = true;//TODO: make so when the entity is NOT colliding from the bottom
+                isGrounded = true;
             }
             base.applyCollision(direction, overlap);
         }

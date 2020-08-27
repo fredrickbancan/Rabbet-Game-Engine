@@ -44,9 +44,7 @@ namespace Coictus
         {
             if(Input.keySinglePress(Key.E))
             {
-                Input.centerMouse(); // center the mouse cursor when closing or opening menu
-                Input.toggleHideMouse();
-                GameInstance.get.thePlayer.togglePause();
+                GameInstance.pauseGame();
             }
 
             if (Input.keySinglePress(Key.V))

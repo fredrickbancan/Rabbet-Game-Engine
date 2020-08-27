@@ -28,6 +28,7 @@ namespace Coictus
             GL.Enable(EnableCap.SampleAlphaToOne);
             GL.SampleCoverage(1.0F, false);*/
             GL.Viewport(GameInstance.get.ClientRectangle);
+            GL.LineWidth(3);
             projectionMatrix = Matrix4F.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
             OffScreen.init(1F);
         }

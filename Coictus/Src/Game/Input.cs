@@ -60,6 +60,11 @@ namespace Coictus
                     toggleDebugScreen();
                 }
 
+                if (keySinglePress(Key.F4))
+                {
+                    toggleDebugHitboxes();
+                }
+
             }
         }
         /*Places the mouse cursor at the center of the game window*/
@@ -77,6 +82,17 @@ namespace Coictus
             else
             {
                 GameSettings.debugScreen = false;
+            }
+        }
+        public static void toggleDebugHitboxes()
+        {
+            if (!GameSettings.drawHitboxes)
+            {
+                GameSettings.drawHitboxes = true;
+            }
+            else
+            {
+                GameSettings.drawHitboxes = false;
             }
         }
 

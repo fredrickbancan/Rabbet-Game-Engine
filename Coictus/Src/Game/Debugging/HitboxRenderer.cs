@@ -29,7 +29,7 @@ namespace Coictus.Debugging
 
             for(int i = 0; i < boxSides.Length; i++)
             {
-                boxSides[i] = QuadPrefab.getNewModel().setColor(ColourF.aquaPain);
+                boxSides[i] = QuadPrefab.getNewModel().setColor(ColourF.majenta);
             }
             
             boxSides[0].rotateVertices(new Vector3F(0, 180, 0)).translateVertices(new Vector3F(0, 0, -0.5F));//negZ face

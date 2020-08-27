@@ -7,7 +7,7 @@ layout(location = 1) in vec4 colour;
 layout(location = 2) in vec2 texCoord;
 
 uniform float fogDensity = 0.0075;
-const float fogGradient = 3.5;
+const float fogGradient = 2.5;
 
 out vec4 vcolour;
 out float visibility;//for fog

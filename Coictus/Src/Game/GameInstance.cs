@@ -68,7 +68,6 @@ namespace Coictus
             //center mouse in preperation for first person 
             Input.centerMouse();
             Input.toggleHideMouse();
-            
         }
 
         /*overriding OpenTk game update function, called every frame.*/
@@ -101,6 +100,14 @@ namespace Coictus
             windowHeight = Height;
             Renderer.onResize();
         }
+        protected override void OnFocusedChanged(EventArgs e)
+        {
+            if (thePlayer != null && !thePlayer.paused)
+            {//pausing the game if the window focus changes
+                GameInstance.pauseGame();
+            }
+            base.OnFocusedChanged(e);
+        }
 
         /*Each itteration of game logic is done here*/
         private void onTick()
@@ -112,18 +119,23 @@ namespace Coictus
             Profiler.beginEndProfile(Profiler.gameLoopName);
         }
 
+        //TODO: Create event system for handling these events
         /*Called when player lands direct hit on a cactus, TEMPORARY!*/
         public static void onDirectHit()
         {
             MainGUI.onDirectHit();
         }
-
         /*Called when player lands air shot on a cactus, TEMPORARY!*/
         public static void onAirShot()
         {
-            MainGUI.onAirShot();//TODO: Create event system for handling such events
+            MainGUI.onAirShot();
         }
-        
+        public static void pauseGame()
+        {
+            Input.centerMouse(); // center the mouse cursor when closing or opening menu
+            Input.toggleHideMouse();
+            GameInstance.get.thePlayer.togglePause();
+        }
 
         private void setDPIScale()
         {

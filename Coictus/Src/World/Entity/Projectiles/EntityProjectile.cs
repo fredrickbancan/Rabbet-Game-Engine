@@ -12,7 +12,7 @@ namespace Coictus
             airResistance = 0.001F;
             velocity += direction * initialVelocity;
             this.maxExistedTicks = TicksAndFps.getNumOfTicksForSeconds(maxLivingSeconds);
-            this.setCollider(new SphereCollider(pos, 0.15F, this));//TODO: temp, experiment. Remove.
+            this.setCollider(new SphereCollider(pos, 0.15F, this));
         }
 
         public override void onTick()

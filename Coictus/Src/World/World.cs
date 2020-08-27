@@ -105,7 +105,7 @@ namespace Coictus
             {
                 for(int z = 0; z < 64; z++)
                 {
-                    unbatchedGroundQuads[x * 64 + z] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3F(20,1,20)).translateVertices(new Vector3F((x-32)*20, groundHeight, (z-32)*20));
+                    unbatchedGroundQuads[x * 64 + z] = PlanePrefab.getNewModel().scaleVertices(new Vector3F(20,1,20)).scaleUV(new Vector2F(5F,5F)).translateVertices(new Vector3F((x-32)*20, groundHeight, (z-32)*20));
                 }
             }
 
@@ -169,7 +169,8 @@ namespace Coictus
             removeMarkedVFX();
             tickEntities();
             tickVFX();
-            doCollisions();//this should be done last
+            doCollisions();//this should be done AFTER ticking entities.
+            if (GameSettings.drawHitboxes) updateAllEntityColliders();//For correcting the drawing of hitboxes after a collision
         }
 
         /*Called every frame.*/
@@ -193,6 +194,17 @@ namespace Coictus
                     ent.preTickMovement();
                     ent.onTick();
                     ent.postTickMovement();
+                }
+            }
+        }
+
+        private void updateAllEntityColliders()
+        {
+            foreach (Entity ent in entities.Values)
+            {
+                if (ent != null)
+                {
+                    ent.tickUpdateCollider();
                 }
             }
         }

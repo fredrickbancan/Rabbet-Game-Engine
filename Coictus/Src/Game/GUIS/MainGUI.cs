@@ -27,7 +27,7 @@ namespace Coictus
             GUIHandler.addNewGUIScreen(mainGUIName, "Trebuchet");
             GUIHandler.addTextPanelToGUI(mainGUIName, "flying", new GUITextPanel(new TextFormat().setAlign(TextAlign.RIGHT).setLine("Flying: OFF").setPanelColor(ColourF.darkRed)));
             GUIHandler.addTextPanelToGUI(mainGUIName, "label", new GUITextPanel(new TextFormat(0, 0.97F).setLine("Coictus Version " + Application.version).setPanelColor(ColourF.black)));
-            GUIHandler.addTextPanelToGUI(mainGUIName, "help", new GUITextPanel(new TextFormat(0.5F, 0).setAlign(TextAlign.CENTER).setLines(new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'V' to toggle flying. Tap 'E' to release mouse.", "Walk up to tank and press F to drive, Left click to fire.", "Press 'ESC' to close game." }).setPanelColor(ColourF.black)));
+            GUIHandler.addTextPanelToGUI(mainGUIName, "help", new GUITextPanel(new TextFormat(0.5F, 0).setAlign(TextAlign.CENTER).setLines(new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'V' to toggle flying. Tap 'E' to release mouse.", "Walk up to tank and press F to drive, Left click to fire.", "Press 'ESC' to close game.", "Press F3 to show/hide debug menu.", "press F4 to enable/disable drawing hitboxes." }).setFontSize(0.015F).setPanelColor(ColourF.black)));
             GUIHandler.addGUIComponentToGUI(mainGUIName, "crossHair", new GUICrosshair());
 
             /*TEMPORARY, just for arcade stuff*/

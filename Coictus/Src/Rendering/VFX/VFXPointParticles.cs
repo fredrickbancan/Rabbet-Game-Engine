@@ -76,7 +76,7 @@ namespace Coictus.VFX
             if (vfxModel != null && !removalFlag)
             {
                 //TODO: Inefficient. There needs to be a dynamic model for all point VFX in the world. Each new point vfx vertices are added to it and it can be rendered in one single draw!
-                vfxModel.drawPoints(viewMatrix, projectionMatrix, prevTickModelMatrix + (modelMatrix - prevTickModelMatrix) * TicksAndFps.getPercentageToNextTick(), fogColor, pointRadius, pointAmbientOcclusion, pass);
+                 vfxModel.drawPoints(viewMatrix, projectionMatrix, prevTickModelMatrix + (modelMatrix - prevTickModelMatrix) * TicksAndFps.getPercentageToNextTick(), fogColor, pointRadius, pointAmbientOcclusion, pass);
             }
             else
             {

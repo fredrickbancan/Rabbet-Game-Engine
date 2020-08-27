@@ -2,8 +2,11 @@
 
 namespace Coictus.SubRendering
 {
+    /*Class for Taking in  an even amount of vertices and batches them with indices which allow line rendering.*/
     public static class LineBatcher
     {
+
+        /*retuns indices for multiple quads to render them as lined squares*/
         public static UInt32[] getIndicesForLineQuadCount(int count)
         {
             int indexCount = count * 8; //lines require two vertices per line, each quad will need 4 lines, thus 8 vertices.

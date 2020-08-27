@@ -42,8 +42,7 @@ namespace Coictus.Debugging
                         ("Profiler ms averages: "),
                         ("Render: " + Profiler.getAveragesForProfile(Profiler.renderingName).ToString("0.##") + " ms."),
                         ("Game loop: " + Profiler.getAveragesForProfile(Profiler.gameLoopName).ToString("0.##") + " ms."),
-                        ("Collisions: " + Profiler.getAveragesForProfile(Profiler.collisionsName).ToString("0.##") + " ms."),
-                        ("press F3 to hide debug screen."),
+                        ("Collisions: " + Profiler.getAveragesForProfile(Profiler.collisionsName).ToString("0.##") + " ms.")
                        }); 
             }
             else
