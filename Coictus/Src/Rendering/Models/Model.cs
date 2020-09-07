@@ -1,4 +1,5 @@
-﻿using Coictus.FredsMath;
+﻿using OpenTK;
+using System.Drawing;
 
 namespace Coictus.Models
 {
@@ -13,11 +14,11 @@ namespace Coictus.Models
         }
 
         /*sets all vertex colors to this color*/
-        public Model setColor(ColourF color)
+        public Model setColor(Color color)
         {
-            return this.setColor(color.normalVector4F());
+            return this.setColor(color.normalVector4());
         }
-        public Model setColor(Vector4F color)
+        public Model setColor(Vector4 color)
         {
             for(int i = 0; i < vertices.Length; i++)
             {
@@ -28,42 +29,42 @@ namespace Coictus.Models
         
         /*Changes the vertices in the float arrays before rendering. Usefull for copying an already layed out model
           and batch rendering it in multiple different locations with different transformations.*/
-        public Model transformVertices(Vector3F scale, Vector3F rotate, Vector3F translate)
+        public Model transformVertices(Vector3 scale, Vector3 rotate, Vector3 translate)
         {
             for(int i = 0; i < vertices.Length; i ++)
             {
-                Matrix4F.scaleXYZFloats(scale, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
-                Matrix4F.rotateXYZFloats(rotate, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
-                Matrix4F.translateXYZFloats(translate, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
+                Matrix4.scaleXYZFloats(scale, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
+                Matrix4.rotateXYZFloats(rotate, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
+                Matrix4.translateXYZFloats(translate, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
             }
             return this;
         }
-        public Model scaleVertices(Vector3F scale)
+        public Model scaleVertices(Vector3 scale)
         {
             for (int i = 0; i < vertices.Length; i ++)
             {
-                Matrix4F.scaleXYZFloats(scale, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
+                Matrix4.scaleXYZFloats(scale, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
             }
             return this;
         }
-        public Model rotateVertices(Vector3F rotate)
+        public Model rotateVertices(Vector3 rotate)
         {
             for (int i = 0; i < vertices.Length; i++)
             {
-                Matrix4F.rotateXYZFloats(rotate, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
+                Matrix4.rotateXYZFloats(rotate, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
             }
             return this;
         }
-        public Model translateVertices(Vector3F translate)
+        public Model translateVertices(Vector3 translate)
         {
             for (int i = 0; i < vertices.Length; i++)
             {
-                Matrix4F.translateXYZFloats(translate, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
+                Matrix4.translateXYZFloats(translate, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
             }
             return this;
         }
 
-        public Model scaleUV(Vector2F scale)
+        public Model scaleUV(Vector2 scale)
         {
             for (int i = 0; i < vertices.Length; i++)
             {
@@ -72,11 +73,11 @@ namespace Coictus.Models
             return this;
         }
 
-        public Model scaleVerticesAndUV(Vector3F scale)
+        public Model scaleVerticesAndUV(Vector3 scale)
         {
             for (int i = 0; i < vertices.Length; i++)
             {
-                Matrix4F.scaleXYZFloats(scale, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
+                Matrix4.scaleXYZFloats(scale, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
                 vertices[i].uv.x *= scale.x;
                 vertices[i].uv.y *= scale.z;
             }

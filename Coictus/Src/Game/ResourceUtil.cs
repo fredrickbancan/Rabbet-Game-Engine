@@ -3,7 +3,7 @@
 namespace Coictus
 {
     /*A class containing functions to gelp find resources. This class will make it much easier to change resource directories.*/
-    public static class ResourceHelper
+    public static class ResourceUtil
     {
         public static String getTextureFileDir(String fileName)
         {

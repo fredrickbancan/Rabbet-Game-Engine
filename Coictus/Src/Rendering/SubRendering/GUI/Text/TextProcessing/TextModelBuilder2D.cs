@@ -1,6 +1,6 @@
-﻿using Coictus.FredsMath;
-using Coictus.GUI.Text;
+﻿using Coictus.GUI.Text;
 using Coictus.Models;
+using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,7 +15,7 @@ namespace Coictus.SubRendering.GUI.Text
 
         /*Takes in an array of strings and converts them into an array of models. Each string in the array is treated as a new line of text.
           The lines start from the provided topleftorigin vector. Each model in the array is a line of text.*/
-        public static Model[] convertStringArrayToModelArray(String[] theStrings, Font font, Vector4F color, Vector2F topLeftPixelOrigin, float fontSize, int screenEdgePadding, TextAlign alignment)
+        public static Model[] convertStringArrayToModelArray(String[] theStrings, FontFace font, Vector4 color, Vector2 topLeftPixelOrigin, float fontSize, int screenEdgePadding, TextAlign alignment)
         {
             Model[] result = new Model[theStrings.Length];
             for(UInt32 i = 0; i < theStrings.Length; i++)
@@ -24,9 +24,9 @@ namespace Coictus.SubRendering.GUI.Text
             }
             return result;
         }
-        public static Vertex[] convertStringToVertexArray(String theString, Font font, Vector4F color, Vector2F topLeftPixelOrigin, float fontSize, int screenEdgePadding, TextAlign alignment, UInt32 previousLineCount = 0)
+        public static Vertex[] convertStringToVertexArray(String theString, FontFace font, Vector4 color, Vector2 topLeftPixelOrigin, float fontSize, int screenEdgePadding, TextAlign alignment, UInt32 previousLineCount = 0)
         {
-            Vector2F cursorPos = topLeftPixelOrigin;
+            Vector2 cursorPos = topLeftPixelOrigin;
             cursorPos.x += screenEdgePadding;
             cursorPos.y += previousLineCount * (font.getLineHeightPixels() * fontSize);
             byte[] charIds = Encoding.ASCII.GetBytes(theString);
@@ -127,7 +127,7 @@ namespace Coictus.SubRendering.GUI.Text
             return result;
         }
        
-        public static Vertex[] createVerticesFromChar(Character character, Vector4F color, Vector2F pixelCursorTopLeft, float fontSize)
+        public static Vertex[] createVerticesFromChar(Character character, Vector4 color, Vector2 pixelCursorTopLeft, float fontSize)
         {
             //get pixel values
             float x = pixelCursorTopLeft.x + character.getxOffsetPixels() * fontSize;

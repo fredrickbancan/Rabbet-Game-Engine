@@ -11,21 +11,21 @@ namespace Coictus.Models
     {
         protected Entity parent;
         protected ModelDrawable theModel;
-        protected Matrix4F prevTickModelMatrix;
-        protected Matrix4F modelMatrix;
+        protected Matrix4 prevTickModelMatrix;
+        protected Matrix4 modelMatrix;
 
         protected EntityModel()
         {
             theModel = null;
-            modelMatrix = new Matrix4F(1.0F);
-            prevTickModelMatrix = new Matrix4F(1.0F);
+            modelMatrix = new Matrix4(1.0F);
+            prevTickModelMatrix = new Matrix4(1.0F);
         }
         public EntityModel(Entity parent)
         {
             this.parent = parent;
             theModel = null;
-            modelMatrix = new Matrix4F(1.0F);
-            prevTickModelMatrix = new Matrix4F(1.0F);
+            modelMatrix = new Matrix4(1.0F);
+            prevTickModelMatrix = new Matrix4(1.0F);
             updateModel();//updating model twice to set first frame render position to the entity position.
             updateModel();
         }
@@ -33,8 +33,8 @@ namespace Coictus.Models
         {
             this.parent = parent;
             theModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelPath);//TODO: Inefficient. This will mean we have to load model data each time a model for an entity etc is spawned!, maybe make a list of pre loaded models?
-            modelMatrix = new Matrix4F(1.0F);
-            prevTickModelMatrix = new Matrix4F(1.0F);
+            modelMatrix = new Matrix4(1.0F);
+            prevTickModelMatrix = new Matrix4(1.0F);
             updateModel();//updating model twice to set first frame render position to the entity position.
             updateModel();
         }
@@ -44,7 +44,7 @@ namespace Coictus.Models
         public virtual void updateModel()
         {
             prevTickModelMatrix = modelMatrix;
-            modelMatrix = Matrix4F.rotate(new Vector3F((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) *  Matrix4F.translate(Vector3F.convert(parent.getPosition())) ;
+            modelMatrix = Matrix4.rotate(new Vector3((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) *  Matrix4.translate(Vector3.convert(parent.getPosition())) ;
         }
 
         /*Replaces the current or non existing ModelDrawable with the one provided*/
@@ -55,7 +55,7 @@ namespace Coictus.Models
         }
 
         /*draws this model, can be overwritten.*/
-        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Vector3F fogColor)
+        public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColor)
         {
             if (theModel != null)
             {

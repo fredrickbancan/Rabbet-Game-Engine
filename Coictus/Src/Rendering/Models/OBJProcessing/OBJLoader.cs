@@ -13,9 +13,9 @@ namespace Coictus.Models
         private static StreamReader reader;
         private static bool successfullyLoaded = false;
         private static List<Vertex> vertexResult;
-        private static List<Vector3F> positions;
-        private static List<Vector2F> unorderedUVs; 
-        private static Vector2F[] orderedUVs; 
+        private static List<Vector3> positions;
+        private static List<Vector2> unorderedUVs; 
+        private static Vector2[] orderedUVs; 
         private static List<UInt32> indices;
 
         /*Takes in a shader,texture and obj file and returns a modeldrawable. If processing fails, will return a default debug model*/
@@ -37,8 +37,8 @@ namespace Coictus.Models
             }
             successfullyLoaded = false;
             vertexResult = new List<Vertex>();
-            positions = new List<Vector3F>();
-            unorderedUVs = new List<Vector2F>();
+            positions = new List<Vector3>();
+            unorderedUVs = new List<Vector2>();
             indices = new List<UInt32>();
 
             processAllLines();
@@ -72,18 +72,18 @@ namespace Coictus.Models
             }
         }
 
-        /*Adds the vertex positions in the line to the positions list as a vector3f*/
+        /*Adds the vertex positions in the line to the positions list as a Vector3*/
         private static void processVertexPosition()
         {
             float[] vertexPosData = getFloatsFromStringArray(currentLine.Split(' '));
-            Vector3F newVertPos = new Vector3F(vertexPosData[0], vertexPosData[1], vertexPosData[2]);
+            Vector3 newVertPos = new Vector3(vertexPosData[0], vertexPosData[1], vertexPosData[2]);
             positions.Add(newVertPos);
         }
-        /*Adds the uvs in the line to the unordered uv list as a vector2f*/
+        /*Adds the uvs in the line to the unordered uv list as a Vector2*/
         private static void processUV()
         {
             float[] vertexUV = getFloatsFromStringArray(currentLine.Split(' '));
-            Vector2F newUV = new Vector2F(vertexUV[0], vertexUV[1]);// other model programs may requre a v flip, blender does not
+            Vector2 newUV = new Vector2(vertexUV[0], vertexUV[1]);// other model programs may requre a v flip, blender does not
             unorderedUVs.Add(newUV);
         }
 
@@ -121,7 +121,7 @@ namespace Coictus.Models
                 /*Here we take init the ordered uv list, and then for each position index (which we are using as vertex indices) 
                   We take the corrosponding uv index and use it to take the values from the unordered array at that index. This 
                   Manually matches the uv data with the vertex position data so they can be put into vertices.*/
-                orderedUVs = new Vector2F[unorderedUVs.Count];
+                orderedUVs = new Vector2[unorderedUVs.Count];
                 for (int i = 0; i < uvIndices.Count; i++)
                 {
                     orderedUVs[indices.ElementAt(i)] = unorderedUVs.ElementAt(uvIndices.ElementAt(i));
@@ -129,7 +129,7 @@ namespace Coictus.Models
 
                 for (int i = 0; i < positions.Count; i++)
                 {
-                    vertexResult.Add(new Vertex(positions.ElementAt(i), ColourF.white.normalVector4F(), orderedUVs[i]));
+                    vertexResult.Add(new Vertex(positions.ElementAt(i), Color.white.normalVector4(), orderedUVs[i]));
                 }
                 successfullyLoaded = true;//do last, to make sure there is not mistake with any lines starting with f triggering a new face processing method call
             }

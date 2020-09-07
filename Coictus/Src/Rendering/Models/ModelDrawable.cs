@@ -1,5 +1,5 @@
-﻿using Coictus.FredsMath;
-using Coictus.SubRendering;
+﻿using Coictus.SubRendering;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
@@ -57,7 +57,7 @@ namespace Coictus.Models
             this.shader = shad;
         }
 
-        public virtual void setUniformVec3(String name, Vector3F vec)
+        public virtual void setUniformVec3(String name, Vector3 vec)
         {
             shader.setUniformVec3F(name, vec);
         }
@@ -102,28 +102,28 @@ namespace Coictus.Models
 
         #region drawMethods
         /*Draws this model. If its the first draw call, and firtst bind call, the model will be initialized.*/
-        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Vector3F skyTopColor, Vector3F skyHorizonColor)//for skybox
+        public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 skyTopColor, Vector3 skyHorizonColor)//for skybox
         {
             bind();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
-            shader.setUniformMat4F("modelMatrix", new Matrix4F(1.0F));
+            shader.setUniformMat4F("modelMatrix", new Matrix4(1.0F));
             shader.setUniformVec3F("skyTop", skyTopColor);
             shader.setUniformVec3F("skyHorizon", skyHorizonColor);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
-        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Vector3F fogColour)
+        public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColour)
         {
             bind();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
-            shader.setUniformMat4F("modelMatrix", new Matrix4F(1.0F));
+            shader.setUniformMat4F("modelMatrix", new Matrix4(1.0F));
             shader.setUniformVec3F("fogColour", fogColour);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
-        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Matrix4F modelMatrix, Vector3F fogColor)
+        public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Matrix4 modelMatrix, Vector3 fogColor)
         {
             bind();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
@@ -134,7 +134,7 @@ namespace Coictus.Models
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
-        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Matrix4F modelMatrix, PrimitiveType primitive)
+        public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Matrix4 modelMatrix, PrimitiveType primitive)
         {
             bind();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
@@ -144,7 +144,7 @@ namespace Coictus.Models
             GL.DrawElements(primitive, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
-        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Matrix4F modelMatrix)
+        public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Matrix4 modelMatrix)
         {
             bind();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
@@ -155,7 +155,7 @@ namespace Coictus.Models
             unBind();
         }
 
-        public virtual void draw(Matrix4F projectionMatrix, Matrix4F modelMatrix)
+        public virtual void draw(Matrix4 projectionMatrix, Matrix4 modelMatrix)
         {
             bind();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
@@ -163,7 +163,7 @@ namespace Coictus.Models
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
-        public virtual void draw(Matrix4F modelMatrix)
+        public virtual void draw(Matrix4 modelMatrix)
         {
             bind();
             shader.setUniformMat4F("modelMatrix", modelMatrix);
@@ -185,7 +185,7 @@ namespace Coictus.Models
             unBind();
         }
 
-        public virtual void drawPoints(Matrix4F viewMatrix, Matrix4F projectionMatrix, Matrix4F modelMatrix, Vector3F fogColor, float pointRadius, bool ambientOcclusion, int pass = 1)
+        public virtual void drawPoints(Matrix4 viewMatrix, Matrix4 projectionMatrix, Matrix4 modelMatrix, Vector3 fogColor, float pointRadius, bool ambientOcclusion, int pass = 1)
         {
             if (!drawErrorPrinted && indices != null && GL.IsBuffer(indicesBufferObject))
             {
@@ -197,7 +197,7 @@ namespace Coictus.Models
             shader.setUniformMat4F("viewMatrix", viewMatrix);
             shader.setUniformMat4F("modelMatrix", modelMatrix);
             shader.setUniformVec3F("fogColour", fogColor);
-            shader.setUniformVec2F("viewPortSize", new Vector2F(OffScreen.getWidth, OffScreen.getHeight));
+            shader.setUniformVec2F("viewPortSize", new Vector2(OffScreen.getWidth, OffScreen.getHeight));
             shader.setUniform1F("pointRadius", pointRadius);
             shader.setUniform1I("aoc", ambientOcclusion ? 1 : 0);
             //shader.setUniform1I("renderPass", pass);

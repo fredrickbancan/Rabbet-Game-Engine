@@ -28,8 +28,8 @@ namespace Coictus.VFX
         protected double maxExistingTicks;
         protected int ticksExisted;
         protected ModelDrawable vfxModel;
-        protected Matrix4F prevTickModelMatrix;
-        protected Matrix4F modelMatrix;
+        protected Matrix4 prevTickModelMatrix;
+        protected Matrix4 modelMatrix;
         protected bool removalFlag = false;// true if this entity should be removed in the next tick
 
         protected VFXRenderType renderType;
@@ -62,11 +62,11 @@ namespace Coictus.VFX
             prevTickModelMatrix = modelMatrix;
             scaleVelocity += scaleAcceleration - scaleResistance * scaleVelocity; //decrease expansion rate
             scale += scaleVelocity;
-            modelMatrix = Matrix4F.scale(new Vector3F(scale * scaleXModifyer, scale * scaleYModifyer, scale * scaleZModifyer)) * Matrix4F.rotate(new Vector3F((float)pitch, -(float)yaw, (float)roll)) * Matrix4F.translate(Vector3F.convert(pos));
+            modelMatrix = Matrix4.scale(new Vector3(scale * scaleXModifyer, scale * scaleYModifyer, scale * scaleZModifyer)) * Matrix4.rotate(new Vector3((float)pitch, -(float)yaw, (float)roll)) * Matrix4.translate(Vector3.convert(pos));
         }
 
         /*draws this vfx, can be overridden*/
-        public virtual void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Vector3F fogColor, int pass = 1)
+        public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColor, int pass = 1)
         {
             if (vfxModel != null && !removalFlag)
             {

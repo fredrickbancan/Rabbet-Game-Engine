@@ -15,43 +15,43 @@ namespace Coictus
         private ModelDrawable groundModel;
         private ModelDrawable wallsModel;
         private ModelDrawable skyboxModel;
-        private Vector3F skyColor;
-        private Vector3F fogColor;
+        private Vector3 skyColor;
+        private Vector3 fogColor;
         private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
         public Dictionary<int, Entity> entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
         public Dictionary<int, ICollider> entityColliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity
         public List<ICollider> worldColliders = new List<ICollider>();//list of colliders with no parent, ie, walls, ground planes.
         public List<VFXBase> vfxList = new List<VFXBase>();
-        private String wallTextureDir = ResourceHelper.getTextureFileDir("plasterwall.png"); 
+        private String wallTextureDir = ResourceUtil.getTextureFileDir("plasterwall.png"); 
 
 
         public World()
         {
-            fogColor = ColourF.lightBlossom.normalVector3F();
-            skyColor = ColourF.skyBlue.normalVector3F();
+            fogColor = Color.lightBlossom.normalVector3();
+            skyColor = Color.skyBlue.normalVector3();
             buildSkyBox();
             generateWorld();
         }
 
-        public void setSkyColor(Vector3F skyColor)
+        public void setSkyColor(Vector3 skyColor)
         {
             this.skyColor = skyColor;
         }
-        public void setFogColor(Vector3F skyColor)
+        public void setFogColor(Vector3 skyColor)
         {
             this.fogColor = skyColor;
         }
 
-        public Vector3F getSkyColor()
+        public Vector3 getSkyColor()
         {
             return skyColor;
-        }public Vector3F getFogColor()
+        }public Vector3 getFogColor()
         {
             return fogColor;
         }
 
         /*Loop through each entity and render them with a seperate draw call (INEFFICIENT)*/
-        public void drawEntities(Matrix4F viewMatrix, Matrix4F projectionMatrix)
+        public void drawEntities(Matrix4 viewMatrix, Matrix4 projectionMatrix)
         {
             foreach(KeyValuePair<int, Entity> ent in entities)
             {
@@ -63,7 +63,7 @@ namespace Coictus
         }
 
         /*Loop through each vfx and render them with a seperate draw call (INEFFICIENT)*/
-        public void drawVFX(Matrix4F viewMatrix, Matrix4F projectionMatrix, int pass = 1)
+        public void drawVFX(Matrix4 viewMatrix, Matrix4 projectionMatrix, int pass = 1)
         {
             foreach (VFXBase vfx in vfxList)
             {
@@ -82,13 +82,13 @@ namespace Coictus
         private void buildSkyBox()
         {
             Model[] temp = new Model[6];
-            temp[0] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(0, 180, 0), new Vector3F(0, 0, 0.5F));//posZ
-            temp[1] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(0, -90, 0), new Vector3F(-0.5F, 0, 0));//negX
-            temp[2] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(0, 90, 0), new Vector3F(0.5F, 0, 0));//posX
-            temp[3] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(0, 0, 0), new Vector3F(0, 0, -0.5F));//negZ
-            temp[4] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(-90, 0, 0), new Vector3F(0, 0.5F, 0));//top
-            temp[5] = QuadPrefab.getNewModel().transformVertices(new Vector3F(1, 1, 1), new Vector3F(90, 0, 0), new Vector3F(0, -0.5F, 0));//bottom
-            skyboxModel = QuadBatcher.batchQuadModels(temp, ResourceHelper.getShaderFileDir("SkyboxShader3D.shader"), QuadPrefab.getTextureDir());
+            temp[0] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(0, 180, 0), new Vector3(0, 0, 0.5F));//posZ
+            temp[1] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(0, -90, 0), new Vector3(-0.5F, 0, 0));//negX
+            temp[2] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(0, 90, 0), new Vector3(0.5F, 0, 0));//posX
+            temp[3] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(0, 0, 0), new Vector3(0, 0, -0.5F));//negZ
+            temp[4] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(-90, 0, 0), new Vector3(0, 0.5F, 0));//top
+            temp[5] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(90, 0, 0), new Vector3(0, -0.5F, 0));//bottom
+            skyboxModel = QuadBatcher.batchQuadModels(temp, ResourceUtil.getShaderFileDir("SkyboxShader3D.shader"), QuadPrefab.getTextureDir());
         }
 
         private void generateWorld()//creates the playground and world colliders
@@ -105,51 +105,51 @@ namespace Coictus
             {
                 for(int z = 0; z < 64; z++)
                 {
-                    unbatchedGroundQuads[x * 64 + z] = PlanePrefab.getNewModel().scaleVertices(new Vector3F(20,1,20)).scaleUV(new Vector2F(5F,5F)).translateVertices(new Vector3F((x-32)*20, groundHeight, (z-32)*20));
+                    unbatchedGroundQuads[x * 64 + z] = PlanePrefab.getNewModel().scaleVertices(new Vector3(20,1,20)).scaleUV(new Vector2(5F,5F)).translateVertices(new Vector3((x-32)*20, groundHeight, (z-32)*20));
                 }
             }
 
             //building the lump in middle of map, quads added after all the flat plane quads.
 
             //top face
-            unbatchedGroundQuads[4096] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3F(2,1,2)).translateVertices(new Vector3F(0, 1F, 0));
+            unbatchedGroundQuads[4096] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3(2,1,2)).translateVertices(new Vector3(0, 1F, 0));
 
             //negZ face
-            unbatchedGroundQuads[4097] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3F(2, 1, 1)).rotateVertices(new Vector3F(90,0,0)).translateVertices(new Vector3F(0, 0.5F, -1F)).setColor(new Vector4F(0.8F, 0.8F, 0.8F, 1.0F));//pseudoLighting
+            unbatchedGroundQuads[4097] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3(2, 1, 1)).rotateVertices(new Vector3(90,0,0)).translateVertices(new Vector3(0, 0.5F, -1F)).setColor(new Vector4(0.8F, 0.8F, 0.8F, 1.0F));//pseudoLighting
             
             //posZ face
-            unbatchedGroundQuads[4098] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3F(2, 1, 1)).rotateVertices(new Vector3F(-90,0,0)).translateVertices(new Vector3F(0, 0.5F, 1F)).setColor(new Vector4F(0.7F, 0.7F, 0.7F, 1.0F));
+            unbatchedGroundQuads[4098] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3(2, 1, 1)).rotateVertices(new Vector3(-90,0,0)).translateVertices(new Vector3(0, 0.5F, 1F)).setColor(new Vector4(0.7F, 0.7F, 0.7F, 1.0F));
 
             //negX face
-            unbatchedGroundQuads[4099] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3F(1, 1, 2)).rotateVertices(new Vector3F(0,0,-90)).translateVertices(new Vector3F(-1f, 0.5F, 0)).setColor(new Vector4F(0.9F, 0.9F, 0.9F, 1.0F));
+            unbatchedGroundQuads[4099] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3(1, 1, 2)).rotateVertices(new Vector3(0,0,-90)).translateVertices(new Vector3(-1f, 0.5F, 0)).setColor(new Vector4(0.9F, 0.9F, 0.9F, 1.0F));
 
             //posX face
-            unbatchedGroundQuads[4100] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3F(1, 1, 2)).rotateVertices(new Vector3F(0,0,90)).translateVertices(new Vector3F(1f, 0.5F, 0)).setColor(new Vector4F(0.65F, 0.65F, 0.65F, 1.0F));
+            unbatchedGroundQuads[4100] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3(1, 1, 2)).rotateVertices(new Vector3(0,0,90)).translateVertices(new Vector3(1f, 0.5F, 0)).setColor(new Vector4(0.65F, 0.65F, 0.65F, 1.0F));
             groundModel = QuadBatcher.batchQuadModels(unbatchedGroundQuads, PlanePrefab.getShaderDir(), PlanePrefab.getTextureDir()); 
 
 
             //build negZ wall
             for(int i = 0; i < 4; i++)
             {
-                unbatchedWallQuads[i] = QuadPrefab.getNewModel().scaleVertices(new Vector3F(playgroundWidth/4, wallHeight, 1)).scaleUV(new Vector2F(playgroundWidth / (wallHeight * 4), 1)).translateVertices(new Vector3F((-playgroundWidth/2) + ((playgroundWidth/4)/2) + ((playgroundWidth / 4) * i), groundHeight + wallHeight / 2, -playgroundLength/2)).setColor(new Vector4F(0.7F, 0.7F, 0.7F, 1.0F));
+                unbatchedWallQuads[i] = QuadPrefab.getNewModel().scaleVertices(new Vector3(playgroundWidth/4, wallHeight, 1)).scaleUV(new Vector2(playgroundWidth / (wallHeight * 4), 1)).translateVertices(new Vector3((-playgroundWidth/2) + ((playgroundWidth/4)/2) + ((playgroundWidth / 4) * i), groundHeight + wallHeight / 2, -playgroundLength/2)).setColor(new Vector4(0.7F, 0.7F, 0.7F, 1.0F));
             }
 
             //build posZ wall
             for (int i = 0; i < 4; i++)
             {
-                unbatchedWallQuads[ 4 + i] = QuadPrefab.getNewModel().scaleVertices(new Vector3F(playgroundWidth / 4, wallHeight, 1)).scaleUV(new Vector2F(playgroundWidth / (wallHeight * 4), 1)).rotateVertices(new Vector3F(0, 180, 0)).translateVertices(new Vector3F((playgroundWidth / 2) - ((playgroundWidth / 4) / 2) - ((playgroundWidth / 4) * i), groundHeight + wallHeight / 2, playgroundLength / 2)).setColor(new Vector4F(0.8F, 0.8F, 0.8F, 1.0F)); ;
+                unbatchedWallQuads[ 4 + i] = QuadPrefab.getNewModel().scaleVertices(new Vector3(playgroundWidth / 4, wallHeight, 1)).scaleUV(new Vector2(playgroundWidth / (wallHeight * 4), 1)).rotateVertices(new Vector3(0, 180, 0)).translateVertices(new Vector3((playgroundWidth / 2) - ((playgroundWidth / 4) / 2) - ((playgroundWidth / 4) * i), groundHeight + wallHeight / 2, playgroundLength / 2)).setColor(new Vector4(0.8F, 0.8F, 0.8F, 1.0F)); ;
             }
 
             //build negX wall
             for (int i = 0; i < 4; i++)
             {
-                unbatchedWallQuads[8 + i] = QuadPrefab.getNewModel().scaleVertices(new Vector3F(playgroundLength / 4, wallHeight, 1)).scaleUV(new Vector2F(playgroundLength / (wallHeight * 4), 1)).rotateVertices(new Vector3F(0, -90, 0)).translateVertices(new Vector3F(-playgroundWidth / 2, groundHeight + wallHeight / 2, (-playgroundLength / 2) + ((playgroundLength / 4) / 2) + ((playgroundLength / 4) * i))).setColor(new Vector4F(0.65F, 0.65F, 0.65F, 1.0F));
+                unbatchedWallQuads[8 + i] = QuadPrefab.getNewModel().scaleVertices(new Vector3(playgroundLength / 4, wallHeight, 1)).scaleUV(new Vector2(playgroundLength / (wallHeight * 4), 1)).rotateVertices(new Vector3(0, -90, 0)).translateVertices(new Vector3(-playgroundWidth / 2, groundHeight + wallHeight / 2, (-playgroundLength / 2) + ((playgroundLength / 4) / 2) + ((playgroundLength / 4) * i))).setColor(new Vector4(0.65F, 0.65F, 0.65F, 1.0F));
             }
 
             //build posX wall
             for (int i = 0; i < 4; i++)
             {
-                unbatchedWallQuads[12 + i] = QuadPrefab.getNewModel().scaleVertices(new Vector3F(playgroundLength / 4, wallHeight, 1)).scaleUV(new Vector2F(playgroundLength / (wallHeight * 4), 1)).rotateVertices(new Vector3F(0, 90, 0)).translateVertices(new Vector3F(playgroundWidth / 2, groundHeight + wallHeight / 2, (playgroundLength / 2) - ((playgroundLength / 4) / 2) - ((playgroundLength / 4) * i))).setColor(new Vector4F(0.9F, 0.9F, 0.9F, 1.0F));
+                unbatchedWallQuads[12 + i] = QuadPrefab.getNewModel().scaleVertices(new Vector3(playgroundLength / 4, wallHeight, 1)).scaleUV(new Vector2(playgroundLength / (wallHeight * 4), 1)).rotateVertices(new Vector3(0, 90, 0)).translateVertices(new Vector3(playgroundWidth / 2, groundHeight + wallHeight / 2, (playgroundLength / 2) - ((playgroundLength / 4) / 2) - ((playgroundLength / 4) * i))).setColor(new Vector4(0.9F, 0.9F, 0.9F, 1.0F));
             }
 
 

@@ -49,7 +49,7 @@ namespace Coictus.Models
         {
             Vertex[] verticesCopy = new Vertex[vertices.Length];
             Array.Copy(vertices, verticesCopy, vertices.Length);
-            return new Model(verticesCopy).translateVertices(new Vector3F(0, 0.5F, 0));
+            return new Model(verticesCopy).translateVertices(new Vector3(0, 0.5F, 0));
         }
         public static ModelDrawable getNewModelDrawable()
         {
@@ -57,12 +57,12 @@ namespace Coictus.Models
             UInt32[] indicesCopy = new uint[indices.Length];
             Array.Copy(vertices, verticesCopy, vertices.Length);
             Array.Copy(indices, indicesCopy, indices.Length);
-            return (ModelDrawable)new ModelDrawable(getShaderDir(), new Texture(), verticesCopy, indicesCopy).translateVertices(new Vector3F(0, 0.5F, 0));
+            return (ModelDrawable)new ModelDrawable(getShaderDir(), new Texture(), verticesCopy, indicesCopy).translateVertices(new Vector3(0, 0.5F, 0));
         }
 
         public static String getShaderDir()
         {
-            return ResourceHelper.getShaderFileDir("ColorTexture3D.shader");
+            return ResourceUtil.getShaderFileDir("ColorTexture3D.shader");
         }
 
         public static String getTextureDir()

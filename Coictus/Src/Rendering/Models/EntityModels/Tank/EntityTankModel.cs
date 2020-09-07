@@ -1,4 +1,4 @@
-﻿using Coictus.FredsMath;
+﻿using OpenTK;
 using System;
 
 namespace Coictus.Models
@@ -9,21 +9,21 @@ namespace Coictus.Models
         private ModelDrawable tankWheelModel;
         private ModelDrawable tankBodyModel;
         private ModelDrawable tankBarrelModel;
-        private Matrix4F prevTickTankWheelsModelMatrix;//previous tick model matrices for interpolating each part of the tank model.
-        private Matrix4F prevTickTankBodyModelMatrix;
-        private Matrix4F prevTickTankBarrelModelMatrix;
-        private Matrix4F tankWheelsModelMatrix = new Matrix4F(1.0F);
-        private Matrix4F tankBodyModelMatrix = new Matrix4F(1.0F);
-        private Matrix4F tankBarrelModelMatrix = new Matrix4F(1.0F);
-        private String shaderDir = ResourceHelper.getShaderFileDir("ColorTextureFog3D.shader");
-        private String textureDir = ResourceHelper.getTextureFileDir("Camo.png");
+        private Matrix4 prevTickTankWheelsModelMatrix;//previous tick model matrices for interpolating each part of the tank model.
+        private Matrix4 prevTickTankBodyModelMatrix;
+        private Matrix4 prevTickTankBarrelModelMatrix;
+        private Matrix4 tankWheelsModelMatrix = new Matrix4(1.0F);
+        private Matrix4 tankBodyModelMatrix = new Matrix4(1.0F);
+        private Matrix4 tankBarrelModelMatrix = new Matrix4(1.0F);
+        private String shaderDir = ResourceUtil.getShaderFileDir("ColorTextureFog3D.shader");
+        private String textureDir = ResourceUtil.getTextureFileDir("Camo.png");
 
         public EntityTankModel(EntityTank parent)//dont want to call the base constructor for this model
         {
             this.parent = parent;
-            tankWheelModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceHelper.getOBJFileDir(@"Tank\TankWheels.obj"));
-            tankBodyModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceHelper.getOBJFileDir(@"Tank\TankBody.obj"));
-            tankBarrelModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceHelper.getOBJFileDir(@"Tank\TankBarrel.obj"));
+            tankWheelModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceUtil.getOBJFileDir(@"Tank\TankWheels.obj"));
+            tankBodyModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceUtil.getOBJFileDir(@"Tank\TankBody.obj"));
+            tankBarrelModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceUtil.getOBJFileDir(@"Tank\TankBarrel.obj"));
             updateModel();
             updateModel();
         }
@@ -39,14 +39,14 @@ namespace Coictus.Models
             //body yaw  is also child of camera yaw, which means it has to be additionally rotated by getBodyYaw
             //barrel pitch is also child of camera pitch, which means it has to be additionally rotated by getBarrelPitch
             //barrel also needs to be translated to a specific spot on the body model
-            tankWheelsModelMatrix = Matrix4F.scale(new Vector3F(0.5F, 0.5F, 0.5F)) * Matrix4F.rotate(new Vector3F((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) * Matrix4F.translate(Vector3F.convert(parent.getPosition()));
-            tankBodyModelMatrix = Matrix4F.rotate(new Vector3F(0, 90 + (float)parent.getYaw() - (float)parent.getBodyYaw, 0)) * tankWheelsModelMatrix;
-            tankBarrelModelMatrix = Matrix4F.rotate(new Vector3F((float)parent.getBarrelPitch, 0, 0)) * Matrix4F.translate(new Vector3F(0, 1.7F, -2F)) * tankBodyModelMatrix;
+            tankWheelsModelMatrix = Matrix4.scale(new Vector3(0.5F, 0.5F, 0.5F)) * Matrix4.rotate(new Vector3((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) * Matrix4.translate(Vector3.convert(parent.getPosition()));
+            tankBodyModelMatrix = Matrix4.rotate(new Vector3(0, 90 + (float)parent.getYaw() - (float)parent.getBodyYaw, 0)) * tankWheelsModelMatrix;
+            tankBarrelModelMatrix = Matrix4.rotate(new Vector3((float)parent.getBarrelPitch, 0, 0)) * Matrix4.translate(new Vector3(0, 1.7F, -2F)) * tankBodyModelMatrix;
 
         }
 
         /*Called every frame by base*/
-        public override void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Vector3F fogColor)
+        public override void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColor)
         {
             tankWheelModel.draw(viewMatrix, projectionMatrix, prevTickTankWheelsModelMatrix + (tankWheelsModelMatrix - prevTickTankWheelsModelMatrix) * TicksAndFps.getPercentageToNextTick(), fogColor);
             tankBodyModel.draw(viewMatrix, projectionMatrix, prevTickTankBodyModelMatrix + (tankBodyModelMatrix - prevTickTankBodyModelMatrix) * TicksAndFps.getPercentageToNextTick(), fogColor);
@@ -63,7 +63,7 @@ namespace Coictus.Models
             return tankWheelModel != null && tankBodyModel != null && tankBarrelModel != null;
         }
 
-        public Matrix4F getBarrelModelMatrix()
+        public Matrix4 getBarrelModelMatrix()
         {
             return tankBarrelModelMatrix;
         }

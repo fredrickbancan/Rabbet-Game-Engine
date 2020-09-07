@@ -15,7 +15,7 @@ namespace Coictus.SubRendering.GUI
         private ModelDrawableDynamic screenTextModel;
         private int preHideWindowWidth;
         private int preHideWindowHeight;
-        private Font screenFont;
+        private FontFace screenFont;
         private bool wholeScreenHidden = false;
         private UInt32 maxCharCount;
         public String screenName = "";

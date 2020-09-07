@@ -1,8 +1,8 @@
 ﻿using Coictus.Debugging;
-using Coictus.FredsMath;
 using Coictus.GUI;
 using Coictus.GUI.Text;
 using System;
+using System.Drawing;
 
 namespace Coictus
 {
@@ -25,20 +25,20 @@ namespace Coictus
         public static void init()
         {
             GUIHandler.addNewGUIScreen(mainGUIName, "Trebuchet");
-            GUIHandler.addTextPanelToGUI(mainGUIName, "flying", new GUITextPanel(new TextFormat().setAlign(TextAlign.RIGHT).setLine("Flying: OFF").setPanelColor(ColourF.darkRed)));
-            GUIHandler.addTextPanelToGUI(mainGUIName, "label", new GUITextPanel(new TextFormat(0, 0.97F).setLine("Coictus Version " + Application.version).setPanelColor(ColourF.black)));
-            GUIHandler.addTextPanelToGUI(mainGUIName, "help", new GUITextPanel(new TextFormat(0.5F, 0).setAlign(TextAlign.CENTER).setLines(new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'V' to toggle flying. Tap 'E' to release mouse.", "Walk up to tank and press F to drive, Left click to fire.", "Press 'ESC' to close game.", "Press F3 to show/hide debug menu.", "press F4 to enable/disable drawing hitboxes." }).setFontSize(0.015F).setPanelColor(ColourF.black)));
+            GUIHandler.addTextPanelToGUI(mainGUIName, "flying", new GUITextPanel(new TextFormat().setAlign(TextAlign.RIGHT).setLine("Flying: OFF").setPanelColor(Color.darkRed)));
+            GUIHandler.addTextPanelToGUI(mainGUIName, "label", new GUITextPanel(new TextFormat(0, 0.97F).setLine("Coictus Version " + Application.version).setPanelColor(Color.black)));
+            GUIHandler.addTextPanelToGUI(mainGUIName, "help", new GUITextPanel(new TextFormat(0.5F, 0).setAlign(TextAlign.CENTER).setLines(new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'V' to toggle flying. Tap 'E' to release mouse.", "Walk up to tank and press F to drive, Left click to fire.", "Press 'ESC' to close game.", "Press F3 to show/hide debug menu.", "press F4 to enable/disable drawing hitboxes." }).setFontSize(0.015F).setPanelColor(Color.black)));
             GUIHandler.addGUIComponentToGUI(mainGUIName, "crossHair", new GUICrosshair());
 
             /*TEMPORARY, just for arcade stuff*/
-            GUIHandler.addTextPanelToGUI(mainGUIName, "directHit", new GUITextPanel(new TextFormat(0.5F, 0.64F).setAlign(TextAlign.CENTER).setLine("Direct Hit!").setPanelColor(ColourF.flame)));
+            GUIHandler.addTextPanelToGUI(mainGUIName, "directHit", new GUITextPanel(new TextFormat(0.5F, 0.64F).setAlign(TextAlign.CENTER).setLine("Direct Hit!").setPanelColor(Color.flame)));
             GUIHandler.hideTextPanelInGUI(mainGUIName, "directHit");
 
-            GUIHandler.addTextPanelToGUI(mainGUIName, "airShot", new GUITextPanel(new TextFormat(0.5F, 0.67F).setAlign(TextAlign.CENTER).setLine("AIR SHOT!").setPanelColor(ColourF.red)));
+            GUIHandler.addTextPanelToGUI(mainGUIName, "airShot", new GUITextPanel(new TextFormat(0.5F, 0.67F).setAlign(TextAlign.CENTER).setLine("AIR SHOT!").setPanelColor(Color.red)));
             GUIHandler.hideTextPanelInGUI(mainGUIName, "airShot");
 
-            GUIHandler.addTextPanelToGUI(mainGUIName, "directHitCount", new GUITextPanel(new TextFormat(0.1F, 0.15F).setAlign(TextAlign.RIGHT).setLine("Direct Hits: " + 0).setPanelColor(ColourF.flame)));
-            GUIHandler.addTextPanelToGUI(mainGUIName, "airShotCount", new GUITextPanel(new TextFormat(0.1F, 0.18F).setAlign(TextAlign.RIGHT).setLine("Air Shots: " + 0).setPanelColor(ColourF.red)));
+            GUIHandler.addTextPanelToGUI(mainGUIName, "directHitCount", new GUITextPanel(new TextFormat(0.1F, 0.15F).setAlign(TextAlign.RIGHT).setLine("Direct Hits: " + 0).setPanelColor(Color.flame)));
+            GUIHandler.addTextPanelToGUI(mainGUIName, "airShotCount", new GUITextPanel(new TextFormat(0.1F, 0.18F).setAlign(TextAlign.RIGHT).setLine("Air Shots: " + 0).setPanelColor(Color.red)));
 
             GUIHandler.addTextPanelToGUI(MainGUI.mainGUIName, fpsPanelName, new GUITextPanel(new TextFormat().setLine("0")));
 
@@ -71,11 +71,11 @@ namespace Coictus
             }
             if (GameInstance.get.thePlayer.getIsFlying())
             {
-                GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "flying").setPanelColor(ColourF.darkGreen).setLine("Flying: ON");
+                GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "flying").setPanelColor(Color.darkGreen).setLine("Flying: ON");
             }
             else
             {
-                GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "flying").setPanelColor(ColourF.darkRed).setLine("Flying: OFF");
+                GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "flying").setPanelColor(Color.darkRed).setLine("Flying: OFF");
             }
 
             GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "directHitCount").setLine("Direct Hits: " + directHitCounter);
@@ -127,15 +127,15 @@ namespace Coictus
                 String fpsString = fps.ToString();
                 if (fps < 75)
                 {
-                    GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsString).setPanelColor(ColourF.red);
+                    GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsString).setPanelColor(Color.red);
                 }
                 else if (fps < 120)
                 {
-                    GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsString).setPanelColor(ColourF.yellow);
+                    GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsString).setPanelColor(Color.yellow);
                 }
                 else
                 {
-                    GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsString).setPanelColor(ColourF.green);
+                    GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsString).setPanelColor(Color.green);
                 }
             }
             else

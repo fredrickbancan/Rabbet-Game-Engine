@@ -5,9 +5,9 @@ namespace Coictus
 {
     public struct Vertex
     {
-        public Vector3F pos;
-        public Vector4F color;
-        public Vector2F uv;
+        public Vector3 pos;
+        public Vector4 color;
+        public Vector2 uv;
 
         /*these are only in bytes to save memory. They shouldnt ever get even close to 256*/
         public static readonly byte positionLength = 3;
@@ -33,7 +33,7 @@ namespace Coictus
             uv.x = u;
             uv.y = v;
         }
-        public Vertex(Vector3F pos, Vector4F color, Vector2F uv)
+        public Vertex(Vector3 pos, Vector4 color, Vector2 uv)
         {
             this.pos = pos;
             this.color = color;

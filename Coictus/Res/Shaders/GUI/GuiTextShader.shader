@@ -1,23 +1,23 @@
 ﻿#shader vertex
 #version 330 core
 layout(location = 0) in vec4 position;
-layout(location = 1) in vec4 colour;
+layout(location = 1) in vec4 Color;
 layout(location = 2) in vec2 texCoord;
 
-out vec4 vcolour;
+out vec4 vColor;
 out vec2 fTexCoord;
 
 void main()
 {
 	gl_Position = position;
-	vcolour = colour;
+	vColor = Color;
 	fTexCoord = texCoord;
 }
 
 #shader fragment
 #version 330 core
 out vec4 color;
-in vec4 vcolour;
+in vec4 vColor;
 in vec2 fTexCoord;
 
 uniform sampler2D uTexture;
@@ -28,6 +28,6 @@ void main()
 	if (textureColor.a < 0.01)
 		discard;
 	gl_FragDepth = -1;//render on top
-	vec4 vcolourChanged = vcolour;
-	color = vec4(vcolourChanged.rgb, 1.0);
+	vec4 vColorChanged = vColor;
+	color = vec4(vColorChanged.rgb, 1.0);
 }

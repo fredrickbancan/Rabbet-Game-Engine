@@ -85,7 +85,7 @@ namespace Coictus
                 TicksAndFps.unPause();
             }
         }
-        public Matrix4F getViewMatrix()
+        public Matrix4 getViewMatrix()
         {
             return camera.getViewMatrix();
         }

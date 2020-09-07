@@ -7,8 +7,8 @@ namespace Coictus.VFX
     /*Base class for any VFX using point particles*/
     public class VFXPointParticles : VFXBase
     {
-        private static String defaultShaderDir = ResourceHelper.getShaderFileDir(@"VFX\PointParticleFog.shader");
-        protected ColourF pointColor;
+        private static String defaultShaderDir = ResourceUtil.getShaderFileDir(@"VFX\PointParticleFog.shader");
+        protected Color pointColor;
         protected float randomPointPositionSpread;//the maximum distance between points when randomizing a point cloud (e.g, a puff of smoke)
         protected float pointRadius;
         protected bool randomBrightness = false;
@@ -18,7 +18,7 @@ namespace Coictus.VFX
        
 
         /*this constructor is for creating a point particle based VFX which does not create a random point cloud. maybe you will want to construct the points in a specific manner with colors or use a model.*/
-        public VFXPointParticles(Vector3D pos, ColourF color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
+        public VFXPointParticles(Vector3D pos, Color color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
         {
             colorAlpha = alpha;
             pointColor = color;
@@ -27,7 +27,7 @@ namespace Coictus.VFX
         }
 
         /*this constructor is for creating a randomized particle cloud at the position using the provided parameters*/
-        public VFXPointParticles(Vector3D pos, ColourF color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
+        public VFXPointParticles(Vector3D pos, Color color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
         {
             colorAlpha = alpha;
             this.randomBrightness = randomBrightness;
@@ -47,7 +47,7 @@ namespace Coictus.VFX
             Vertex[] points = new Vertex[particleCount];
             for(int i = 0; i < particleCount; i++)
             {
-                points[i] = new Vertex(Vector3F.convert(getRandomParticleOffset()), getPointColor(), Vector2F.zero);
+                points[i] = new Vertex(Vector3.convert(getRandomParticleOffset()), getPointColor(), Vector2.zero);
             }
 
             vfxModel = new ModelDrawable(defaultShaderDir, "none", points);
@@ -58,20 +58,20 @@ namespace Coictus.VFX
             return Vector3D.normalize(new Vector3D( 0.5 - GameInstance.rand.NextDouble(), 0.5 - GameInstance.rand.NextDouble(), 0.5 - GameInstance.rand.NextDouble())) * (randomPointPositionSpread / 2 +( randomPointPositionSpread / 4 + randomPointPositionSpread / 2 *  GameInstance.rand.NextDouble())  );
         }
 
-        protected Vector4F getPointColor()
+        protected Vector4 getPointColor()
         {
             if(randomBrightness)
             {
-                Vector4F colorVec = pointColor.normalVector4F();
+                Vector4 colorVec = pointColor.normalVector4();
                 float randomBrightnessAmount = 0.2F - 0.4F * (float)GameInstance.rand.NextDouble();
-                return new Vector4F(colorVec.r + randomBrightnessAmount, colorVec.g + randomBrightnessAmount, colorVec.b + randomBrightnessAmount, colorAlpha);
+                return new Vector4(colorVec.r + randomBrightnessAmount, colorVec.g + randomBrightnessAmount, colorVec.b + randomBrightnessAmount, colorAlpha);
             }
-            Vector4F nonRandBrightColor =  pointColor.normalVector4F();
+            Vector4 nonRandBrightColor =  pointColor.normalVector4();
             nonRandBrightColor.a = colorAlpha;
             return nonRandBrightColor;
         }
 
-        public override void draw(Matrix4F viewMatrix, Matrix4F projectionMatrix, Vector3F fogColor, int pass = 1)
+        public override void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColor, int pass = 1)
         {
             if (vfxModel != null && !removalFlag)
             {

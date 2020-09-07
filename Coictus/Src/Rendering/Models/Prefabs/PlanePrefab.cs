@@ -36,12 +36,12 @@ namespace Coictus.Models
 
         public static String getShaderDir()
         {
-            return ResourceHelper.getShaderFileDir("ColorTextureFog3D.shader");
+            return ResourceUtil.getShaderFileDir("ColorTextureFog3D.shader");
         }
 
         public static String getTextureDir()
         {
-            return ResourceHelper.getTextureFileDir("sand.png");
+            return ResourceUtil.getTextureFileDir("sand.png");
         }
     }
 }

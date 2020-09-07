@@ -1,16 +1,17 @@
-﻿using Coictus.FredsMath;
-using Coictus.Models;
+﻿using Coictus.Models;
 using Coictus.SubRendering;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 
 namespace Coictus.Debugging
 {
     /*This class handles the rendering of hitboxes for debugging purposes.*/
     public static class HitboxRenderer
     {
-        private static String aabbPlaneShaderDir = ResourceHelper.getShaderFileDir("Color3D.shader");
+        private static String aabbPlaneShaderDir = ResourceUtil.getShaderFileDir("Color3D.shader");
         private static ModelDrawable aabbModel;
         private static ModelDrawable sphereModel;
         private static ModelDrawable planeModel;
@@ -29,15 +30,15 @@ namespace Coictus.Debugging
 
             for(int i = 0; i < boxSides.Length; i++)
             {
-                boxSides[i] = QuadPrefab.getNewModel().setColor(ColourF.majenta);
+                boxSides[i] = QuadPrefab.getNewModel().setColor(Color.Magenta);
             }
             
-            boxSides[0].rotateVertices(new Vector3F(0, 180, 0)).translateVertices(new Vector3F(0, 0, -0.5F));//negZ face
-            boxSides[1].translateVertices(new Vector3F(0, 0, 0.5F));//posZ face
-            boxSides[2].rotateVertices(new Vector3F(0, 90, 0)).translateVertices(new Vector3F(-0.5F, 0, 0));//negX face
-            boxSides[3].rotateVertices(new Vector3F(0, -90, 0)).translateVertices(new Vector3F(0.5F, 0, 0));//posX face
-            boxSides[4].rotateVertices(new Vector3F(-90, 0, 0)).translateVertices(new Vector3F(0, -0.5F, 0));//negY face
-            boxSides[5].rotateVertices(new Vector3F(90, 0, 0)).translateVertices(new Vector3F(0, 0.5F, 0));//posY face
+            boxSides[0].rotateVertices(new Vector3(0, 180, 0)).translateVertices(new Vector3(0, 0, -0.5F));//negZ face
+            boxSides[1].translateVertices(new Vector3(0, 0, 0.5F));//posZ face
+            boxSides[2].rotateVertices(new Vector3(0, 90, 0)).translateVertices(new Vector3(-0.5F, 0, 0));//negX face
+            boxSides[3].rotateVertices(new Vector3(0, -90, 0)).translateVertices(new Vector3(0.5F, 0, 0));//posX face
+            boxSides[4].rotateVertices(new Vector3(-90, 0, 0)).translateVertices(new Vector3(0, -0.5F, 0));//negY face
+            boxSides[5].rotateVertices(new Vector3(90, 0, 0)).translateVertices(new Vector3(0, 0.5F, 0));//posY face
 
             aabbModel = QuadBatcher.batchQuadModels(boxSides, aabbPlaneShaderDir, "none");
             aabbModel.setIndices(LineBatcher.getIndicesForLineQuadCount(6));
@@ -79,7 +80,7 @@ namespace Coictus.Debugging
 
         public static void renderBox(AABBCollider box)//TODO: VERY inefficient. Need to created either a dynamic model or instancing to cut down on draws. Avoiding calcualting the model matrix each frame would also help.
         {
-            Matrix4F modelMatrix = Matrix4F.scale(new Vector3F((float)box.extentX*2, (float)box.extentY * 2, (float)box.extentZ * 2)) * Matrix4F.translate(Vector3F.convert(box.centerVec));
+            Matrix4 modelMatrix = Matrix4.CreateScale(new Vector3((float)box.extentX*2, (float)box.extentY * 2, (float)box.extentZ * 2)) * Matrix4.CreateTranslation(Vector3.convert(box.centerVec));
 
             aabbModel.draw(GameInstance.get.thePlayer.getViewMatrix(), Renderer.projMatrix, modelMatrix, PrimitiveType.Lines);
         }

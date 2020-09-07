@@ -10,7 +10,7 @@ namespace Coictus
         private double pitch, yaw, externalYawAmount;//externalYawAmount is a value of how much the camera yaw should rotate in between ticks, affected by methods in the game loop
         private int mouseDeltaX;
         private int mouseDeltaY;
-        private Matrix4F viewMatrix;
+        private Matrix4 viewMatrix;
         private Vector3D camUpVector;
         private Vector3D up;
         private Vector3D camFrontVector;
@@ -32,7 +32,7 @@ namespace Coictus
             camRightVector = Vector3D.normalize(Vector3D.cross(up, camDirectionVector));
             camFrontVector = new Vector3D(0.0F, 0.0F, -1.0F);
             camUpVector = Vector3D.cross(camDirectionVector, camRightVector);
-            viewMatrix = Matrix4F.lookAt(childEntity.getEyePosition(), camTargetVector, up);
+            viewMatrix = Matrix4.lookAt(childEntity.getEyePosition(), camTargetVector, up);
         }
 
         /*Called every FRAME (not tick), will update view matrix depending on interpolated player position.
@@ -68,7 +68,7 @@ namespace Coictus
             camRightVector = Vector3D.normalize(Vector3D.cross(up, camDirectionVector));
             camUpVector = Vector3D.cross(camDirectionVector, camRightVector);
             Vector3D parentLerpPos = child.getLerpEyePos();
-            viewMatrix = Matrix4F.lookAt(parentLerpPos, parentLerpPos + camFrontVector, camUpVector);
+            viewMatrix = Matrix4.lookAt(parentLerpPos, parentLerpPos + camFrontVector, camUpVector);
         }
 
         public void onTick()
@@ -92,7 +92,7 @@ namespace Coictus
             mouseDeltaX = mouseState.X - GameInstance.windowCenterX;
             mouseDeltaY = mouseState.Y - GameInstance.windowCenterY;
         }
-        public Matrix4F getViewMatrix()
+        public Matrix4 getViewMatrix()
         {
             return this.viewMatrix;
         }

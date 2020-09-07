@@ -10,7 +10,7 @@ namespace Coictus.SubRendering
     {
         private static ModelDrawable screenQuad;
         private static Shader screenShader;
-        private static readonly String screenShaderDir = ResourceHelper.getShaderFileDir("Offscreen.shader");
+        private static readonly String screenShaderDir = ResourceUtil.getShaderFileDir("Offscreen.shader");
         private static int texColorBuffer;
         private static int depthBuffer;
         private static int frameBuffer;
@@ -58,7 +58,7 @@ namespace Coictus.SubRendering
                 Application.debug("Offscreen frame buffer successfully initialized!");
             }
 
-            screenQuad = (ModelDrawable)QuadPrefab.getNewModelDrawable().scaleVertices(new Vector3F(2.0F, 2.0F, 1.0F));//scale quad to fit screen
+            screenQuad = (ModelDrawable)QuadPrefab.getNewModelDrawable().scaleVertices(new Vector3(2.0F, 2.0F, 1.0F));//scale quad to fit screen
             screenQuad.setNewShader(screenShader);
         }
 

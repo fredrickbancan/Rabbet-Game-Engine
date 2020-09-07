@@ -5,7 +5,7 @@ using System.IO;
 namespace Coictus.SubRendering.GUI.Text
 {
     /*This class is responsable for reading the .fnt files for each font, and generating a dictionary of characters for the text renderers to access.*/
-    public class Font
+    public class FontFace
     {
         private bool successfull = true;
         private String debugDir;
@@ -26,13 +26,13 @@ namespace Coictus.SubRendering.GUI.Text
         private Dictionary<byte, Character> finalFontData = new Dictionary<byte, Character>();
         private Dictionary<String, String> lineData = new Dictionary<String, String>();
         private StreamReader reader;
-        public Font(String fontName)
+        public FontFace(String fontName)
         {
-            debugDir = ResourceHelper.getFontFileDir(fontName + ".fnt");
+            debugDir = ResourceUtil.getFontFileDir(fontName + ".fnt");
             this.fontName = fontName;
             try
             {
-                reader = new StreamReader(ResourceHelper.getFontFileDir(fontName + ".fnt"));
+                reader = new StreamReader(ResourceUtil.getFontFileDir(fontName + ".fnt"));
             }
             catch(Exception e)
             {

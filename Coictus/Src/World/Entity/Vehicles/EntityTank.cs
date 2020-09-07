@@ -73,7 +73,7 @@ namespace Coictus
 
         private Vector3D getMuzzleLocation()
         {
-            Matrix4F barrelLengthTranslationMatrix = Matrix4F.translate(new Vector3F(0, 0, -(float)barrelLength)) * ((EntityTankModel)entityModel).getBarrelModelMatrix();
+            Matrix4 barrelLengthTranslationMatrix = Matrix4.translate(new Vector3(0, 0, -(float)barrelLength)) * ((EntityTankModel)entityModel).getBarrelModelMatrix();
             Vector3D result = new Vector3D();
             result.x += barrelLengthTranslationMatrix.row3.x;
             result.y += barrelLengthTranslationMatrix.row3.y;

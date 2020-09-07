@@ -1,20 +1,21 @@
-﻿using Coictus.FredsMath;
-using Coictus.Models;
+﻿using Coictus.Models;
 using Coictus.SubRendering.GUI.Text;
+using OpenTK;
 using System;
+using System.Drawing;
 
 namespace Coictus.GUI.Text
 {
     public class TextFormat// a simle class for submitting format options for a text panel
     {
-        public Vector2F panelPos = Vector2F.zero; // position of the top left corner of this panel
-        public Vector2F panelPixelPos = Vector2F.zero; // position of the top left corner of this panel
-        public Vector4F panelColour = ColourF.white.normalVector4F();
+        public Vector2 panelPos = Vector2.Zero; // position of the top left corner of this panel
+        public Vector2 panelPixelPos = Vector2.Zero; // position of the top left corner of this panel
+        public Vector4 panelColour = MathUtil.colorToNormalVec4(Color.White);
         public TextAlign alignment = TextAlign.LEFT;
         public int screenEdgePadding = TextUtil.defaultScreenEdgePadding;
         public String[] lines = new String[] { "Sample Text" };
         public float fontSize = TextUtil.defaultFontSize;
-        public Font font = null;
+        public FontFace font = null;
 
         public TextFormat()
         {
@@ -23,7 +24,7 @@ namespace Coictus.GUI.Text
 
         public TextFormat(float xPosFromLeft, float yPosFromTop)
         {
-            panelPos = new Vector2F(xPosFromLeft, yPosFromTop);
+            panelPos = new Vector2(xPosFromLeft, yPosFromTop);
         }
 
         #region builderMethods
@@ -42,9 +43,9 @@ namespace Coictus.GUI.Text
             lines = new string[] { line };
             return this;
         }
-        public TextFormat setPanelColor(ColourF color)
+        public TextFormat setPanelColor(Color color)
         {
-            panelColour = color.normalVector4F();
+            panelColour = MathUtil.colorToNormalVec4(color);
             return this;
         }
         public TextFormat setFontSize(float size)
@@ -75,8 +76,8 @@ namespace Coictus.GUI.Text
 
         public void buildOrRebuild()
         {
-            format.panelPixelPos.x = format.panelPos.x * GameInstance.gameWindowWidth;
-            format.panelPixelPos.y = format.panelPos.y * GameInstance.gameWindowHeight;
+            format.panelPixelPos.X = format.panelPos.X * GameInstance.gameWindowWidth;
+            format.panelPixelPos.Y = format.panelPos.Y * GameInstance.gameWindowHeight;
             this.models = TextModelBuilder2D.convertStringArrayToModelArray(format.lines, format.font, format.panelColour, format.panelPixelPos, format.fontSize * GameInstance.dpiScale, format.screenEdgePadding, format.alignment);
         }
 
@@ -119,9 +120,9 @@ namespace Coictus.GUI.Text
             format.lines = new string[] { line };
             return this;
         }
-        public GUITextPanel setPanelColor(ColourF color)
+        public GUITextPanel setPanelColor(Color color)
         {
-            format.panelColour = color.normalVector4F();
+            format.panelColour = color.normalVector4();
             return this;
         }
         public GUITextPanel setFontSize(float size)

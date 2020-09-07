@@ -1,6 +1,7 @@
-﻿using System;
+﻿using OpenTK;
+using System.Drawing;
 
-namespace Coictus.FredsMath
+namespace Coictus
 {
     static class MathUtil
     {
@@ -39,21 +40,22 @@ namespace Coictus.FredsMath
 
         public static double hypotenuse(double a, double b)
         {
-            return Math.Sqrt(a*a + b*b);
+            return System.Math.Sqrt(a * a + b * b);
         }
 
         public static double max3(double a, double b, double c)
         {
-            if(a >= b && a >= c)
+            if (a >= b && a >= c)
             {
                 return a;
             }
-            if(b >= a && b >= c)
+            if (b >= a && b >= c)
             {
                 return b;
             }
             return c;
         }
+
         public static double min3(double a, double b, double c)
         {
             if (a <= b && a <= c)
@@ -91,6 +93,17 @@ namespace Coictus.FredsMath
             }
             return f;
         }
-    
+
+        /*Returns a vector 4 with the values of the color normalized from 0 to 1, format: RGBA*/
+        public static Vector4 colorToNormalVec4(Color color)
+        {
+            return new Vector4(normalize(0, 255, color.R), normalize(0, 255, color.G), normalize(0, 255, color.B), normalize(0, 255, color.A));
+        }
+
+        /*Returns a vector 3 with the values of the color normalized from 0 to 1, format: RGB*/
+        public static Vector3 colorToNormalVec3(Color color)
+        {
+            return new Vector3(normalize(0, 255, color.R), normalize(0, 255, color.G), normalize(0, 255, color.B));
+        }
     }
 }

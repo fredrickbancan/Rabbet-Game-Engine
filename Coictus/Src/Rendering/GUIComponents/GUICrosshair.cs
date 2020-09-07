@@ -14,20 +14,20 @@ namespace Coictus.GUI
       crosshair texture will be gotten.*/
     public class GUICrosshair : GUIScreenComponent
     {
-        private static String shaderDir = ResourceHelper.getShaderFileDir(@"GUI\GuiStencilShader.shader");
+        private static String shaderDir = ResourceUtil.getShaderFileDir(@"GUI\GuiStencilShader.shader");
         private Texture crosshairTexture;
         private float texutrePixelWidth = 0F;
         private float texutrePixelHeight = 0F;
-        private ColourF crosshairColor = ColourF.black;
+        private Color crosshairColor = Color.black;
 
-        public GUICrosshair(ColourF color,float crosshairSize = 2.0F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2F(0.5F, 0.5F))
+        public GUICrosshair(Color color,float crosshairSize = 2.0F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0.5F, 0.5F))
         {
             crosshairColor = color;
             setCrosshairTextureAndSize(crosshairType, crosshairSize);
             setModel(new ModelDrawable(shaderDir, crosshairTexture, QuadPrefab.getNewModel().setColor(crosshairColor).vertices, QuadPrefab.quadIndices));
         }
 
-        public GUICrosshair(float crosshairSize = 2.0F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2F(0.5F, 0.5F))
+        public GUICrosshair(float crosshairSize = 2.0F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0.5F, 0.5F))
         {
             setCrosshairTextureAndSize(crosshairType, crosshairSize);
             setModel(new ModelDrawable(shaderDir, crosshairTexture, QuadPrefab.getNewModel().setColor(crosshairColor).vertices, QuadPrefab.quadIndices));
@@ -38,7 +38,7 @@ namespace Coictus.GUI
             switch(type)
             {
                 case CrosshairType.normal:
-                    crosshairTexture = new Texture(ResourceHelper.getTextureFileDir(@"GUI\Crosshairs\CrosshairNormal.png"), false);
+                    crosshairTexture = new Texture(ResourceUtil.getTextureFileDir(@"GUI\Crosshairs\CrosshairNormal.png"), false);
                     texutrePixelWidth = crosshairTexture.getWidth() * crosshairSize;
                     texutrePixelHeight = crosshairTexture.getHeight() * crosshairSize;
                     break;

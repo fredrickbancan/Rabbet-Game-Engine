@@ -1,4 +1,4 @@
-﻿using Coictus.FredsMath;
+﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.IO;
@@ -124,19 +124,19 @@ namespace Coictus
             GL.UseProgram(id);
         }
 
-        public void setUniformMat4F(String name, Matrix4F matrix)
+        public void setUniformMat4F(String name, Matrix4 matrix)
         {
-            GL.UniformMatrix4(getUniformLocation(name), 1, false, ref matrix.row0.x );
+            GL.UniformMatrix4(getUniformLocation(name), 1, false, ref matrix.Row0.X );
         }
 
-        public void setUniformVec3F(String name, Vector3F vec)
+        public void setUniformVec3F(String name, Vector3 vec)
         {
-            GL.Uniform3(getUniformLocation(name), vec.x, vec.y, vec.z);
+            GL.Uniform3(getUniformLocation(name), vec.X, vec.Y, vec.Z);
         }
 
-        public void setUniformVec2F(String name, Vector2F vec)
+        public void setUniformVec2F(String name, Vector2 vec)
         {
-            GL.Uniform2(getUniformLocation(name), vec.x, vec.y);
+            GL.Uniform2(getUniformLocation(name), vec.X, vec.Y);
         }
         public void setUniform1I(String name, int val)
         {

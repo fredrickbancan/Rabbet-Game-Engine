@@ -1,7 +1,7 @@
-﻿using Coictus.FredsMath;
-using Coictus.GUI;
+﻿using Coictus.GUI;
 using Coictus.GUI.Text;
 using System;
+using System.Drawing;
 
 namespace Coictus.Debugging
 {
@@ -13,12 +13,12 @@ namespace Coictus.Debugging
         /*Initialize the text panel for the debug info, can only be done if the mainGUI panel is created first*/
         public static void init()
         {
-            GUIHandler.addTextPanelToGUI(MainGUI.mainGUIName, debugInfoPanelName, new GUITextPanel(new TextFormat(0.0F, 0.05F).setPanelColor(ColourF.grey)
+            GUIHandler.addTextPanelToGUI(MainGUI.mainGUIName, debugInfoPanelName, new GUITextPanel(new TextFormat(0.0F, 0.05F).setPanelColor(Color.Gray)
                 .setLines(new String[]
                         {
                         ("press F3 to hide debug screen.")
                         }
-                       ).setPanelColor(ColourF.grey)));
+                       ).setPanelColor(Color.Gray)));
         }
 
         /*Shows and updates the debug info on the screen, Can be called every tick (Do not call every frame, too expensive)*/
@@ -31,12 +31,12 @@ namespace Coictus.Debugging
                        new String[]
                        {
                         ("Player Name: " + GameInstance.get.thePlayer.getName()),
-                        ("X: " + GameInstance.get.thePlayer.getPosition().x.ToString("0.##")),
-                        ("Y: " + GameInstance.get.thePlayer.getPosition().y.ToString("0.##")),
-                        ("Z: " + GameInstance.get.thePlayer.getPosition().z.ToString("0.##")),
-                        ("Velocity X: " + GameInstance.get.thePlayer.getVelocity().x.ToString("0.##")),
-                        ("Velocity Y: " + GameInstance.get.thePlayer.getVelocity().y.ToString("0.##")),
-                        ("Velocity Z: " + GameInstance.get.thePlayer.getVelocity().z.ToString("0.##")),
+                        ("X: " + GameInstance.get.thePlayer.getPosition().X.ToString("0.##")),
+                        ("Y: " + GameInstance.get.thePlayer.getPosition().Y.ToString("0.##")),
+                        ("Z: " + GameInstance.get.thePlayer.getPosition().Z.ToString("0.##")),
+                        ("Velocity X: " + GameInstance.get.thePlayer.getVelocity().X.ToString("0.##")),
+                        ("Velocity Y: " + GameInstance.get.thePlayer.getVelocity().Y.ToString("0.##")),
+                        ("Velocity Z: " + GameInstance.get.thePlayer.getVelocity().Z.ToString("0.##")),
                         ("Head Pitch: " + GameInstance.get.thePlayer.getHeadPitch().ToString("0.##")),
                         ("Yaw: " + GameInstance.get.thePlayer.getYaw().ToString("0.##")),
                         ("Profiler ms averages: "),

@@ -66,9 +66,9 @@
     <None Include="Res\Shaders\Color3D.shader" />
     <None Include="Res\Shaders\Offscreen.shader" />
     <None Include="Res\Shaders\VFX\PointParticleFog.shader" />
-    <Compile Include="Src\FredsMath\QuaternionF.cs" />
     <Compile Include="Src\Game\Debugging\HitboxRenderer.cs" />
     <Compile Include="Src\Game\GUIS\MainGUI.cs" />
+    <Compile Include="Src\Game\MathUtil.cs" />
     <Compile Include="Src\Rendering\GUIComponents\GUICrosshair.cs" />
     <Compile Include="Src\Rendering\GUIHandler.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\EntityCactusModel.cs" />
@@ -95,14 +95,6 @@
     <Compile Include="Src\World\Entity\EntityLiving.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\EntityModel.cs" />
     <Compile Include="Src\World\Entity\EntityPlayer.cs" />
-    <Compile Include="Src\FredsMath\ColourF.cs" />
-    <Compile Include="Src\FredsMath\MathUtil.cs" />
-    <Compile Include="Src\FredsMath\Matrix3F.cs" />
-    <Compile Include="Src\FredsMath\Matrix4F.cs" />
-    <Compile Include="Src\FredsMath\Vector2F.cs" />
-    <Compile Include="Src\FredsMath\Vector3D.cs" />
-    <Compile Include="Src\FredsMath\Vector3F.cs" />
-    <Compile Include="Src\FredsMath\Vector4F.cs" />
     <Compile Include="Src\World\Collisions\Colliders\AABBCollider.cs" />
     <Compile Include="Src\Game\Debugging\DebugInfo.cs" />
     <Compile Include="Src\Game\GameInstance.cs" />
@@ -112,7 +104,7 @@
     <Compile Include="Src\Game\Input.cs" />
     <Compile Include="Src\Game\PlayerController.cs" />
     <Compile Include="Src\Game\Debugging\Profiler.cs" />
-    <Compile Include="Src\Game\ResourceHelper.cs" />
+    <Compile Include="Src\Game\ResourceUtil.cs" />
     <Compile Include="Src\Game\TicksAndFps.cs" />
     <Compile Include="Src\World\Entity\Projectiles\EntityProjectile.cs" />
     <Compile Include="Src\World\Entity\Projectiles\EntityTankProjectile.cs" />
@@ -127,7 +119,7 @@
     <Compile Include="Src\Rendering\SubRendering\Batching\QuadBatcher.cs" />
     <Compile Include="Src\Rendering\SubRendering\GUI\Text\GUITextPanel.cs" />
     <Compile Include="Src\Rendering\SubRendering\GUI\Text\TextProcessing\Character.cs" />
-    <Compile Include="Src\Rendering\SubRendering\GUI\Text\TextProcessing\Font.cs" />
+    <Compile Include="Src\Rendering\SubRendering\GUI\Text\TextProcessing\FontFace.cs" />
     <Compile Include="Src\Rendering\SubRendering\GUI\Text\TextProcessing\TextModelBuilder2D.cs" />
     <Compile Include="Src\Rendering\SubRendering\GUI\Text\TextUtil.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\QuadPrefab.cs" />
