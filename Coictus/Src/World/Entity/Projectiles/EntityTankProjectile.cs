@@ -1,12 +1,12 @@
-﻿using Coictus.FredsMath;
+﻿
 using Coictus.Models;
+using OpenTK;
 using System;
-
 namespace Coictus
 {
     class EntityTankProjectile : EntityProjectile
     {
-        public EntityTankProjectile(Vector3D pos, Vector3D direction, double barrelPitch, double initialYaw) : base(pos, direction)
+        public EntityTankProjectile(Vector3d pos, Vector3d direction, double barrelPitch, double initialYaw) : base(pos, direction)
         {
             this.yaw = initialYaw - 90;
             this.pitch = barrelPitch;
@@ -19,9 +19,9 @@ namespace Coictus
             base.onTick();
 
             //rotating projectile based on velocity to simulate areodynamics
-            Vector3D velocityNormalVec = Vector3D.normalize(velocity);
-            yaw = (Math.Atan2(velocityNormalVec.z, velocityNormalVec.x) * 180) / Math.PI ;
-            pitch = Math.Atan2(velocityNormalVec.y, velocityNormalVec.horizontalMagnitude()) * (180D / Math.PI);
+            Vector3d velocityNormalVec = Vector3d.Normalize(velocity);
+            yaw = (Math.Atan2(velocityNormalVec.Z, velocityNormalVec.X) * 180) / Math.PI ;
+            pitch = Math.Atan2(velocityNormalVec.Y, velocityNormalVec.Xz.Length) * (180D / Math.PI);
         }
 
         public override void ceaseToExist()
@@ -29,7 +29,7 @@ namespace Coictus
             currentPlanet.doExplosionAt(pos);
             base.ceaseToExist();
         }
-        public override void applyCollision(Vector3D direction, double overlap)
+        public override void applyCollision(Vector3d direction, double overlap)
         {
             base.applyCollision(direction, overlap);
             Dispose();

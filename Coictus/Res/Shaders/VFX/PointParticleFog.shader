@@ -33,9 +33,9 @@ void main()
     gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * pointRadius / gl_Position.w;//TODO: this does not take into account aspect ratio and can cause points to be elipsical in shape.
 
     //position jitter for retro feel
-   // float aspectRatio = viewPortSize.x / viewPortSize.y;
-   // gl_Position.x = floor(gl_Position.x * (positionResolution / gl_Position.w)) / (positionResolution / gl_Position.w);
-  //  gl_Position.y = floor(gl_Position.y * (positionResolution / (gl_Position.w * aspectRatio))) / (positionResolution / (gl_Position.w  * aspectRatio));
+   // float aspectRatio = viewPortSize.X / viewPortSize.Y;
+   // gl_Position.X = floor(gl_Position.X * (positionResolution / gl_Position.w)) / (positionResolution / gl_Position.w);
+  //  gl_Position.Y = floor(gl_Position.Y * (positionResolution / (gl_Position.w * aspectRatio))) / (positionResolution / (gl_Position.w  * aspectRatio));
 
     float distanceFromCam = length(positionRelativeToCam.xyz);
     visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));
@@ -113,9 +113,9 @@ void main()
 
     if (vcolour.a < 1.0)
     {
-        //uint fragX = uint(gl_FragCoord.x);
-        //uint fragY = uint(gl_FragCoord.y);
-        //float randomFloat = hash(fragX + uint(viewPortSize.x) * fragY + uint(viewPortSize.x) * uint(viewPortSize.y) * uint((gl_FragCoord.z / (renderPass + 1)) * 7000.0));
+        //uint fragX = uint(gl_FragCoord.X);
+        //uint fragY = uint(gl_FragCoord.Y);
+        //float randomFloat = hash(fragX + uint(viewPortSize.X) * fragY + uint(viewPortSize.X) * uint(viewPortSize.Y) * uint((gl_FragCoord.Z / (renderPass + 1)) * 7000.0));
         float randomFloat = rand3D(gl_FragCoord.xyz);
         if (randomFloat > vcolour.a)//do stochastic transparency, noise can be reduced with sampling. 
         {

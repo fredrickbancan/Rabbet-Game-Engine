@@ -105,5 +105,55 @@ namespace Coictus
         {
             return new Vector3(normalize(0, 255, color.R), normalize(0, 255, color.G), normalize(0, 255, color.B));
         }
+
+        /*Returns a vector 3 with the absolute values negated from one, only useful for axis aligned collisions*/
+        public static Vector3 oneMinusAbsolute(Vector3 vec)
+        {
+            return new Vector3(1F - System.Math.Abs(vec.X), 1F - System.Math.Abs(vec.Y), 1F - System.Math.Abs(vec.Z));
+        }
+
+        /*Returns a vector 3d with the absolute values negated from one, only useful for axis aligned collisions*/
+        public static Vector3d oneMinusAbsolute(Vector3d vec)
+        {
+            return new Vector3d(1D - System.Math.Abs(vec.X), 1D - System.Math.Abs(vec.Y), 1D - System.Math.Abs(vec.Z));
+        }
+
+        public static Vector3 convertVec(Vector3d vec)
+        {
+            return new Vector3((float)vec.X, (float)vec.Y, (float)vec.Z);
+        }
+        public static Matrix4 createRotation(Vector3 rot)
+        {
+            return Matrix4.CreateRotationX(rot.X) * Matrix4.CreateRotationY(rot.Y) * Matrix4.CreateRotationZ(rot.Z);
+        }
+        public static Matrix4 createRotation(Vector3d rot)
+        {
+            return Matrix4.CreateRotationX((float)rot.X) * Matrix4.CreateRotationY((float)rot.Y) * Matrix4.CreateRotationZ((float)rot.Z);
+        }
+
+        /*Scales the provided floats the same way a matrix would*/
+        public static void scaleXYZFloats(Vector3 newScale, float x, float y, float z, out float newX, out float newY, out float newZ)
+        {
+            newX = x * newScale.X;
+            newY = y * newScale.Y;
+            newZ = z * newScale.Z;
+        }
+
+        /*Rotates the provided floats the same way a matrix would*/
+        public static void rotateXYZFloats(Vector3 newRotation, float x, float y, float z, out float newX, out float newY, out float newZ)
+        {
+            Matrix4 rotMat = createRotation(newRotation);
+            newX = MathUtil.dotFloats(rotMat.M11, rotMat.M12, rotMat.M13, x, y, z) + rotMat.M14;
+            newY = MathUtil.dotFloats(rotMat.M21, rotMat.M22, rotMat.M23, x, y, z) + rotMat.M24;
+            newZ = MathUtil.dotFloats(rotMat.M31, rotMat.M32, rotMat.M33, x, y, z) + rotMat.M34;
+        }
+
+        /*Translates the provided floats the same way a matrix would*/
+        public static void translateXYZFloats(Vector3 translation, float x, float y, float z, out float newX, out float newY, out float newZ)
+        {
+            newX = x + translation.X;
+            newY = y + translation.Y;
+            newZ = z + translation.Z;
+        }
     }
 }

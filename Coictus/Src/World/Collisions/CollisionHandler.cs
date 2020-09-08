@@ -1,4 +1,4 @@
-﻿using Coictus.FredsMath;
+﻿using OpenTK;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,7 +15,7 @@ namespace Coictus
         {
             ICollider currentWorldCollider;
             ICollider currentEntityCollider;
-            Vector3D currentCollisionDirection;
+            Vector3d currentCollisionDirection;
             double currentCollisionOverlapResult = 0;
             for (int i = 0; i < worldColliders.Count; i++)
             {
@@ -50,7 +50,7 @@ namespace Coictus
         public static void doEntityCollisions(Dictionary<int, ICollider> entityColliders)
         {
             double currentCollisionOverlapResult = 0;
-            Vector3D currentCollisionDirection;
+            Vector3d currentCollisionDirection;
             ICollider currentColliderA;//collider A is tested with all other colliders after it, which are assigned to collider B. Collision results are applied to collider B's parent respectively.
             ICollider currentColliderB;
 

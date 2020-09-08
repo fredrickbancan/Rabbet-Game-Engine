@@ -12,9 +12,9 @@ namespace Coictus.Models
         private Matrix4 prevTickTankWheelsModelMatrix;//previous tick model matrices for interpolating each part of the tank model.
         private Matrix4 prevTickTankBodyModelMatrix;
         private Matrix4 prevTickTankBarrelModelMatrix;
-        private Matrix4 tankWheelsModelMatrix = new Matrix4(1.0F);
-        private Matrix4 tankBodyModelMatrix = new Matrix4(1.0F);
-        private Matrix4 tankBarrelModelMatrix = new Matrix4(1.0F);
+        private Matrix4 tankWheelsModelMatrix = new Matrix4();
+        private Matrix4 tankBodyModelMatrix = new Matrix4();
+        private Matrix4 tankBarrelModelMatrix = new Matrix4();
         private String shaderDir = ResourceUtil.getShaderFileDir("ColorTextureFog3D.shader");
         private String textureDir = ResourceUtil.getTextureFileDir("Camo.png");
 
@@ -39,9 +39,9 @@ namespace Coictus.Models
             //body yaw  is also child of camera yaw, which means it has to be additionally rotated by getBodyYaw
             //barrel pitch is also child of camera pitch, which means it has to be additionally rotated by getBarrelPitch
             //barrel also needs to be translated to a specific spot on the body model
-            tankWheelsModelMatrix = Matrix4.scale(new Vector3(0.5F, 0.5F, 0.5F)) * Matrix4.rotate(new Vector3((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) * Matrix4.translate(Vector3.convert(parent.getPosition()));
-            tankBodyModelMatrix = Matrix4.rotate(new Vector3(0, 90 + (float)parent.getYaw() - (float)parent.getBodyYaw, 0)) * tankWheelsModelMatrix;
-            tankBarrelModelMatrix = Matrix4.rotate(new Vector3((float)parent.getBarrelPitch, 0, 0)) * Matrix4.translate(new Vector3(0, 1.7F, -2F)) * tankBodyModelMatrix;
+            tankWheelsModelMatrix = Matrix4.CreateScale(new Vector3(0.5F, 0.5F, 0.5F)) * MathUtil.createRotation(new Vector3((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) * Matrix4.CreateTranslation(MathUtil.convertVec(parent.getPosition()));
+            tankBodyModelMatrix = MathUtil.createRotation(new Vector3(0, 90 + (float)parent.getYaw() - (float)parent.getBodyYaw, 0)) * tankWheelsModelMatrix;
+            tankBarrelModelMatrix = MathUtil.createRotation(new Vector3((float)parent.getBarrelPitch, 0, 0)) * Matrix4.CreateTranslation(new Vector3(0, 1.7F, -2F)) * tankBodyModelMatrix;
 
         }
 

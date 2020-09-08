@@ -1,5 +1,5 @@
-﻿using Coictus.FredsMath;
-using Coictus.Models;
+﻿using Coictus.Models;
+using OpenTK;
 
 namespace Coictus
 {
@@ -20,7 +20,7 @@ namespace Coictus
             setYAccel(-gravity);
         }
         
-        public Entity(Vector3D spawnPosition) : base(spawnPosition)
+        public Entity(Vector3d spawnPosition) : base(spawnPosition)
         {
             setYAccel(-gravity);
         }
@@ -32,7 +32,7 @@ namespace Coictus
             if (existedTicks < 0) existedTicks = 0;//incase of int overflow
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             if (isFlying) { setYAccel(0); } else { setYAccel(-gravity); }
-            if (velocity.y != 0) isGrounded = false;//simple detection of being on the ground. Very basic.
+            if (velocity.Y != 0) isGrounded = false;//simple detection of being on the ground. Very basic.
             if (hasModel)
             {
                 if (entityModel.exists())
@@ -65,9 +65,9 @@ namespace Coictus
             else 
             {
                 velocity += acceleration;
-                velocity.x *= (1 - groundResistance);
-                velocity.y *= (1 - airResistance);
-                velocity.z *= (1 - groundResistance);
+                velocity.X *= (1 - groundResistance);
+                velocity.Y *= (1 - airResistance);
+                velocity.Z *= (1 - groundResistance);
             }
 
             pos += velocity;
@@ -91,9 +91,9 @@ namespace Coictus
             }
         }
         
-        public override void applyCollision(Vector3D direction, double overlap)
+        public override void applyCollision(Vector3d direction, double overlap)
         {
-            if (direction.y >= 0.35D)//if the entity is being collided from a generally upwards direction
+            if (direction.Y >= 0.35D)//if the entity is being collided from a generally upwards direction
             {
                 isGrounded = true;
             }

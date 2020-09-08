@@ -1,4 +1,4 @@
-﻿using Coictus.FredsMath;
+﻿using OpenTK;
 using System;
 
 namespace Coictus
@@ -6,10 +6,10 @@ namespace Coictus
     public class EntityVehicle : Entity
     {
         protected EntityLiving mountingEntity;
-        protected Vector3D mountingOffset;
-        protected Vector3D frontVector;//vector pointing to the direction the entity is facing
-        protected Vector3D upVector;
-        protected Vector3D movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
+        protected Vector3d mountingOffset;
+        protected Vector3d frontVector;//vector pointing to the direction the entity is facing
+        protected Vector3d upVector;
+        protected Vector3d movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
         public static readonly double defaultTurnRate = 2.5F;//degrees per tick
         public static readonly double defaultDriveSpeed = 0.15F;
         protected double driveSpeed = defaultDriveSpeed;
@@ -17,19 +17,19 @@ namespace Coictus
 
         public EntityVehicle() : base()
         {
-            frontVector = new Vector3D(0.0F, 0.0F, -1.0F);
-            upVector = new Vector3D(0.0F, 1.0F, 0.0F);
-            movementVector = new Vector3D(0.0F, 0.0F, 0.0F);
-            mountingOffset  = new Vector3D(0.0F, 1.9F, 0.0F);
+            frontVector = new Vector3d(0.0F, 0.0F, -1.0F);
+            upVector = new Vector3d(0.0F, 1.0F, 0.0F);
+            movementVector = new Vector3d(0.0F, 0.0F, 0.0F);
+            mountingOffset  = new Vector3d(0.0F, 1.9F, 0.0F);
         }
 
-        public EntityVehicle(Vector3D pos) : base(pos)
+        public EntityVehicle(Vector3d pos) : base(pos)
         {
-            frontVector = new Vector3D(0.0F, 0.0F, -1.0F);
-            upVector = new Vector3D(0.0F, 1.0F, 0.0F);
-            movementVector = new Vector3D(0.0F, 0.0F, 0.0F);
+            frontVector = new Vector3d(0.0F, 0.0F, -1.0F);
+            upVector = new Vector3d(0.0F, 1.0F, 0.0F);
+            movementVector = new Vector3d(0.0F, 0.0F, 0.0F);
 
-            mountingOffset = new Vector3D(0.0F, 1.9F, 0.0F);
+            mountingOffset = new Vector3d(0.0F, 1.9F, 0.0F);
         }
 
 
@@ -54,7 +54,7 @@ namespace Coictus
             }
         }
 
-        public override void applyCollision(Vector3D direction, double overlap)
+        public override void applyCollision(Vector3d direction, double overlap)
         {
             base.applyCollision(direction, overlap);
             if (mountingEntity != null)
@@ -68,9 +68,9 @@ namespace Coictus
         protected virtual void alignVectors()
         {
             /*correcting front vector based on new pitch and yaw*/
-            frontVector.x = (double)(Math.Cos(MathUtil.radians(yaw)));
-            frontVector.z = (double)(Math.Sin(MathUtil.radians(yaw)));
-            frontVector.normalize();
+            frontVector.X = (double)(Math.Cos(MathUtil.radians(yaw)));
+            frontVector.Z = (double)(Math.Sin(MathUtil.radians(yaw)));
+            frontVector.Normalize();
         }
 
         /*Changes velocity based on state and movement vector, movement vector is changed by movement functions such as walkFowards()*/
@@ -85,9 +85,9 @@ namespace Coictus
 
             //change velocity based on movement
             //movement vector is a unit vector.
-            movementVector.normalize();
-            rotateYaw(movementVector.x * movementVector.z * turnRate);//steer vehicle, if reversing then vehicle will turn opposite way
-            velocity += frontVector * movementVector.z * walkSpeedModified;//fowards and backwards movement
+            movementVector.Normalize();
+            rotateYaw(movementVector.X * movementVector.Z * turnRate);//steer vehicle, if reversing then vehicle will turn opposite way
+            velocity += frontVector * movementVector.Z * walkSpeedModified;//fowards and backwards movement
 
             movementVector *= 0;//reset movement vector
         }
@@ -106,23 +106,23 @@ namespace Coictus
 
         public virtual void driveFowards()
         {
-            movementVector.z++;
+            movementVector.Z++;
         }
         public virtual void driveBackwards()
         {
-            movementVector.z--;
+            movementVector.Z--;
         }
 
         public virtual void turnLeft()
         {
-            movementVector.x--;
+            movementVector.X--;
         }
         public virtual void turnRight()
         {
-            movementVector.x++;
+            movementVector.X++;
         }
 
-        public virtual Vector3D getMountingOffset()
+        public virtual Vector3d getMountingOffset()
         {
             return mountingOffset;
         }

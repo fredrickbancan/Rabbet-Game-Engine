@@ -1,6 +1,7 @@
-﻿using Coictus.FredsMath;
-using Coictus.Models;
+﻿using Coictus.Models;
+using OpenTK;
 using System;
+using System.Drawing;
 
 namespace Coictus.VFX
 {
@@ -18,7 +19,7 @@ namespace Coictus.VFX
        
 
         /*this constructor is for creating a point particle based VFX which does not create a random point cloud. maybe you will want to construct the points in a specific manner with colors or use a model.*/
-        public VFXPointParticles(Vector3D pos, Color color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
+        public VFXPointParticles(Vector3d pos, Color color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
         {
             colorAlpha = alpha;
             pointColor = color;
@@ -27,7 +28,7 @@ namespace Coictus.VFX
         }
 
         /*this constructor is for creating a randomized particle cloud at the position using the provided parameters*/
-        public VFXPointParticles(Vector3D pos, Color color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
+        public VFXPointParticles(Vector3d pos, Color color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
         {
             colorAlpha = alpha;
             this.randomBrightness = randomBrightness;
@@ -47,27 +48,27 @@ namespace Coictus.VFX
             Vertex[] points = new Vertex[particleCount];
             for(int i = 0; i < particleCount; i++)
             {
-                points[i] = new Vertex(Vector3.convert(getRandomParticleOffset()), getPointColor(), Vector2.zero);
+                points[i] = new Vertex(MathUtil.convertVec(getRandomParticleOffset()), getPointColor(), Vector2.Zero);
             }
 
             vfxModel = new ModelDrawable(defaultShaderDir, "none", points);
         }
 
-        protected Vector3D getRandomParticleOffset()
+        protected Vector3d getRandomParticleOffset()
         {
-            return Vector3D.normalize(new Vector3D( 0.5 - GameInstance.rand.NextDouble(), 0.5 - GameInstance.rand.NextDouble(), 0.5 - GameInstance.rand.NextDouble())) * (randomPointPositionSpread / 2 +( randomPointPositionSpread / 4 + randomPointPositionSpread / 2 *  GameInstance.rand.NextDouble())  );
+            return Vector3d.Normalize(new Vector3d( 0.5 - GameInstance.rand.NextDouble(), 0.5 - GameInstance.rand.NextDouble(), 0.5 - GameInstance.rand.NextDouble())) * (randomPointPositionSpread / 2 +( randomPointPositionSpread / 4 + randomPointPositionSpread / 2 *  GameInstance.rand.NextDouble())  );
         }
 
         protected Vector4 getPointColor()
         {
             if(randomBrightness)
             {
-                Vector4 colorVec = pointColor.normalVector4();
+                Vector4 colorVec = MathUtil.colorToNormalVec4(pointColor);
                 float randomBrightnessAmount = 0.2F - 0.4F * (float)GameInstance.rand.NextDouble();
-                return new Vector4(colorVec.r + randomBrightnessAmount, colorVec.g + randomBrightnessAmount, colorVec.b + randomBrightnessAmount, colorAlpha);
+                return new Vector4(colorVec.X + randomBrightnessAmount, colorVec.Y + randomBrightnessAmount, colorVec.Z + randomBrightnessAmount, colorAlpha);
             }
-            Vector4 nonRandBrightColor =  pointColor.normalVector4();
-            nonRandBrightColor.a = colorAlpha;
+            Vector4 nonRandBrightColor = MathUtil.colorToNormalVec4(pointColor);
+            nonRandBrightColor.W = colorAlpha;
             return nonRandBrightColor;
         }
 

@@ -1,14 +1,14 @@
-﻿using Coictus.FredsMath;
+﻿using OpenTK;
 
 namespace Coictus
 {
     public struct SphereCollider : ICollider
     {
         public PositionalObject parent;
-        public Vector3D pos;
+        public Vector3d pos;
         public double radius;
 
-        public SphereCollider(Vector3D pos, double radius, PositionalObject parent = null)
+        public SphereCollider(Vector3d pos, double radius, PositionalObject parent = null)
         {
             this.pos = pos;
             this.radius = radius;

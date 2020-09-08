@@ -1,6 +1,6 @@
-﻿using Coictus.FredsMath;
-using Coictus.Models;
+﻿using Coictus.Models;
 using Coictus.VFX;
+using OpenTK;
 using System;
 
 namespace Coictus
@@ -16,13 +16,13 @@ namespace Coictus
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
-            this.setCollider(new AABBCollider(new Vector3D(-2.5, -1.25, -2.5), new Vector3D(2.5, 1.25, 2.5), this), 2);
+            this.setCollider(new AABBCollider(new Vector3d(-2.5, -1.25, -2.5), new Vector3d(2.5, 1.25, 2.5), this), 2);
         }
-        public EntityTank(Vector3D initialPos) : base(initialPos)
+        public EntityTank(Vector3d initialPos) : base(initialPos)
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
-            this.setCollider(new AABBCollider(new Vector3D(-2.5, -1.25, -2.5), new Vector3D(2.5, 1.25, 2.5), this), 2);
+            this.setCollider(new AABBCollider(new Vector3d(-2.5, -1.25, -2.5), new Vector3d(2.5, 1.25, 2.5), this), 2);
         }
 
         public override void onTick()
@@ -40,9 +40,9 @@ namespace Coictus
         protected override void alignVectors()
         {
             /*correcting front vector based on new pitch and yaw*/
-            frontVector.x = (double)(Math.Cos(MathUtil.radians(yaw)));
-            frontVector.z = (double)(Math.Sin(MathUtil.radians(yaw)));
-            frontVector.normalize();
+            frontVector.X = (double)(Math.Cos(MathUtil.radians(yaw)));
+            frontVector.Z = (double)(Math.Sin(MathUtil.radians(yaw)));
+            frontVector.Normalize();
         }
 
         /*Called by base ontick()*/
@@ -57,37 +57,37 @@ namespace Coictus
 
             //change velocity based on movement
             //movement vector is a unit vector.
-            movementVector.normalize();//normalize vector so vehicle is same speed in any direction
-            rotateYaw((movementVector.x > 0 ? 1 : (movementVector.x < 0 ? -1 : 0))  * turnRate);//rotate wheels, if reversing then rotate tank in opposite direction
-            velocity += frontVector * movementVector.z * walkSpeedModified;//fowards and backwards movement
+            movementVector.Normalize();//normalize vector so vehicle is same speed in any direction
+            rotateYaw((movementVector.X > 0 ? 1 : (movementVector.X < 0 ? -1 : 0))  * turnRate);//rotate wheels, if reversing then rotate tank in opposite direction
+            velocity += frontVector * movementVector.Z * walkSpeedModified;//fowards and backwards movement
             movementVector *= 0;//reset movement vector
         }
 
         /*called when player left clicks while driving this vehicle*/
         public override void onLeftClick()
         {
-            Vector3D muzzleLocation = getMuzzleLocation();
+            Vector3d muzzleLocation = getMuzzleLocation();
             currentPlanet.spawnEntityInWorld(new EntityTankProjectile(muzzleLocation, getMuzzleFrontVector(), barrelPitch, bodyYaw));
             VFXUtil.doSmallSmokePuffEffect(currentPlanet, muzzleLocation, (float)barrelPitch, (float)bodyYaw);
         }
 
-        private Vector3D getMuzzleLocation()
+        private Vector3d getMuzzleLocation()
         {
-            Matrix4 barrelLengthTranslationMatrix = Matrix4.translate(new Vector3(0, 0, -(float)barrelLength)) * ((EntityTankModel)entityModel).getBarrelModelMatrix();
-            Vector3D result = new Vector3D();
-            result.x += barrelLengthTranslationMatrix.row3.x;
-            result.y += barrelLengthTranslationMatrix.row3.y;
-            result.z += barrelLengthTranslationMatrix.row3.z;
+            Matrix4 barrelLengthTranslationMatrix = Matrix4.CreateTranslation(new Vector3(0, 0, -(float)barrelLength)) * ((EntityTankModel)entityModel).getBarrelModelMatrix();
+            Vector3d result = new Vector3d();
+            result.X += barrelLengthTranslationMatrix.Row3.X;
+            result.Y += barrelLengthTranslationMatrix.Row3.Y;
+            result.Z += barrelLengthTranslationMatrix.Row3.Z;
             return result;
         }
 
-        private Vector3D getMuzzleFrontVector()
+        private Vector3d getMuzzleFrontVector()
         {
-            Vector3D result = new Vector3D();
-            result.x = (double)(Math.Cos(MathUtil.radians(mountingEntity.getYaw()))) * (double)(Math.Cos(MathUtil.radians(barrelPitch)));
-            result.y = (double)Math.Sin(MathUtil.radians(barrelPitch));
-            result.z = (double)(Math.Sin(MathUtil.radians(mountingEntity.getYaw()))) * (double)(Math.Cos(MathUtil.radians(barrelPitch)));
-            result.normalize();
+            Vector3d result = new Vector3d();
+            result.X = (double)(Math.Cos(MathUtil.radians(mountingEntity.getYaw()))) * (double)(Math.Cos(MathUtil.radians(barrelPitch)));
+            result.Y = (double)Math.Sin(MathUtil.radians(barrelPitch));
+            result.Z = (double)(Math.Sin(MathUtil.radians(mountingEntity.getYaw()))) * (double)(Math.Cos(MathUtil.radians(barrelPitch)));
+            result.Normalize();
             return result;
         }
         public override void rotateYaw(double amount)

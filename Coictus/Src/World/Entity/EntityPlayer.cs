@@ -1,6 +1,5 @@
-﻿using Coictus.FredsMath;
+﻿using OpenTK;
 using System;
-
 namespace Coictus
 {
     /*Class for the player. Contains the players name, inventory etc.*/
@@ -10,18 +9,18 @@ namespace Coictus
         private Camera camera;
         public bool paused = false;
         public bool debugScreenOn = false;
-        public static readonly Vector3D eyeOffset = new Vector3D(0.0D, 0.62D, 0.0D);
+        public static readonly Vector3d eyeOffset = new Vector3d(0.0D, 0.62D, 0.0D);
         public EntityPlayer(String name) : base()
         {
             this.playerName = name;
             camera = new Camera(this);
-            this.setCollider(new AABBCollider(new Vector3D(-0.5, -1, -0.5), new Vector3D(0.5, 1, 0.5), this));
+            this.setCollider(new AABBCollider(new Vector3d(-0.5, -1, -0.5), new Vector3d(0.5, 1, 0.5), this));
         }
-        public EntityPlayer(String name, Vector3D spawnPosition) : base(spawnPosition)
+        public EntityPlayer(String name, Vector3d spawnPosition) : base(spawnPosition)
         {
             this.playerName = name;
             camera = new Camera(this);
-            this.setCollider(new AABBCollider(new Vector3D(-0.5, -1, -0.5), new Vector3D(0.5, 1, 0.5), this));
+            this.setCollider(new AABBCollider(new Vector3d(-0.5, -1, -0.5), new Vector3d(0.5, 1, 0.5), this));
         }
 
         public override void onTick()
@@ -49,12 +48,12 @@ namespace Coictus
             camera.tickRotateYaw(amount);
         }
 
-        public Vector3D getEyePosition()
+        public Vector3d getEyePosition()
         {
             return pos + EntityPlayer.eyeOffset;
         }
 
-        public Vector3D getLerpEyePos()
+        public Vector3d getLerpEyePos()
         {
             return this.getLerpPos() + EntityPlayer.eyeOffset;
         }

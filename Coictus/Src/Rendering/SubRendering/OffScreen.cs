@@ -1,4 +1,4 @@
-﻿using Coictus.FredsMath;
+﻿using OpenTK;
 using Coictus.Models;
 using OpenTK.Graphics.OpenGL;
 using System;

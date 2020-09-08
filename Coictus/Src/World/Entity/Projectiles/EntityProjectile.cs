@@ -1,4 +1,4 @@
-﻿using Coictus.FredsMath;
+﻿using OpenTK;
 using System;
 
 namespace Coictus
@@ -7,7 +7,7 @@ namespace Coictus
     {
         protected double maxExistedTicks;
 
-        public EntityProjectile(Vector3D pos, Vector3D direction, double initialVelocity = 2.5D, double maxLivingSeconds = 2) : base(pos)
+        public EntityProjectile(Vector3d pos, Vector3d direction, double initialVelocity = 2.5D, double maxLivingSeconds = 2) : base(pos)
         {
             airResistance = 0.001F;
             velocity += direction * initialVelocity;

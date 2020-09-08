@@ -1,14 +1,14 @@
-﻿using Coictus.FredsMath;
+﻿using OpenTK;
 
 namespace Coictus
 {
     /*Abstraction base class of objects with any type of position, rotation, velocity, interpolation.*/
     public class PositionalObject
     {
-        protected Vector3D previousTickPos;
-        protected Vector3D pos;
-        protected Vector3D velocity;
-        protected Vector3D acceleration;
+        protected Vector3d previousTickPos;
+        protected Vector3d pos;
+        protected Vector3d velocity;
+        protected Vector3d acceleration;
 
         public static readonly double defaultAirResistance = 0.03572F;
         public static readonly double defaultGroundResistance = 0.3572F;
@@ -32,11 +32,11 @@ namespace Coictus
 
         public PositionalObject()
         {
-            pos = new Vector3D();
+            pos = new Vector3d();
             previousTickPos = pos;
             setYaw(-90D);//face neg z
         }
-        public PositionalObject(Vector3D initialPosition)
+        public PositionalObject(Vector3d initialPosition)
         {
             pos = initialPosition;
             previousTickPos = pos;
@@ -74,23 +74,23 @@ namespace Coictus
 
         /*Done after the entity has ticked, so will correct for overlap AFTER movement. Will change velocity, accelleration and positon.
           Can be overritten.*/
-        public virtual void applyCollision(Vector3D direction, double overlap)
+        public virtual void applyCollision(Vector3d direction, double overlap)
         {
             //make sure direction is normal vec
-            direction.normalize();
+            direction.Normalize();
 
             //correct position
             pos += direction * overlap;
 
             //clip velocity
-            velocity *= direction.oneMinusAbsolute();//TODO: Only works with axis-aligned collision directions. anything else, will still work, but velocity will be slowed in wrong directions.
+            velocity *= MathUtil.oneMinusAbsolute(direction);//TODO: Only works with axis-aligned collision directions. anything else, will still work, but velocity will be slowed in wrong directions.
         }
 
         /*Apply a force to this entity from the location with the power.*/
-        public virtual void applyImpulseFromLocation(Vector3D loc, double power)
+        public virtual void applyImpulseFromLocation(Vector3d loc, double power)
         {
             //adding a tiny pos y bias to the impulses
-            velocity += Vector3D.normalize((pos + new Vector3D(0, 0.5, 0)) - loc) * power;
+            velocity += Vector3d.Normalize((pos + new Vector3d(0, 0.5, 0)) - loc) * power;
         }
 
         /*used for setting the collider of this object*/
@@ -153,81 +153,81 @@ namespace Coictus
         {
             return pitch;
         }
-        public virtual Vector3D getPosition()
+        public virtual Vector3d getPosition()
         {
             return this.pos;
         }
-        public virtual Vector3D getVelocity()
+        public virtual Vector3d getVelocity()
         {
             return this.velocity;
         }
 
         //useful for predicting and compensating for collisions
-        public virtual Vector3D getPredictedNextTickPos()
+        public virtual Vector3d getPredictedNextTickPos()
         {
             return pos + velocity;
         }
 
         public virtual void setXVelocity(double d)
         {
-            velocity.x = d;
+            velocity.X = d;
         }
         public virtual void setYVelocity(double d)
         {
-            velocity.y = d;
+            velocity.Y = d;
         }
         public virtual void setZVelocity(double d)
         {
-            velocity.z = d;
+            velocity.Z = d;
         }
         public virtual void addXVelocity(double d)
         {
-            velocity.x += d;
+            velocity.X += d;
         }
         public virtual void addYVelocity(double d)
         {
-            velocity.y += d;
+            velocity.Y += d;
         }
         public virtual void addZVelocity(double d)
         {
-            velocity.z += d;
+            velocity.Z += d;
         }
         public virtual void scaleXVelocity(double d)
         {
-            velocity.x *= d;
+            velocity.X *= d;
         }
         public virtual void scaleYVelocity(double d)
         {
-            velocity.y *= d;
+            velocity.Y *= d;
         }
         public virtual void scaleZVelocity(double d)
         {
-            velocity.z *= d;
+            velocity.Z *= d;
         }
-        public virtual void addVelocity(Vector3D v)
+        public virtual void addVelocity(Vector3d v)
         {
             velocity += v;
         }
-        public virtual void setVelocity(Vector3D v)
+        public virtual void setVelocity(Vector3d v)
         {
             velocity = v;
         }
 
-        public virtual void setAccel(Vector3D v)
+        public virtual void setAccel(Vector3d v)
         {
             acceleration = v;
         }
         public virtual void setXAccel(double v)
         {
-            acceleration.x = v;
+            acceleration.X = v;
         }
         public virtual void setYAccel(double v)
         {
-            acceleration.y = v;
+            acceleration.Y = v;
         }
         public virtual void setZAccel(double v)
         {
-            acceleration.z = v;
+            acceleration.Z = v;
         }
 
         public virtual void setAirResistance(double d)
@@ -235,11 +235,11 @@ namespace Coictus
             airResistance = d;
         }
 
-        public virtual void setPosition(Vector3D newPos)
+        public virtual void setPosition(Vector3d newPos)
         {
             this.pos = newPos;
         }
-        public virtual Vector3D getLerpPos()
+        public virtual Vector3d getLerpPos()
         {
             if (hasDoneFirstUpdate)
             {
@@ -272,8 +272,8 @@ namespace Coictus
             return roll;
         }
 
-        public virtual double posX { get => pos.x; set => pos.x = value; }
-        public virtual double posY { get => pos.y; set => pos.y = value; }
-        public virtual double posZ { get => pos.z; set => pos.z = value; }
+        public virtual double posX { get => pos.X; set => pos.X = value; }
+        public virtual double posY { get => pos.Y; set => pos.Y = value; }
+        public virtual double posZ { get => pos.Z; set => pos.Z = value; }
     }
 }

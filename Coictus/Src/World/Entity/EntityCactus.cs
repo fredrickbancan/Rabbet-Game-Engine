@@ -1,7 +1,6 @@
-﻿using Coictus.FredsMath;
-using Coictus.Models;
+﻿using Coictus.Models;
+using OpenTK;
 using System;
-
 namespace Coictus
 {
     public class EntityCactus : EntityLiving
@@ -12,15 +11,15 @@ namespace Coictus
         {
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
-            this.setCollider(new AABBCollider(new Vector3D(-0.5, -0.5, -0.5), new Vector3D(0.5, 0.5, 0.5), this), 1);
+            this.setCollider(new AABBCollider(new Vector3d(-0.5, -0.5, -0.5), new Vector3d(0.5, 0.5, 0.5), this), 1);
             yaw = rand.NextDouble() * 360;
             walkFowards();
         }
-        public EntityCactus(Vector3D pos) : base(pos)
+        public EntityCactus(Vector3d pos) : base(pos)
         {
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
-            this.setCollider(new AABBCollider(new Vector3D(-0.5, -0.5, -0.5), new Vector3D(0.5, 0.5, 0.5), this), 1);
+            this.setCollider(new AABBCollider(new Vector3d(-0.5, -0.5, -0.5), new Vector3d(0.5, 0.5, 0.5), this), 1);
             yaw = rand.NextDouble() * 360;
             walkFowards();
         }

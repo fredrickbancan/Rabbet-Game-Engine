@@ -1,7 +1,7 @@
-﻿using Coictus.FredsMath;
+﻿
 using Coictus.SubRendering;
+using OpenTK;
 using System;
-
 namespace Coictus.Models
 {
 

@@ -1,6 +1,5 @@
-﻿using Coictus.FredsMath;
+﻿using OpenTK;
 using System.Runtime.InteropServices;
-
 namespace Coictus
 {
     public struct Vertex
@@ -23,15 +22,15 @@ namespace Coictus
 
         public Vertex(float x, float y, float z, float r, float g, float b, float a, float u, float v)
         {
-            pos.x = x;
-            pos.y = y;
-            pos.z = z;
-            color.x = r;
-            color.y = g;
-            color.z = b;
-            color.w = a;
-            uv.x = u;
-            uv.y = v;
+            pos.X = x;
+            pos.Y = y;
+            pos.Z = z;
+            color.X = r;
+            color.Y = g;
+            color.Z = b;
+            color.W = a;
+            uv.X = u;
+            uv.Y = v;
         }
         public Vertex(Vector3 pos, Vector4 color, Vector2 uv)
         {

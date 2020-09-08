@@ -1,5 +1,4 @@
 ﻿using Coictus.Debugging;
-using Coictus.FredsMath;
 using Coictus.GUI;
 using Coictus.GUI.Text;
 using OpenTK;
@@ -56,14 +55,14 @@ namespace Coictus
             DebugInfo.init();
             HitboxRenderer.init();
             //create and spawn player in new world
-            thePlayer = new EntityPlayer("Steve", new Vector3D(0.0, 0.0, 2.0));
+            thePlayer = new EntityPlayer("Steve", new Vector3d(0.0, 0.0, 2.0));
             currentPlanet = new World();
             for (int i = 0; i < 60; i++)
             {
-                currentPlanet.spawnEntityInWorld(new EntityCactus(new Vector3D(0, 10, 0)));
+                currentPlanet.spawnEntityInWorld(new EntityCactus(new Vector3d(0, 10, 0)));
             }
             currentPlanet.spawnEntityInWorld(thePlayer);
-            currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3D(5, 10, -5)));
+            currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3d(5, 10, -5)));
 
             //center mouse in preperation for first person 
             Input.centerMouse();

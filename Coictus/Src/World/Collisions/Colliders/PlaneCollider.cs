@@ -1,21 +1,20 @@
-﻿using Coictus.FredsMath;
-
+﻿using OpenTK;
 namespace Coictus
 {
     public struct PlaneCollider : ICollider
     {
-        public Vector3D normal;
+        public Vector3d normal;
         public double scalar;
 
-        public PlaneCollider(Vector3D normal, double scalar)
+        public PlaneCollider(Vector3d normal, double scalar)
         {
-            this.normal = Vector3D.normalize(normal);
+            this.normal = Vector3d.Normalize(normal);
             this.scalar = scalar;
         }
 
-        public static double vectorDistanceFromPlane(PlaneCollider plane, Vector3D vec)
+        public static double vectorDistanceFromPlane(PlaneCollider plane, Vector3d vec)
         {
-            return Vector3D.dot(vec, plane.normal) - plane.scalar;
+            return Vector3d.Dot(vec, plane.normal) - plane.scalar;
         }
         public bool getHasParent()
         {

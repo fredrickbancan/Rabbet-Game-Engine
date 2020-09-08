@@ -1,8 +1,9 @@
 ﻿using Coictus.Debugging;
-using Coictus.FredsMath;
 using Coictus.GUI;
 using Coictus.SubRendering;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using System.Drawing;
 
 namespace Coictus
 {
@@ -17,7 +18,7 @@ namespace Coictus
         /*Called before any rendering is done*/
         public static void init()
         {
-            setClearColor(Color.skyBlue);
+            setClearColor(Color.SkyBlue);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.VertexProgramPointSize);//allows shaders for GL_POINTS to change size of points.
@@ -29,7 +30,7 @@ namespace Coictus
             GL.SampleCoverage(1.0F, false);*/
             GL.Viewport(GameInstance.get.ClientRectangle);
             GL.LineWidth(3);
-            projectionMatrix = Matrix4.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
             OffScreen.init(1F);
         }
 
@@ -37,7 +38,7 @@ namespace Coictus
         public static void onResize()
         {
             GL.Viewport(GameInstance.get.ClientRectangle);
-            projectionMatrix = Matrix4.createPerspectiveMatrix((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
             GUIHandler.onWindowResize();
         }
 
@@ -45,7 +46,7 @@ namespace Coictus
         private static void preRender()
         {
             OffScreen.prepareToRenderToOffScreenTexture();
-            setClearColor(Color.skyBlue);
+            setClearColor(Color.SkyBlue);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         }
         
@@ -79,14 +80,14 @@ namespace Coictus
 
         public static void setClearColor(Color color)
         {
-            float r = MathUtil.normalize(0, 255, color.GetRed());
-            float g = MathUtil.normalize(0, 255, color.GetGreen());
-            float b = MathUtil.normalize(0, 255, color.GetBlue());
+            float r = MathUtil.normalize(0, 255, color.R);
+            float g = MathUtil.normalize(0, 255, color.G);
+            float b = MathUtil.normalize(0, 255, color.B);
             GL.ClearColor(r, g, b, 1.0f);
         }
         public static void setClearColor(Vector3 colorNormalized)
         {
-            GL.ClearColor(colorNormalized.x, colorNormalized.y, colorNormalized.z, 1.0f);
+            GL.ClearColor(colorNormalized.X, colorNormalized.Y, colorNormalized.Z, 1.0f);
         }
 
         public static Matrix4 projMatrix { get => projectionMatrix; }

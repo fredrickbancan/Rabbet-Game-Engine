@@ -89,7 +89,7 @@ namespace Coictus.GUI.Text
         {
             hidden = false;
         }
-        public void setFont(Font font)
+        public void setFont(FontFace font)
         {
             format.font = font;
         }
@@ -122,7 +122,7 @@ namespace Coictus.GUI.Text
         }
         public GUITextPanel setPanelColor(Color color)
         {
-            format.panelColour = color.normalVector4();
+            format.panelColour = MathUtil.colorToNormalVec4(color);
             return this;
         }
         public GUITextPanel setFontSize(float size)

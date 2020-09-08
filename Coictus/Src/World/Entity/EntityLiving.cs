@@ -1,31 +1,30 @@
-﻿using Coictus.FredsMath;
+﻿using OpenTK;
 using System;
-
 namespace Coictus
 {
     public class EntityLiving : Entity
     {
         
         protected EntityVehicle currentVehicle;
-        protected Vector3D frontVector;//vector pointing to the direction the entity is facing
-        protected Vector3D upVector;
-        protected Vector3D movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
+        protected Vector3d frontVector;//vector pointing to the direction the entity is facing
+        protected Vector3d upVector;
+        protected Vector3d movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
         protected bool isJumping = false;
         protected double headPitch; // Pitch of the living entity head
         public static readonly double defaultWalkSpeed = 0.1572F;
         protected double walkSpeed = defaultWalkSpeed;
         public EntityLiving() : base()
         {
-            frontVector = new Vector3D(0.0F, 0.0F, -1.0F);
-            upVector = new Vector3D(0.0F, 1.0F, 0.0F);
-            movementVector = new Vector3D(0.0F, 0.0F, 0.0F);
+            frontVector = new Vector3d(0.0F, 0.0F, -1.0F);
+            upVector = new Vector3d(0.0F, 1.0F, 0.0F);
+            movementVector = new Vector3d(0.0F, 0.0F, 0.0F);
         }
 
-        public EntityLiving(Vector3D pos) : base(pos)
+        public EntityLiving(Vector3d pos) : base(pos)
         {
-            frontVector = new Vector3D(0.0F, 0.0F, -1.0F);
-            upVector = new Vector3D(0.0F, 1.0F, 0.0F);
-            movementVector = new Vector3D(0.0F, 0.0F, 0.0F);
+            frontVector = new Vector3d(0.0F, 0.0F, -1.0F);
+            upVector = new Vector3d(0.0F, 1.0F, 0.0F);
+            movementVector = new Vector3d(0.0F, 0.0F, 0.0F);
         }
 
         public override void onTick()
@@ -53,17 +52,17 @@ namespace Coictus
             /*correcting front vector based on new pitch and yaw*/
             if (isFlying)
             {
-                frontVector.x = (double)(Math.Cos(MathUtil.radians(yaw)) * (double)(Math.Cos(MathUtil.radians(headPitch))));
-                frontVector.y = (double)Math.Sin(MathUtil.radians(headPitch));
-                frontVector.z = (double)(Math.Sin(MathUtil.radians(yaw)) * (double)(Math.Cos(MathUtil.radians(headPitch))));
+                frontVector.X = (double)(Math.Cos(MathUtil.radians(yaw)) * (double)(Math.Cos(MathUtil.radians(headPitch))));
+                frontVector.Y = (double)Math.Sin(MathUtil.radians(headPitch));
+                frontVector.Z = (double)(Math.Sin(MathUtil.radians(yaw)) * (double)(Math.Cos(MathUtil.radians(headPitch))));
             }
             else
             {
-                frontVector.x = (double)(Math.Cos(MathUtil.radians(yaw)));
-                frontVector.y = (double)Math.Sin(MathUtil.radians(headPitch));
-                frontVector.z = (double)(Math.Sin(MathUtil.radians(yaw)));
+                frontVector.X = (double)(Math.Cos(MathUtil.radians(yaw)));
+                frontVector.Y = (double)Math.Sin(MathUtil.radians(headPitch));
+                frontVector.Z = (double)(Math.Sin(MathUtil.radians(yaw)));
             }
-            frontVector.normalize();
+            frontVector.Normalize();
         }
 
         /*Changes velocity based on state and movement vector, movement vector is changed by movement functions such as walkFowards()*/
@@ -86,24 +85,24 @@ namespace Coictus
 
             //change velocity based on movement
             //movement vector is a unit vector.
-            movementVector.normalize();//normalize vector so player is same speed in any direction
+            movementVector.Normalize();//normalize vector so player is same speed in any direction
 
-            velocity.x += frontVector.x * movementVector.z * walkSpeedModified;//fowards and backwards movement
-            if(isFlying)velocity.y += frontVector.y * movementVector.z * walkSpeedModified;//fowards and backwards movement for flying
-            velocity.z += frontVector.z * movementVector.z * walkSpeedModified;//fowards and backwards movement
-            velocity += Vector3D.normalize(Vector3D.cross(frontVector, upVector)) * movementVector.x * walkSpeedModified;//strafing movement
+            velocity.X += frontVector.X * movementVector.Z * walkSpeedModified;//fowards and backwards movement
+            if(isFlying)velocity.Y += frontVector.Y * movementVector.Z * walkSpeedModified;//fowards and backwards movement for flying
+            velocity.Z += frontVector.Z * movementVector.Z * walkSpeedModified;//fowards and backwards movement
+            velocity += Vector3d.Normalize(Vector3d.Cross(frontVector, upVector)) * movementVector.X * walkSpeedModified;//strafing movement
 
             movementVector *= 0;//reset movement vector
 
             if (isJumping)// if player jumping or flying up
             {
-                velocity.y += 0.32D;//jump 
+                velocity.Y += 0.32D;//jump 
                 isJumping = false;
                 isGrounded = false;
             }
         }
 
-        public override void applyCollision(Vector3D direction, double overlap)
+        public override void applyCollision(Vector3d direction, double overlap)
         {
             if (currentVehicle == null)
             {
@@ -113,7 +112,7 @@ namespace Coictus
 
         public virtual void jump()
         {
-            if (isGrounded && velocity.y <= 0)
+            if (isGrounded && velocity.Y <= 0)
             {
                 isJumping = true;
             }
@@ -133,7 +132,7 @@ namespace Coictus
                 {
                     foreach (Entity ent in currentPlanet.entities.Values)
                     {
-                        if (Vector3D.distance(ent.getPosition(), pos) < 4D)//if the entity is atleast within 4 units (meters)
+                        if (Vector3d.Distance(ent.getPosition(), pos) < 4D)//if the entity is atleast within 4 units (meters)
                         {
                             if (ent is EntityVehicle vehicle)
                             {
@@ -150,7 +149,7 @@ namespace Coictus
         {
             if (currentVehicle != null)
             {
-                setVelocity(new Vector3D(0));
+                setVelocity(new Vector3d(0));
                 currentVehicle.setMountedEntity(null);
                 currentVehicle = null;
             }
@@ -171,7 +170,7 @@ namespace Coictus
             }
             else
             {
-                movementVector.z++;
+                movementVector.Z++;
             }
         }
         public virtual void walkBackwards()
@@ -182,7 +181,7 @@ namespace Coictus
             }
             else
             {
-                movementVector.z--;
+                movementVector.Z--;
             }
         }
         public virtual void strafeRight()
@@ -193,7 +192,7 @@ namespace Coictus
             }
             else
             {
-                movementVector.x++;
+                movementVector.X++;
             }
         }
         public virtual void strafeLeft()
@@ -204,7 +203,7 @@ namespace Coictus
             }
             else
             {
-                movementVector.x--;
+                movementVector.X--;
             }
         }
 
@@ -216,17 +215,17 @@ namespace Coictus
         {
             return this.headPitch;
         }
-        public virtual Vector3D getFrontVector()
+        public virtual Vector3d getFrontVector()
         {
             return this.frontVector;
         }
 
-        public virtual Vector3D getUpVector()
+        public virtual Vector3d getUpVector()
         {
             return this.upVector;
         }
 
-        public override Vector3D getLerpPos()
+        public override Vector3d getLerpPos()
         {
             if(currentVehicle != null)
             {

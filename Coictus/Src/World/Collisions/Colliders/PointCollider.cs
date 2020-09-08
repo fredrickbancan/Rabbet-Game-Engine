@@ -1,13 +1,13 @@
-﻿using Coictus.FredsMath;
+﻿using OpenTK;
 
 namespace Coictus
 {
     public struct PointCollider : ICollider
     {
-        public Vector3D pos;
+        public Vector3d pos;
         public PositionalObject parent;
 
-        public PointCollider(Vector3D pos, PositionalObject parent = null)
+        public PointCollider(Vector3d pos, PositionalObject parent = null)
         {
             this.pos = pos;
             this.parent = parent;

@@ -16,7 +16,7 @@ namespace Coictus.Models
         /*sets all vertex colors to this color*/
         public Model setColor(Color color)
         {
-            return this.setColor(color.normalVector4());
+            return this.setColor(MathUtil.colorToNormalVec4(color));
         }
         public Model setColor(Vector4 color)
         {
@@ -33,9 +33,9 @@ namespace Coictus.Models
         {
             for(int i = 0; i < vertices.Length; i ++)
             {
-                Matrix4.scaleXYZFloats(scale, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
-                Matrix4.rotateXYZFloats(rotate, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
-                Matrix4.translateXYZFloats(translate, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
+                MathUtil.scaleXYZFloats(scale, vertices[i].pos.X, vertices[i].pos.Y, vertices[i].pos.Z, out vertices[i].pos.X, out vertices[i].pos.Y, out vertices[i].pos.Z);
+                MathUtil.rotateXYZFloats(rotate, vertices[i].pos.X, vertices[i].pos.Y, vertices[i].pos.Z, out vertices[i].pos.X, out vertices[i].pos.Y, out vertices[i].pos.Z);
+                MathUtil.translateXYZFloats(translate, vertices[i].pos.X, vertices[i].pos.Y, vertices[i].pos.Z, out vertices[i].pos.X, out vertices[i].pos.Y, out vertices[i].pos.Z);
             }
             return this;
         }
@@ -43,7 +43,7 @@ namespace Coictus.Models
         {
             for (int i = 0; i < vertices.Length; i ++)
             {
-                Matrix4.scaleXYZFloats(scale, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
+                MathUtil.scaleXYZFloats(scale, vertices[i].pos.X, vertices[i].pos.Y, vertices[i].pos.Z, out vertices[i].pos.X, out vertices[i].pos.Y, out vertices[i].pos.Z);
             }
             return this;
         }
@@ -51,7 +51,7 @@ namespace Coictus.Models
         {
             for (int i = 0; i < vertices.Length; i++)
             {
-                Matrix4.rotateXYZFloats(rotate, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
+                MathUtil.rotateXYZFloats(rotate, vertices[i].pos.X, vertices[i].pos.Y, vertices[i].pos.Z, out vertices[i].pos.X, out vertices[i].pos.Y, out vertices[i].pos.Z);
             }
             return this;
         }
@@ -59,7 +59,7 @@ namespace Coictus.Models
         {
             for (int i = 0; i < vertices.Length; i++)
             {
-                Matrix4.translateXYZFloats(translate, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
+                MathUtil.translateXYZFloats(translate, vertices[i].pos.X, vertices[i].pos.Y, vertices[i].pos.Z, out vertices[i].pos.X, out vertices[i].pos.Y, out vertices[i].pos.Z);
             }
             return this;
         }
@@ -77,9 +77,9 @@ namespace Coictus.Models
         {
             for (int i = 0; i < vertices.Length; i++)
             {
-                Matrix4.scaleXYZFloats(scale, vertices[i].pos.x, vertices[i].pos.y, vertices[i].pos.z, out vertices[i].pos.x, out vertices[i].pos.y, out vertices[i].pos.z);
-                vertices[i].uv.x *= scale.x;
-                vertices[i].uv.y *= scale.z;
+                MathUtil.scaleXYZFloats(scale, vertices[i].pos.X, vertices[i].pos.Y, vertices[i].pos.Z, out vertices[i].pos.X, out vertices[i].pos.Y, out vertices[i].pos.Z);
+                vertices[i].uv.X *= scale.X;
+                vertices[i].uv.Y *= scale.Z;
             }
             return this;
         }

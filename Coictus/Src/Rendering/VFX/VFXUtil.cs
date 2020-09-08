@@ -1,4 +1,5 @@
-﻿using Coictus.FredsMath;
+﻿using OpenTK;
+using System.Drawing;
 
 namespace Coictus.VFX
 {
@@ -6,15 +7,15 @@ namespace Coictus.VFX
       change certain VFX*/
     public static class VFXUtil
     {
-        public static void doExplosionEffect(World planet, Vector3D location, float radius, float pitch = 0, float yaw = -90, float roll = 0)
+        public static void doExplosionEffect(World planet, Vector3d location, float radius, float pitch = 0, float yaw = -90, float roll = 0)
         {
-            VFXBase smoke = new VFXPointParticles(location, Color.darkGrey, (25 - (int)radius / 2) + (int)(radius / 2 * radius / 2), radius / 15, 0.15F, true, false, 2F, 0.8F);
+            VFXBase smoke = new VFXPointParticles(location, Color.DarkGray, (25 - (int)radius / 2) + (int)(radius / 2 * radius / 2), radius / 15, 0.15F, true, false, 2F, 0.8F);
 
-            VFXBase sparks = new VFXPointParticles(location, Color.orange, (12 - (int)radius / 4) + (int)(radius / 4 * radius / 4), radius / 15, 0.05F, true, false, 0.75F);
+            VFXBase sparks = new VFXPointParticles(location, Color.Orange, (12 - (int)radius / 4) + (int)(radius / 4 * radius / 4), radius / 15, 0.05F, true, false, 0.75F);
 
-            VFXBase explosion1 = new VFXPointParticles(location, Color.flame, (128 - (int)radius/2) + (int)(radius/2*radius/2), radius / 15, 0.125F, false, false, 0.2F);
+            VFXBase explosion1 = new VFXPointParticles(location, Color.Firebrick, (128 - (int)radius/2) + (int)(radius/2*radius/2), radius / 15, 0.125F, false, false, 0.2F);
 
-            VFXBase explosion2 = new VFXPointParticles(location, Color.ember, (128 - (int)radius/2) + (int)(radius/2*radius/2), radius / 20, 0.125F, true, false, 0.15F);
+            VFXBase explosion2 = new VFXPointParticles(location, Color.DarkOrange, (128 - (int)radius/2) + (int)(radius/2*radius/2), radius / 20, 0.125F, true, false, 0.15F);
 
             smoke.setYAccel(0.003572D);
             smoke.setExpansionResistance(0.2F);
@@ -35,9 +36,9 @@ namespace Coictus.VFX
             planet.spawnVFXInWorld(explosion2);
         }
 
-        public static void doSmallSmokePuffEffect(World planet, Vector3D location, float pitch = 0, float yaw = -90, float roll = 0)
+        public static void doSmallSmokePuffEffect(World planet, Vector3d location, float pitch = 0, float yaw = -90, float roll = 0)
         {
-            VFXBase smoke = new VFXPointParticles(location, Color.darkGrey, 7, 0.05F, 0.05F, true, false, 2F, 0.8F);
+            VFXBase smoke = new VFXPointParticles(location, Color.DarkGray, 7, 0.05F, 0.05F, true, false, 2F, 0.8F);
 
             smoke.setPitch(pitch);
             smoke.setYaw(yaw);
@@ -53,7 +54,7 @@ namespace Coictus.VFX
 
         public static void doDebugSmokeEffect(World planet)
         {
-            VFXBase smoke = new VFXPointParticles(Vector3D.zero + 2, Color.darkGrey, 5, 0.5F, 0.5F, true, false, 2F, 0.5F);
+            VFXBase smoke = new VFXPointParticles(new Vector3d(0, 2D, 0), Color.DarkGray, 5, 0.5F, 0.5F, true, false, 2F, 0.5F);
             smoke.setExpansionResistance(0.05F);
             smoke.setExpansionVelocity(0.5F);
             planet.spawnVFXInWorld(smoke);

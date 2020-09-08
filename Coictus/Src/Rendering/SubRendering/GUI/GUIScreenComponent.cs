@@ -1,6 +1,6 @@
-﻿using Coictus.FredsMath;
+﻿
 using Coictus.Models;
-
+using OpenTK;
 namespace Coictus.SubRendering.GUI
 {
     public class GUIScreenComponent
@@ -9,13 +9,13 @@ namespace Coictus.SubRendering.GUI
         protected Vector2 screenPosAbsolute;
         protected bool hidden = false;
         private bool hasModel = false;
-        private Matrix4 translationAndScale = new Matrix4(1.0F);
-        private Matrix4 orthographicMatrix = new Matrix4(1.0F);
+        private Matrix4 translationAndScale = new Matrix4();
+        private Matrix4 orthographicMatrix = new Matrix4();
         private ModelDrawable componentQuadModel = null;
 
         public GUIScreenComponent(Vector2 screenPos/*position where 0 is top left and 1 is bottom right*/)
         {
-            this.screenPosAbsolute = new Vector2(screenPos.x, 1F-screenPos.y);//flips y.
+            this.screenPosAbsolute = new Vector2(screenPos.X, 1F-screenPos.Y);//flips y.
         }
 
         /*Sets the size of this component in pixels*/
@@ -44,9 +44,9 @@ namespace Coictus.SubRendering.GUI
 
         protected virtual void scaleAndTranslate()
         {
-            orthographicMatrix = Matrix4.createOrthographicMatrix(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0, 1);
+            orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0, 1);
 
-            translationAndScale = Matrix4.scale(new Vector3(widthPixels, heightPixels, 1)) *  Matrix4.translate(new Vector3(GameInstance.gameWindowWidth * screenPosAbsolute.x, GameInstance.gameWindowHeight * screenPosAbsolute.y, -0.01F));
+            translationAndScale = Matrix4.CreateScale(new Vector3(widthPixels, heightPixels, 1)) *  Matrix4.CreateTranslation(new Vector3(GameInstance.gameWindowWidth * screenPosAbsolute.X, GameInstance.gameWindowHeight * screenPosAbsolute.Y, -0.01F));
         }
         public virtual void draw()
         {

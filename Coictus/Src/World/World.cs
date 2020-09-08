@@ -1,10 +1,11 @@
 ﻿using Coictus.Debugging;
-using Coictus.FredsMath;
 using Coictus.Models;
 using Coictus.SubRendering;
 using Coictus.VFX;
+using OpenTK;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace Coictus
@@ -27,8 +28,8 @@ namespace Coictus
 
         public World()
         {
-            fogColor = Color.lightBlossom.normalVector3();
-            skyColor = Color.skyBlue.normalVector3();
+            fogColor = MathUtil.colorToNormalVec3(Color.LightPink);
+            skyColor = MathUtil.colorToNormalVec3(Color.SkyBlue);
             buildSkyBox();
             generateWorld();
         }
@@ -155,12 +156,12 @@ namespace Coictus
 
             wallsModel = QuadBatcher.batchQuadModels(unbatchedWallQuads, QuadPrefab.getShaderDir(), wallTextureDir);
             //adding all world collider planes
-            this.addWorldCollider(new PlaneCollider(new Vector3D(0, 1, 0), groundHeight));//ground plane at y groundHeight, facing positive Y
-            this.addWorldCollider(new PlaneCollider(new Vector3D(0,0,1), -playgroundLength / 2));//Wall at negZ, playgroundLength / 2 units away, facing pos Z
-            this.addWorldCollider(new PlaneCollider(new Vector3D(0,0,-1), -playgroundLength / 2));//Wall at posZ, playgroundLength / 2 units away, facing negZ
-            this.addWorldCollider(new PlaneCollider(new Vector3D(1,0,0), -playgroundWidth / 2));//Wall at negX, playgroundWidth / 2 units away, facing pos X
-            this.addWorldCollider(new PlaneCollider(new Vector3D(-1,0,0), -playgroundWidth / 2));//Wall at posX, playgroundWidth / 2 units away, facint negX
-            this.addWorldCollider(new AABBCollider(new Vector3D(-1,0,-1), new Vector3D(1,1,1)));//2x2 lump in middle of playground
+            this.addWorldCollider(new PlaneCollider(new Vector3d(0, 1, 0), groundHeight));//ground plane at y groundHeight, facing positive Y
+            this.addWorldCollider(new PlaneCollider(new Vector3d(0,0,1), -playgroundLength / 2));//Wall at negZ, playgroundLength / 2 units away, facing pos Z
+            this.addWorldCollider(new PlaneCollider(new Vector3d(0,0,-1), -playgroundLength / 2));//Wall at posZ, playgroundLength / 2 units away, facing negZ
+            this.addWorldCollider(new PlaneCollider(new Vector3d(1,0,0), -playgroundWidth / 2));//Wall at negX, playgroundWidth / 2 units away, facing pos X
+            this.addWorldCollider(new PlaneCollider(new Vector3d(-1,0,0), -playgroundWidth / 2));//Wall at posX, playgroundWidth / 2 units away, facint negX
+            this.addWorldCollider(new AABBCollider(new Vector3d(-1,0,-1), new Vector3d(1,1,1)));//2x2 lump in middle of playground
         }
         
         public void onTick()
@@ -285,7 +286,7 @@ namespace Coictus
 
         /*creates an impulse at the given location which will push entities away, 
           like an explosion.*/
-        public void doExplosionAt(Vector3D loc, float radius = 7, float power = 2)
+        public void doExplosionAt(Vector3d loc, float radius = 7, float power = 2)
         {
             //render an explosion effect
             VFXUtil.doExplosionEffect(this, loc, radius);
@@ -295,7 +296,7 @@ namespace Coictus
             {
                 if (ent!= null)
                 {
-                    double distanceFromLocation = (ent.getPosition() - loc).Magnitude();
+                    double distanceFromLocation = (ent.getPosition() - loc).Length;
                     if (distanceFromLocation < radius)
                     {
                         ent.applyImpulseFromLocation(loc, (1 - MathUtil.normalize(0, (float)radius, (float)distanceFromLocation)) * power);
@@ -332,7 +333,7 @@ namespace Coictus
             entityIDItterator++;
         }
 
-        public void spawnEntityInWorldAtPosition(Entity theEntity, Vector3D atPosition)
+        public void spawnEntityInWorldAtPosition(Entity theEntity, Vector3d atPosition)
         {
             theEntity.setPosition(atPosition);
             spawnEntityInWorld(theEntity);

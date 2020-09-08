@@ -1,4 +1,4 @@
-﻿using Coictus.FredsMath;
+﻿using OpenTK;
 using System;
 
 namespace Coictus.Models
@@ -17,15 +17,15 @@ namespace Coictus.Models
         protected EntityModel()
         {
             theModel = null;
-            modelMatrix = new Matrix4(1.0F);
-            prevTickModelMatrix = new Matrix4(1.0F);
+            modelMatrix = new Matrix4();
+            prevTickModelMatrix = new Matrix4();
         }
         public EntityModel(Entity parent)
         {
             this.parent = parent;
             theModel = null;
-            modelMatrix = new Matrix4(1.0F);
-            prevTickModelMatrix = new Matrix4(1.0F);
+            modelMatrix = new Matrix4();
+            prevTickModelMatrix = new Matrix4();
             updateModel();//updating model twice to set first frame render position to the entity position.
             updateModel();
         }
@@ -33,8 +33,8 @@ namespace Coictus.Models
         {
             this.parent = parent;
             theModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelPath);//TODO: Inefficient. This will mean we have to load model data each time a model for an entity etc is spawned!, maybe make a list of pre loaded models?
-            modelMatrix = new Matrix4(1.0F);
-            prevTickModelMatrix = new Matrix4(1.0F);
+            modelMatrix = new Matrix4();
+            prevTickModelMatrix = new Matrix4();
             updateModel();//updating model twice to set first frame render position to the entity position.
             updateModel();
         }
@@ -44,7 +44,7 @@ namespace Coictus.Models
         public virtual void updateModel()
         {
             prevTickModelMatrix = modelMatrix;
-            modelMatrix = Matrix4.rotate(new Vector3((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) *  Matrix4.translate(Vector3.convert(parent.getPosition())) ;
+            modelMatrix = MathUtil.createRotation(new Vector3((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) *  Matrix4.CreateTranslation(MathUtil.convertVec(parent.getPosition())) ;
         }
 
         /*Replaces the current or non existing ModelDrawable with the one provided*/

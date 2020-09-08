@@ -27,8 +27,8 @@ namespace Coictus.SubRendering.GUI.Text
         public static Vertex[] convertStringToVertexArray(String theString, FontFace font, Vector4 color, Vector2 topLeftPixelOrigin, float fontSize, int screenEdgePadding, TextAlign alignment, UInt32 previousLineCount = 0)
         {
             Vector2 cursorPos = topLeftPixelOrigin;
-            cursorPos.x += screenEdgePadding;
-            cursorPos.y += previousLineCount * (font.getLineHeightPixels() * fontSize);
+            cursorPos.X += screenEdgePadding;
+            cursorPos.Y += previousLineCount * (font.getLineHeightPixels() * fontSize);
             byte[] charIds = Encoding.ASCII.GetBytes(theString);
             Vertex[] result = new Vertex[theString.Replace(" ", "").Length * 4];//number of vertices for each character. Excluding spaces.
             int vertexIndex = 0;
@@ -36,16 +36,16 @@ namespace Coictus.SubRendering.GUI.Text
             if (alignment == TextAlign.RIGHT)
             {
                 //position cursor to right side and offset cursor to compensate for string length
-                cursorPos.x = GameInstance.gameWindowWidth - cursorPos.x;//put cursor to right side orientation
+                cursorPos.X = GameInstance.gameWindowWidth - cursorPos.X;//put cursor to right side orientation
                 for (int i = 0; i < theString.Length; i++)
                 {
                     if (charIds[i] == spaceAscii)
                     {
-                        cursorPos.x -= font.getSpaceWidthPixels() * fontSize;
+                        cursorPos.X -= font.getSpaceWidthPixels() * fontSize;
                     }
                     else
                     {
-                        cursorPos.x -= font.getCharacter(charIds[i]).getXAdvancePixels() * fontSize;
+                        cursorPos.X -= font.getCharacter(charIds[i]).getXAdvancePixels() * fontSize;
                     }
                 }
 
@@ -53,7 +53,7 @@ namespace Coictus.SubRendering.GUI.Text
                 {
                     if (charIds[i] == spaceAscii)
                     {
-                        cursorPos.x += font.getSpaceWidthPixels() * fontSize;
+                        cursorPos.X += font.getSpaceWidthPixels() * fontSize;
                     }
                     else
                     {
@@ -64,23 +64,23 @@ namespace Coictus.SubRendering.GUI.Text
                         result[vertexIndex + 2] = characterVertices[2];
                         result[vertexIndex + 3] = characterVertices[3];
                         vertexIndex += 4;
-                        cursorPos.x += currentChar.getXAdvancePixels() * fontSize;
+                        cursorPos.X += currentChar.getXAdvancePixels() * fontSize;
                     }
                 }
             }
             else if (alignment == TextAlign.CENTER)
             {
-                cursorPos.x -= screenEdgePadding;//remove padding if text is center alignment since it shouldnt be near edges
+                cursorPos.X -= screenEdgePadding;//remove padding if text is center alignment since it shouldnt be near edges
                 //offset cursor to compensate for string length so center of string is at origin provided
                 for (int i = 0; i < theString.Length; i++)
                 {
                     if (charIds[i] == spaceAscii)
                     {
-                        cursorPos.x -= font.getSpaceWidthPixels() / 2 * fontSize;
+                        cursorPos.X -= font.getSpaceWidthPixels() / 2 * fontSize;
                     }
                     else
                     {
-                        cursorPos.x -= font.getCharacter(charIds[i]).getXAdvancePixels() / 2 * fontSize;
+                        cursorPos.X -= font.getCharacter(charIds[i]).getXAdvancePixels() / 2 * fontSize;
                     }
                 }
 
@@ -88,7 +88,7 @@ namespace Coictus.SubRendering.GUI.Text
                 {
                     if (charIds[i] == spaceAscii)
                     {
-                        cursorPos.x += font.getSpaceWidthPixels() * fontSize;
+                        cursorPos.X += font.getSpaceWidthPixels() * fontSize;
                     }
                     else
                     {
@@ -99,7 +99,7 @@ namespace Coictus.SubRendering.GUI.Text
                         result[vertexIndex + 2] = characterVertices[2];
                         result[vertexIndex + 3] = characterVertices[3];
                         vertexIndex += 4;
-                        cursorPos.x += currentChar.getXAdvancePixels() * fontSize;
+                        cursorPos.X += currentChar.getXAdvancePixels() * fontSize;
                     }
                 }
             }
@@ -109,7 +109,7 @@ namespace Coictus.SubRendering.GUI.Text
                 {
                     if (charIds[i] == spaceAscii)
                     {
-                        cursorPos.x += font.getSpaceWidthPixels() * fontSize;
+                        cursorPos.X += font.getSpaceWidthPixels() * fontSize;
                     }
                     else
                     {
@@ -120,7 +120,7 @@ namespace Coictus.SubRendering.GUI.Text
                         result[vertexIndex + 2] = characterVertices[2];
                         result[vertexIndex + 3] = characterVertices[3];
                         vertexIndex += 4;
-                        cursorPos.x += currentChar.getXAdvancePixels() * fontSize;
+                        cursorPos.X += currentChar.getXAdvancePixels() * fontSize;
                     }
                 }
             }
@@ -130,8 +130,8 @@ namespace Coictus.SubRendering.GUI.Text
         public static Vertex[] createVerticesFromChar(Character character, Vector4 color, Vector2 pixelCursorTopLeft, float fontSize)
         {
             //get pixel values
-            float x = pixelCursorTopLeft.x + character.getxOffsetPixels() * fontSize;
-            float y = pixelCursorTopLeft.y + character.getyOffsetPixels() * fontSize;
+            float x = pixelCursorTopLeft.X + character.getxOffsetPixels() * fontSize;
+            float y = pixelCursorTopLeft.Y + character.getyOffsetPixels() * fontSize;
             float xMax = x + character.getPixelWidth() * fontSize;
             float yMax = y + character.getPixelHeight() * fontSize;
             float u = character.getU();
@@ -155,10 +155,10 @@ namespace Coictus.SubRendering.GUI.Text
 
             //add vertices at screen coords with uv, in different order so the quads will now face fowards after being flipped, so that they show when face culling.
             //color additions and multiplications are for creating the gradient and highlight for visibility
-            modelVertices[0] = new Vertex(xMax, y, 0, color.r + 0.1F, color.g + 0.1F, color.b + 0.1F, color.a, uMax, v);//bottom right vertex1
-            modelVertices[1] = new Vertex(x, y, 0, color.r + 0.1F, color.g + 0.1F, color.b + 0.1F, color.a, u, v);//Bottom left vertex0
-            modelVertices[2] = new Vertex(xMax, yMax, 0, color.r * 0.5F, color.g * 0.5F, color.b * 0.5F, color.a, uMax, vMax);//top right vertex3
-            modelVertices[3] = new Vertex(x, yMax, 0, color.r * 0.5F, color.g * 0.5F, color.b * 0.5F, color.a, u, vMax);//top left vertex2
+            modelVertices[0] = new Vertex(xMax, y, 0, color.X + 0.1F, color.Y + 0.1F, color.Z + 0.1F, color.W, uMax, v);//bottom right vertex1
+            modelVertices[1] = new Vertex(x, y, 0, color.X + 0.1F, color.Y + 0.1F, color.Z + 0.1F, color.W, u, v);//Bottom left vertex0
+            modelVertices[2] = new Vertex(xMax, yMax, 0, color.X * 0.5F, color.Y * 0.5F, color.Z * 0.5F, color.W, uMax, vMax);//top right vertex3
+            modelVertices[3] = new Vertex(x, yMax, 0, color.X * 0.5F, color.Y * 0.5F, color.Z * 0.5F, color.W, u, vMax);//top left vertex2
 
             return modelVertices;
         }
@@ -213,7 +213,7 @@ namespace Coictus.SubRendering.GUI.Text
                 }
                 else
                 {
-                    //fill combined vertices with zero values untill it reaches the defined maximum character limit * 4
+                    //fill combined vertices with Zero values untill it reaches the defined maximum character limit * 4
                     //This must be done to override the old data in the vertex buffer
                     Array.Copy(combinedVertices, fillerVertexArray, combinedVertices.Length);
                 }
