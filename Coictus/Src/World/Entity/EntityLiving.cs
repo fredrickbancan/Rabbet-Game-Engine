@@ -85,6 +85,7 @@ namespace Coictus
 
             //change velocity based on movement
             //movement vector is a unit vector.
+            if(movementVector.Length > 0)
             movementVector.Normalize();//normalize vector so player is same speed in any direction
 
             velocity.X += frontVector.X * movementVector.Z * walkSpeedModified;//fowards and backwards movement

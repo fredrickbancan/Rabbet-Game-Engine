@@ -26,6 +26,18 @@ namespace Coictus
         {
             return degrees * 0.01745329251994329576923690768489D;
         }
+        public static float radiansF(float degrees)
+        {
+            return degrees * 0.01745329251994329576923690768489F;
+        }
+        public static Vector3 radians(Vector3 degrees)
+        {
+            return degrees * 0.01745329251994329576923690768489F;
+        }
+        public static Vector3d radians(Vector3d degrees)
+        {
+            return degrees * 0.01745329251994329576923690768489D;
+        }
 
         /*gives the dot product of the two provided coordinates*/
         public static float dotFloats(float xA, float yA, float zA, float xB, float yB, float zB)
@@ -124,10 +136,12 @@ namespace Coictus
         }
         public static Matrix4 createRotation(Vector3 rot)
         {
+            rot = radians(rot);
             return Matrix4.CreateRotationX(rot.X) * Matrix4.CreateRotationY(rot.Y) * Matrix4.CreateRotationZ(rot.Z);
         }
         public static Matrix4 createRotation(Vector3d rot)
         {
+            rot = radians(rot);
             return Matrix4.CreateRotationX((float)rot.X) * Matrix4.CreateRotationY((float)rot.Y) * Matrix4.CreateRotationZ((float)rot.Z);
         }
 

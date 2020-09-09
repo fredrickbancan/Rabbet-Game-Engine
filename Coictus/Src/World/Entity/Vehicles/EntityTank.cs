@@ -57,6 +57,7 @@ namespace Coictus
 
             //change velocity based on movement
             //movement vector is a unit vector.
+            if(movementVector.Length > 0)
             movementVector.Normalize();//normalize vector so vehicle is same speed in any direction
             rotateYaw((movementVector.X > 0 ? 1 : (movementVector.X < 0 ? -1 : 0))  * turnRate);//rotate wheels, if reversing then rotate tank in opposite direction
             velocity += frontVector * movementVector.Z * walkSpeedModified;//fowards and backwards movement
