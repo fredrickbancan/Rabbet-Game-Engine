@@ -1,7 +1,6 @@
 ﻿using Coictus.GUI;
 using Coictus.GUI.Text;
 using System;
-using System.Drawing;
 
 namespace Coictus.Debugging
 {
@@ -13,12 +12,12 @@ namespace Coictus.Debugging
         /*Initialize the text panel for the debug info, can only be done if the mainGUI panel is created first*/
         public static void init()
         {
-            GUIHandler.addTextPanelToGUI(MainGUI.mainGUIName, debugInfoPanelName, new GUITextPanel(new TextFormat(0.0F, 0.05F).setPanelColor(Color.Gray)
+            GUIHandler.addTextPanelToGUI(MainGUI.mainGUIName, debugInfoPanelName, new GUITextPanel(new TextFormat(0.0F, 0.05F)
                 .setLines(new String[]
                         {
                         ("press F3 to hide debug screen.")
                         }
-                       ).setPanelColor(Color.Gray)));
+                       ).setPanelColor(CustomColor.grey)));
         }
 
         /*Shows and updates the debug info on the screen, Can be called every tick (Do not call every frame, too expensive)*/

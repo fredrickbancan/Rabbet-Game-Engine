@@ -2,7 +2,6 @@
 using Coictus.SubRendering.GUI;
 using OpenTK;
 using System;
-using System.Drawing;
 namespace Coictus.GUI
 {
     public enum CrosshairType//enum for all different types of crosshairs
@@ -18,16 +17,16 @@ namespace Coictus.GUI
         private Texture crosshairTexture;
         private float texutrePixelWidth = 0F;
         private float texutrePixelHeight = 0F;
-        private Color crosshairColor = Color.Black;
+        private CustomColor crosshairColor = CustomColor.black;
 
-        public GUICrosshair(Color color,float crosshairSize = 2.0F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0.5F, 0.5F))
+        public GUICrosshair(CustomColor color,float crosshairSize = 2.0F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0.5F, 0.5F))
         {
             crosshairColor = color;
             setCrosshairTextureAndSize(crosshairType, crosshairSize);
             setModel(new ModelDrawable(shaderDir, crosshairTexture, QuadPrefab.getNewModel().setColor(crosshairColor).vertices, QuadPrefab.quadIndices));
         }
 
-        public GUICrosshair(float crosshairSize = 2.0F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0.0F, 1.0F))//TODO: figure out wtf happened here
+        public GUICrosshair(float crosshairSize = 2.0F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0.5F, 0.5F))//TODO: figure out wtf happened here
         {
             setCrosshairTextureAndSize(crosshairType, crosshairSize);
             setModel(new ModelDrawable(shaderDir, crosshairTexture, QuadPrefab.getNewModel().setColor(crosshairColor).vertices, QuadPrefab.quadIndices));

@@ -1,7 +1,6 @@
 ﻿using Coictus.Models;
 using OpenTK;
 using System;
-using System.Drawing;
 
 namespace Coictus.VFX
 {
@@ -9,7 +8,7 @@ namespace Coictus.VFX
     public class VFXPointParticles : VFXBase
     {
         private static String defaultShaderDir = ResourceUtil.getShaderFileDir(@"VFX\PointParticleFog.shader");
-        protected Color pointColor;
+        protected CustomColor pointColor;
         protected float randomPointPositionSpread;//the maximum distance between points when randomizing a point cloud (e.g, a puff of smoke)
         protected float pointRadius;
         protected bool randomBrightness = false;
@@ -19,7 +18,7 @@ namespace Coictus.VFX
        
 
         /*this constructor is for creating a point particle based VFX which does not create a random point cloud. maybe you will want to construct the points in a specific manner with colors or use a model.*/
-        public VFXPointParticles(Vector3d pos, Color color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
+        public VFXPointParticles(Vector3d pos, CustomColor color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
         {
             colorAlpha = alpha;
             pointColor = color;
@@ -28,7 +27,7 @@ namespace Coictus.VFX
         }
 
         /*this constructor is for creating a randomized particle cloud at the position using the provided parameters*/
-        public VFXPointParticles(Vector3d pos, Color color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
+        public VFXPointParticles(Vector3d pos, CustomColor color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
         {
             colorAlpha = alpha;
             this.randomBrightness = randomBrightness;
@@ -63,11 +62,11 @@ namespace Coictus.VFX
         {
             if(randomBrightness)
             {
-                Vector4 colorVec = MathUtil.colorToNormalVec4(pointColor);
+                Vector4 colorVec = pointColor.toNormalVec4();
                 float randomBrightnessAmount = 0.2F - 0.4F * (float)GameInstance.rand.NextDouble();
                 return new Vector4(colorVec.X + randomBrightnessAmount, colorVec.Y + randomBrightnessAmount, colorVec.Z + randomBrightnessAmount, colorAlpha);
             }
-            Vector4 nonRandBrightColor = MathUtil.colorToNormalVec4(pointColor);
+            Vector4 nonRandBrightColor = pointColor.toNormalVec4();
             nonRandBrightColor.W = colorAlpha;
             return nonRandBrightColor;
         }

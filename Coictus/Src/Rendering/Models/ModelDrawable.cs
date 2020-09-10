@@ -107,7 +107,7 @@ namespace Coictus.Models
             bind();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
-            shader.setUniformMat4F("modelMatrix", new Matrix4());
+            shader.setUniformMat4F("modelMatrix", Matrix4.Identity);
             shader.setUniformVec3F("skyTop", skyTopColor);
             shader.setUniformVec3F("skyHorizon", skyHorizonColor);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
@@ -118,7 +118,7 @@ namespace Coictus.Models
             bind();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
-            shader.setUniformMat4F("modelMatrix", new Matrix4());
+            shader.setUniformMat4F("modelMatrix", Matrix4.Identity);
             shader.setUniformVec3F("fogColour", fogColour);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();

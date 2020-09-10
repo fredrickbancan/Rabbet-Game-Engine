@@ -55,7 +55,7 @@ namespace Coictus
             DebugInfo.init();
             HitboxRenderer.init();
             //create and spawn player in new world
-            thePlayer = new EntityPlayer("Steve", new Vector3d(0.0, 0.0, 2.0));
+            thePlayer = new EntityPlayer("Steve", new Vector3d(0.0, 0.0, 2));
             currentPlanet = new World();
             for (int i = 0; i < 60; i++)
             {

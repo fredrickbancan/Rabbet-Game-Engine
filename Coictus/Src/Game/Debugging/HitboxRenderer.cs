@@ -4,7 +4,6 @@ using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace Coictus.Debugging
 {
@@ -13,9 +12,9 @@ namespace Coictus.Debugging
     {
         private static String aabbPlaneShaderDir = ResourceUtil.getShaderFileDir("Color3D.shader");
         private static ModelDrawable aabbModel;
-        private static ModelDrawable sphereModel;
-        private static ModelDrawable planeModel;
-        private static ModelDrawable pointModel;
+      //  private static ModelDrawable sphereModel;
+       // private static ModelDrawable planeModel;
+       // private static ModelDrawable pointModel;
 
         /*Constructs each hitbox model for instanced rendering. Requires Renderer to be initialized first.*/
         public static void init()
@@ -30,7 +29,7 @@ namespace Coictus.Debugging
 
             for(int i = 0; i < boxSides.Length; i++)
             {
-                boxSides[i] = QuadPrefab.getNewModel().setColor(Color.Magenta);
+                boxSides[i] = QuadPrefab.getNewModel().setColor(CustomColor.magenta);
             }
             
             boxSides[0].rotateVertices(new Vector3(0, 180, 0)).translateVertices(new Vector3(0, 0, -0.5F));//negZ face

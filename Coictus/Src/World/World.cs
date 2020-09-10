@@ -5,7 +5,6 @@ using Coictus.VFX;
 using OpenTK;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
 namespace Coictus
@@ -28,8 +27,8 @@ namespace Coictus
 
         public World()
         {
-            fogColor = MathUtil.colorToNormalVec3(Color.LightPink);
-            skyColor = MathUtil.colorToNormalVec3(Color.SkyBlue);
+            fogColor = CustomColor.lightBlossom.toNormalVec3();
+            skyColor = CustomColor.skyBlue.toNormalVec3();
             buildSkyBox();
             generateWorld();
         }
@@ -80,6 +79,7 @@ namespace Coictus
             HitboxRenderer.renderAllHitboxes(worldColliders, entityColliders);
         }
 
+        /*creates simple inverted cube at 0,0,0*/
         private void buildSkyBox()
         {
             Model[] temp = new Model[6];
@@ -89,7 +89,7 @@ namespace Coictus
             temp[3] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(0, 0, 0), new Vector3(0, 0, -0.5F));//negZ
             temp[4] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(-90, 0, 0), new Vector3(0, 0.5F, 0));//top
             temp[5] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(90, 0, 0), new Vector3(0, -0.5F, 0));//bottom
-            skyboxModel = QuadBatcher.batchQuadModels(temp, ResourceUtil.getShaderFileDir("SkyboxShader3D.shader"), QuadPrefab.getTextureDir());
+            skyboxModel = QuadBatcher.batchQuadModels(temp, ResourceUtil.getShaderFileDir("SkyboxShader3D.shader"), "none");
         }
 
         private void generateWorld()//creates the playground and world colliders

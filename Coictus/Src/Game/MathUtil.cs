@@ -1,5 +1,4 @@
 ﻿using OpenTK;
-using System.Drawing;
 
 namespace Coictus
 {
@@ -20,6 +19,15 @@ namespace Coictus
             if (val < min) val = min;
             if (val > max) val = max;
             return val;
+        }
+
+        public static double lerp(double src, double dest, float factor)
+        {
+            return src + (dest - src) * factor;
+        }
+        public static float lerpF(float src, float dest, float factor)
+        {
+            return src + (dest - src) * factor;
         }
 
         public static double radians(double degrees)
@@ -53,6 +61,33 @@ namespace Coictus
         public static double hypotenuse(double a, double b)
         {
             return System.Math.Sqrt(a * a + b * b);
+        }
+
+        /*Takes in 3 doubles and a smooth factor. Smooths the 3 values with strength of smooth factor. Smooth factor of 0 does nothing, and 1 makes each value the average.*/
+        public static void smooth3(ref double x, ref double y, ref double z, float factor)
+        {
+            if (factor <= 0)
+                return;
+            if (factor > 1F)
+                factor = 1F;
+
+            double avg = (x + y + z) / 3D;
+            x = lerp(x, avg, factor);
+            y = lerp(y, avg, factor);
+            z = lerp(z, avg, factor);
+        }
+
+         public static void smooth3F(ref float x, ref float y, ref float z, float factor)
+        {
+            if (factor <= 0)
+                return;
+            if (factor > 1F)
+                factor = 1F;
+
+            float avg = (x + y + z) / 3F;
+            x = lerpF(x, avg, factor);
+            y = lerpF(y, avg, factor);
+            z = lerpF(z, avg, factor);
         }
 
         public static double max3(double a, double b, double c)
@@ -106,17 +141,9 @@ namespace Coictus
             return f;
         }
 
-        /*Returns a vector 4 with the values of the color normalized from 0 to 1, format: RGBA*/
-        public static Vector4 colorToNormalVec4(Color color)
-        {
-            return new Vector4(normalize(0, 255, color.R), normalize(0, 255, color.G), normalize(0, 255, color.B), normalize(0, 255, color.A));
-        }
+        
 
-        /*Returns a vector 3 with the values of the color normalized from 0 to 1, format: RGB*/
-        public static Vector3 colorToNormalVec3(Color color)
-        {
-            return new Vector3(normalize(0, 255, color.R), normalize(0, 255, color.G), normalize(0, 255, color.B));
-        }
+        
 
         /*Returns a vector 3 with the absolute values negated from one, only useful for axis aligned collisions*/
         public static Vector3 oneMinusAbsolute(Vector3 vec)

@@ -66,6 +66,7 @@
     <None Include="Res\Shaders\Color3D.shader" />
     <None Include="Res\Shaders\Offscreen.shader" />
     <None Include="Res\Shaders\VFX\PointParticleFog.shader" />
+    <Compile Include="Src\Game\CustomColor.cs" />
     <Compile Include="Src\Game\Debugging\HitboxRenderer.cs" />
     <Compile Include="Src\Game\GUIS\MainGUI.cs" />
     <Compile Include="Src\Game\MathUtil.cs" />

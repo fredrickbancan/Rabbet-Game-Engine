@@ -130,7 +130,7 @@ namespace Coictus.Models
 
                 for (int i = 0; i < positions.Count; i++)
                 {
-                    vertexResult.Add(new Vertex(positions.ElementAt(i), MathUtil.colorToNormalVec4(Color.White), orderedUVs[i]));
+                    vertexResult.Add(new Vertex(positions.ElementAt(i), CustomColor.colorToNormalVec4(Color.White), orderedUVs[i]));
                 }
                 successfullyLoaded = true;//do last, to make sure there is not mistake with any lines starting with f triggering a new face processing method call
             }

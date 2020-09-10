@@ -1,5 +1,6 @@
 ﻿using Coictus.Debugging;
 using Coictus.GUI;
+using Coictus.Models;
 using Coictus.SubRendering;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -46,8 +47,7 @@ namespace Coictus
         private static void preRender()
         {
             OffScreen.prepareToRenderToOffScreenTexture();
-            setClearColor(Color.SkyBlue);
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.Clear(ClearBufferMask.DepthBufferBit);
         }
         
         public static void renderAll()
@@ -59,10 +59,11 @@ namespace Coictus
             postRender();
             Profiler.beginEndProfile(Profiler.renderingName);
         }
-
+        static ModelDrawable test = PlanePrefab.getNewModelDrawable();
         private static void updateCameraAndRenderWorld()
         {
             GameInstance.get.thePlayer.onCameraUpdate();//do this first
+            test.draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());
             GameInstance.get.currentPlanet.drawEntities(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
             GameInstance.get.currentPlanet.drawVFX(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
             GameInstance.get.currentPlanet.getGroundModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());

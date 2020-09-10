@@ -12,9 +12,9 @@ namespace Coictus.Models
         private Matrix4 prevTickTankWheelsModelMatrix;//previous tick model matrices for interpolating each part of the tank model.
         private Matrix4 prevTickTankBodyModelMatrix;
         private Matrix4 prevTickTankBarrelModelMatrix;
-        private Matrix4 tankWheelsModelMatrix = new Matrix4();
-        private Matrix4 tankBodyModelMatrix = new Matrix4();
-        private Matrix4 tankBarrelModelMatrix = new Matrix4();
+        private Matrix4 tankWheelsModelMatrix = Matrix4.Identity;
+        private Matrix4 tankBodyModelMatrix = Matrix4.Identity;
+        private Matrix4 tankBarrelModelMatrix = Matrix4.Identity;
         private String shaderDir = ResourceUtil.getShaderFileDir("ColorTextureFog3D.shader");
         private String textureDir = ResourceUtil.getTextureFileDir("Camo.png");
 
@@ -40,8 +40,8 @@ namespace Coictus.Models
             //barrel pitch is also child of camera pitch, which means it has to be additionally rotated by getBarrelPitch
             //barrel also needs to be translated to a specific spot on the body model
             tankWheelsModelMatrix = Matrix4.CreateScale(new Vector3(0.5F, 0.5F, 0.5F)) * MathUtil.createRotation(new Vector3((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) * Matrix4.CreateTranslation(MathUtil.convertVec(parent.getPosition()));
-            tankBodyModelMatrix = MathUtil.createRotation(new Vector3(0, 90 + (float)parent.getYaw() - (float)parent.getBodyYaw, 0)) * tankWheelsModelMatrix;
-            tankBarrelModelMatrix = MathUtil.createRotation(new Vector3((float)parent.getBarrelPitch, 0, 0)) * Matrix4.CreateTranslation(new Vector3(0, 1.7F, -2F)) * tankBodyModelMatrix;
+            tankBodyModelMatrix = Matrix4.CreateScale(new Vector3(0.5F, 0.5F, 0.5F)) * MathUtil.createRotation(new Vector3(0, -(float)parent.getBodyYaw, 0)) * Matrix4.CreateTranslation(MathUtil.convertVec(parent.getPosition()));
+            tankBarrelModelMatrix = MathUtil.createRotation(new Vector3((float)parent.getBarrelPitch, 0, 0)) * Matrix4.CreateTranslation(0, 1.7F, -2F) * tankBodyModelMatrix;
 
         }
 

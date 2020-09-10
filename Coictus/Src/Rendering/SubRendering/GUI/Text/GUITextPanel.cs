@@ -2,7 +2,6 @@
 using Coictus.SubRendering.GUI.Text;
 using OpenTK;
 using System;
-using System.Drawing;
 
 namespace Coictus.GUI.Text
 {
@@ -10,7 +9,7 @@ namespace Coictus.GUI.Text
     {
         public Vector2 panelPos = Vector2.Zero; // position of the top left corner of this panel
         public Vector2 panelPixelPos = Vector2.Zero; // position of the top left corner of this panel
-        public Vector4 panelColour = MathUtil.colorToNormalVec4(Color.White);
+        public Vector4 panelColour = CustomColor.white.toNormalVec4();
         public TextAlign alignment = TextAlign.LEFT;
         public int screenEdgePadding = TextUtil.defaultScreenEdgePadding;
         public String[] lines = new String[] { "Sample Text" };
@@ -43,9 +42,9 @@ namespace Coictus.GUI.Text
             lines = new string[] { line };
             return this;
         }
-        public TextFormat setPanelColor(Color color)
+        public TextFormat setPanelColor(CustomColor color)
         {
-            panelColour = MathUtil.colorToNormalVec4(color);
+            panelColour = color.toNormalVec4();
             return this;
         }
         public TextFormat setFontSize(float size)
@@ -120,9 +119,9 @@ namespace Coictus.GUI.Text
             format.lines = new string[] { line };
             return this;
         }
-        public GUITextPanel setPanelColor(Color color)
+        public GUITextPanel setPanelColor(CustomColor color)
         {
-            format.panelColour = MathUtil.colorToNormalVec4(color);
+            format.panelColour = color.toNormalVec4();
             return this;
         }
         public GUITextPanel setFontSize(float size)

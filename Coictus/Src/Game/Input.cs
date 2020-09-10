@@ -57,12 +57,16 @@ namespace Coictus
 
                 if (keySinglePress(Key.F3))
                 {
-                    toggleDebugScreen();
+                    toggleBoolean(ref GameSettings.debugScreen);
                 }
 
                 if (keySinglePress(Key.F4))
                 {
-                    toggleDebugHitboxes();
+                    toggleBoolean(ref GameSettings.drawHitboxes);
+                }
+                if (keySinglePress(Key.F5))
+                {
+                    toggleBoolean(ref GameSettings.noclip);
                 }
 
             }
@@ -73,26 +77,15 @@ namespace Coictus
             Mouse.SetPosition(GameInstance.windowCenterX, GameInstance.windowCenterY); // center the mouse cursor
         }
 
-        public static void toggleDebugScreen()
+        public static void toggleBoolean(ref bool boolean)
         {
-            if(!GameSettings.debugScreen)
+            if (!boolean)
             {
-                GameSettings.debugScreen = true;
+                boolean  = true;
             }
             else
             {
-                GameSettings.debugScreen = false;
-            }
-        }
-        public static void toggleDebugHitboxes()
-        {
-            if (!GameSettings.drawHitboxes)
-            {
-                GameSettings.drawHitboxes = true;
-            }
-            else
-            {
-                GameSettings.drawHitboxes = false;
+                boolean = false;
             }
         }
 

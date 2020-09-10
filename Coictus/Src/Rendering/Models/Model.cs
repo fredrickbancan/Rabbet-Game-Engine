@@ -1,5 +1,4 @@
 ﻿using OpenTK;
-using System.Drawing;
 
 namespace Coictus.Models
 {
@@ -14,9 +13,9 @@ namespace Coictus.Models
         }
 
         /*sets all vertex colors to this color*/
-        public Model setColor(Color color)
+        public Model setColor(CustomColor color)
         {
-            return this.setColor(MathUtil.colorToNormalVec4(color));
+            return this.setColor(color.toNormalVec4());
         }
         public Model setColor(Vector4 color)
         {

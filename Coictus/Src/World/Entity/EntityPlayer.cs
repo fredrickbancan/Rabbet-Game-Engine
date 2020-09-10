@@ -41,13 +41,6 @@ namespace Coictus
             }
         }
 
-        /*When the player is rotated by something other than the camera, it needs to apply the rotation to the camera smoothly in between ticks. 
-          The camera will then apply this rotation to the player entity.*/
-        public override void rotateYaw(double amount)
-        {
-            camera.tickRotateYaw(amount);
-        }
-
         public Vector3d getEyePosition()
         {
             return pos + EntityPlayer.eyeOffset;
@@ -71,6 +64,7 @@ namespace Coictus
         {
             return this.playerName;
         }
+
         public void togglePause()
         {
             if(!paused)
@@ -83,6 +77,12 @@ namespace Coictus
                 paused = false;
                 TicksAndFps.unPause();
             }
+        }
+
+        public override void applyCollision(Vector3d direction, double overlap)
+        {
+            if(!GameSettings.noclip)
+            base.applyCollision(direction, overlap);
         }
         public Matrix4 getViewMatrix()
         {

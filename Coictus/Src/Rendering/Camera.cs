@@ -7,7 +7,7 @@ namespace Coictus
     /*This class represents a virtual point at which the world should be rendered from. It takes in a player and will be bound to the players head.*/
     public class Camera
     {
-        private double pitch, yaw, externalYawAmount;//externalYawAmount is a value of how much the camera yaw should rotate in between ticks, affected by methods in the game loop
+        private double pitch, yaw;
         private int mouseDeltaX;
         private int mouseDeltaY;
         private Matrix4 viewMatrix;
@@ -39,7 +39,6 @@ namespace Coictus
           also updates mouse input and rotates camera dependingly.*/
         public void onUpdate()
         {
-            applyExternalYawInterpolated();
             updateMouseDeltas();
             Input.centerMouse();
             pitch -= mouseDeltaY * GameSettings.mouseSensitivity;
@@ -74,14 +73,6 @@ namespace Coictus
 
         public void onTick()
         {
-
-            externalYawAmount = 0;
-        }
-
-        /*Calculate the amount to rotate the camera in between ticks for external rotations applied to camera.*/
-        private void applyExternalYawInterpolated()
-        {
-            yaw += externalYawAmount * TicksAndFps.getFrameTickPercentage();
         }
 
         /*updates mouse input for camera*/
@@ -96,11 +87,6 @@ namespace Coictus
         public Matrix4 getViewMatrix()
         {
             return this.viewMatrix;
-        }
-
-        public void tickRotateYaw(double amount)
-        {
-            this.externalYawAmount += amount;
         }
     }
 }

@@ -17,15 +17,15 @@ namespace Coictus.Models
         protected EntityModel()
         {
             theModel = null;
-            modelMatrix = new Matrix4();
-            prevTickModelMatrix = new Matrix4();
+            modelMatrix = Matrix4.Identity;
+            prevTickModelMatrix = Matrix4.Identity;
         }
         public EntityModel(Entity parent)
         {
             this.parent = parent;
             theModel = null;
-            modelMatrix = new Matrix4();
-            prevTickModelMatrix = new Matrix4();
+            modelMatrix = Matrix4.Identity;
+            prevTickModelMatrix = Matrix4.Identity;
             updateModel();//updating model twice to set first frame render position to the entity position.
             updateModel();
         }
@@ -33,8 +33,8 @@ namespace Coictus.Models
         {
             this.parent = parent;
             theModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelPath);//TODO: Inefficient. This will mean we have to load model data each time a model for an entity etc is spawned!, maybe make a list of pre loaded models?
-            modelMatrix = new Matrix4();
-            prevTickModelMatrix = new Matrix4();
+            modelMatrix = Matrix4.Identity;
+            prevTickModelMatrix = Matrix4.Identity;
             updateModel();//updating model twice to set first frame render position to the entity position.
             updateModel();
         }
