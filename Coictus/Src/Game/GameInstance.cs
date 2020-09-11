@@ -8,11 +8,25 @@ using System.Drawing;
 
 namespace Coictus
 {
-
+    /*List of all possible player/EntityLiving actions requestable via keyboard and mouse input or game logic*/
+    public enum Action
+    {
+        none,
+        fowards,
+        strafeLeft,
+        backwards,
+        strafeRight,
+        jump,
+        attack,
+        duck,
+        sprint,
+        interact
+    };
 
     /*This class is the main game class. It contains all the execution code for rendering, logic loops and loading.*/
     public class GameInstance : GameWindow
     {
+        public static readonly int actionsCount = Enum.GetNames(typeof(Action)).Length;
         public static int temp = 0;
         private static GameInstance instance;
         private static Random privateRand;
@@ -27,14 +41,14 @@ namespace Coictus
         public World currentPlanet;
        
 
-        public GameInstance(int screenWidth, int screenHeight, int initialWidth, int initialHeight, String title) : base(initialWidth, initialHeight, new GraphicsMode(32,24,0,8), title)
+        public GameInstance(int screenWidth, int screenHeight, int initialWindowWidth, int initialWindowHeight, String title) : base(initialWindowWidth, initialWindowHeight, new GraphicsMode(32,24,0,8), title)
         {
-            Application.debug("Game window width: " + initialWidth);
-            Application.debug("Game window height: " + initialHeight);
+            Application.debug("Game window width: " + initialWindowWidth);
+            Application.debug("Game window height: " + initialWindowHeight);
             GameInstance.privateRand = new Random();
             GameInstance.instance = this;
-            GameInstance.windowWidth = initialWidth;
-            GameInstance.windowHeight = initialHeight;
+            GameInstance.windowWidth = initialWindowWidth;
+            GameInstance.windowHeight = initialWindowHeight;
             GameInstance.screenHeight = screenHeight;
             GameInstance.screenWidth = screenWidth;
             GameInstance.mouseCenterX = this.X + this.Width / 2;

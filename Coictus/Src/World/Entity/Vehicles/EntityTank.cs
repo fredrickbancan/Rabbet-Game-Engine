@@ -27,12 +27,15 @@ namespace Coictus
 
         public override void onTick()
         {
-            base.onTick();//do first
-            if (mountingEntity != null && !playerDriving)
+            if (mountingEntity != null)
             {
-                bodyYaw = mountingEntity.getYaw() + 90;
-                barrelPitch = mountingEntity.getHeadPitch() + projectileHopupAngle;
+                if (!playerDriving)
+                {
+                    bodyYaw = mountingEntity.getYaw() + 90;
+                    barrelPitch = mountingEntity.getHeadPitch() + projectileHopupAngle;
+                }
             }
+            base.onTick();
         }
 
         public override void onFrame()
@@ -76,7 +79,7 @@ namespace Coictus
         }
 
         /*called when player left clicks while driving this vehicle*/
-        public override void onLeftClick()
+        public override void onDriverAttack()
         {
             Vector3d muzzleLocation = getMuzzleLocation();
             currentPlanet.spawnEntityInWorld(new EntityTankProjectile(muzzleLocation, getMuzzleFrontVector(), barrelPitch, bodyYaw));

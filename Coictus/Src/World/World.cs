@@ -188,14 +188,21 @@ namespace Coictus
 
         private void tickEntities()
         {
-            foreach(Entity ent in entities.Values)
+            Entity[] currentEntities = entities.Values.ToArray();
+            foreach (Entity ent in currentEntities)
             {
                 if (ent != null)
-                {
-                    ent.preTickMovement();
+                    ent.preTick();
+            }
+            foreach (Entity ent in currentEntities)
+            {
+                if (ent != null)
                     ent.onTick();
-                    ent.postTickMovement();
-                }
+            }
+            foreach (Entity ent in currentEntities)
+            {
+                if (ent != null)
+                    ent.postTick();
             }
         }
 
@@ -216,9 +223,9 @@ namespace Coictus
             {
                 if (vfx != null)
                 {
-                    vfx.preTickMovement();
+                    vfx.preTick();
                     vfx.onTick();
-                    vfx.postTickMovement();
+                    vfx.postTick();
                 }
             }
         }

@@ -64,7 +64,7 @@ namespace Coictus
         }
 
         /*Do this after manipulating any movement of this object*/
-        public override void postTickMovement()//Overriding in entity so we can apply different frictions on axis depending on state of entity.
+        public override void postTick()//Overriding in entity so we can apply different frictions on axis depending on state of entity.
         {
             if (!isGrounded)
             {

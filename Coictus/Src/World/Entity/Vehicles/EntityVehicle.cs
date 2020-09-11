@@ -39,16 +39,26 @@ namespace Coictus
             if (mountingEntity != null)
             {
                 playerDriving = mountingEntity.getIsPlayer();
-                
+                if (mountingEntity.doingAction(Action.attack))
+                {
+                    onDriverAttack();
+                }
                 alignVectors();
+
+                //setting movementVector.X to -1, 0 or 1 based on driver strafing actions
+                movementVector.X = Convert.ToDouble(mountingEntity.doingAction(Action.strafeRight)) - Convert.ToDouble(mountingEntity.doingAction(Action.strafeLeft));
+
+                //setting movementVector.Z to -1, 0 or 1 based on driver fowards/backwards actions
+                movementVector.Z = Convert.ToDouble(mountingEntity.doingAction(Action.fowards)) - Convert.ToDouble(mountingEntity.doingAction(Action.backwards));
+
 
                 moveByMovementVector();
             }
         }
 
-        public override void postTickMovement()
+        public override void postTick()
         {
-            base.postTickMovement();
+            base.postTick();
             if (mountingEntity != null)
             {
                 mountingEntity.setPosition(pos + mountingOffset);
@@ -105,8 +115,8 @@ namespace Coictus
             }
         }
 
-        /*Called when player is mounting this vehicle and left clicks (for tank)*/
-        public virtual void onLeftClick()
+        /*Called when the driving entity attacks (for tank)*/
+        public virtual void onDriverAttack()
         {
 
         }

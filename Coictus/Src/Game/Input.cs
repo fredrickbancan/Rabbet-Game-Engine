@@ -30,7 +30,7 @@ namespace Coictus
                 //do constant input here
 
                 //this does single button input
-                PlayerController.updateSingleMousePressInput(mouseState);
+                PlayerController.updateMouseButtonInput(mouseState);
             }
         }
 
@@ -42,21 +42,21 @@ namespace Coictus
             /*Only update keyboard input if the game window is focused, and if any key is being pressed.*/
             if (GameInstance.get.Focused && keyboardState.IsAnyKeyDown)
             {
-                if (keySinglePress(Key.Escape))
+                if (singleKeyPress(Key.Escape))
                 {
                     GameInstance.get.Exit();
                 }
 
-                if (keySinglePress(Key.F3))
+                if (singleKeyPress(Key.F3))
                 {
                     toggleBoolean(ref GameSettings.debugScreen);
                 }
 
-                if (keySinglePress(Key.F4))
+                if (singleKeyPress(Key.F4))
                 {
                     toggleBoolean(ref GameSettings.drawHitboxes);
                 }
-                if (keySinglePress(Key.F5))
+                if (singleKeyPress(Key.F5))
                 {
                     toggleBoolean(ref GameSettings.noclip);
                 }
@@ -102,15 +102,14 @@ namespace Coictus
             return mouseHidden;
         }
 
-        public static bool keySinglePress(Key key)
+        //returns true if this key is pressed, and only for the first frame.
+        public static bool singleKeyPress(Key key)
         {
-            //returns true if this key is pressed, and only for the first update.
-            return (keyboardState[key] && (keyboardState[key] != previouskeyboardState[key]));
+            return keyboardState[key] && !previouskeyboardState[key];
         }
-        public static bool mouseSingleKeyPress(MouseButton key)
+        public static bool singleMouseButtonPress(MouseButton key)
         {
-            //returns true if this key is pressed, and only for the first update.
-            return (mouseState[key] && (mouseState[key] != previousMouseState[key]));
+            return mouseState[key] && !previousMouseState[key];
         }
     }
 }

@@ -8,24 +8,26 @@ namespace Coictus
         protected EntityVehicle currentVehicle;
         protected Vector3d frontVector;//vector pointing to the direction the entity is facing
         protected Vector3d upVector;
-        protected Vector3d movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
-        protected bool isJumping = false;
+        protected Vector3d movementVector;//a unit vector describing the direction of movement by this entity, e.g: walking
         protected double headPitch; // Pitch of the living entity head
         public static readonly double defaultWalkSpeed = 0.1572F;
         protected double walkSpeed = defaultWalkSpeed;
         protected bool isPlayer = false;
+
+        /*array of actions being requested by player user. When an action is requested, the bool at the index of the action (enum) value
+          is set to true. To detect if an action is requested, check the index. e.g: if(actions[Action.attack])*/
+        protected bool[] actions = new bool[GameInstance.actionsCount];
+
         public EntityLiving() : base()
         {
-            frontVector = new Vector3d(0.0F, 0.0F, -1.0F);
-            upVector = new Vector3d(0.0F, 1.0F, 0.0F);
-            movementVector = new Vector3d(0.0F, 0.0F, 0.0F);
+            frontVector = new Vector3d(0.0D, 0.0D, -1.0D);
+            upVector = new Vector3d(0.0D, 1.0D, 0.0D);
         }
 
         public EntityLiving(Vector3d pos) : base(pos)
         {
-            frontVector = new Vector3d(0.0F, 0.0F, -1.0F);
-            upVector = new Vector3d(0.0F, 1.0F, 0.0F);
-            movementVector = new Vector3d(0.0F, 0.0F, 0.0F);
+            frontVector = new Vector3d(0.0D, 0.0D, -1.0D);
+            upVector = new Vector3d(0.0D, 1.0D, 0.0D);
         }
 
         public override void onTick()
@@ -44,24 +46,29 @@ namespace Coictus
 
             alignVectors();
 
-            moveByMovementVector(); 
+            moveByMovementVector();
         }
 
+        public override void postTick()
+        {
+            resetActions();//this must be done in post tick so other entities (namely vehicles) can read this entity's movement when they tick
+            base.postTick();
+        }
         /*When called, aligns vectors according to the entities state and rotations.*/
         protected virtual void alignVectors()
         {
             /*correcting front vector based on new pitch and yaw*/
             if (isFlying)
             {
-                frontVector.X = (double)(Math.Cos(MathUtil.radians(yaw)) * (double)(Math.Cos(MathUtil.radians(headPitch))));
-                frontVector.Y = (double)Math.Sin(MathUtil.radians(headPitch));
-                frontVector.Z = (double)(Math.Sin(MathUtil.radians(yaw)) * (double)(Math.Cos(MathUtil.radians(headPitch))));
+                frontVector.X = Math.Cos(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(headPitch));
+                frontVector.Y = Math.Sin(MathUtil.radians(headPitch));
+                frontVector.Z = Math.Sin(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(headPitch));
             }
             else
             {
-                frontVector.X = (double)(Math.Cos(MathUtil.radians(yaw)));
-                frontVector.Y = (double)Math.Sin(MathUtil.radians(headPitch));
-                frontVector.Z = (double)(Math.Sin(MathUtil.radians(yaw)));
+                frontVector.X = Math.Cos(MathUtil.radians(yaw));
+                frontVector.Y = Math.Sin(MathUtil.radians(headPitch));
+                frontVector.Z = Math.Sin(MathUtil.radians(yaw));
             }
             frontVector.Normalize();
         }
@@ -83,11 +90,16 @@ namespace Coictus
                     walkSpeedModified *= 0.05D;//reduce movespeed when jumping or mid air 
                 }
             }
+            //setting movementVector.X to -1, 0 or 1 based on strafing actions
+            movementVector.X = Convert.ToDouble(doingAction(Action.strafeRight)) - Convert.ToDouble(doingAction(Action.strafeLeft));
 
-            //change velocity based on movement
-            //movement vector is a unit vector.
-            if(movementVector.Length > 0)
-            movementVector.Normalize();//normalize vector so player is same speed in any direction
+            //setting movementVector.Z to -1, 0 or 1 based on fowards/backwards actions
+            movementVector.Z = Convert.ToDouble(doingAction(Action.fowards)) - Convert.ToDouble(doingAction(Action.backwards));
+
+            if (movementVector != Vector3d.Zero)
+            {
+                movementVector.Normalize();//normalize vector so player is same speed in any direction
+            }
 
             velocity.X += frontVector.X * movementVector.Z * walkSpeedModified;//fowards and backwards movement
             if(isFlying)velocity.Y += frontVector.Y * movementVector.Z * walkSpeedModified;//fowards and backwards movement for flying
@@ -96,10 +108,9 @@ namespace Coictus
 
             movementVector *= 0;//reset movement vector
 
-            if (isJumping)// if player jumping or flying up
+            if (doingAction(Action.jump) && isGrounded)
             {
-                velocity.Y += 0.32D;//jump 
-                isJumping = false;
+                velocity.Y += 0.32D;//jump here
                 isGrounded = false;
             }
         }
@@ -114,10 +125,7 @@ namespace Coictus
 
         public virtual void jump()
         {
-            if (isGrounded && velocity.Y <= 0)
-            {
-                isJumping = true;
-            }
+            addAction(Action.jump);
         }
 
         /*When called, this entity will attempt to interact with an object, could be anything.
@@ -151,7 +159,7 @@ namespace Coictus
         {
             if (currentVehicle != null)
             {
-                setVelocity(new Vector3d(0));
+                setVelocity(Vector3d.Zero);
                 currentVehicle.setMountedEntity(null);
                 currentVehicle = null;
             }
@@ -166,47 +174,19 @@ namespace Coictus
 
         public virtual void walkFowards()
         {
-            if (currentVehicle != null)
-            {
-                currentVehicle.driveFowards();
-            }
-            else
-            {
-                movementVector.Z++;
-            }
+            addAction(Action.fowards);
         }
         public virtual void walkBackwards()
         {
-            if (currentVehicle != null)
-            {
-                currentVehicle.driveBackwards();
-            }
-            else
-            {
-                movementVector.Z--;
-            }
+            addAction(Action.backwards);
         }
         public virtual void strafeRight()
         {
-            if (currentVehicle != null)
-            {
-                currentVehicle.turnRight();
-            }
-            else
-            {
-                movementVector.X++;
-            }
+            addAction(Action.strafeRight);
         }
         public virtual void strafeLeft()
         {
-            if (currentVehicle != null)
-            {
-                currentVehicle.turnLeft();
-            }
-            else
-            {
-                movementVector.X--;
-            }
+            addAction(Action.strafeLeft);
         }
 
         public virtual bool getIsPlayer()//returns true if this entityliving is a player
@@ -239,6 +219,27 @@ namespace Coictus
                 return currentVehicle.getLerpPos() + currentVehicle.getMountingOffset();
             }
             return base.getLerpPos();
+        }
+
+        /*returns true if entity is doing the specified action*/
+        public bool doingAction(Action act)
+        {
+            return actions[(int)act];
+        }
+
+        /*used for adding a entity action*/
+        public void addAction(Action act)
+        {
+            actions[(int)act] = true;
+        }
+
+        /*should be called every update at the end of onTick() to reset the entity actions.*/
+        public void resetActions()
+        {
+            for (int i = 0; i < GameInstance.actionsCount; i++)
+            {
+                actions[i] = false;
+            }
         }
     }
 }

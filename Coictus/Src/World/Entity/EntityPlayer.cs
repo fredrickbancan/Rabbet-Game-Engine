@@ -9,6 +9,8 @@ namespace Coictus
         private Camera camera;
         public bool paused = false;
         public bool debugScreenOn = false;
+
+
         public static readonly Vector3d eyeOffset = new Vector3d(0.0D, 0.62D, 0.0D);
         public EntityPlayer(String name) : base()
         {
@@ -32,15 +34,6 @@ namespace Coictus
                 base.onTick();//do first
             }
             camera.onTick();
-        }
-
-        /*Called by input when user left clicks*/
-        public void onLeftClick()
-        {
-            if(currentVehicle != null)
-            {
-                currentVehicle.onLeftClick();
-            }
         }
 
         public Vector3d getEyePosition()
@@ -94,5 +87,7 @@ namespace Coictus
         {
             return this.camera;
         }
+
+        
     }
 }

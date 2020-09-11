@@ -26,8 +26,6 @@ namespace Coictus
 
         public override void onTick()
         {
-            base.onTick();//do first
-
             if(rand.Next(0, 25) == 1)
             {
                 turn = !turn;
@@ -41,6 +39,7 @@ namespace Coictus
             {
                 jump();
             }
+            base.onTick();//do last
         }
         public override void onCollidedBy(PositionalObject other)
         {

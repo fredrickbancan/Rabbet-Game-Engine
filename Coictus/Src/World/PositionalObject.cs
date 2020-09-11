@@ -44,7 +44,7 @@ namespace Coictus
         }
 
         /*Do this before manipulating any movement of this object*/
-        public virtual void preTickMovement()
+        public virtual void preTick()
         {
             previousTickPos = pos;
             prevTickPitch = pitch;
@@ -54,7 +54,7 @@ namespace Coictus
 
 
         /*Do this after manipulating any movement of this object*/
-        public virtual void postTickMovement()
+        public virtual void postTick()
         {
             velocity += acceleration;
             velocity *= (1 - airResistance);
