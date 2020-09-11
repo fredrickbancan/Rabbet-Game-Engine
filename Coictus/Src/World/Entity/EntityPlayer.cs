@@ -12,12 +12,14 @@ namespace Coictus
         public static readonly Vector3d eyeOffset = new Vector3d(0.0D, 0.62D, 0.0D);
         public EntityPlayer(String name) : base()
         {
+            isPlayer = true;
             this.playerName = name;
             camera = new Camera(this);
             this.setCollider(new AABBCollider(new Vector3d(-0.5, -1, -0.5), new Vector3d(0.5, 1, 0.5), this));
         }
         public EntityPlayer(String name, Vector3d spawnPosition) : base(spawnPosition)
         {
+            isPlayer = true;
             this.playerName = name;
             camera = new Camera(this);
             this.setCollider(new AABBCollider(new Vector3d(-0.5, -1, -0.5), new Vector3d(0.5, 1, 0.5), this));

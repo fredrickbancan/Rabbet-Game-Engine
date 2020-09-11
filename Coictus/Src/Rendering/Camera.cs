@@ -88,5 +88,14 @@ namespace Coictus
         {
             return this.viewMatrix;
         }
+
+        public double getYaw()
+        {
+            return yaw;
+        }
+        public double getPitch()
+        {
+            return pitch;
+        }
     }
 }

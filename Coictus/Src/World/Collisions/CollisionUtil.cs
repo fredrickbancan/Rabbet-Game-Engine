@@ -10,6 +10,8 @@ namespace Coictus
         sphere,
         point
     }
+    //TODO: make collision resolution more accurate, i.e, make collisions compensate for high velocities pushing colliders to wrong side of objects.
+    //TODO: make colliders on moving objects work with interpolation.
     public static class CollisionUtil
     {
         public static bool getOverlapAndDirectionForColliderTypes(ICollider colliderA, ICollider colliderB, out Vector3d direction, out double overlap)

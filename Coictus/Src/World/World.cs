@@ -174,7 +174,7 @@ namespace Coictus
             if (GameSettings.drawHitboxes) updateAllEntityColliders();//For correcting the drawing of hitboxes after a collision
         }
 
-        /*Called every frame.*/
+        /*Called every frame. Should not do any heavy computation, only for preparing certain things for rendering. E.G: correcting models.*/
         public void onFrame()
         {
             foreach (Entity ent in entities.Values)

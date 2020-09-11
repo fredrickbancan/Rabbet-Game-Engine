@@ -4,7 +4,7 @@ namespace Coictus
 {
     /*This class is responsable for detecting input which changes the players state.
       Such as movement, inventory use, attacking etc*/
-    public static class PlayerController
+    public static class PlayerController//TODO: impliment an actions list. An array of actions which have been requested by input. The list should consist of a set size array of action enums, an action enum needs to be created with different actions. e.g: use, attack, duck, fowards, backwards etc. And then an onTick() function must be added to playercontroller.cs to act on this list of actions and reset it.
     {
         /*Called every tick from Input.cs if a key is being pressed. for detecting player input*/
         public static void updateInput(KeyboardState keyboard)

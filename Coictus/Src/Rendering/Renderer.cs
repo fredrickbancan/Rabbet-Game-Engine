@@ -54,15 +54,14 @@ namespace Coictus
         {
             Profiler.beginEndProfile(Profiler.renderingName);
             preRender();
-            updateCameraAndRenderWorld();
+            renderWorld();
             GUIHandler.drawCurrentGUIScreen();
             postRender();
             Profiler.beginEndProfile(Profiler.renderingName);
         }
         static ModelDrawable test = PlanePrefab.getNewModelDrawable();
-        private static void updateCameraAndRenderWorld()
+        private static void renderWorld()
         {
-            GameInstance.get.thePlayer.onCameraUpdate();//do this first
             test.draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());
             GameInstance.get.currentPlanet.drawEntities(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
             GameInstance.get.currentPlanet.drawVFX(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);

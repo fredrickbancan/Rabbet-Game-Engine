@@ -13,6 +13,7 @@ namespace Coictus
         protected double headPitch; // Pitch of the living entity head
         public static readonly double defaultWalkSpeed = 0.1572F;
         protected double walkSpeed = defaultWalkSpeed;
+        protected bool isPlayer = false;
         public EntityLiving() : base()
         {
             frontVector = new Vector3d(0.0F, 0.0F, -1.0F);
@@ -206,6 +207,11 @@ namespace Coictus
             {
                 movementVector.X--;
             }
+        }
+
+        public virtual bool getIsPlayer()//returns true if this entityliving is a player
+        {
+            return isPlayer;
         }
 
         public virtual void setHeadPitch(double Pitch)

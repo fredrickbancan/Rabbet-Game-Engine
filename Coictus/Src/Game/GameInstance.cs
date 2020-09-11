@@ -73,14 +73,11 @@ namespace Coictus
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             base.OnUpdateFrame(args);
-            mouseCenterX = this.X + this.Width / 2;
-            mouseCenterY = this.Y + this.Height / 2;
             for (int i = 0; i < TicksAndFps.getTicksElapsed(); i++)//for each tick that has elapsed since the start of last update, run the games logic enough times to catch up. 
             {
                 onTick();
             }
             Input.updateInput();
-            currentPlanet.onFrame();
         }
 
         /*overriding OpenTk render update function, called every frame.*/
@@ -88,6 +85,8 @@ namespace Coictus
         {
             base.OnRenderFrame(args);
             TicksAndFps.update();
+            thePlayer.onCameraUpdate();//do this before calling on tick to prepare camera variables
+            currentPlanet.onFrame();//should be called before rendering world since this may prepare certain elements for a frame perfect render
             Renderer.renderAll();
         }
 
@@ -112,6 +111,8 @@ namespace Coictus
         private void onTick()
         {
             Profiler.beginEndProfile(Profiler.gameLoopName);
+            mouseCenterX = this.X + this.Width / 2;
+            mouseCenterY = this.Y + this.Height / 2;
             GUIHandler.onTick();
             MainGUI.onTick();
             currentPlanet.onTick();

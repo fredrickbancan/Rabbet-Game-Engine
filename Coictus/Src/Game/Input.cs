@@ -42,14 +42,6 @@ namespace Coictus
             /*Only update keyboard input if the game window is focused, and if any key is being pressed.*/
             if (GameInstance.get.Focused && keyboardState.IsAnyKeyDown)
             {
-                //do consistant input here
-                PlayerController.updateInput(keyboardState);//do player input 
-
-
-
-                //this does single key input~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-                PlayerController.updateSinglePressInput(keyboardState);//do player single button input
-
                 if (keySinglePress(Key.Escape))
                 {
                     GameInstance.get.Exit();
@@ -68,7 +60,8 @@ namespace Coictus
                 {
                     toggleBoolean(ref GameSettings.noclip);
                 }
-
+                PlayerController.updateInput(keyboardState);//do player input 
+                PlayerController.updateSinglePressInput(keyboardState);//do player single button input
             }
         }
         /*Places the mouse cursor at the center of the game window*/

@@ -7,10 +7,10 @@ namespace Coictus
 {
     public class EntityTank : EntityVehicle
     {
-        private double projectileHopupAngle = 7.2F;
+        public static readonly double projectileHopupAngle = 7.2F;
         private double bodyYaw;
         private double barrelPitch;
-        private readonly double barrelLength = 6.75D;
+        public static readonly double barrelLength = 6.75D;
         Random rand = new Random();
         public EntityTank() : base()
         {
@@ -28,11 +28,22 @@ namespace Coictus
         public override void onTick()
         {
             base.onTick();//do first
-            if (mountingEntity != null)
+            if (mountingEntity != null && !playerDriving)
             {
                 bodyYaw = mountingEntity.getYaw() + 90;
-                barrelPitch = mountingEntity.getHeadPitch() + projectileHopupAngle;//TODO: make tank barrel and body follow camera with frame precision for improved accuracy
+                barrelPitch = mountingEntity.getHeadPitch() + projectileHopupAngle;
             }
+        }
+
+        public override void onFrame()
+        {
+            //set body rotation to player cam yaw and barrel to cam pitch for frame perfect accuracy
+            if(playerDriving)
+            {
+                bodyYaw = ((EntityPlayer)mountingEntity).getCamera().getYaw() + 90;
+                barrelPitch = ((EntityPlayer)mountingEntity).getCamera().getPitch() + projectileHopupAngle;
+            }
+            base.onFrame();
         }
 
         /*Called by base ontick()*/

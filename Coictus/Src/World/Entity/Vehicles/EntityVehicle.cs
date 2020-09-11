@@ -14,7 +14,7 @@ namespace Coictus
         public static readonly double defaultDriveSpeed = 0.15F;
         protected double driveSpeed = defaultDriveSpeed;
         protected double turnRate = defaultTurnRate;
-
+        protected bool playerDriving = false;
         public EntityVehicle() : base()
         {
             frontVector = new Vector3d(0.0F, 0.0F, -1.0F);
@@ -38,6 +38,8 @@ namespace Coictus
             base.onTick();//do first
             if (mountingEntity != null)
             {
+                playerDriving = mountingEntity.getIsPlayer();
+                
                 alignVectors();
 
                 moveByMovementVector();
@@ -97,6 +99,10 @@ namespace Coictus
         public virtual void setMountedEntity(EntityLiving entityMounting)
         {
             this.mountingEntity = entityMounting;
+            if(mountingEntity == null)
+            {
+                playerDriving = false;
+            }
         }
 
         /*Called when player is mounting this vehicle and left clicks (for tank)*/
@@ -105,6 +111,10 @@ namespace Coictus
 
         }
 
+        public virtual bool getIsplayerDriving()
+        {
+            return playerDriving;
+        }
         public virtual void driveFowards()
         {
             movementVector.Z++;
@@ -126,6 +136,12 @@ namespace Coictus
         public virtual Vector3d getMountingOffset()
         {
             return mountingOffset;
+        }
+
+        /*May return null.*/
+        public virtual EntityLiving getMountingEntity()
+        {
+            return mountingEntity;
         }
     }
 }

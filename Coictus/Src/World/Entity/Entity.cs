@@ -25,6 +25,15 @@ namespace Coictus
             setYAccel(-gravity);
         }
 
+        public override void onFrame()
+        {
+            if (hasModel && entityModel.exists())
+            {
+                entityModel.onFrame();
+            }
+            base.onFrame();
+        }
+
         /*Called every tick*/
         public virtual void onTick()
         {
@@ -130,7 +139,7 @@ namespace Coictus
         }
         protected virtual void updateModel()
         {
-            entityModel.updateModel();
+            entityModel.onTick();
         }
         public virtual bool getHasModel()
         {

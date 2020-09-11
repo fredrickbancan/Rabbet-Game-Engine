@@ -172,6 +172,11 @@ namespace Coictus
             return Matrix4.CreateRotationX((float)rot.X) * Matrix4.CreateRotationY((float)rot.Y) * Matrix4.CreateRotationZ((float)rot.Z);
         }
 
+        public static Matrix4 lerp(Matrix4 src, Matrix4 dest, float factor)
+        {
+            return src + (dest - src) * factor;
+        }
+
         /*Scales the provided floats the same way a matrix would*/
         public static void scaleXYZFloats(Vector3 newScale, float x, float y, float z, out float newX, out float newY, out float newZ)
         {

@@ -26,8 +26,8 @@ namespace Coictus.Models
             theModel = null;
             modelMatrix = Matrix4.Identity;
             prevTickModelMatrix = Matrix4.Identity;
-            updateModel();//updating model twice to set first frame render position to the entity position.
-            updateModel();
+            onTick();//updating model twice to set first frame render position to the entity position.
+            onTick();
         }
         public EntityModel(Entity parent,String shaderDir, String textureDir, String modelPath)
         {
@@ -35,13 +35,13 @@ namespace Coictus.Models
             theModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelPath);//TODO: Inefficient. This will mean we have to load model data each time a model for an entity etc is spawned!, maybe make a list of pre loaded models?
             modelMatrix = Matrix4.Identity;
             prevTickModelMatrix = Matrix4.Identity;
-            updateModel();//updating model twice to set first frame render position to the entity position.
-            updateModel();
+            onTick();//updating model twice to set first frame render position to the entity position.
+            onTick();
         }
 
         /*Will be called on entity TICK update to update the model matrix. Only if the parent entity has a model to be rendered.*/
         /*By default this method will match the models rotation and position with the parent entities.*/
-        public virtual void updateModel()
+        public virtual void onTick()
         {
             prevTickModelMatrix = modelMatrix;
             modelMatrix = MathUtil.createRotation(new Vector3((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) *  Matrix4.CreateTranslation(MathUtil.convertVec(parent.getPosition())) ;
@@ -52,6 +52,12 @@ namespace Coictus.Models
         {
             theModel = newModel;
             return this;
+        }
+
+        /*called every frame before rendering*/
+        public virtual void onFrame()
+        {
+
         }
 
         /*draws this model, can be overwritten.*/
