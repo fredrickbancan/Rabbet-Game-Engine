@@ -36,8 +36,8 @@ namespace Coictus.Models
             prevTickTankBodyModelMatrix = tankBodyModelMatrix;
             prevTickTankBarrelModelMatrix = tankBarrelModelMatrix;
             
-            tankWheelsModelMatrix = Matrix4.CreateScale(new Vector3(0.5F, 0.5F, 0.5F)) * MathUtil.createRotation(new Vector3((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) * Matrix4.CreateTranslation(MathUtil.convertVec(parent.getPosition()));
-            tankBodyModelMatrix = Matrix4.CreateScale(new Vector3(0.5F, 0.5F, 0.5F)) * MathUtil.createRotation(new Vector3(0, -(float)parent.getBodyYaw, 0)) * Matrix4.CreateTranslation(MathUtil.convertVec(parent.getPosition()));
+            tankWheelsModelMatrix = Matrix4.CreateScale(new Vector3(0.5F, 0.5F, 0.5F)) * MathUtil.createRotation(new Vector3((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) * Matrix4.CreateTranslation(parent.getPosition());
+            tankBodyModelMatrix = Matrix4.CreateScale(new Vector3(0.5F, 0.5F, 0.5F)) * MathUtil.createRotation(new Vector3(0, -(float)parent.getBodyYaw, 0)) * Matrix4.CreateTranslation(parent.getPosition());
             tankBarrelModelMatrix = MathUtil.createRotation(new Vector3((float)parent.getBarrelPitch, 0, 0)) * Matrix4.CreateTranslation(0, 1.7F, -2F) * tankBodyModelMatrix;
             
         }

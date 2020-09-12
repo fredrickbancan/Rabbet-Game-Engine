@@ -18,7 +18,7 @@ namespace Coictus.VFX
        
 
         /*this constructor is for creating a point particle based VFX which does not create a random point cloud. maybe you will want to construct the points in a specific manner with colors or use a model.*/
-        public VFXPointParticles(Vector3d pos, CustomColor color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
+        public VFXPointParticles(Vector3 pos, CustomColor color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
         {
             colorAlpha = alpha;
             pointColor = color;
@@ -27,7 +27,7 @@ namespace Coictus.VFX
         }
 
         /*this constructor is for creating a randomized particle cloud at the position using the provided parameters*/
-        public VFXPointParticles(Vector3d pos, CustomColor color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
+        public VFXPointParticles(Vector3 pos, CustomColor color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
         {
             colorAlpha = alpha;
             this.randomBrightness = randomBrightness;
@@ -47,15 +47,15 @@ namespace Coictus.VFX
             Vertex[] points = new Vertex[particleCount];
             for(int i = 0; i < particleCount; i++)
             {
-                points[i] = new Vertex(MathUtil.convertVec(getRandomParticleOffset()), getPointColor(), Vector2.Zero);
+                points[i] = new Vertex(getRandomParticleOffset(), getPointColor(), Vector2.Zero);
             }
 
             vfxModel = new ModelDrawable(defaultShaderDir, "none", points);
         }
 
-        protected Vector3d getRandomParticleOffset()
+        protected Vector3 getRandomParticleOffset()
         {
-            return Vector3d.Normalize(new Vector3d( 0.5 - GameInstance.rand.NextDouble(), 0.5 - GameInstance.rand.NextDouble(), 0.5 - GameInstance.rand.NextDouble())) * (randomPointPositionSpread / 2 +( randomPointPositionSpread / 4 + randomPointPositionSpread / 2 *  GameInstance.rand.NextDouble())  );
+            return Vector3.Normalize(new Vector3( 0.5F - (float)GameInstance.rand.NextDouble(), 0.5F - (float)GameInstance.rand.NextDouble(), 0.5F - (float)GameInstance.rand.NextDouble())) * (randomPointPositionSpread / 2 +( randomPointPositionSpread / 4 + randomPointPositionSpread / 2 *  (float)GameInstance.rand.NextDouble())  );
         }
 
         protected Vector4 getPointColor()

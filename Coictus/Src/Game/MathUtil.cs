@@ -14,14 +14,14 @@ namespace Coictus
             return (mapMax - mapMin) * normalize(min, max, val) + mapMin;
         }
 
-        public static double clamp(double val, double min, double max)
+        public static float clamp(float val, float min, float max)
         {
             if (val < min) val = min;
             if (val > max) val = max;
             return val;
         }
 
-        public static double lerp(double src, double dest, float factor)
+        public static float lerp(float src, float dest, float factor)
         {
             return src + (dest - src) * factor;
         }
@@ -29,22 +29,13 @@ namespace Coictus
         {
             return src + (dest - src) * factor;
         }
-
-        public static double radians(double degrees)
-        {
-            return degrees * 0.01745329251994329576923690768489D;
-        }
-        public static float radiansF(float degrees)
+        public static float radians(float degrees)
         {
             return degrees * 0.01745329251994329576923690768489F;
         }
         public static Vector3 radians(Vector3 degrees)
         {
             return degrees * 0.01745329251994329576923690768489F;
-        }
-        public static Vector3d radians(Vector3d degrees)
-        {
-            return degrees * 0.01745329251994329576923690768489D;
         }
 
         /*gives the dot product of the two provided coordinates*/
@@ -53,31 +44,14 @@ namespace Coictus
             return xA * xB + yA * yB + zA * zB;
         }
 
-        public static double dotDoubles(double xA, double yA, double zA, double xB, double yB, double zB)
+
+        public static float hypotenuse(float a, float b)
         {
-            return xA * xB + yA * yB + zA * zB;
+            return (float)System.Math.Sqrt(a * a + b * b);
         }
 
-        public static double hypotenuse(double a, double b)
-        {
-            return System.Math.Sqrt(a * a + b * b);
-        }
-
-        /*Takes in 3 doubles and a smooth factor. Smooths the 3 values with strength of smooth factor. Smooth factor of 0 does nothing, and 1 makes each value the average.*/
-        public static void smooth3(ref double x, ref double y, ref double z, float factor)
-        {
-            if (factor <= 0)
-                return;
-            if (factor > 1F)
-                factor = 1F;
-
-            double avg = (x + y + z) / 3D;
-            x = lerp(x, avg, factor);
-            y = lerp(y, avg, factor);
-            z = lerp(z, avg, factor);
-        }
-
-         public static void smooth3F(ref float x, ref float y, ref float z, float factor)
+        /*Takes in 3 floats and a smooth factor. Smooths the 3 values with strength of smooth factor. Smooth factor of 0 does nothing, and 1 makes each value the average.*/
+        public static void smooth3(ref float x, ref float y, ref float z, float factor)
         {
             if (factor <= 0)
                 return;
@@ -85,12 +59,12 @@ namespace Coictus
                 factor = 1F;
 
             float avg = (x + y + z) / 3F;
-            x = lerpF(x, avg, factor);
-            y = lerpF(y, avg, factor);
-            z = lerpF(z, avg, factor);
+            x = lerp(x, avg, factor);
+            y = lerp(y, avg, factor);
+            z = lerp(z, avg, factor);
         }
 
-        public static double max3(double a, double b, double c)
+        public static float max3(float a, float b, float c)
         {
             if (a >= b && a >= c)
             {
@@ -103,7 +77,7 @@ namespace Coictus
             return c;
         }
 
-        public static double min3(double a, double b, double c)
+        public static float min3(float a, float b, float c)
         {
             if (a <= b && a <= c)
             {
@@ -116,7 +90,7 @@ namespace Coictus
             return c;
         }
 
-        public static double max6(double a, double b, double c, double d, double e, double f)
+        public static float max6(float a, float b, float c, float d, float e, float f)
         {
             if (a >= b && a >= c && a >= d && a >= e && a >= f)
             {
@@ -151,25 +125,10 @@ namespace Coictus
             return new Vector3(1F - System.Math.Abs(vec.X), 1F - System.Math.Abs(vec.Y), 1F - System.Math.Abs(vec.Z));
         }
 
-        /*Returns a vector 3d with the absolute values negated from one, only useful for axis aligned collisions*/
-        public static Vector3d oneMinusAbsolute(Vector3d vec)
-        {
-            return new Vector3d(1D - System.Math.Abs(vec.X), 1D - System.Math.Abs(vec.Y), 1D - System.Math.Abs(vec.Z));
-        }
-
-        public static Vector3 convertVec(Vector3d vec)
-        {
-            return new Vector3((float)vec.X, (float)vec.Y, (float)vec.Z);
-        }
         public static Matrix4 createRotation(Vector3 rot)
         {
             rot = radians(rot);
             return Matrix4.CreateRotationX(rot.X) * Matrix4.CreateRotationY(rot.Y) * Matrix4.CreateRotationZ(rot.Z);
-        }
-        public static Matrix4 createRotation(Vector3d rot)
-        {
-            rot = radians(rot);
-            return Matrix4.CreateRotationX((float)rot.X) * Matrix4.CreateRotationY((float)rot.Y) * Matrix4.CreateRotationZ((float)rot.Z);
         }
 
         public static Matrix4 lerp(Matrix4 src, Matrix4 dest, float factor)

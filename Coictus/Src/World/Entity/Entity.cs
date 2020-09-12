@@ -20,7 +20,7 @@ namespace Coictus
             setYAccel(-gravity);
         }
         
-        public Entity(Vector3d spawnPosition) : base(spawnPosition)
+        public Entity(Vector3 spawnPosition) : base(spawnPosition)
         {
             setYAccel(-gravity);
         }
@@ -100,7 +100,7 @@ namespace Coictus
             }
         }
         
-        public override void applyCollision(Vector3d direction, double overlap)
+        public override void applyCollision(Vector3 direction, float overlap)
         {
             if (direction.Y >= 0.35D)//if the entity is being collided from a generally upwards direction
             {

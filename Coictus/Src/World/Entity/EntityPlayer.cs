@@ -11,20 +11,20 @@ namespace Coictus
         public bool debugScreenOn = false;
 
 
-        public static readonly Vector3d eyeOffset = new Vector3d(0.0D, 0.62D, 0.0D);
+        public static readonly Vector3 eyeOffset = new Vector3(0.0F, 0.62F, 0.0F);
         public EntityPlayer(String name) : base()
         {
             isPlayer = true;
             this.playerName = name;
             camera = new Camera(this);
-            this.setCollider(new AABBCollider(new Vector3d(-0.5, -1, -0.5), new Vector3d(0.5, 1, 0.5), this));
+            this.setCollider(new AABBCollider(new Vector3(-0.5F, -1, -0.5F), new Vector3(0.5F, 1, 0.5F), this));
         }
-        public EntityPlayer(String name, Vector3d spawnPosition) : base(spawnPosition)
+        public EntityPlayer(String name, Vector3 spawnPosition) : base(spawnPosition)
         {
             isPlayer = true;
             this.playerName = name;
             camera = new Camera(this);
-            this.setCollider(new AABBCollider(new Vector3d(-0.5, -1, -0.5), new Vector3d(0.5, 1, 0.5), this));
+            this.setCollider(new AABBCollider(new Vector3(-0.5F, -1, -0.5F), new Vector3(0.5F, 1, 0.5F), this));
         }
 
         public override void onTick()
@@ -36,12 +36,12 @@ namespace Coictus
             camera.onTick();
         }
 
-        public Vector3d getEyePosition()
+        public Vector3 getEyePosition()
         {
             return pos + EntityPlayer.eyeOffset;
         }
 
-        public Vector3d getLerpEyePos()
+        public Vector3 getLerpEyePos()
         {
             return this.getLerpPos() + EntityPlayer.eyeOffset;
         }
@@ -74,7 +74,7 @@ namespace Coictus
             }
         }
 
-        public override void applyCollision(Vector3d direction, double overlap)
+        public override void applyCollision(Vector3 direction, float overlap)
         {
             if(!GameSettings.noclip)
             base.applyCollision(direction, overlap);

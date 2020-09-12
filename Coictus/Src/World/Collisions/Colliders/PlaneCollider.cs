@@ -3,18 +3,18 @@ namespace Coictus
 {
     public struct PlaneCollider : ICollider
     {
-        public Vector3d normal;
-        public double scalar;
+        public Vector3 normal;
+        public float scalar;
 
-        public PlaneCollider(Vector3d normal, double scalar)
+        public PlaneCollider(Vector3 normal, float scalar)
         {
-            this.normal = Vector3d.Normalize(normal);
+            this.normal = Vector3.Normalize(normal);
             this.scalar = scalar;
         }
 
-        public static double vectorDistanceFromPlane(PlaneCollider plane, Vector3d vec)
+        public static float vectorDistanceFromPlane(PlaneCollider plane, Vector3 vec)
         {
-            return Vector3d.Dot(vec, plane.normal) - plane.scalar;
+            return Vector3.Dot(vec, plane.normal) - plane.scalar;
         }
         public bool getHasParent()
         {

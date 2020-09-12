@@ -103,7 +103,7 @@ namespace Coictus
             float newGreen = (float)systemColor.G;
             float newBlue = (float)systemColor.B;
 
-            MathUtil.smooth3F(ref newRed, ref newGreen, ref newBlue, percentage);
+            MathUtil.smooth3(ref newRed, ref newGreen, ref newBlue, percentage);
             return new CustomColor((byte)newRed, (byte)newGreen, (byte)newBlue, systemColor.A);
         }
 
@@ -116,7 +116,7 @@ namespace Coictus
 
             Vector3 result = this.toVec3();
 
-            MathUtil.smooth3F(ref result.X, ref result.Y, ref result.Z, percentage);
+            MathUtil.smooth3(ref result.X, ref result.Y, ref result.Z, percentage);
 
             return result;
         }
@@ -130,7 +130,7 @@ namespace Coictus
 
             Vector4 result = this.toVec4();
 
-            MathUtil.smooth3F(ref result.X, ref result.Y, ref result.Z, percentage);
+            MathUtil.smooth3(ref result.X, ref result.Y, ref result.Z, percentage);
 
             return result;
         }
@@ -147,7 +147,7 @@ namespace Coictus
             float newGreen = (float)color.G;
             float newBlue = (float)color.B;
 
-            MathUtil.smooth3F(ref newRed, ref newGreen, ref newBlue, percentage);
+            MathUtil.smooth3(ref newRed, ref newGreen, ref newBlue, percentage);
             return new CustomColor(Color.FromArgb(color.A, (int)newRed, (int)newGreen, (int)newBlue));
         }
 
@@ -158,7 +158,7 @@ namespace Coictus
             if (percentage > 1F)
                 percentage = 1F;
 
-            MathUtil.smooth3F(ref color.X, ref color.Y, ref color.Z, percentage);
+            MathUtil.smooth3(ref color.X, ref color.Y, ref color.Z, percentage);
 
             return color;
         }

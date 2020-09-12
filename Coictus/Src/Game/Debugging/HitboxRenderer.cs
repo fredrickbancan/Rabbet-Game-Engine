@@ -79,7 +79,7 @@ namespace Coictus.Debugging
 
         public static void renderBox(AABBCollider box)//TODO: VERY inefficient. Need to created either a dynamic model or instancing to cut down on draws. Avoiding calcualting the model matrix each frame would also help.
         {
-            Matrix4 modelMatrix = Matrix4.CreateScale(new Vector3((float)box.extentX*2, (float)box.extentY * 2, (float)box.extentZ * 2)) * Matrix4.CreateTranslation(MathUtil.convertVec(box.centerVec));
+            Matrix4 modelMatrix = Matrix4.CreateScale(new Vector3((float)box.extentX*2, (float)box.extentY * 2, (float)box.extentZ * 2)) * Matrix4.CreateTranslation(box.centerVec);
 
             aabbModel.draw(GameInstance.get.thePlayer.getViewMatrix(), Renderer.projMatrix, modelMatrix, PrimitiveType.Lines);
         }

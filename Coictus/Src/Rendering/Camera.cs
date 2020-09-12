@@ -7,7 +7,7 @@ namespace Coictus
     /*This class represents a virtual point at which the world should be rendered from. It takes in a player and will be bound to the players head.*/
     public class Camera
     {
-        private double pitch, yaw;
+        private float pitch, yaw;
         private int mouseDeltaX;
         private int mouseDeltaY;
         private Matrix4 viewMatrix;
@@ -27,12 +27,12 @@ namespace Coictus
             this.child = childEntity;
             this.yaw = child.getYaw();
             camTargetVector = new Vector3(0.0F);
-            camDirectionVector = Vector3.Normalize(MathUtil.convertVec(child.getEyePosition()) - camTargetVector);
+            camDirectionVector = Vector3.Normalize(child.getEyePosition() - camTargetVector);
             up = new Vector3(0.0F, 1.0F, 0.0F);
             camRightVector = Vector3.Normalize(Vector3.Cross(up, camDirectionVector));
             camFrontVector = new Vector3(0.0F, 0.0F, -1.0F);
             camUpVector = Vector3.Cross(camDirectionVector, camRightVector);
-            viewMatrix = Matrix4.LookAt(MathUtil.convertVec(child.getEyePosition()), camTargetVector, up);
+            viewMatrix = Matrix4.LookAt(child.getEyePosition(), camTargetVector, up);
         }
 
         /*Called every FRAME (not tick), will update view matrix depending on interpolated player position.
@@ -47,13 +47,13 @@ namespace Coictus
           //  if (yaw > 360.0F) { yaw = 0.0F; }
           //  if (yaw < -360.0F) { yaw = 0.0F; }
             /*cap yaw so cam and entity can not flip*/
-            if (pitch > 90.0F)
+            if (pitch >= 90.0F)
             {
-                pitch = 90.0F;
+                pitch = 89.999F;
             }
-            else if (pitch < -90.0F)
+            else if (pitch <= -90.0F)
             {
-                pitch = -90.0F;
+                pitch = -89.999F;
             }
 
             //the camera controls the players entity yaw and headpitch
@@ -67,7 +67,7 @@ namespace Coictus
             camRightVector = Vector3.Normalize(Vector3.Cross(up, camDirectionVector));
             camUpVector = Vector3.Cross(camDirectionVector, camRightVector);
 
-            Vector3 parentLerpPos = MathUtil.convertVec(child.getLerpEyePos());
+            Vector3 parentLerpPos = child.getLerpEyePos();
             viewMatrix = Matrix4.LookAt(parentLerpPos, parentLerpPos + camFrontVector, camUpVector);
         }
 
@@ -89,11 +89,11 @@ namespace Coictus
             return this.viewMatrix;
         }
 
-        public double getYaw()
+        public float getYaw()
         {
             return yaw;
         }
-        public double getPitch()
+        public float getPitch()
         {
             return pitch;
         }

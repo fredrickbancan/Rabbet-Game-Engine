@@ -5,24 +5,24 @@ namespace Coictus
     /*Abstraction base class of objects with any type of position, rotation, velocity, interpolation.*/
     public class PositionalObject
     {
-        protected Vector3d previousTickPos;
-        protected Vector3d pos;
-        protected Vector3d velocity;
-        protected Vector3d acceleration;
+        protected Vector3 previousTickPos;
+        protected Vector3 pos;
+        protected Vector3 velocity;
+        protected Vector3 acceleration;
 
-        public static readonly double defaultAirResistance = 0.03572F;
-        public static readonly double defaultGroundResistance = 0.3572F;
-        public static readonly double defaultGravity = 0.03572F;
-        protected double airResistance = defaultAirResistance;
-        protected double groundResistance = defaultGroundResistance;
-        public double gravity = defaultGravity;
+        public static readonly float defaultAirResistance = 0.03572F;
+        public static readonly float defaultGroundResistance = 0.3572F;
+        public static readonly float defaultGravity = 0.03572F;
+        protected float airResistance = defaultAirResistance;
+        protected float groundResistance = defaultGroundResistance;
+        public float gravity = defaultGravity;
 
-        protected double pitch;
-        protected double yaw;
-        protected double roll;
-        protected double prevTickPitch;
-        protected double prevTickYaw;
-        protected double prevTickRoll;
+        protected float pitch;
+        protected float yaw;
+        protected float roll;
+        protected float prevTickPitch;
+        protected float prevTickYaw;
+        protected float prevTickRoll;
 
         protected ICollider collider = null;
         protected bool hasCollider = false;
@@ -32,15 +32,15 @@ namespace Coictus
 
         public PositionalObject()
         {
-            pos = new Vector3d();
+            pos = new Vector3();
             previousTickPos = pos;
-            setYaw(-90D);//face neg z
+            setYaw(-90F);//face neg z
         }
-        public PositionalObject(Vector3d initialPosition)
+        public PositionalObject(Vector3 initialPosition)
         {
             pos = initialPosition;
             previousTickPos = pos;
-            setYaw(-90D);//face neg z
+            setYaw(-90F);//face neg z
         }
 
         /*Do this before manipulating any movement of this object*/
@@ -74,7 +74,7 @@ namespace Coictus
 
         /*Done after the entity has ticked, so will correct for overlap AFTER movement. Will change velocity, accelleration and positon.
           Can be overritten.*/
-        public virtual void applyCollision(Vector3d direction, double overlap)
+        public virtual void applyCollision(Vector3 direction, float overlap)
         {
             //make sure direction is normal vec
             direction.Normalize();
@@ -87,10 +87,10 @@ namespace Coictus
         }
 
         /*Apply a force to this entity from the location with the power.*/
-        public virtual void applyImpulseFromLocation(Vector3d loc, double power)
+        public virtual void applyImpulseFromLocation(Vector3 loc, float power)
         {
             //adding a tiny pos y bias to the impulses
-            velocity += Vector3d.Normalize((pos + new Vector3d(0, 0.5, 0)) - loc) * power;
+            velocity += Vector3.Normalize((pos + new Vector3(0, 0.5F, 0)) - loc) * power;
         }
 
         /*used for setting the collider of this object*/
@@ -115,131 +115,131 @@ namespace Coictus
             return collisionWeight;
         }
 
-        public virtual void rotateRoll(double amount)
+        public virtual void rotateRoll(float amount)
         {
             roll += amount;
         }
-        public virtual void rotateYaw(double amount)
+        public virtual void rotateYaw(float amount)
         {
             yaw += amount;
         }
-        public virtual void rotatePitch(double amount)
+        public virtual void rotatePitch(float amount)
         {
             pitch += amount;
         }
 
-        public virtual void setRoll(double amount)
+        public virtual void setRoll(float amount)
         {
             roll = amount;
         }
 
-        public virtual void setYaw(double amount)
+        public virtual void setYaw(float amount)
         {
             yaw = amount;
         }
-        public virtual void setPitch(double amount)
+        public virtual void setPitch(float amount)
         {
             pitch = amount;
         }
-        public virtual double getYaw()
+        public virtual float getYaw()
         {
             return yaw;
         }
-        public virtual double getRoll()
+        public virtual float getRoll()
         {
             return roll;
         }
-        public virtual double getPitch()
+        public virtual float getPitch()
         {
             return pitch;
         }
-        public virtual Vector3d getPosition()
+        public virtual Vector3 getPosition()
         {
             return this.pos;
         }
-        public virtual Vector3d getVelocity()
+        public virtual Vector3 getVelocity()
         {
             return this.velocity;
         }
 
         //useful for predicting and compensating for collisions
-        public virtual Vector3d getPredictedNextTickPos()
+        public virtual Vector3 getPredictedNextTickPos()
         {
             return pos + velocity;
         }
 
-        public virtual void setXVelocity(double d)
+        public virtual void setXVelocity(float d)
         {
             velocity.X = d;
         }
-        public virtual void setYVelocity(double d)
+        public virtual void setYVelocity(float d)
         {
             velocity.Y = d;
         }
-        public virtual void setZVelocity(double d)
+        public virtual void setZVelocity(float d)
         {
             velocity.Z = d;
         }
-        public virtual void addXVelocity(double d)
+        public virtual void addXVelocity(float d)
         {
             velocity.X += d;
         }
-        public virtual void addYVelocity(double d)
+        public virtual void addYVelocity(float d)
         {
             velocity.Y += d;
         }
-        public virtual void addZVelocity(double d)
+        public virtual void addZVelocity(float d)
         {
             velocity.Z += d;
         }
-        public virtual void scaleXVelocity(double d)
+        public virtual void scaleXVelocity(float d)
         {
             velocity.X *= d;
         }
-        public virtual void scaleYVelocity(double d)
+        public virtual void scaleYVelocity(float d)
         {
             velocity.Y *= d;
         }
-        public virtual void scaleZVelocity(double d)
+        public virtual void scaleZVelocity(float d)
         {
             velocity.Z *= d;
         }
-        public virtual void addVelocity(Vector3d v)
+        public virtual void addVelocity(Vector3 v)
         {
             velocity += v;
         }
-        public virtual void setVelocity(Vector3d v)
+        public virtual void setVelocity(Vector3 v)
         {
             velocity = v;
         }
 
-        public virtual void setAccel(Vector3d v)
+        public virtual void setAccel(Vector3 v)
         {
             acceleration = v;
         }
-        public virtual void setXAccel(double v)
+        public virtual void setXAccel(float v)
         {
             acceleration.X = v;
         }
-        public virtual void setYAccel(double v)
+        public virtual void setYAccel(float v)
         {
             acceleration.Y = v;
         }
-        public virtual void setZAccel(double v)
+        public virtual void setZAccel(float v)
         {
             acceleration.Z = v;
         }
 
-        public virtual void setAirResistance(double d)
+        public virtual void setAirResistance(float d)
         {
             airResistance = d;
         }
 
-        public virtual void setPosition(Vector3d newPos)
+        public virtual void setPosition(Vector3 newPos)
         {
             this.pos = newPos;
         }
-        public virtual Vector3d getLerpPos()
+        public virtual Vector3 getLerpPos()
         {
             if (hasDoneFirstUpdate)
             {
@@ -247,7 +247,7 @@ namespace Coictus
             }
             return pos;
         }
-        public virtual double getLerpPitch()
+        public virtual float getLerpPitch()
         {
             if (hasDoneFirstUpdate)
             {
@@ -255,7 +255,7 @@ namespace Coictus
             }
             return pitch;
         }
-        public virtual double getLerpYaw()
+        public virtual float getLerpYaw()
         {
             if (hasDoneFirstUpdate)
             {
@@ -263,7 +263,7 @@ namespace Coictus
             }
             return yaw;
         }
-        public virtual double getLerpRoll()
+        public virtual float getLerpRoll()
         {
             if (hasDoneFirstUpdate)
             {
@@ -272,8 +272,8 @@ namespace Coictus
             return roll;
         }
 
-        public virtual double posX { get => pos.X; set => pos.X = value; }
-        public virtual double posY { get => pos.Y; set => pos.Y = value; }
-        public virtual double posZ { get => pos.Z; set => pos.Z = value; }
+        public virtual float posX { get => pos.X; set => pos.X = value; }
+        public virtual float posY { get => pos.Y; set => pos.Y = value; }
+        public virtual float posZ { get => pos.Z; set => pos.Z = value; }
     }
 }

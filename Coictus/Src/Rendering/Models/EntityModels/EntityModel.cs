@@ -44,7 +44,7 @@ namespace Coictus.Models
         public virtual void onTick()
         {
             prevTickModelMatrix = modelMatrix;
-            modelMatrix = MathUtil.createRotation(new Vector3((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) *  Matrix4.CreateTranslation(MathUtil.convertVec(parent.getPosition())) ;
+            modelMatrix = MathUtil.createRotation(new Vector3((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) *  Matrix4.CreateTranslation(parent.getPosition()) ;
         }
 
         /*Replaces the current or non existing ModelDrawable with the one provided*/

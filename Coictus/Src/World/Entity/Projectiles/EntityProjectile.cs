@@ -5,9 +5,9 @@ namespace Coictus
 {
     class EntityProjectile : Entity, IDisposable
     {
-        protected double maxExistedTicks;
+        protected float maxExistedTicks;
 
-        public EntityProjectile(Vector3d pos, Vector3d direction, double initialVelocity = 2.5D, double maxLivingSeconds = 2) : base(pos)
+        public EntityProjectile(Vector3 pos, Vector3 direction, float initialVelocity = 2.5F, float maxLivingSeconds = 20) : base(pos)
         {
             airResistance = 0.001F;
             velocity += direction * initialVelocity;

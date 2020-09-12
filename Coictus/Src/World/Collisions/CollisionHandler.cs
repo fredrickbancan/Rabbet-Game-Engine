@@ -15,8 +15,8 @@ namespace Coictus
         {
             ICollider currentWorldCollider;
             ICollider currentEntityCollider;
-            Vector3d currentCollisionDirection;
-            double currentCollisionOverlapResult = 0;
+            Vector3 currentCollisionDirection;
+            float currentCollisionOverlapResult = 0;
             for (int i = 0; i < worldColliders.Count; i++)
             {
                 currentWorldCollider = worldColliders.ElementAt(i);
@@ -49,8 +49,8 @@ namespace Coictus
         /*Takes in a dictionary of all the entity colliders in the world and tests them against eachother.*/
         public static void doEntityCollisions(Dictionary<int, ICollider> entityColliders)
         {
-            double currentCollisionOverlapResult = 0;
-            Vector3d currentCollisionDirection;
+            float currentCollisionOverlapResult = 0;
+            Vector3 currentCollisionDirection;
             ICollider currentColliderA;//collider A is tested with all other colliders after it, which are assigned to collider B. Collision results are applied to collider B's parent respectively.
             ICollider currentColliderB;
 

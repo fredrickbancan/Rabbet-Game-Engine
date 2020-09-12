@@ -1,5 +1,5 @@
-﻿using OpenTK;
-using Coictus.Models;
+﻿using Coictus.Models;
+using OpenTK;
 using System;
 namespace Coictus
 {
@@ -25,7 +25,7 @@ namespace Coictus.VFX
         protected float scaleXModifyer = 1;
         protected float scaleYModifyer = 1;
         protected float scaleZModifyer = 1;
-        protected double maxExistingTicks;
+        protected float maxExistingTicks;
         protected int ticksExisted;
         protected ModelDrawable vfxModel;
         protected Matrix4 prevTickModelMatrix;
@@ -33,7 +33,7 @@ namespace Coictus.VFX
         protected bool removalFlag = false;// true if this entity should be removed in the next tick
 
         protected VFXRenderType renderType;
-        public VFXBase(Vector3d pos, float initialScale, String shaderDir, String textureDir, String modelDir, float maxExistingSeconds = 1, VFXRenderType renderType = VFXRenderType.tirangles) : base(pos)
+        public VFXBase(Vector3 pos, float initialScale, String shaderDir, String textureDir, String modelDir, float maxExistingSeconds = 1, VFXRenderType renderType = VFXRenderType.tirangles) : base(pos)
         {
             this.scale = initialScale;
             this.vfxModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelDir, renderType == VFXRenderType.points ? false : true);//TODO:Inneficcient. This will mean we have to load the data every time a VFX is spawned. maybe a list of pre loaded models is needed?
@@ -62,7 +62,7 @@ namespace Coictus.VFX
             prevTickModelMatrix = modelMatrix;
             scaleVelocity += scaleAcceleration - scaleResistance * scaleVelocity; //decrease expansion rate
             scale += scaleVelocity;
-            modelMatrix = Matrix4.CreateScale(new Vector3(scale * scaleXModifyer, scale * scaleYModifyer, scale * scaleZModifyer)) * MathUtil.createRotation(new Vector3((float)pitch, -(float)yaw, (float)roll)) * Matrix4.CreateTranslation(MathUtil.convertVec(pos));
+            modelMatrix = Matrix4.CreateScale(new Vector3(scale * scaleXModifyer, scale * scaleYModifyer, scale * scaleZModifyer)) * MathUtil.createRotation(new Vector3((float)pitch, -(float)yaw, (float)roll)) * Matrix4.CreateTranslation(pos);
         }
 
         /*draws this vfx, can be overridden*/

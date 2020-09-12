@@ -11,7 +11,7 @@ namespace Coictus
         public static bool displayFps = true;
         public static bool debugScreen = true;
         public static bool drawHitboxes = false;
-        public static bool superSampling = true;//TODO: impliment
+        public static bool superSampling = true;
         public static bool noclip = false;//disables player clipping
         public static void loadSettings()
         {

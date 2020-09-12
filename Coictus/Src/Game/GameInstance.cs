@@ -8,20 +8,6 @@ using System.Drawing;
 
 namespace Coictus
 {
-    /*List of all possible player/EntityLiving actions requestable via keyboard and mouse input or game logic*/
-    public enum Action
-    {
-        none,
-        fowards,
-        strafeLeft,
-        backwards,
-        strafeRight,
-        jump,
-        attack,
-        duck,
-        sprint,
-        interact
-    };
 
     /*This class is the main game class. It contains all the execution code for rendering, logic loops and loading.*/
     public class GameInstance : GameWindow
@@ -64,19 +50,19 @@ namespace Coictus
             TextUtil.loadAllFoundTextFiles();
             setDPIScale();
             Renderer.init();
-            TicksAndFps.init(30.0);
+            TicksAndFps.init(30.0F);
             MainGUI.init();
             DebugInfo.init();
             HitboxRenderer.init();
             //create and spawn player in new world
-            thePlayer = new EntityPlayer("Steve", new Vector3d(0.0, 0.0, 2));
+            thePlayer = new EntityPlayer("Steve", new Vector3(0, 0, 2));
             currentPlanet = new World();
             for (int i = 0; i < 60; i++)
             {
-                currentPlanet.spawnEntityInWorld(new EntityCactus(new Vector3d(0, 10, 0)));
+                currentPlanet.spawnEntityInWorld(new EntityCactus(new Vector3(0, 10, 0)));
             }
             currentPlanet.spawnEntityInWorld(thePlayer);
-            currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3d(5, 10, -5)));
+            currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3(5, 10, -5)));
 
             //center mouse in preperation for first person 
             Input.centerMouse();

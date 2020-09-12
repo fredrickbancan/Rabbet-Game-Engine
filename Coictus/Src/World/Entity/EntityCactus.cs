@@ -11,16 +11,16 @@ namespace Coictus
         {
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
-            this.setCollider(new AABBCollider(new Vector3d(-0.5, -0.5, -0.5), new Vector3d(0.5, 0.5, 0.5), this), 1);
-            yaw = rand.NextDouble() * 360;
+            this.setCollider(new AABBCollider(new Vector3(-0.5F, -0.5F, -0.5F), new Vector3(0.5F, 0.5F, 0.5F), this), 1);
+            yaw = (float)rand.NextDouble() * 360;
             walkFowards();
         }
-        public EntityCactus(Vector3d pos) : base(pos)
+        public EntityCactus(Vector3 pos) : base(pos)
         {
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
-            this.setCollider(new AABBCollider(new Vector3d(-0.5, -0.5, -0.5), new Vector3d(0.5, 0.5, 0.5), this), 1);
-            yaw = rand.NextDouble() * 360;
+            this.setCollider(new AABBCollider(new Vector3(-0.5F, -0.5F, -0.5F), new Vector3(0.5F, 0.5F, 0.5F), this), 1);
+            yaw = (float)rand.NextDouble() * 360;
             walkFowards();
         }
 

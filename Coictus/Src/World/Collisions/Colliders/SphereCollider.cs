@@ -5,10 +5,10 @@ namespace Coictus
     public struct SphereCollider : ICollider
     {
         public PositionalObject parent;
-        public Vector3d pos;
-        public double radius;
+        public Vector3 pos;
+        public float radius;
 
-        public SphereCollider(Vector3d pos, double radius, PositionalObject parent = null)
+        public SphereCollider(Vector3 pos, float radius, PositionalObject parent = null)
         {
             this.pos = pos;
             this.radius = radius;

@@ -19,7 +19,7 @@ namespace Coictus
         private static double percentToNextTick; //a decimal value between 0 and 1 which can be used as a percentage of progress towards next tick, usefull for interpolation.
         private static bool paused = false; //true when game is paused
 
-        public static void init(double tps)
+        public static void init(float tps)
         {
             ticksPerSecond = tps;
             timePerTick = 1 / ticksPerSecond;
@@ -93,9 +93,9 @@ namespace Coictus
             return ticksElapsed;
         }
 
-        public static double getNumOfTicksForSeconds(double seconds)
+        public static float getNumOfTicksForSeconds(float seconds)
         {
-            return seconds * ticksPerSecond;
+            return (float) (seconds * ticksPerSecond);
         }
         public static double getFrameTickPercentage()
         {

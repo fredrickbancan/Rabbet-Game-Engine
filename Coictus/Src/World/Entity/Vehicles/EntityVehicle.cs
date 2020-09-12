@@ -6,30 +6,30 @@ namespace Coictus
     public class EntityVehicle : Entity
     {
         protected EntityLiving mountingEntity;
-        protected Vector3d mountingOffset;
-        protected Vector3d frontVector;//vector pointing to the direction the entity is facing
-        protected Vector3d upVector;
-        protected Vector3d movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
-        public static readonly double defaultTurnRate = 2.5F;//degrees per tick
-        public static readonly double defaultDriveSpeed = 0.15F;
-        protected double driveSpeed = defaultDriveSpeed;
-        protected double turnRate = defaultTurnRate;
+        protected Vector3 mountingOffset;
+        protected Vector3 frontVector;//vector pointing to the direction the entity is facing
+        protected Vector3 upVector;
+        protected Vector3 movementVector; //a unit vector representing this entity's movement values. z is front and backwards, x is side to side.
+        public static readonly float defaultTurnRate = 2.5F;//degrees per tick
+        public static readonly float defaultDriveSpeed = 0.15F;
+        protected float driveSpeed = defaultDriveSpeed;
+        protected float turnRate = defaultTurnRate;
         protected bool playerDriving = false;
         public EntityVehicle() : base()
         {
-            frontVector = new Vector3d(0.0F, 0.0F, -1.0F);
-            upVector = new Vector3d(0.0F, 1.0F, 0.0F);
-            movementVector = new Vector3d(0.0F, 0.0F, 0.0F);
-            mountingOffset  = new Vector3d(0.0F, 1.9F, 0.0F);
+            frontVector = new Vector3(0.0F, 0.0F, -1.0F);
+            upVector = new Vector3(0.0F, 1.0F, 0.0F);
+            movementVector = new Vector3(0.0F, 0.0F, 0.0F);
+            mountingOffset  = new Vector3(0.0F, 1.9F, 0.0F);
         }
 
-        public EntityVehicle(Vector3d pos) : base(pos)
+        public EntityVehicle(Vector3 pos) : base(pos)
         {
-            frontVector = new Vector3d(0.0F, 0.0F, -1.0F);
-            upVector = new Vector3d(0.0F, 1.0F, 0.0F);
-            movementVector = new Vector3d(0.0F, 0.0F, 0.0F);
+            frontVector = new Vector3(0.0F, 0.0F, -1.0F);
+            upVector = new Vector3(0.0F, 1.0F, 0.0F);
+            movementVector = new Vector3(0.0F, 0.0F, 0.0F);
 
-            mountingOffset = new Vector3d(0.0F, 1.9F, 0.0F);
+            mountingOffset = new Vector3(0.0F, 1.9F, 0.0F);
         }
 
 
@@ -46,10 +46,10 @@ namespace Coictus
                 alignVectors();
 
                 //setting movementVector.X to -1, 0 or 1 based on driver strafing actions
-                movementVector.X = Convert.ToDouble(mountingEntity.doingAction(Action.strafeRight)) - Convert.ToDouble(mountingEntity.doingAction(Action.strafeLeft));
+                movementVector.X = Convert.ToInt32(mountingEntity.doingAction(Action.strafeRight)) - Convert.ToInt32(mountingEntity.doingAction(Action.strafeLeft));
 
                 //setting movementVector.Z to -1, 0 or 1 based on driver fowards/backwards actions
-                movementVector.Z = Convert.ToDouble(mountingEntity.doingAction(Action.fowards)) - Convert.ToDouble(mountingEntity.doingAction(Action.backwards));
+                movementVector.Z = Convert.ToInt32(mountingEntity.doingAction(Action.fowards)) - Convert.ToInt32(mountingEntity.doingAction(Action.backwards));
 
 
                 moveByMovementVector();
@@ -66,7 +66,7 @@ namespace Coictus
             }
         }
 
-        public override void applyCollision(Vector3d direction, double overlap)
+        public override void applyCollision(Vector3 direction, float overlap)
         {
             base.applyCollision(direction, overlap);
             if (mountingEntity != null)
@@ -80,8 +80,8 @@ namespace Coictus
         protected virtual void alignVectors()
         {
             /*correcting front vector based on new pitch and yaw*/
-            frontVector.X = (double)(Math.Cos(MathUtil.radians(yaw)));
-            frontVector.Z = (double)(Math.Sin(MathUtil.radians(yaw)));
+            frontVector.X = (float)(Math.Cos(MathUtil.radians(yaw)));
+            frontVector.Z = (float)(Math.Sin(MathUtil.radians(yaw)));
             frontVector.Normalize();
         }
 
@@ -89,9 +89,9 @@ namespace Coictus
         protected virtual void moveByMovementVector()
         {
             //modify walk speed here i.e slows, speed ups etc
-            double walkSpeedModified = driveSpeed;
+            float walkSpeedModified = driveSpeed;
 
-            if (!isGrounded) walkSpeedModified = 0.02D;//reduce movespeed when jumping or mid air 
+            if (!isGrounded) walkSpeedModified = 0.02F;//reduce movespeed when jumping or mid air 
 
 
 
@@ -143,7 +143,7 @@ namespace Coictus
             movementVector.X++;
         }
 
-        public virtual Vector3d getMountingOffset()
+        public virtual Vector3 getMountingOffset()
         {
             return mountingOffset;
         }

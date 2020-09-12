@@ -41,7 +41,8 @@ namespace Coictus.Debugging
                         ("Profiler ms averages: "),
                         ("Render: " + Profiler.getAveragesForProfile(Profiler.renderingName).ToString("0.##") + " ms."),
                         ("Game loop: " + Profiler.getAveragesForProfile(Profiler.gameLoopName).ToString("0.##") + " ms."),
-                        ("Collisions: " + Profiler.getAveragesForProfile(Profiler.collisionsName).ToString("0.##") + " ms.")
+                        ("Collisions: " + Profiler.getAveragesForProfile(Profiler.collisionsName).ToString("0.##") + " ms."),
+                        ("Entities: " + GameInstance.get.currentPlanet.getEntityCount())
                        }); 
             }
             else

@@ -4,10 +4,10 @@ namespace Coictus
 {
     public struct PointCollider : ICollider
     {
-        public Vector3d pos;
+        public Vector3 pos;
         public PositionalObject parent;
 
-        public PointCollider(Vector3d pos, PositionalObject parent = null)
+        public PointCollider(Vector3 pos, PositionalObject parent = null)
         {
             this.pos = pos;
             this.parent = parent;

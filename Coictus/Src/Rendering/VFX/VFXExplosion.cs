@@ -10,12 +10,12 @@ namespace Coictus.VFX
         private static Random rand = new Random();
 
         [Obsolete("This vfx was used for explosions before the addition of point particle vfx")]
-        public VFXExplosion(Vector3d pos) : base(pos, 1.0F, shaderDir, textureDir, modelDir, 0.5F, VFXRenderType.tirangles)
+        public VFXExplosion(Vector3 pos) : base(pos, 1.0F, shaderDir, textureDir, modelDir, 0.5F, VFXRenderType.tirangles)
         {
             scale = 3.0F;
-            setPitch((float)rand.NextDouble() * 180D);
-            setYaw((float)rand.NextDouble() * 180D);
-            setRoll((float)rand.NextDouble() * 180D);
+            setPitch((float)(rand.NextDouble() * 180D));
+            setYaw((float)(rand.NextDouble() * 180D));
+            setRoll((float)(rand.NextDouble() * 180D));
         }
 
     }

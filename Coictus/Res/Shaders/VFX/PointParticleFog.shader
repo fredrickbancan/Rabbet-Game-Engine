@@ -84,10 +84,10 @@ float rand3D(in vec3 co) {
 void makeCircle()
 {
     //clamps fragments to circle shape. 
-    vec2 centerVec = gl_PointCoord - vec2(0.5);//get a vector from center of square to coord
+    vec2 centerVec = gl_PointCoord - vec2(0.5F);//get a vector from center of square to coord
     float coordLength = length(centerVec);
 
-    if (coordLength >= 0.5)
+    if (coordLength >= 0.5F)
     {//discard if the vectors length is more than 0.5
         discard;
     }

@@ -5,31 +5,31 @@ namespace Coictus
     public struct AABBCollider : ICollider
     {
         public PositionalObject parent;
-        public Vector3d minBounds;
-        public Vector3d maxBounds;
+        public Vector3 minBounds;
+        public Vector3 maxBounds;
 
         /*these vectors are in aabb relative space. They point from
           the center of the aabb to the direction specified.
           They can be used for collision detection. If the aabb
           is resized, these must be recalculated.*/
-        public Vector3d vecToBackRight;
-        public Vector3d vecToBackLeft;
-        public Vector3d vecToFrontRight;
+        public Vector3 vecToBackRight;
+        public Vector3 vecToBackLeft;
+        public Vector3 vecToFrontRight;
 
-        public AABBCollider(Vector3d minBounds, Vector3d maxBounds, PositionalObject parent = null)
+        public AABBCollider(Vector3 minBounds, Vector3 maxBounds, PositionalObject parent = null)
         {
-            this.minBounds = Vector3d.Zero;
-            this.maxBounds = Vector3d.Zero;
-            vecToBackRight = Vector3d.Zero;
-            vecToBackLeft = Vector3d.Zero;
-            vecToFrontRight = Vector3d.Zero;
+            this.minBounds = Vector3.Zero;
+            this.maxBounds = Vector3.Zero;
+            vecToBackRight = Vector3.Zero;
+            vecToBackLeft = Vector3.Zero;
+            vecToFrontRight = Vector3.Zero;
             this.parent = parent;
             setBounds(minBounds, maxBounds, parent);
         }
 
         /*sets the bounds for this aabb. if the parent entity is provided and is not null, the bounds will be relative to the parent entity as a center origin
           otherwise the bounds will be absolutely world space orientated.*/
-        public AABBCollider setBounds(Vector3d minBounds, Vector3d maxBounds, PositionalObject parent = null)
+        public AABBCollider setBounds(Vector3 minBounds, Vector3 maxBounds, PositionalObject parent = null)
         {
             
             if(parent != null)
@@ -43,9 +43,9 @@ namespace Coictus
                 this.maxBounds = maxBounds;
             }
             
-            vecToBackRight = (maxBounds - minBounds) / 2D;
-            vecToBackLeft = new Vector3d(-(maxBounds.X - minBounds.X) / 2D, (maxBounds.Y - minBounds.Y) / 2D, (maxBounds.Z - minBounds.Z) / 2D);
-            vecToFrontRight = new Vector3d((maxBounds.X - minBounds.X) / 2D, (maxBounds.Y - minBounds.Y) / 2D, -(maxBounds.Z - minBounds.Z) / 2D);
+            vecToBackRight = (maxBounds - minBounds) / 2;
+            vecToBackLeft = new Vector3(-(maxBounds.X - minBounds.X) / 2, (maxBounds.Y - minBounds.Y) / 2, (maxBounds.Z - minBounds.Z) / 2);
+            vecToFrontRight = new Vector3((maxBounds.X - minBounds.X) / 2, (maxBounds.Y - minBounds.Y) / 2, -(maxBounds.Z - minBounds.Z) / 2);
             return this;
         }
 
@@ -57,7 +57,7 @@ namespace Coictus
         }
 
         /*returns true if a vector is NOT within a box's bounds*/
-        public static bool isPositionNotInsideBox(AABBCollider box, Vector3d position)
+        public static bool isPositionNotInsideBox(AABBCollider box, Vector3 position)
         {
             return position.X > box.maxX || position.X < box.minX
                 || position.Y > box.maxY || position.Y < box.minY
@@ -67,7 +67,7 @@ namespace Coictus
         {
             if (this.getHasParent())
             {
-                Vector3d boundDistFromCenter = (maxBounds - minBounds) / 2D;
+                Vector3 boundDistFromCenter = (maxBounds - minBounds) / 2;
                 maxBounds = parent.getPosition() + boundDistFromCenter;
                 minBounds = parent.getPosition() - boundDistFromCenter;
             }
@@ -92,7 +92,7 @@ namespace Coictus
         {
             if(this.getHasParent())
             {
-                Vector3d boundDistFromCenter = (maxBounds - minBounds) / 2D;
+                Vector3 boundDistFromCenter = (maxBounds - minBounds) / 2;
                 AABBCollider result = new AABBCollider(minBounds, maxBounds, parent);
                 result.maxBounds = parent.getPredictedNextTickPos() + boundDistFromCenter;
                 result.minBounds = parent.getPredictedNextTickPos() - boundDistFromCenter;
@@ -111,19 +111,19 @@ namespace Coictus
             return parent;
         }
 
-        public double minX { get => minBounds.X; set => minBounds.X = value; }
-        public double minY { get => minBounds.Y; set => minBounds.Y = value; }
-        public double minZ { get => minBounds.Z; set => minBounds.Z = value; }
+        public float minX { get => minBounds.X; set => minBounds.X = value; }
+        public float minY { get => minBounds.Y; set => minBounds.Y = value; }
+        public float minZ { get => minBounds.Z; set => minBounds.Z = value; }
 
-        public double maxX { get => maxBounds.X; set => maxBounds.X = value; }
-        public double maxY { get => maxBounds.Y; set => maxBounds.Y = value; }
-        public double maxZ { get => maxBounds.Z; set => maxBounds.Z = value; }
+        public float maxX { get => maxBounds.X; set => maxBounds.X = value; }
+        public float maxY { get => maxBounds.Y; set => maxBounds.Y = value; }
+        public float maxZ { get => maxBounds.Z; set => maxBounds.Z = value; }
 
 
         //extent is how much the aabb extends from its center 
-        public double extentX { get => (maxBounds.X - minBounds.X) / 2D; }
-        public double extentY { get => (maxBounds.Y - minBounds.Y) / 2D; }
-        public double extentZ { get => (maxBounds.Z - minBounds.Z) / 2D; }
-        public Vector3d centerVec { get => minBounds + ((maxBounds - minBounds) / 2D); }//relative to world
+        public float extentX { get => (maxBounds.X - minBounds.X) / 2; }
+        public float extentY { get => (maxBounds.Y - minBounds.Y) / 2; }
+        public float extentZ { get => (maxBounds.Z - minBounds.Z) / 2; }
+        public Vector3 centerVec { get => minBounds + ((maxBounds - minBounds) / 2); }//relative to world
     }
 }

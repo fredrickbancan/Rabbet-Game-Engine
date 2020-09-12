@@ -7,22 +7,22 @@ namespace Coictus
 {
     public class EntityTank : EntityVehicle
     {
-        public static readonly double projectileHopupAngle = 7.2F;
-        private double bodyYaw;
-        private double barrelPitch;
-        public static readonly double barrelLength = 6.75D;
+        public static readonly float projectileHopupAngle = 7.2F;
+        private float bodyYaw;
+        private float barrelPitch;
+        public static readonly float barrelLength = 6.75F;
         Random rand = new Random();
         public EntityTank() : base()
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
-            this.setCollider(new AABBCollider(new Vector3d(-2.5, -1.25, -2.5), new Vector3d(2.5, 1.25, 2.5), this), 2);
+            this.setCollider(new AABBCollider(new Vector3(-2.5F, -1.25F, -2.5F), new Vector3(2.5F, 1.25F, 2.5F), this), 2);
         }
-        public EntityTank(Vector3d initialPos) : base(initialPos)
+        public EntityTank(Vector3 initialPos) : base(initialPos)
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
-            this.setCollider(new AABBCollider(new Vector3d(-2.5, -1.25, -2.5), new Vector3d(2.5, 1.25, 2.5), this), 2);
+            this.setCollider(new AABBCollider(new Vector3(-2.5F, -1.25F, -2.5F), new Vector3(2.5F, 1.25F, 2.5F), this), 2);
         }
 
         public override void onTick()
@@ -54,8 +54,8 @@ namespace Coictus
         protected override void alignVectors()
         {
             /*correcting front vector based on new pitch and yaw*/
-            frontVector.X = (double)(Math.Cos(MathUtil.radians(yaw)));
-            frontVector.Z = (double)(Math.Sin(MathUtil.radians(yaw)));
+            frontVector.X = (float)(Math.Cos(MathUtil.radians(yaw)));
+            frontVector.Z = (float)(Math.Sin(MathUtil.radians(yaw)));
             frontVector.Normalize();
         }
 
@@ -64,9 +64,9 @@ namespace Coictus
         protected override void moveByMovementVector()
         {
             //modify walk speed here i.e slows, speed ups etc
-            double walkSpeedModified = driveSpeed;
+            float walkSpeedModified = driveSpeed;
 
-            if (!isGrounded)walkSpeedModified = 0.02D;//reduce movespeed when jumping or mid air 
+            if (!isGrounded)walkSpeedModified = 0.02F;//reduce movespeed when jumping or mid air 
 
 
             //change velocity based on movement
@@ -81,36 +81,36 @@ namespace Coictus
         /*called when player left clicks while driving this vehicle*/
         public override void onDriverAttack()
         {
-            Vector3d muzzleLocation = getMuzzleLocation();
+            Vector3 muzzleLocation = getMuzzleLocation();
             currentPlanet.spawnEntityInWorld(new EntityTankProjectile(muzzleLocation, getMuzzleFrontVector(), barrelPitch, bodyYaw));
             VFXUtil.doSmallSmokePuffEffect(currentPlanet, muzzleLocation, (float)barrelPitch, (float)bodyYaw);
         }
 
-        private Vector3d getMuzzleLocation()
+        private Vector3 getMuzzleLocation()
         {
             Matrix4 barrelLengthTranslationMatrix = Matrix4.CreateTranslation(new Vector3(0, 0, -(float)barrelLength)) * ((EntityTankModel)entityModel).getBarrelModelMatrix();
-            Vector3d result = new Vector3d();
+            Vector3 result = new Vector3();
             result.X += barrelLengthTranslationMatrix.Row3.X;
             result.Y += barrelLengthTranslationMatrix.Row3.Y;
             result.Z += barrelLengthTranslationMatrix.Row3.Z;
             return result;
         }
 
-        private Vector3d getMuzzleFrontVector()
+        private Vector3 getMuzzleFrontVector()
         {
-            Vector3d result = new Vector3d();
-            result.X = (double)(Math.Cos(MathUtil.radians(mountingEntity.getYaw()))) * (double)(Math.Cos(MathUtil.radians(barrelPitch)));
-            result.Y = (double)Math.Sin(MathUtil.radians(barrelPitch));
-            result.Z = (double)(Math.Sin(MathUtil.radians(mountingEntity.getYaw()))) * (double)(Math.Cos(MathUtil.radians(barrelPitch)));
+            Vector3 result = new Vector3();
+            result.X = (float)(Math.Cos(MathUtil.radians(mountingEntity.getYaw()))) * (float)(Math.Cos(MathUtil.radians(barrelPitch)));
+            result.Y = (float)Math.Sin(MathUtil.radians(barrelPitch));
+            result.Z = (float)(Math.Sin(MathUtil.radians(mountingEntity.getYaw()))) * (float)(Math.Cos(MathUtil.radians(barrelPitch)));
             result.Normalize();
             return result;
         }
-        public override void rotateYaw(double amount)
+        public override void rotateYaw(float amount)
         {
             base.rotateYaw(amount);
             this.mountingEntity.rotateYaw(amount);
         }
-        public double getBodyYaw { get => bodyYaw;}
-        public double getBarrelPitch { get => barrelPitch;}
+        public float getBodyYaw { get => bodyYaw;}
+        public float getBarrelPitch { get => barrelPitch;}
     }
 }
