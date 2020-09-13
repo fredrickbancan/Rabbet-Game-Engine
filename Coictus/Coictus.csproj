@@ -76,6 +76,7 @@
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankModel.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankProjectileModel.cs" />
     <Compile Include="Src\Rendering\Models\ModelDrawableDynamicInterpolated.cs" />
+    <Compile Include="Src\Rendering\Models\Prefabs\CubePrefab.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\DefaultDebugModel.cs" />
     <Compile Include="Src\Rendering\Models\OBJProcessing\OBJLoader.cs" />
     <Compile Include="Src\Rendering\SubRendering\Batching\LineBatcher.cs" />

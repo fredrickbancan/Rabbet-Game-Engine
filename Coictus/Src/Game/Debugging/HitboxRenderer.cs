@@ -10,11 +10,13 @@ namespace Coictus.Debugging
     /*This class handles the rendering of hitboxes for debugging purposes.*/
     public static class HitboxRenderer
     {
-        private static string aabbPlaneShaderDir = ResourceUtil.getShaderFileDir("Color3D.shader");
-        private static ModelDrawable aabbModel;
-      //  private static ModelDrawable sphereModel;
-       // private static ModelDrawable planeModel;
-       // private static ModelDrawable pointModel;
+        private static string linesShader = ResourceUtil.getShaderFileDir("Color3D.shader");
+
+
+        public static readonly int maxAABBRenderCount = 512;
+        private static ModelDrawableDynamic aabbDynamicModel;
+        private static Model aabbModelPrefab;
+        private static List<Model> aabbToBeRendered = new List<Model>();
 
         /*Constructs each hitbox model for instanced rendering. Requires Renderer to be initialized first.*/
         public static void init()
@@ -22,83 +24,90 @@ namespace Coictus.Debugging
             buildAABBModel();
         }
 
-        /*Builds the model for an AABB, basically a cube*/
+        /*Builds the prefab model for an AABB, basically a cube made of lines*/
         private static void buildAABBModel()
         {
-            Model[] boxSides = new Model[6];
+            aabbDynamicModel = new ModelDrawableDynamic(linesShader, "none", LineBatcher.getIndicesForLineQuadCount(maxAABBRenderCount * 6), maxAABBRenderCount * 48 /*aabb models have 48 vertices*/);//initializing dynamic model for drawing aabb
 
-            for(int i = 0; i < boxSides.Length; i++)
-            {
-                boxSides[i] = QuadPrefab.getNewModel().setColor(CustomColor.magenta);
-            }
-            
-            boxSides[0].rotateVertices(new Vector3(0, 180, 0)).translateVertices(new Vector3(0, 0, -0.5F));//negZ face
-            boxSides[1].translateVertices(new Vector3(0, 0, 0.5F));//posZ face
-            boxSides[2].rotateVertices(new Vector3(0, 90, 0)).translateVertices(new Vector3(-0.5F, 0, 0));//negX face
-            boxSides[3].rotateVertices(new Vector3(0, -90, 0)).translateVertices(new Vector3(0.5F, 0, 0));//posX face
-            boxSides[4].rotateVertices(new Vector3(-90, 0, 0)).translateVertices(new Vector3(0, -0.5F, 0));//negY face
-            boxSides[5].rotateVertices(new Vector3(90, 0, 0)).translateVertices(new Vector3(0, 0.5F, 0));//posY face
-
-            aabbModel = QuadBatcher.batchQuadModels(boxSides, aabbPlaneShaderDir, "none");
-            aabbModel.setIndices(LineBatcher.getIndicesForLineQuadCount(6));
+            aabbModelPrefab = CubePrefab.getNewModel();
         }
-        public static void renderAllHitboxes(List<ICollider> worldColliders, Dictionary<int, ICollider> entityColliders)
+
+        /*Can be called on tick. Adds all of the provided colliders to a list of hitboxes to be dynamically batched and drawn.*/
+        public static void addAllHitboxesToBeRendered(List<ICollider> worldColliders, Dictionary<int, ICollider> entityColliders)
         {
             foreach(ICollider hitBox in worldColliders)
             {
-                renderHitboxByType(hitBox);
+                addHitboxToBeRendered(hitBox);
             }
 
             foreach(ICollider hitBox in entityColliders.Values)
             {
-                renderHitboxByType(hitBox);
+                addHitboxToBeRendered(hitBox);
             }
+
+            combineAndSubmitAABBModels();
         }
 
-        public static void renderHitboxByType(ICollider hitBox)
+        private static void addHitboxToBeRendered(ICollider hitBox)
         {
             switch(hitBox.getType())
             {
                 case ColliderType.aabb:
-                    renderBox((AABBCollider)hitBox);
+                    addBoxToBeRendered((AABBCollider)hitBox);
                     break;
 
                 case ColliderType.sphere:
-                    renderSphere((SphereCollider)hitBox);
+                    addSphereToBeRendered((SphereCollider)hitBox);
                     break;
 
                 case ColliderType.plane:
-                    renderPlane((PlaneCollider)hitBox);
+                    addPlaneToBeRendered((PlaneCollider)hitBox);
                     break;
 
                 case ColliderType.point:
-                    renderPoint((PointCollider)hitBox);
+                    addPointToBeRendered((PointCollider)hitBox);
                     break;
             }
         }
 
-        public static void renderBox(AABBCollider box)//TODO: VERY inefficient. Need to created either a dynamic model or instancing to cut down on draws. Avoiding calcualting the model matrix each frame would also help.
+        public static void addBoxToBeRendered(AABBCollider box)
         {
-            Matrix4 modelMatrix = Matrix4.CreateScale(new Vector3((float)box.extentX*2, (float)box.extentY * 2, (float)box.extentZ * 2)) * Matrix4.CreateTranslation(box.centerVec);
-
-            aabbModel.draw(GameInstance.get.thePlayer.getViewMatrix(), Renderer.projMatrix, modelMatrix, PrimitiveType.Lines);
+            if(aabbToBeRendered.Count < maxAABBRenderCount)
+            {
+                //add a copy of the aabb line model transformed to aabb collider specs
+                aabbToBeRendered.Add(aabbModelPrefab.copyModel().transformVertices(new Vector3((float)box.extentX * 2, (float)box.extentY * 2, (float)box.extentZ * 2), Vector3.Zero, box.centerVec));
+            }
         }
 
-        public static void renderSphere(SphereCollider sphere)
-        {
-
-        }
-
-        public static void renderPoint(PointCollider point)
+        public static void addSphereToBeRendered(SphereCollider sphere)
         {
 
         }
 
-        public static void renderPlane(PlaneCollider plane)
+        public static void addPointToBeRendered(PointCollider point)
         {
 
         }
 
-       
+        public static void addPlaneToBeRendered(PlaneCollider plane)
+        {
+
+        }
+
+        /*Renders all of the requested hitboxes via dynamic draw*/
+        public static void renderAll(Matrix4 viewMatrix, Matrix4 projectionMatrix)
+        {
+            aabbDynamicModel.draw(viewMatrix, projectionMatrix, Matrix4.Identity, PrimitiveType.Lines);
+        }
+
+        private static void combineAndSubmitAABBModels()
+        {
+            Vertex[] fillerVertices = new Vertex[maxAABBRenderCount*48];
+            Vertex[] batchedModelVertices;
+            QuadBatcher.combineData(aabbToBeRendered.ToArray(), out batchedModelVertices);
+            Array.Copy(batchedModelVertices, fillerVertices, batchedModelVertices.Length);
+            aabbDynamicModel.submitData(fillerVertices);
+            aabbToBeRendered.Clear();
+        }
     }
 }

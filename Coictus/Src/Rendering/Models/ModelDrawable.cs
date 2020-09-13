@@ -30,12 +30,16 @@ namespace Coictus.Models
         protected int VAO;
         protected Texture texture;
         protected Shader shader;
+        protected string shaderDir;
+        protected string textureDir;
         private bool drawErrorPrinted = false;
 
 
         /*takes in directory for the shader and texture for this model, indices can be null if they wont be used*/
         public ModelDrawable(string shaderFile, string textureFile, Vertex[] vertices, uint[] indices = null) : base(vertices)
         {
+            shaderDir = shaderFile;
+            textureDir = textureFile;
             this.indices = indices;
             texture = new Texture(textureFile, false);
             shader = new Shader(shaderFile);
@@ -197,6 +201,12 @@ namespace Coictus.Models
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
         }
+        public virtual void draw(PrimitiveType primType, bool useTex = true)
+        {
+            bind(useTex);
+            GL.DrawElements(primType, indices.Length, DrawElementsType.UnsignedInt, 0);
+            unBind();
+        }
 
         public virtual void drawPoints(Matrix4 viewMatrix, Matrix4 projectionMatrix, Matrix4 modelMatrix, Vector3 fogColor, float pointRadius, bool ambientOcclusion)
         {
@@ -281,6 +291,22 @@ namespace Coictus.Models
             GL.BindBuffer(BufferTarget.ArrayBuffer, VBOS[0]);
         }
 
+
+        public ModelDrawable copyModelDrawable()
+        {
+            if (indices != null)
+            {
+                Vertex[] verticesCopy = new Vertex[vertices.Length];
+                uint[] indicesCopy = new uint[indices.Length];
+                Array.Copy(vertices, verticesCopy, vertices.Length);
+                Array.Copy(indices, indicesCopy, indices.Length);
+                return new ModelDrawable(shaderDir, textureDir, verticesCopy, indicesCopy);
+            }
+
+            Vertex[] verticesCopy2 = new Vertex[vertices.Length];
+            Array.Copy(vertices, verticesCopy2, vertices.Length);
+            return new ModelDrawable(shaderDir, textureDir, verticesCopy2, null);
+        }
         /*Called when this model is no longer needed and will be replaced*/
         public virtual void delete()
         {

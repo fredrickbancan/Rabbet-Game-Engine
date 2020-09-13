@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using System;
 
 namespace Coictus.Models
 {
@@ -81,6 +82,14 @@ namespace Coictus.Models
                 vertices[i].uv.Y *= scale.Z;
             }
             return this;
+        }
+
+        /*generates a new model using copies of this models arrays.*/
+        public Model copyModel()
+        {
+            Vertex[] verticesCopy = new Vertex[vertices.Length];
+            Array.Copy(vertices, verticesCopy, vertices.Length);
+            return new Model(verticesCopy);
         }
 
     }

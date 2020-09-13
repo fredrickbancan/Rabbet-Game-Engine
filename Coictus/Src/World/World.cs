@@ -75,7 +75,7 @@ namespace Coictus
 
         public void drawDebugHitboxes()
         {
-            HitboxRenderer.renderAllHitboxes(worldColliders, entityColliders);
+           
         }
 
         /*creates simple inverted cube at 0,0,0*/
@@ -170,7 +170,11 @@ namespace Coictus
             tickEntities();
             tickVFX();
             doCollisions();//this should be done AFTER ticking entities.
-            if (GameSettings.drawHitboxes) updateAllEntityColliders();//For correcting the drawing of hitboxes after a collision
+            if (GameSettings.drawHitboxes)
+            {
+                updateAllEntityColliders();//For correcting the drawing of hitboxes after a collision
+                HitboxRenderer.addAllHitboxesToBeRendered(worldColliders, entityColliders);
+            }
         }
 
         /*Called every frame. Should not do any heavy computation, only for preparing certain things for rendering. E.G: correcting models.*/
