@@ -8,7 +8,7 @@ namespace Coictus.SubRendering
     public static class TriangleBatcher
     {
 
-        public static void combineData(ModelDrawable[] inputModels, out Vertex[] resultVertices, out UInt32[] resultIndices)
+        public static void combineData(ModelDrawable[] inputModels, out Vertex[] resultVertices, out uint[] resultIndices)
         {
             int totalVerticesCount = 0;
             int totalIndicesCount = 0;
@@ -26,7 +26,7 @@ namespace Coictus.SubRendering
             }
 
             resultVertices = new Vertex[totalVerticesCount];
-            resultIndices = new UInt32[totalIndicesCount];
+            resultIndices = new uint[totalIndicesCount];
 
             //fill resultvertices
             int prevModelVerticesIndex = 0;
@@ -43,8 +43,8 @@ namespace Coictus.SubRendering
             }
 
             //fill resultIndices
-            UInt32 prevModelIndicesIndex = 0;
-            UInt32 prevModelsVertexCount = 0;
+            uint prevModelIndicesIndex = 0;
+            uint prevModelsVertexCount = 0;
             for (int i = 0; i < inputModels.Length; i++)
             {
                 if (inputModels[i] != null)
@@ -53,8 +53,8 @@ namespace Coictus.SubRendering
                     {
                         resultIndices[prevModelIndicesIndex + j] = inputModels[i].indices[j] + prevModelsVertexCount;
                     }
-                    prevModelIndicesIndex += (UInt32)inputModels[i].indices.Length;
-                    prevModelsVertexCount += (UInt32)inputModels[i].vertices.Length;
+                    prevModelIndicesIndex += (uint)inputModels[i].indices.Length;
+                    prevModelsVertexCount += (uint)inputModels[i].vertices.Length;
                 }
             }
         }

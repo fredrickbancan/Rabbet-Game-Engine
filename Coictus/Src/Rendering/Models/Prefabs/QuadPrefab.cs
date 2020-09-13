@@ -12,7 +12,7 @@ namespace Coictus.Models
             new Vertex(0.5F, 0.5F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F, 1.0F),//3
         };
 
-        public static readonly UInt32[] quadIndices = new UInt32[] //order of vertices in counter clockwise direction for both triangles of quad. counter clock wise is opengl default for front facing.
+        public static readonly uint[] quadIndices = new uint[] //order of vertices in counter clockwise direction for both triangles of quad. counter clock wise is opengl default for front facing.
         {
             0, 1, 2,//first triangle    
             1, 3, 2 //second triangle
@@ -28,18 +28,18 @@ namespace Coictus.Models
         public static ModelDrawable getNewModelDrawable()
         {
             Vertex[] verticesCopy = new Vertex[quadVertices.Length];
-            UInt32[] indicesCopy = new uint[quadIndices.Length];
+            uint[] indicesCopy = new uint[quadIndices.Length];
             Array.Copy(quadVertices, verticesCopy, quadVertices.Length);
             Array.Copy(quadIndices, indicesCopy, quadIndices.Length);
             return new ModelDrawable(getShaderDir(), getTextureDir(), verticesCopy, indicesCopy);
         }
 
-        public static String getShaderDir()
+        public static string getShaderDir()
         {
             return ResourceUtil.getShaderFileDir("ColorTextureFog3D.shader");
         }
 
-        public static String getTextureDir()
+        public static string getTextureDir()
         {
             return ResourceUtil.getTextureFileDir("EntityCactus.png");
         }

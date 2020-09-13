@@ -11,7 +11,7 @@ namespace Coictus
         private bool isNone = false;//is true if texture is null
         private bool disposed = false;
         private int id, width, height;
-        public Texture(String path, bool enableFiltering)
+        public Texture(string path, bool enableFiltering)
         {
             if (path != "none")
             {
@@ -74,7 +74,7 @@ namespace Coictus
         }
         
 
-        public int loadTexture(String file, TextureMinFilter minfilter, TextureMagFilter magfilter)
+        public int loadTexture(string file, TextureMinFilter minfilter, TextureMagFilter magfilter)
         {   
             if(GL.IsTexture(id))//checks if this texture has already been loaded, if so, will replace it with a new one
             {

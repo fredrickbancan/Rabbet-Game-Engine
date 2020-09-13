@@ -7,7 +7,7 @@ namespace Coictus.VFX
     /*Base class for any VFX using point particles*/
     public class VFXPointParticles : VFXBase
     {
-        private static String defaultShaderDir = ResourceUtil.getShaderFileDir(@"VFX\PointParticleFog.shader");
+        private static string defaultShaderDir = ResourceUtil.getShaderFileDir(@"VFX\PointParticleFog.shader");
         protected CustomColor pointColor;
         protected float randomPointPositionSpread;//the maximum distance between points when randomizing a point cloud (e.g, a puff of smoke)
         protected float pointRadius;
@@ -71,12 +71,12 @@ namespace Coictus.VFX
             return nonRandBrightColor;
         }
 
-        public override void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColor, int pass = 1)
+        public override void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColor)
         {
             if (vfxModel != null && !removalFlag)
             {
                 //TODO: Inefficient. There needs to be a dynamic model for all point VFX in the world. Each new point vfx vertices are added to it and it can be rendered in one single draw!
-                 vfxModel.drawPoints(viewMatrix, projectionMatrix, prevTickModelMatrix + (modelMatrix - prevTickModelMatrix) * TicksAndFps.getPercentageToNextTick(), fogColor, pointRadius, pointAmbientOcclusion, pass);
+                 vfxModel.drawPoints(viewMatrix, projectionMatrix, prevTickModelMatrix + (modelMatrix - prevTickModelMatrix) * TicksAndFps.getPercentageToNextTick(), fogColor, pointRadius, pointAmbientOcclusion);
             }
             else
             {

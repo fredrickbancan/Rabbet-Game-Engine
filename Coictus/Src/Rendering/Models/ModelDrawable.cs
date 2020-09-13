@@ -6,11 +6,24 @@ using System.Collections.Generic;
 
 namespace Coictus.Models
 {
-    /*Base class for models that wont be batched and can be drawn individually with additional draw calls and have
+    /*enum for determining how to draw a model. Important for dynamic models so they can automatically 
+      chose a shader for the specific type. E.G: singlePoint only needs a position vector, not a whole
+      model matrix.*/
+    public enum ModelDrawType
+    {
+        trangles,
+        points,
+        singlePoint,
+        lines
+    };
+
+    /*Base class for models that can be drawn individually with additional draw calls and have
      *individual VAO's.*/
     public class ModelDrawable : Model
     {
-        public UInt32[] indices;
+        /*ModelDrawables can have null indices. In which case the vertices will be drawn without the use of indices.
+          In which case, a draw function which does not use indices must be utilized (e.g: drawPoints())*/
+        public uint[] indices;
         protected bool hasInitialized = false;
         protected int indicesBufferObject;
         protected List<int> VBOS = new List<int>();
@@ -21,20 +34,20 @@ namespace Coictus.Models
 
 
         /*takes in directory for the shader and texture for this model, indices can be null if they wont be used*/
-        public ModelDrawable(String shaderFile, String textureFile, Vertex[] vertices, UInt32[] indices = null) : base(vertices)
+        public ModelDrawable(string shaderFile, string textureFile, Vertex[] vertices, uint[] indices = null) : base(vertices)
         {
             this.indices = indices;
             texture = new Texture(textureFile, false);
             shader = new Shader(shaderFile);
         }
-        public ModelDrawable(String shaderFile, Texture tex, Vertex[] vertices, UInt32[] indices) : base(vertices)
+        public ModelDrawable(string shaderFile, Texture tex, Vertex[] vertices, uint[] indices) : base(vertices)
         {
             this.indices = indices;
             texture = tex;
             shader = new Shader(shaderFile);
         }
 
-        public virtual void setIndices(UInt32[] newind)
+        public virtual void setIndices(uint[] newind)
         {
             indices = newind;
         }
@@ -57,7 +70,7 @@ namespace Coictus.Models
             this.shader = shad;
         }
 
-        public virtual void setUniformVec3(String name, Vector3 vec)
+        public virtual void setUniformVec3(string name, Vector3 vec)
         {
             shader.setUniformVec3F(name, vec);
         }
@@ -185,7 +198,7 @@ namespace Coictus.Models
             unBind();
         }
 
-        public virtual void drawPoints(Matrix4 viewMatrix, Matrix4 projectionMatrix, Matrix4 modelMatrix, Vector3 fogColor, float pointRadius, bool ambientOcclusion, int pass = 1)
+        public virtual void drawPoints(Matrix4 viewMatrix, Matrix4 projectionMatrix, Matrix4 modelMatrix, Vector3 fogColor, float pointRadius, bool ambientOcclusion)
         {
             if (!drawErrorPrinted && indices != null && GL.IsBuffer(indicesBufferObject))
             {
@@ -224,7 +237,7 @@ namespace Coictus.Models
             {
                 indicesBufferObject = GL.GenBuffer();
                 GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBufferObject);
-                GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(UInt32), indices, BufferUsageHint.StaticDraw);
+                GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
             }
         }
 

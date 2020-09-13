@@ -10,7 +10,7 @@ namespace Coictus.Debugging
     /*This class handles the rendering of hitboxes for debugging purposes.*/
     public static class HitboxRenderer
     {
-        private static String aabbPlaneShaderDir = ResourceUtil.getShaderFileDir("Color3D.shader");
+        private static string aabbPlaneShaderDir = ResourceUtil.getShaderFileDir("Color3D.shader");
         private static ModelDrawable aabbModel;
       //  private static ModelDrawable sphereModel;
        // private static ModelDrawable planeModel;

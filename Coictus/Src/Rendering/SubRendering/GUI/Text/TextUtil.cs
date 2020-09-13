@@ -9,14 +9,14 @@ namespace Coictus.GUI.Text
     public enum TextAlign { LEFT, CENTER, RIGHT };
     public static class TextUtil
     {
-        public static readonly String textShaderDir = ResourceUtil.getShaderFileDir(@"GUI\GuiTextShader.shader");
+        public static readonly string textShaderDir = ResourceUtil.getShaderFileDir(@"GUI\GuiTextShader.shader");
         public static readonly float defaultFontSize = 0.02F;
         public static readonly int defaultScreenEdgePadding = 5; //5 pixels
 
-        private static Dictionary<String, FontFace> fonts = new Dictionary<String, FontFace>();
+        private static Dictionary<string, FontFace> fonts = new Dictionary<string, FontFace>();
 
         /*Returns true if the requested font was found in the global list*/
-        public static bool tryGetFont(String name, out FontFace font)
+        public static bool tryGetFont(string name, out FontFace font)
         {
             bool success = fonts.TryGetValue(name, out font);
             if(!success)
@@ -29,18 +29,18 @@ namespace Coictus.GUI.Text
         /*Goes through the font file directory and adds all fonts*/
         public static void loadAllFoundTextFiles()
         {
-            String[] allFileDirectoriesAndName = Directory.GetFiles(ResourceUtil.getFontFileDir(""));
-            foreach(String dir in allFileDirectoriesAndName)
+            string[] allFileDirectoriesAndName = Directory.GetFiles(ResourceUtil.getFontFileDir(""));
+            foreach(string dir in allFileDirectoriesAndName)
             {
                 if (dir.Contains(".fnt"))
                 {
-                    String fontName = dir.Replace(ResourceUtil.getFontFileDir(""), "").Replace(".fnt", "");//removes directory and file extension
+                    string fontName = dir.Replace(ResourceUtil.getFontFileDir(""), "").Replace(".fnt", "");//removes directory and file extension
                     tryAddNewFontToGlobalList(fontName);
                 }
             }
         }
 
-        private static void tryAddNewFontToGlobalList(String fontName)
+        private static void tryAddNewFontToGlobalList(string fontName)
         {
             FontFace addingFont = new FontFace(fontName);
             if (addingFont.successfullyInitialized())
@@ -53,7 +53,7 @@ namespace Coictus.GUI.Text
             }
         }
 
-        public static String getTextureDirForFont(FontFace font)
+        public static string getTextureDirForFont(FontFace font)
         {
             return ResourceUtil.getFontFileDir(font.getFontName() + ".png");
         }

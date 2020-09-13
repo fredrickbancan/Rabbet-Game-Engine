@@ -3,7 +3,6 @@ using Coictus.Models;
 using Coictus.SubRendering;
 using Coictus.VFX;
 using OpenTK;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,7 +21,7 @@ namespace Coictus
         public Dictionary<int, ICollider> entityColliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity
         public List<ICollider> worldColliders = new List<ICollider>();//list of colliders with no parent, ie, walls, ground planes.
         public List<VFXBase> vfxList = new List<VFXBase>();
-        private String wallTextureDir = ResourceUtil.getTextureFileDir("plasterwall.png"); 
+        private string wallTextureDir = ResourceUtil.getTextureFileDir("plasterwall.png"); 
 
 
         public World()
@@ -63,13 +62,13 @@ namespace Coictus
         }
 
         /*Loop through each vfx and render them with a seperate draw call (INEFFICIENT)*/
-        public void drawVFX(Matrix4 viewMatrix, Matrix4 projectionMatrix, int pass = 1)
+        public void drawVFX(Matrix4 viewMatrix, Matrix4 projectionMatrix)
         {
             foreach (VFXBase vfx in vfxList)
             {
                 if (vfx.exists())
                 {
-                    vfx.draw(viewMatrix, projectionMatrix, fogColor, pass);
+                    vfx.draw(viewMatrix, projectionMatrix, fogColor);
                 }
             }
         }
@@ -188,21 +187,19 @@ namespace Coictus
 
         private void tickEntities()
         {
-            Entity[] currentEntities = entities.Values.ToArray();
-            foreach (Entity ent in currentEntities)
-            {
-                if (ent != null)
-                    ent.preTick();
+            for (int i = 0; i < entities.Count; i++)
+            { 
+                entities.Values.ElementAt(i).preTick();
             }
-            foreach (Entity ent in currentEntities)
+
+            for (int i = 0; i < entities.Count; i++)
             {
-                if (ent != null)
-                    ent.onTick();
+                entities.Values.ElementAt(i).onTick();
             }
-            foreach (Entity ent in currentEntities)
+
+            for (int i = 0; i < entities.Count; i++)
             {
-                if (ent != null)
-                    ent.postTick();
+                entities.Values.ElementAt(i).postTick();
             }
         }
 

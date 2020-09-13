@@ -10,17 +10,17 @@ namespace Coictus.SubRendering.GUI
       Multiple gui screens can be created and displayed seperately.*/
     public class GUIScreen
     {
-        private Dictionary<String, GUIScreenComponent> components = new Dictionary<String, GUIScreenComponent>();//all of the gui related components in this screen, such as crosshairs, health bars, menus ect. Each component can be individually hidden, changed or removed.
-        private Dictionary<String, GUITextPanel> screenTextPanels = new Dictionary<String, GUITextPanel>();
+        private Dictionary<string, GUIScreenComponent> components = new Dictionary<string, GUIScreenComponent>();//all of the gui related components in this screen, such as crosshairs, health bars, menus ect. Each component can be individually hidden, changed or removed.
+        private Dictionary<string, GUITextPanel> screenTextPanels = new Dictionary<string, GUITextPanel>();
         private ModelDrawableDynamic screenTextModel;
         private int preHideWindowWidth;
         private int preHideWindowHeight;
         private FontFace screenFont;
         private bool wholeScreenHidden = false;
-        private UInt32 maxCharCount;
-        public String screenName = "";
+        private uint maxCharCount;
+        public string screenName = "";
 
-        public GUIScreen(String screenName, String textFont, UInt32 maxCharCount = 1024)
+        public GUIScreen(string screenName, string textFont, uint maxCharCount = 1024)
         {
             if(!TextUtil.tryGetFont(textFont, out screenFont))
             {
@@ -41,7 +41,7 @@ namespace Coictus.SubRendering.GUI
         }
 
         /*Add new or change already existing gui component*/
-        public void addGuiComponent(String name, GUIScreenComponent component)
+        public void addGuiComponent(string name, GUIScreenComponent component)
         {
             if(components.TryGetValue(name, out GUIScreenComponent comp))
             {
@@ -53,7 +53,7 @@ namespace Coictus.SubRendering.GUI
         }
 
         /*Add new text panel, or override existing one, Do not use this to update existing panels, use updateTextPanel() instead*/
-        public void addTextPanel(String name, GUITextPanel textPanel)
+        public void addTextPanel(string name, GUITextPanel textPanel)
         {
             if (screenTextPanels.TryGetValue(name, out GUITextPanel panel))
             {
@@ -68,7 +68,7 @@ namespace Coictus.SubRendering.GUI
             }
         }
 
-        public bool getTextPanel(String name, out GUITextPanel foundPanel)
+        public bool getTextPanel(string name, out GUITextPanel foundPanel)
         {
             if (screenTextPanels.TryGetValue(name, out GUITextPanel result))
             {
@@ -99,21 +99,21 @@ namespace Coictus.SubRendering.GUI
             }
         }
 
-        public void hideComponent(String name)
+        public void hideComponent(string name)
         {
             if (components.TryGetValue(name, out GUIScreenComponent comp))
             {
                 comp.setHide(true);
             }
         }
-        public void unHideComponent(String name)
+        public void unHideComponent(string name)
         {
             if (components.TryGetValue(name, out GUIScreenComponent comp))
             {
                 comp.setHide(false);
             }
         }
-        public void deleteComponent(String name)
+        public void deleteComponent(string name)
         {
             if (components.TryGetValue(name, out GUIScreenComponent comp))
             {
@@ -121,7 +121,7 @@ namespace Coictus.SubRendering.GUI
                 components.Remove(name);
             }
         }
-        public void deleteTextPanel(String name)
+        public void deleteTextPanel(string name)
         {
             if (screenTextPanels.TryGetValue(name, out GUITextPanel panel))
             {

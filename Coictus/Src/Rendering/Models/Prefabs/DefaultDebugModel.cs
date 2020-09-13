@@ -42,7 +42,7 @@ namespace Coictus.Models
             new Vertex(0.5F, -0.5F, 0.5F, 0.4F, 0.4F, 0.4F, 1F, 0.5F, 0.5F)//3
         };
 
-        public static readonly UInt32[] indices = QuadBatcher.getIndicesForQuadCount(6);
+        public static readonly uint[] indices = QuadBatcher.getIndicesForQuadCount(6);
 
         /*generates a new model using copies of this models arrays.*/
         public static Model getNewModel()
@@ -54,18 +54,18 @@ namespace Coictus.Models
         public static ModelDrawable getNewModelDrawable()
         {
             Vertex[] verticesCopy = new Vertex[vertices.Length];
-            UInt32[] indicesCopy = new uint[indices.Length];
+            uint[] indicesCopy = new uint[indices.Length];
             Array.Copy(vertices, verticesCopy, vertices.Length);
             Array.Copy(indices, indicesCopy, indices.Length);
             return (ModelDrawable)new ModelDrawable(getShaderDir(), new Texture(), verticesCopy, indicesCopy).translateVertices(new Vector3(0, 0.5F, 0));
         }
 
-        public static String getShaderDir()
+        public static string getShaderDir()
         {
             return ResourceUtil.getShaderFileDir("ColorTexture3D.shader");
         }
 
-        public static String getTextureDir()
+        public static string getTextureDir()
         {
             return "";
         }

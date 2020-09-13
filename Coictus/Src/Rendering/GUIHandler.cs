@@ -8,10 +8,10 @@ namespace Coictus.GUI
     /*This file will handle all gui related logic and requests*/
     public static class GUIHandler
     {
-        private static Dictionary<String, GUIScreen> allGUIs = new Dictionary<String, GUIScreen>();
+        private static Dictionary<string, GUIScreen> allGUIs = new Dictionary<string, GUIScreen>();
         private static GUIScreen currentDisplayedScreen;
 
-        public static String getCurrentGUIScreenName()
+        public static string getCurrentGUIScreenName()
         {
             if (currentDisplayedScreen != null)
             {
@@ -20,7 +20,7 @@ namespace Coictus.GUI
             else return "none";
         }
 
-        public static void addGUIComponentToCurrentGUI(String componentName, GUIScreenComponent component)
+        public static void addGUIComponentToCurrentGUI(string componentName, GUIScreenComponent component)
         {
             if (currentDisplayedScreen != null)
             {
@@ -28,7 +28,7 @@ namespace Coictus.GUI
             }
         }
 
-        public static void addGUIComponentToGUI(String GUIName, String componentName, GUIScreenComponent component)
+        public static void addGUIComponentToGUI(string GUIName, string componentName, GUIScreenComponent component)
         {
             if (allGUIs.TryGetValue(GUIName, out GUIScreen screen))
             {
@@ -36,14 +36,14 @@ namespace Coictus.GUI
             }
         }
 
-        public static void addTextPanelToCurrentGUI(String panelName, GUITextPanel panel)
+        public static void addTextPanelToCurrentGUI(string panelName, GUITextPanel panel)
         {
             if(currentDisplayedScreen != null)
             {
                 currentDisplayedScreen.addTextPanel(panelName, panel);
             }
         }
-        public static void addTextPanelToGUI(String GUIName, String panelName, GUITextPanel panel)
+        public static void addTextPanelToGUI(string GUIName, string panelName, GUITextPanel panel)
         {
             if (allGUIs.TryGetValue(GUIName, out GUIScreen screen))
             {
@@ -52,7 +52,7 @@ namespace Coictus.GUI
         }
 
         /*returns the format from the text panel with the name provided from the gui name provided, Use this to change the formats of text panels.*/
-        public static TextFormat getTextPanelFormatFromGUI(String GUIName, String panelName)
+        public static TextFormat getTextPanelFormatFromGUI(string GUIName, string panelName)
         {
             if (allGUIs.TryGetValue(GUIName, out GUIScreen screen))
             {
@@ -74,7 +74,7 @@ namespace Coictus.GUI
         }
 
         /*returns the format from the text panel with the name provided from the current gui, Use this to change the formats of text panels.*/
-        public static TextFormat getTextPanelFormatFromCurrentGUI(String panelName)
+        public static TextFormat getTextPanelFormatFromCurrentGUI(string panelName)
         {
             if (currentDisplayedScreen != null)
             {
@@ -95,7 +95,7 @@ namespace Coictus.GUI
             }
         }
 
-        public static void unHideTextPanelInGUI(String GUIName, String panelName)
+        public static void unHideTextPanelInGUI(string GUIName, string panelName)
         {
             if (allGUIs.TryGetValue(GUIName, out GUIScreen screen))
             {
@@ -113,7 +113,7 @@ namespace Coictus.GUI
                 Application.error("GUIHandler.unHideTextPanelInGUI() could not get the GUIScren from name provided: " + GUIName);
             }
         }
-        public static void hideTextPanelInGUI(String GUIName, String panelName)
+        public static void hideTextPanelInGUI(string GUIName, string panelName)
         {
             if (allGUIs.TryGetValue(GUIName, out GUIScreen screen))
             {
@@ -132,7 +132,7 @@ namespace Coictus.GUI
             }
         }
 
-        public static void unHideTextPanelInCurrentGUI(String panelName)
+        public static void unHideTextPanelInCurrentGUI(string panelName)
         {
             if (currentDisplayedScreen != null)
             {
@@ -150,7 +150,7 @@ namespace Coictus.GUI
                 Application.error("GUIHandler.unHideTextPanelInCurrentGUI() was called but the current gui screen is null.");
             }
         }
-        public static void hideTextPanelInCurrentGUI(String panelName)
+        public static void hideTextPanelInCurrentGUI(string panelName)
         {
             if (currentDisplayedScreen != null)
             {
@@ -169,7 +169,7 @@ namespace Coictus.GUI
             }
         }
 
-        public static void rebuildTextInGUI(String guiName)
+        public static void rebuildTextInGUI(string guiName)
         {
             if (allGUIs.TryGetValue(guiName, out GUIScreen screen))
             {
@@ -190,7 +190,7 @@ namespace Coictus.GUI
         }
 
             /*Trys to display the guiscreen with the provided name and hides all the other ones.*/
-            public static void displayGUIScreen(String name)
+            public static void displayGUIScreen(string name)
         {
             if(allGUIs.TryGetValue(name, out GUIScreen screen))
             {
@@ -213,7 +213,7 @@ namespace Coictus.GUI
             }
         }
 
-        public static void addNewGUIScreen(String name, String font, UInt32 maxCharCount = 1024)
+        public static void addNewGUIScreen(string name, string font, uint maxCharCount = 1024)
         {
             GUIScreen screenToAdd = new GUIScreen(name, font, maxCharCount);
             if(screenToAdd.isFontNull())

@@ -5,21 +5,21 @@ namespace Coictus
     /*Class for the player. Contains the players name, inventory etc.*/
     public class EntityPlayer : EntityLiving
     {
-        private String playerName;
+        private string playerName;
         private Camera camera;
         public bool paused = false;
         public bool debugScreenOn = false;
 
 
         public static readonly Vector3 eyeOffset = new Vector3(0.0F, 0.62F, 0.0F);
-        public EntityPlayer(String name) : base()
+        public EntityPlayer(string name) : base()
         {
             isPlayer = true;
             this.playerName = name;
             camera = new Camera(this);
             this.setCollider(new AABBCollider(new Vector3(-0.5F, -1, -0.5F), new Vector3(0.5F, 1, 0.5F), this));
         }
-        public EntityPlayer(String name, Vector3 spawnPosition) : base(spawnPosition)
+        public EntityPlayer(string name, Vector3 spawnPosition) : base(spawnPosition)
         {
             isPlayer = true;
             this.playerName = name;
@@ -55,7 +55,7 @@ namespace Coictus
             }
         }
 
-        public String getName()
+        public string getName()
         {
             return this.playerName;
         }

@@ -27,7 +27,7 @@ namespace Coictus
         public World currentPlanet;
        
 
-        public GameInstance(int screenWidth, int screenHeight, int initialWindowWidth, int initialWindowHeight, String title) : base(initialWindowWidth, initialWindowHeight, new GraphicsMode(32,24,0,8), title)
+        public GameInstance(int screenWidth, int screenHeight, int initialWindowWidth, int initialWindowHeight, string title) : base(initialWindowWidth, initialWindowHeight, new GraphicsMode(32,24,0,8), title)
         {
             Application.debug("Game window width: " + initialWindowWidth);
             Application.debug("Game window height: " + initialWindowHeight);

@@ -12,7 +12,7 @@ namespace Coictus.GUI.Text
         public Vector4 panelColour = CustomColor.white.toNormalVec4();
         public TextAlign alignment = TextAlign.LEFT;
         public int screenEdgePadding = TextUtil.defaultScreenEdgePadding;
-        public String[] lines = new String[] { "Sample Text" };
+        public string[] lines = new string[] { "Sample Text" };
         public float fontSize = TextUtil.defaultFontSize;
         public FontFace font = null;
 
@@ -27,7 +27,7 @@ namespace Coictus.GUI.Text
         }
 
         #region builderMethods
-        public TextFormat setLines(String[] lines)
+        public TextFormat setLines(string[] lines)
         {
             this.lines = lines;
             return this;
@@ -37,7 +37,7 @@ namespace Coictus.GUI.Text
             this.alignment = alignment;
             return this;
         }
-        public TextFormat setLine(String line)
+        public TextFormat setLine(string line)
         {
             lines = new string[] { line };
             return this;
@@ -77,7 +77,7 @@ namespace Coictus.GUI.Text
         {
             format.panelPixelPos.X = format.panelPos.X * GameInstance.gameWindowWidth;
             format.panelPixelPos.Y = format.panelPos.Y * GameInstance.gameWindowHeight;
-            this.models = TextModelBuilder2D.convertStringArrayToModelArray(format.lines, format.font, format.panelColour, format.panelPixelPos, format.fontSize * GameInstance.dpiScale, format.screenEdgePadding, format.alignment);
+            this.models = TextModelBuilder2D.convertstringArrayToModelArray(format.lines, format.font, format.panelColour, format.panelPixelPos, format.fontSize * GameInstance.dpiScale, format.screenEdgePadding, format.alignment);
         }
 
         public void hide()
@@ -93,12 +93,12 @@ namespace Coictus.GUI.Text
             format.font = font;
         }
 
-        public String[] getLines()
+        public string[] getLines()
         {
             return format.lines;
         }
 
-        public void updateLines(String[] newLines)
+        public void updateLines(string[] newLines)
         {
             format.lines = newLines;
         }
@@ -109,12 +109,12 @@ namespace Coictus.GUI.Text
             this.format.alignment = alignment;
             return this;
         }
-        public GUITextPanel setLines(String[] lines)
+        public GUITextPanel setLines(string[] lines)
         {
             format.lines = lines;
             return this;
         }
-        public GUITextPanel setLine(String line)
+        public GUITextPanel setLine(string line)
         {
             format.lines = new string[] { line };
             return this;

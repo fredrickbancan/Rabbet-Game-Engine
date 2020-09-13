@@ -14,7 +14,7 @@ namespace Coictus.VFX
 {
     /*This class is a spawnable sort of entity which can be rendered as a certain provided effect.
       Can be a particle, sprite, ect. This class will just hold the position, velocity and tick update code.
-      VFX objects are treated as disposable and should not last more than a few ticks.*/
+      VFX objects are treated as disposable and should not last more than a few seconds.*/
     public class VFXBase : PositionalObject, IDisposable
     {
         protected bool disposed = false;
@@ -33,7 +33,7 @@ namespace Coictus.VFX
         protected bool removalFlag = false;// true if this entity should be removed in the next tick
 
         protected VFXRenderType renderType;
-        public VFXBase(Vector3 pos, float initialScale, String shaderDir, String textureDir, String modelDir, float maxExistingSeconds = 1, VFXRenderType renderType = VFXRenderType.tirangles) : base(pos)
+        public VFXBase(Vector3 pos, float initialScale, string shaderDir, string textureDir, string modelDir, float maxExistingSeconds = 1, VFXRenderType renderType = VFXRenderType.tirangles) : base(pos)
         {
             this.scale = initialScale;
             this.vfxModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelDir, renderType == VFXRenderType.points ? false : true);//TODO:Inneficcient. This will mean we have to load the data every time a VFX is spawned. maybe a list of pre loaded models is needed?
@@ -66,7 +66,7 @@ namespace Coictus.VFX
         }
 
         /*draws this vfx, can be overridden*/
-        public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColor, int pass = 1)
+        public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColor)
         {
             if (vfxModel != null && !removalFlag)
             {

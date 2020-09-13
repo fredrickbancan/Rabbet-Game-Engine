@@ -10,17 +10,17 @@ namespace Coictus.Models
     /*This class will be responsable for loading models and converting them to vertex arrays for use with rendering.*/
     public static class OBJLoader
     {
-        private static String currentLine = "empty";
+        private static string currentLine = "empty";
         private static StreamReader reader;
         private static bool successfullyLoaded = false;
         private static List<Vertex> vertexResult;
         private static List<Vector3> positions;
         private static List<Vector2> unorderedUVs; 
         private static Vector2[] orderedUVs; 
-        private static List<UInt32> indices;
+        private static List<uint> indices;
 
         /*Takes in a shader,texture and obj file and returns a modeldrawable. If processing fails, will return a default debug model*/
-        public static ModelDrawable loadModelDrawableFromObjFile(String shaderDir, String textureDir, String objFilePath, bool useIndices = true)
+        public static ModelDrawable loadModelDrawableFromObjFile(string shaderDir, string textureDir, string objFilePath, bool useIndices = true)
         {
             if (objFilePath == "none")
             {
@@ -40,7 +40,7 @@ namespace Coictus.Models
             vertexResult = new List<Vertex>();
             positions = new List<Vector3>();
             unorderedUVs = new List<Vector2>();
-            indices = new List<UInt32>();
+            indices = new List<uint>();
 
             processAllLines();
 
@@ -76,14 +76,14 @@ namespace Coictus.Models
         /*Adds the vertex positions in the line to the positions list as a Vector3*/
         private static void processVertexPosition()
         {
-            float[] vertexPosData = getFloatsFromStringArray(currentLine.Split(' '));
+            float[] vertexPosData = getFloatsFromstringArray(currentLine.Split(' '));
             Vector3 newVertPos = new Vector3(vertexPosData[0], vertexPosData[1], vertexPosData[2]);
             positions.Add(newVertPos);
         }
         /*Adds the uvs in the line to the unordered uv list as a Vector2*/
         private static void processUV()
         {
-            float[] vertexUV = getFloatsFromStringArray(currentLine.Split(' '));
+            float[] vertexUV = getFloatsFromstringArray(currentLine.Split(' '));
             Vector2 newUV = new Vector2(vertexUV[0], vertexUV[1]);// other model programs may requre a v flip, blender does not
             unorderedUVs.Add(newUV);
         }
@@ -99,14 +99,14 @@ namespace Coictus.Models
 
                 do//looping through all face lines in obj file and reading all the indices
                 {
-                    String[] faceTriples = currentLine.TrimStart("f ".ToCharArray()).Split(' ');
-                    String[] vertex1 = faceTriples[0].Split('/');
-                    String[] vertex2 = faceTriples[1].Split('/');
-                    String[] vertex3 = faceTriples[2].Split('/');
+                    string[] faceTriples = currentLine.TrimStart("f ".ToCharArray()).Split(' ');
+                    string[] vertex1 = faceTriples[0].Split('/');
+                    string[] vertex2 = faceTriples[1].Split('/');
+                    string[] vertex3 = faceTriples[2].Split('/');
 
-                    indices.Add(UInt32.Parse(vertex1[0].ToString()) - 1);//-1 because obj indices start from 1
-                    indices.Add(UInt32.Parse(vertex2[0].ToString()) - 1);
-                    indices.Add(UInt32.Parse(vertex3[0].ToString()) - 1);
+                    indices.Add(uint.Parse(vertex1[0].ToString()) - 1);//-1 because obj indices start from 1
+                    indices.Add(uint.Parse(vertex2[0].ToString()) - 1);
+                    indices.Add(uint.Parse(vertex3[0].ToString()) - 1);
 
                     uvIndices.Add(int.Parse(vertex1[1].ToString()) - 1);
                     uvIndices.Add(int.Parse(vertex2[1].ToString()) - 1);
@@ -141,7 +141,7 @@ namespace Coictus.Models
             }
         }
 
-        private static float[] getFloatsFromStringArray(String[] strings)
+        private static float[] getFloatsFromstringArray(string[] strings)
         {
             List<float> result = new List<float>();
 

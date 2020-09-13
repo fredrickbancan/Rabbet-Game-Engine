@@ -10,11 +10,11 @@ namespace Coictus.SubRendering
     {
         public static readonly int maxQuadCount = 196608; // maximum number of quads that can be batched into one call, otherwise a new one must be made.
         public static readonly int maxVertexCount = maxQuadCount * 4;
-        private static readonly UInt32[] indices = getIndicesForQuadCount(maxQuadCount);
+        private static readonly uint[] indices = getIndicesForQuadCount(maxQuadCount);
 
 
         /*Batches together models made of quads for being rendered in 3D*/
-        public static ModelDrawable batchQuadModels(Model[] quadModels, String shaderFile, String textureFile)
+        public static ModelDrawable batchQuadModels(Model[] quadModels, string shaderFile, string textureFile)
         {
             Vertex[] newVertices;
             combineData(quadModels, out newVertices);
@@ -59,14 +59,14 @@ namespace Coictus.SubRendering
             }
         }
 
-        public static UInt32[] getIndicesForQuadCount(int quadCount)
+        public static uint[] getIndicesForQuadCount(int quadCount)
         {
             int indexCount = quadCount * 6;
-            UInt32 offset = 0;
-            UInt32[] result = new UInt32[indexCount];
+            uint offset = 0;
+            uint[] result = new uint[indexCount];
             //Building indicies array, will work with any number of quads under the max amount.
             //Assuming all quads are actually quads.
-            for (UInt32 i = 0; i < indexCount; i += 6)
+            for (uint i = 0; i < indexCount; i += 6)
             {
                 result[i + 0] = 0 + offset;
                 result[i + 1] = 1 + offset;

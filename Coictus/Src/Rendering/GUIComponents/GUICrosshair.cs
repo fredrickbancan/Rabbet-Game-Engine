@@ -13,7 +13,7 @@ namespace Coictus.GUI
       crosshair texture will be gotten.*/
     public class GUICrosshair : GUIScreenComponent
     {
-        private static String shaderDir = ResourceUtil.getShaderFileDir(@"GUI\GuiStencilShader.shader");
+        private static string shaderDir = ResourceUtil.getShaderFileDir(@"GUI\GuiStencilShader.shader");
         private Texture crosshairTexture;
         private float texutrePixelWidth = 0F;
         private float texutrePixelHeight = 0F;

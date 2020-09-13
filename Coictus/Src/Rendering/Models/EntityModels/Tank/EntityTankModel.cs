@@ -15,8 +15,8 @@ namespace Coictus.Models
         private Matrix4 tankWheelsModelMatrix = Matrix4.Identity;
         private Matrix4 tankBodyModelMatrix = Matrix4.Identity;
         private Matrix4 tankBarrelModelMatrix = Matrix4.Identity;
-        private String shaderDir = ResourceUtil.getShaderFileDir("ColorTextureFog3D.shader");
-        private String textureDir = ResourceUtil.getTextureFileDir("Camo.png");
+        private string shaderDir = ResourceUtil.getShaderFileDir("ColorTextureFog3D.shader");
+        private string textureDir = ResourceUtil.getTextureFileDir("Camo.png");
         
 
         public EntityTankModel(EntityTank parent)//dont want to call the base constructor for this model

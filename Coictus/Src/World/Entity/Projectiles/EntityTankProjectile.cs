@@ -24,14 +24,10 @@ namespace Coictus
             pitch = (float)(Math.Atan2(velocityNormalVec.Y, velocityNormalVec.Xz.Length) * (180D / Math.PI));
         }
 
-        public override void ceaseToExist()
-        {
-            currentPlanet.doExplosionAt(pos);
-            base.ceaseToExist();
-        }
         public override void applyCollision(Vector3 direction, float overlap)
         {
             base.applyCollision(direction, overlap);
+            currentPlanet.doExplosionAt(pos);
             Dispose();
         }
     }

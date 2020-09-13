@@ -40,8 +40,6 @@ namespace Coictus
             Dispose();
         }
 
-        
-
         public void Dispose()
         {
             ceaseToExist();

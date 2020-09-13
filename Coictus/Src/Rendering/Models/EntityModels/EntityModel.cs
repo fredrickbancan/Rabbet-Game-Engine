@@ -29,7 +29,7 @@ namespace Coictus.Models
             onTick();//updating model twice to set first frame render position to the entity position.
             onTick();
         }
-        public EntityModel(Entity parent,String shaderDir, String textureDir, String modelPath)
+        public EntityModel(Entity parent,string shaderDir, string textureDir, string modelPath)
         {
             this.parent = parent;
             theModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelPath);//TODO: Inefficient. This will mean we have to load model data each time a model for an entity etc is spawned!, maybe make a list of pre loaded models?

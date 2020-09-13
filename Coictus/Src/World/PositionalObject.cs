@@ -77,6 +77,7 @@ namespace Coictus
         public virtual void applyCollision(Vector3 direction, float overlap)
         {
             //make sure direction is normal vec
+            if(direction != Vector3.Zero)
             direction.Normalize();
 
             //correct position

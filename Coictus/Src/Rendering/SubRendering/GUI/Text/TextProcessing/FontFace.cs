@@ -8,8 +8,8 @@ namespace Coictus.SubRendering.GUI.Text
     public class FontFace
     {
         private bool successfull = true;
-        private String debugDir;
-        private String fontName;
+        private string debugDir;
+        private string fontName;
         private static readonly char splitter = ' ';
         private static readonly char numberSeperator = ',';
         private static readonly byte spaceAscii = 32;
@@ -24,9 +24,9 @@ namespace Coictus.SubRendering.GUI.Text
         private int spaceWidth;
 
         private Dictionary<byte, Character> finalFontData = new Dictionary<byte, Character>();
-        private Dictionary<String, String> lineData = new Dictionary<String, String>();
+        private Dictionary<string, string> lineData = new Dictionary<string, string>();
         private StreamReader reader;
-        public FontFace(String fontName)
+        public FontFace(string fontName)
         {
             debugDir = ResourceUtil.getFontFileDir(fontName + ".fnt");
             this.fontName = fontName;
@@ -111,7 +111,7 @@ namespace Coictus.SubRendering.GUI.Text
         private bool readNextLine()
         {
             lineData.Clear();
-            String line = null;
+            string line = null;
 
             try
             {
@@ -128,8 +128,8 @@ namespace Coictus.SubRendering.GUI.Text
                 return false;
             }
 
-            String[] pairs;
-            foreach(String pair in line.Split(splitter))
+            string[] pairs;
+            foreach(string pair in line.Split(splitter))
             {
                 pairs = pair.Split('=');
                 if(pairs.Length == 2)
@@ -140,9 +140,9 @@ namespace Coictus.SubRendering.GUI.Text
             return true;
         }
 
-        private int getValueFromLineData(String key)
+        private int getValueFromLineData(string key)
         {
-            String stringResult;
+            string stringResult;
             if(!lineData.TryGetValue(key, out stringResult))
             {
                 Application.error("FontFile.getValueFromLineData() could not find value for key: " + key);
@@ -160,19 +160,19 @@ namespace Coictus.SubRendering.GUI.Text
             return result;
         }
 
-        private byte[] getValuesFromLineData(String key)
+        private byte[] getValuesFromLineData(string key)
         {
-            String[] stringBytes;
+            string[] stringBytes;
 
-            String resultString;
-            if(!lineData.TryGetValue(key, out resultString))
+            string resultstring;
+            if(!lineData.TryGetValue(key, out resultstring))
             {
                 Application.error("FontFile.getValuesFromLineData() could not find value for key: " + key);
                 successfull = false;
                 return null;
             }
 
-            stringBytes = resultString.Split(numberSeperator);
+            stringBytes = resultstring.Split(numberSeperator);
 
             byte[] bytes = new byte[stringBytes.Length];
             for(int i = 0; i < bytes.Length; i++)
@@ -229,7 +229,7 @@ namespace Coictus.SubRendering.GUI.Text
             return successfull;
         }
 
-        public String getFontName()
+        public string getFontName()
         {
             return fontName;
         }

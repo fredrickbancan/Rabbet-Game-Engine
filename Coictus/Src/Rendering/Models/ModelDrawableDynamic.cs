@@ -8,7 +8,7 @@ namespace Coictus.Models
     {
         private int maxVertexCount;
         /*ModelDrawableDynamics must be initialized at construction because they can not have data submittied to them unless the VBO's are made*/
-        public ModelDrawableDynamic(String shaderFile, String textureFile, UInt32[] indices, int maxVertexCount = 4000) : base( shaderFile, textureFile, null, indices)
+        public ModelDrawableDynamic(string shaderFile, string textureFile, uint[] indices, int maxVertexCount = 4000) : base( shaderFile, textureFile, null, indices)
         {
             this.maxVertexCount = maxVertexCount;
             init();

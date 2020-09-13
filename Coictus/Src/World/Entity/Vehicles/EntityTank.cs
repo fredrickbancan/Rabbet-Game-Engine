@@ -45,6 +45,11 @@ namespace Coictus
             {
                 bodyYaw = ((EntityPlayer)mountingEntity).getCamera().getYaw() + 90;
                 barrelPitch = ((EntityPlayer)mountingEntity).getCamera().getPitch() + projectileHopupAngle;
+
+                if(barrelPitch >= 90)//clamp barrel pitch to only be able to look directly up
+                {
+                    barrelPitch = 89.999F;
+                }
             }
             base.onFrame();
         }

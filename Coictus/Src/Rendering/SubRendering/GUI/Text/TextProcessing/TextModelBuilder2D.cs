@@ -15,29 +15,29 @@ namespace Coictus.SubRendering.GUI.Text
 
         /*Takes in an array of strings and converts them into an array of models. Each string in the array is treated as a new line of text.
           The lines start from the provided topleftorigin vector. Each model in the array is a line of text.*/
-        public static Model[] convertStringArrayToModelArray(String[] theStrings, FontFace font, Vector4 color, Vector2 topLeftPixelOrigin, float fontSize, int screenEdgePadding, TextAlign alignment)
+        public static Model[] convertstringArrayToModelArray(string[] thestrings, FontFace font, Vector4 color, Vector2 topLeftPixelOrigin, float fontSize, int screenEdgePadding, TextAlign alignment)
         {
-            Model[] result = new Model[theStrings.Length];
-            for(UInt32 i = 0; i < theStrings.Length; i++)
+            Model[] result = new Model[thestrings.Length];
+            for(uint i = 0; i < thestrings.Length; i++)
             {
-                result[i] = new Model(convertStringToVertexArray(theStrings[i], font, color, topLeftPixelOrigin, fontSize, screenEdgePadding, alignment, i));
+                result[i] = new Model(convertstringToVertexArray(thestrings[i], font, color, topLeftPixelOrigin, fontSize, screenEdgePadding, alignment, i));
             }
             return result;
         }
-        public static Vertex[] convertStringToVertexArray(String theString, FontFace font, Vector4 color, Vector2 topLeftPixelOrigin, float fontSize, int screenEdgePadding, TextAlign alignment, UInt32 previousLineCount = 0)
+        public static Vertex[] convertstringToVertexArray(string thestring, FontFace font, Vector4 color, Vector2 topLeftPixelOrigin, float fontSize, int screenEdgePadding, TextAlign alignment, uint previousLineCount = 0)
         {
             Vector2 cursorPos = topLeftPixelOrigin;
             cursorPos.X += screenEdgePadding;
             cursorPos.Y += previousLineCount * (font.getLineHeightPixels() * fontSize);
-            byte[] charIds = Encoding.ASCII.GetBytes(theString);
-            Vertex[] result = new Vertex[theString.Replace(" ", "").Length * 4];//number of vertices for each character. Excluding spaces.
+            byte[] charIds = Encoding.ASCII.GetBytes(thestring);
+            Vertex[] result = new Vertex[thestring.Replace(" ", "").Length * 4];//number of vertices for each character. Excluding spaces.
             int vertexIndex = 0;
 
             if (alignment == TextAlign.RIGHT)
             {
                 //position cursor to right side and offset cursor to compensate for string length
                 cursorPos.X = GameInstance.gameWindowWidth - cursorPos.X;//put cursor to right side orientation
-                for (int i = 0; i < theString.Length; i++)
+                for (int i = 0; i < thestring.Length; i++)
                 {
                     if (charIds[i] == spaceAscii)
                     {
@@ -49,7 +49,7 @@ namespace Coictus.SubRendering.GUI.Text
                     }
                 }
 
-                for (int i = 0; i < theString.Length; i++)
+                for (int i = 0; i < thestring.Length; i++)
                 {
                     if (charIds[i] == spaceAscii)
                     {
@@ -72,7 +72,7 @@ namespace Coictus.SubRendering.GUI.Text
             {
                 cursorPos.X -= screenEdgePadding;//remove padding if text is center alignment since it shouldnt be near edges
                 //offset cursor to compensate for string length so center of string is at origin provided
-                for (int i = 0; i < theString.Length; i++)
+                for (int i = 0; i < thestring.Length; i++)
                 {
                     if (charIds[i] == spaceAscii)
                     {
@@ -84,7 +84,7 @@ namespace Coictus.SubRendering.GUI.Text
                     }
                 }
 
-                for (int i = 0; i < theString.Length; i++)
+                for (int i = 0; i < thestring.Length; i++)
                 {
                     if (charIds[i] == spaceAscii)
                     {
@@ -105,7 +105,7 @@ namespace Coictus.SubRendering.GUI.Text
             }
             else//default is left hand alignment
             {
-                for (int i = 0; i < theString.Length; i++)
+                for (int i = 0; i < thestring.Length; i++)
                 {
                     if (charIds[i] == spaceAscii)
                     {
@@ -165,7 +165,7 @@ namespace Coictus.SubRendering.GUI.Text
 
 
         /*Combines all the vertex data of all of the text panels, and sends the information to the dynamic model.*/
-        public static void batchAndSubmitTextToDynamicModel(ModelDrawableDynamic dynamicModel, Dictionary<String, GUITextPanel> textPanels, UInt32 maxCharCount)
+        public static void batchAndSubmitTextToDynamicModel(ModelDrawableDynamic dynamicModel, Dictionary<string, GUITextPanel> textPanels, uint maxCharCount)
         {
             Vertex[] fillerVertexArray = new Vertex[maxCharCount * 4];//creating array big enough to fill max char count
             if (textPanels.Count > 0)

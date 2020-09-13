@@ -10,7 +10,7 @@ namespace Coictus.SubRendering
     {
         private static ModelDrawable screenQuad;
         private static Shader screenShader;
-        private static readonly String screenShaderDir = ResourceUtil.getShaderFileDir("Offscreen.shader");
+        private static readonly string screenShaderDir = ResourceUtil.getShaderFileDir("Offscreen.shader");
         private static int texColorBuffer;
         private static int depthBuffer;
         private static int frameBuffer;

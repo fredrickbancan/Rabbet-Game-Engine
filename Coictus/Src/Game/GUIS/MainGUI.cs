@@ -1,15 +1,14 @@
 ﻿using Coictus.Debugging;
 using Coictus.GUI;
 using Coictus.GUI.Text;
-using System;
 
 namespace Coictus
 {
     /*Abstraction of the main gui for Coictus*/
     public static class MainGUI
     {
-        public static readonly String mainGUIName = "mainGUI";
-        public static readonly String fpsPanelName = "fpsPanel";
+        public static readonly string mainGUIName = "mainGUI";
+        public static readonly string fpsPanelName = "fpsPanel";
 
         /*Temporary arcade vars*/
         private static int directHitCounter = 0;
@@ -133,18 +132,18 @@ namespace Coictus
             if (GameSettings.displayFps)
             {
                 GUIHandler.unHideTextPanelInGUI(mainGUIName, fpsPanelName);
-                String fpsString = fps.ToString();
+                string fpsstring = fps.ToString();
                 if (fps < 75)
                 {
-                    GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsString).setPanelColor(CustomColor.red);
+                    GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsstring).setPanelColor(CustomColor.red);
                 }
                 else if (fps < 120)
                 {
-                    GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsString).setPanelColor(CustomColor.yellow);
+                    GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsstring).setPanelColor(CustomColor.yellow);
                 }
                 else
                 {
-                    GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsString).setPanelColor(CustomColor.green);
+                    GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsstring).setPanelColor(CustomColor.green);
                 }
             }
             else

@@ -7,13 +7,13 @@ namespace Coictus.Debugging
     /*A class for abstracting the process of displaying debug information on the screen when active.*/
     public static class DebugInfo
     {
-        public static readonly String debugInfoPanelName = "debugInfo";
+        public static readonly string debugInfoPanelName = "debugInfo";
 
         /*Initialize the text panel for the debug info, can only be done if the mainGUI panel is created first*/
         public static void init()
         {
             GUIHandler.addTextPanelToGUI(MainGUI.mainGUIName, debugInfoPanelName, new GUITextPanel(new TextFormat(0.0F, 0.05F)
-                .setLines(new String[]
+                .setLines(new string[]
                         {
                         ("press F3 to hide debug screen.")
                         }
@@ -27,7 +27,7 @@ namespace Coictus.Debugging
             {
                 GUIHandler.unHideTextPanelInGUI(MainGUI.mainGUIName, debugInfoPanelName);
                 GUIHandler.getTextPanelFormatFromGUI(MainGUI.mainGUIName, debugInfoPanelName).setLines(
-                       new String[]
+                       new string[]
                        {
                         ("Player Name: " + GameInstance.get.thePlayer.getName()),
                         ("X: " + GameInstance.get.thePlayer.getPosition().X.ToString("0.##")),

@@ -4,9 +4,9 @@ namespace Coictus.VFX
 {
     public class VFXExplosion : VFXBase
     {
-        protected static readonly String shaderDir = ResourceUtil.getShaderFileDir("ColorTextureFog3D.shader");
-        protected static readonly String textureDir = ResourceUtil.getTextureFileDir("Explosion.png");
-        protected static readonly String modelDir = ResourceUtil.getOBJFileDir("IcoSphere.obj");
+        protected static readonly string shaderDir = ResourceUtil.getShaderFileDir("ColorTextureFog3D.shader");
+        protected static readonly string textureDir = ResourceUtil.getTextureFileDir("Explosion.png");
+        protected static readonly string modelDir = ResourceUtil.getOBJFileDir("IcoSphere.obj");
         private static Random rand = new Random();
 
         [Obsolete("This vfx was used for explosions before the addition of point particle vfx")]

@@ -6,15 +6,15 @@ namespace Coictus.Debugging
     /*This class will be responsable for debugging, measuring and testing performance of the subsystems in this program.*/
     public static class Profiler
     {
-        public static String textRender2DBuildingName = "TextRenderer2D Building";
-        public static String gameLoopName = "Game Loop";
-        public static String collisionsName = "Collisions";
-        public static String renderingName = "Rendering";
-        private static Dictionary<String, Profile> profiles = new Dictionary<String, Profile>();
+        public static string textRender2DBuildingName = "TextRenderer2D Building";
+        public static string gameLoopName = "Game Loop";
+        public static string collisionsName = "Collisions";
+        public static string renderingName = "Rendering";
+        private static Dictionary<string, Profile> profiles = new Dictionary<string, Profile>();
 
         /*Calling this function with a name will either create and begin a profile or end an existing running profile, or run an existing non running profile.
           Apon ending a profile the time difference between starting and ending will be displayed. This allows us to measure how long different things take.*/
-        public static void beginEndProfile(String profileName)
+        public static void beginEndProfile(string profileName)
         {
             if(profiles.TryGetValue(profileName, out Profile foundProfile))
             {
@@ -35,7 +35,7 @@ namespace Coictus.Debugging
         }
 
         /*Returns the average completion time in ms for the requested profile. returns -1 if profile isnt found*/
-        public static float getAveragesForProfile(String profileName)
+        public static float getAveragesForProfile(string profileName)
         {
             if (profiles.TryGetValue(profileName, out Profile foundProfile))
             {
@@ -49,12 +49,12 @@ namespace Coictus.Debugging
         private class Profile
         {
             private long startTime;
-            private String name;
+            private string name;
             private int totalUpdates;
             private long combinedTimePassed;
             public bool hasEnded = false;
 
-            public Profile(String name)
+            public Profile(string name)
             {
                 this.name = name;
             }
