@@ -1,5 +1,5 @@
-﻿using OpenTK;
-using Coictus.Models;
+﻿using Coictus.Models;
+using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
 
@@ -20,6 +20,7 @@ namespace Coictus.SubRendering
 
         public static void init(float superSamplingMultiplyer = 1.0F)
         {
+            Application.debug("Rendering is utilizing offscreen buffer!");
             frameBuffer = GL.GenFramebuffer();
             depthBuffer = GL.GenRenderbuffer();
             texColorBuffer = GL.GenTexture();
@@ -32,7 +33,7 @@ namespace Coictus.SubRendering
 
             GL.BindTexture(TextureTarget.Texture2D, texColorBuffer);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba16, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
 
             screenShader = new Shader(screenShaderDir);

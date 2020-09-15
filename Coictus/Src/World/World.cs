@@ -11,6 +11,8 @@ namespace Coictus
     /*This class will be the abstraction of any environment constructed for the player and entities to exist in.*/
     public class World
     {
+        private static ModelDrawable testCube = (ModelDrawable)CubePrefab.getNewModelDrawable().setColor(CustomColor.white).scaleVertices(new Vector3(5, 5, 5)).rotateVertices(new Vector3(15,0,0));
+
         private ModelDrawable groundModel;
         private ModelDrawable wallsModel;
         private ModelDrawable skyboxModel;
@@ -30,6 +32,7 @@ namespace Coictus
             skyColor = CustomColor.skyBlue.toNormalVec3();
             buildSkyBox();
             generateWorld();
+            testCube.setNewTexture(new Texture(512));
         }
 
         public void setSkyColor(Vector3 skyColor)
@@ -49,7 +52,7 @@ namespace Coictus
             return fogColor;
         }
 
-        /*Loop through each entity and render them with a seperate draw call (INEFFICIENT)*/
+        /*TODO: INNEFICIENT, loops through each entitiy and draws their model with a seperate call*/
         public void drawEntities(Matrix4 viewMatrix, Matrix4 projectionMatrix)
         {
             foreach(KeyValuePair<int, Entity> ent in entities)
@@ -59,9 +62,10 @@ namespace Coictus
                     ent.Value.getEntityModel().draw(viewMatrix, projectionMatrix, fogColor);
                 }
             }
+            testCube.draw(viewMatrix, projectionMatrix, fogColor);
         }
 
-        /*Loop through each vfx and render them with a seperate draw call (INEFFICIENT)*/
+        /*TODO: INNEFICIENT, loops through each VFX and draws their model with a seperate call*/
         public void drawVFX(Matrix4 viewMatrix, Matrix4 projectionMatrix)
         {
             foreach (VFXBase vfx in vfxList)
@@ -73,10 +77,6 @@ namespace Coictus
             }
         }
 
-        public void drawDebugHitboxes()
-        {
-           
-        }
 
         /*creates simple inverted cube at 0,0,0*/
         private void buildSkyBox()

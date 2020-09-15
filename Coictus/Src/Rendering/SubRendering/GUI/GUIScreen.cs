@@ -1,7 +1,6 @@
 ﻿using Coictus.GUI.Text;
 using Coictus.Models;
 using Coictus.SubRendering.GUI.Text;
-using System;
 using System.Collections.Generic;
 
 namespace Coictus.SubRendering.GUI
@@ -28,7 +27,7 @@ namespace Coictus.SubRendering.GUI
             }
             this.screenName = screenName;
             this.maxCharCount = maxCharCount;
-            screenTextModel = new ModelDrawableDynamic(TextUtil.textShaderDir, TextUtil.getTextureDirForFont(screenFont), QuadBatcher.getIndicesForQuadCount((int)maxCharCount), (int)maxCharCount * 4);
+            screenTextModel = new ModelDrawableDynamic(TextUtil.textShaderDir, TextUtil.getTextureDirForFont(screenFont), QuadBatcher.getIndicesForQuadCount((int)maxCharCount), (int)maxCharCount * 4, true);
         }
 
         public void buildScreenTextModel()

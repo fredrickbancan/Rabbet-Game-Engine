@@ -1,10 +1,8 @@
 ﻿using Coictus.Debugging;
 using Coictus.GUI;
-using Coictus.Models;
 using Coictus.SubRendering;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
-using System.Drawing;
 
 namespace Coictus
 {
@@ -13,26 +11,24 @@ namespace Coictus
       e.g, when the game requests text to be rendered on the screen, the renderer will send a request to the TextRenderer2D.
       e.g, when the game requests entity models to be rendered in the world, the renderer will send a request to the model draw function.
       This class also contains the projection matrix.*/
-    public static class Renderer
+    public static class Renderer//TODO: Reduce driver overhead closer to zero
     {
         private static Matrix4 projectionMatrix;
+        public static readonly bool useOffScreenBuffer = false;
         /*Called before any rendering is done*/
         public static void init()
         {
-            setClearColor(Color.SkyBlue);
+            GL.Viewport(GameInstance.get.ClientRectangle);
+            
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.VertexProgramPointSize);//allows shaders for GL_POINTS to change size of points.
             GL.Enable(EnableCap.PointSprite);           //allows shaders for GL_POINTS to change point fragments (opentk exclusive)
-           /* GL.Enable(EnableCap.Multisample);
-            GL.Enable(EnableCap.SampleAlphaToCoverage);
-            GL.Enable(EnableCap.SampleCoverage);
-            GL.Enable(EnableCap.SampleAlphaToOne);
-            GL.SampleCoverage(1.0F, false);*/
-            GL.Viewport(GameInstance.get.ClientRectangle);
+            GL.Enable(EnableCap.AlphaTest);
+            GL.AlphaFunc(AlphaFunction.Equal, 1);
             GL.LineWidth(3);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
-            OffScreen.init(1F);
+            if(useOffScreenBuffer) OffScreen.init();
         }
 
         /*Called each time the game window is resized*/
@@ -46,7 +42,7 @@ namespace Coictus
         /*Called before all draw calls*/
         private static void preRender()
         {
-            OffScreen.prepareToRenderToOffScreenTexture();
+            if (useOffScreenBuffer) OffScreen.prepareToRenderToOffScreenTexture();
             GL.Clear(ClearBufferMask.DepthBufferBit);
         }
         
@@ -59,10 +55,8 @@ namespace Coictus
             postRender();
             Profiler.beginEndProfile(Profiler.renderingName);
         }
-        static ModelDrawable test = PlanePrefab.getNewModelDrawable();
         private static void renderWorld()
         {
-            test.draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());
             GameInstance.get.currentPlanet.drawEntities(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
             GameInstance.get.currentPlanet.drawVFX(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
             GameInstance.get.currentPlanet.getGroundModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());
@@ -74,22 +68,9 @@ namespace Coictus
         /*Called after all draw calls*/
         private static void postRender()
         {
-            OffScreen.renderOffScreenTexture();
+            if (useOffScreenBuffer) OffScreen.renderOffScreenTexture();
             GameInstance.get.SwapBuffers();
         }
-
-        public static void setClearColor(Color color)
-        {
-            float r = MathUtil.normalize(0, 255, color.R);
-            float g = MathUtil.normalize(0, 255, color.G);
-            float b = MathUtil.normalize(0, 255, color.B);
-            GL.ClearColor(r, g, b, 1.0f);
-        }
-        public static void setClearColor(Vector3 colorNormalized)
-        {
-            GL.ClearColor(colorNormalized.X, colorNormalized.Y, colorNormalized.Z, 1.0f);
-        }
-
         public static Matrix4 projMatrix { get => projectionMatrix; }
     }
 }

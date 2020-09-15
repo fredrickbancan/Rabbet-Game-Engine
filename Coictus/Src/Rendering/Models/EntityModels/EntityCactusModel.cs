@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace Coictus.Models
+﻿namespace Coictus.Models
 {
     public class EntityCactusModel : EntityModel
     {
-        private static string shaderDir = ResourceUtil.getShaderFileDir("ColorTextureFog3D.shader");
+        private static string shaderDir = ResourceUtil.getShaderFileDir(@"VFX\PointParticleFog.shader");
         private static string textureDir = ResourceUtil.getTextureFileDir("EntityCactus.png");
         private static string modelPath = ResourceUtil.getOBJFileDir("Cactus.obj");
 

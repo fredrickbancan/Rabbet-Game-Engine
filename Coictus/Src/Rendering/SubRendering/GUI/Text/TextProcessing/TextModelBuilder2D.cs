@@ -154,11 +154,10 @@ namespace Coictus.SubRendering.GUI.Text
             Vertex[] modelVertices = new Vertex[4];
 
             //add vertices at screen coords with uv, in different order so the quads will now face fowards after being flipped, so that they show when face culling.
-            //color additions and multiplications are for creating the gradient and highlight for visibility
-            modelVertices[0] = new Vertex(xMax, y, 0, color.X + 0.1F, color.Y + 0.1F, color.Z + 0.1F, color.W, uMax, v);//bottom right vertex1
-            modelVertices[1] = new Vertex(x, y, 0, color.X + 0.1F, color.Y + 0.1F, color.Z + 0.1F, color.W, u, v);//Bottom left vertex0
-            modelVertices[2] = new Vertex(xMax, yMax, 0, color.X * 0.5F, color.Y * 0.5F, color.Z * 0.5F, color.W, uMax, vMax);//top right vertex3
-            modelVertices[3] = new Vertex(x, yMax, 0, color.X * 0.5F, color.Y * 0.5F, color.Z * 0.5F, color.W, u, vMax);//top left vertex2
+            modelVertices[0] = new Vertex(xMax, y, 0, color.X, color.Y, color.Z, color.W, uMax, v);//bottom right vertex1
+            modelVertices[1] = new Vertex(x, y, 0, color.X, color.Y, color.Z, color.W, u, v);//Bottom left vertex0
+            modelVertices[2] = new Vertex(xMax, yMax, 0, color.X, color.Y, color.Z, color.W, uMax, vMax);//top right vertex3
+            modelVertices[3] = new Vertex(x, yMax, 0, color.X, color.Y, color.Z, color.W, u, vMax);//top left vertex2
 
             return modelVertices;
         }

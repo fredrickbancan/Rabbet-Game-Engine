@@ -2,9 +2,10 @@
 using OpenTK;
 
 namespace Coictus.Models
-{
+{//TODO: impliment (ModelDrawableDynamicInterpolated)
     /*A ModelDrawableDynamicInterpolated has the functionality of a ModelDrawableDynamic (ability to combine frequently changing models into one draw call)
-      While interpolating the transforms of each instance of models within it. Useful for dynamically drawing multiple moving objects with interpolation.*/
+      While interpolating the transforms of each instance of models within it. Useful for dynamically drawing multiple moving objects with interpolation.
+      This differs from ModelDrawableInstanced because it works with many different models instead of just one*/
     public class ModelDrawableDynamicInterpolated : ModelDrawableDynamic
     {
         /*this array of shader directories can be indexed with the ModelDrawType enum.
@@ -23,7 +24,7 @@ namespace Coictus.Models
         private Matrix4[] modelMatrices;
         private Vector3[] prevTickSinglePointPositions;//these are only used for rendering single points
         private Vector3[] singlePointPositions;
-
+        private int[] vertexCounts;//This array will hold the count of vertices for each seperate object combined into this model, so the shader can tell which transform to use with which set of verts
 
         /*indices can be null if they arent going to be used. e.g: point rendering
           parameter maxInstanceCount is the maximum number of models to be combined

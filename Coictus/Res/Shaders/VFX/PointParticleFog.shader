@@ -61,22 +61,6 @@ uniform vec2 viewPortSize;//vector of viewport dimensions
 
 float ambientOcclusion;//variable for applying a shadowing effect towards the edges of the point to give the illusion of a sphereical shape
 
-bool xor(bool a, bool b)
-{
-    if (a && b)
-    {
-        return false;
-    }
-    return a || b;
-}
-
-float hash(uint n)//returns random float value from 0 to 1
-{
-    n = (n << 13U) ^ n;
-    n = n * (n * n * 15731U + 789221U) + 1376312589U;
-    return float(n & uvec3(0x7fffffffU)) / float(0x7fffffff);
-}
-
 float rand3D(in vec3 co) {
     return fract(sin(dot(co.xyz, vec3(12.9898, 78.233, 144.7272))) * 43758.5453);
 }
@@ -101,10 +85,11 @@ void makeCircle()
 void main()
 {
     makeCircle();
-    vec4 colorModified;
+    vec3 colorModified = vcolour.rgb;
+    float fragmentAlpha = 1.0;
+
     if (aoc)
     {
-        colorModified = vcolour;
         //add ambient occlusion shading
         colorModified.r *= ambientOcclusion;
         colorModified.g *= ambientOcclusion;
@@ -113,24 +98,10 @@ void main()
 
     if (vcolour.a < 1.0)
     {
-        //uint fragX = uint(gl_FragCoord.X);
-        //uint fragY = uint(gl_FragCoord.Y);
-        //float randomFloat = hash(fragX + uint(viewPortSize.X) * fragY + uint(viewPortSize.X) * uint(viewPortSize.Y) * uint((gl_FragCoord.Z / (renderPass + 1)) * 7000.0));
         float randomFloat = rand3D(gl_FragCoord.xyz);
-        if (randomFloat > vcolour.a)//do stochastic transparency, noise can be reduced with sampling. 
-        {
-            discard;
-        }
+        fragmentAlpha = float(randomFloat < vcolour.a);//do stochastic transparency, noise can be reduced with sampling. 
     }
 
-    if (aoc)
-    {
-        //add fog effect to frag
-        color = mix(vec4(fogColour, 1.0), vec4(colorModified.rgb, 1.0), visibility);
-    }
-    else
-    {
-        //add fog effect to frag
-        color = mix(vec4(fogColour, 1.0), vec4(vcolour.rgb, 1.0), visibility);
-    }
+	//add fog effect to frag
+	color = mix(vec4(fogColour, fragmentAlpha), vec4(colorModified, fragmentAlpha), visibility);
 }

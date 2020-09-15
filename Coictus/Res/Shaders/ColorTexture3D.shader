@@ -34,9 +34,6 @@ uniform sampler2D uTexture;
 void main()
 {
 	vec4 textureColor = texture(uTexture, vTexCoord) * vcolour;// *texture(uTexture, vTexCoord); // mixes colour and textures
-	if (textureColor.a < 0.9)
-	{
-		discard;
-	}
+
 	color = textureColor;
 }

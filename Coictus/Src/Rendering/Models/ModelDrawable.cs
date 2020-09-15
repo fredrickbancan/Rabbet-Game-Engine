@@ -36,12 +36,12 @@ namespace Coictus.Models
 
 
         /*takes in directory for the shader and texture for this model, indices can be null if they wont be used*/
-        public ModelDrawable(string shaderFile, string textureFile, Vertex[] vertices, uint[] indices = null) : base(vertices)
+        public ModelDrawable(string shaderFile, string textureFile, Vertex[] vertices, uint[] indices = null, bool filtering = false) : base(vertices)
         {
             shaderDir = shaderFile;
             textureDir = textureFile;
             this.indices = indices;
-            texture = new Texture(textureFile, false);
+            texture = new Texture(textureFile, filtering);
             shader = new Shader(shaderFile);
         }
         public ModelDrawable(string shaderFile, Texture tex, Vertex[] vertices, uint[] indices) : base(vertices)
@@ -220,7 +220,7 @@ namespace Coictus.Models
             shader.setUniformMat4F("viewMatrix", viewMatrix);
             shader.setUniformMat4F("modelMatrix", modelMatrix);
             shader.setUniformVec3F("fogColour", fogColor);
-            shader.setUniformVec2F("viewPortSize", new Vector2(OffScreen.getWidth, OffScreen.getHeight));
+            shader.setUniformVec2F("viewPortSize", Renderer.useOffScreenBuffer ? new Vector2(OffScreen.getWidth, OffScreen.getHeight) : new Vector2(GameInstance.get.Width, GameInstance.get.Height));
             shader.setUniform1F("pointRadius", pointRadius);
             shader.setUniform1I("aoc", ambientOcclusion ? 1 : 0);
             //shader.setUniform1I("renderPass", pass);

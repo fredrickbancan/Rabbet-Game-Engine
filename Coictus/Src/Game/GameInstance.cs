@@ -27,26 +27,24 @@ namespace Coictus
         public World currentPlanet;
        
 
-        public GameInstance(int screenWidth, int screenHeight, int initialWindowWidth, int initialWindowHeight, string title) : base(initialWindowWidth, initialWindowHeight, new GraphicsMode(32,24,0,8), title)
+        public GameInstance(int screenWidth, int screenHeight, int initialWindowWidth, int initialWindowHeight, string title) : base(initialWindowWidth, initialWindowHeight, GraphicsMode.Default, title)
         {
             Application.debug("Game window width: " + initialWindowWidth);
             Application.debug("Game window height: " + initialWindowHeight);
-            GameInstance.privateRand = new Random();
-            GameInstance.instance = this;
             GameInstance.windowWidth = initialWindowWidth;
             GameInstance.windowHeight = initialWindowHeight;
             GameInstance.screenHeight = screenHeight;
             GameInstance.screenWidth = screenWidth;
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            GameInstance.instance = this;
+            GameInstance.privateRand = new Random();
             GameInstance.mouseCenterX = this.X + this.Width / 2;
             GameInstance.mouseCenterY = this.Y + this.Height / 2;
             GameSettings.loadSettings();
-            initialize();
-        }
-        
-
-        /*Called before game runs*/
-        private void initialize()
-        {
             TextUtil.loadAllFoundTextFiles();
             setDPIScale();
             Renderer.init();
@@ -57,7 +55,7 @@ namespace Coictus
             //create and spawn player in new world
             thePlayer = new EntityPlayer("Steve", new Vector3(0, 0, 2));
             currentPlanet = new World();
-            for (int i = 0; i < 120; i++)
+            for (int i = 0; i < 35; i++)
             {
                 currentPlanet.spawnEntityInWorld(new EntityCactus(new Vector3(0, 10, 0)));
             }
@@ -68,22 +66,24 @@ namespace Coictus
             Input.centerMouse();
             Input.toggleHideMouse();
         }
-
+ 
+        
         /*overriding OpenTk game update function, called every frame.*/
         protected override void OnUpdateFrame(FrameEventArgs args)
         {
             base.OnUpdateFrame(args);
-            for (int i = 0; i < TicksAndFps.getTicksElapsed(); i++)//for each tick that has elapsed since the start of last update, run the games logic enough times to catch up. 
-            {
-                onTick();
-            }
-            Input.updateInput();
+            
         }
 
         /*overriding OpenTk render update function, called every frame.*/
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             base.OnRenderFrame(args);
+            for (int i = 0; i < TicksAndFps.getTicksElapsed(); i++)//for each tick that has elapsed since the start of last update, run the games logic enough times to catch up. 
+            {
+                onTick();
+            }
+            Input.updateInput();
             TicksAndFps.update();
             thePlayer.onCameraUpdate();//do this before calling on tick to prepare camera variables
             currentPlanet.onFrame();//should be called before rendering world since this may prepare certain elements for a frame perfect render

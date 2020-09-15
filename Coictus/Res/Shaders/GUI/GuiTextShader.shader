@@ -28,6 +28,8 @@ void main()
 	if (textureColor.a < 0.01)
 		discard;
 	gl_FragDepth = -1;//render on top
+
 	vec4 vColorChanged = vColor;
-	color = vec4(vColorChanged.rgb, 1.0);
+
+	color = vColorChanged;// vec4(vColorChanged.rgb, 1.0);
 }

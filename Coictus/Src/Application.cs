@@ -14,8 +14,9 @@ namespace Coictus
             Rectangle resolution = Screen.PrimaryScreen.Bounds;
             GameInstance game = new GameInstance(resolution.Width, resolution.Height, resolution.Width/2, resolution.Height/2, "Coictus version " + version);
             game.Run(); //Will start the OpenTk Game instance running. Eeach frame will call OnUpdateFrame and OnRenderFrame. I am using my own tickrate class to controll ticks (TicksAndFps.cs)  
+            game.Dispose();
         }
-        public static readonly string version = "0.0.1_a alpha";
+        public static readonly string version = "0.0.2_a alpha";
 
         #region Print functions
         public static void say(object s)

@@ -30,16 +30,16 @@ namespace Coictus
             }
         }
 
-        public Texture()//constructs default texture
+        public Texture(int res = 16)//constructs default texture
         {
-            Bitmap bitmap = new Bitmap(16, 16);//creating default error texture
-            width = 16;
-            height = 16;
-            for(int i = 0; i < 16; i++)
+            Bitmap bitmap = new Bitmap(res, res);//creating default error texture
+            width = res;
+            height = res;
+            for(int i = 0; i < res; i++)
             {
-                for(int j = 0; j < 16; j++)
+                for(int j = 0; j < res; j++)
                 {//exlusive or
-                    bitmap.SetPixel(i, j, i % 2 == 0 ^ j % 2 != 0 ? Color.Magenta : Color.Black);//creating black and magenta checker board
+                    bitmap.SetPixel(i, j, i % 2 == 0 ^ j % 2 != 0 ? Color.Magenta : Color.FromArgb(0,0,0,0));//creating black and magenta checker board
                 }
             }
 
@@ -60,11 +60,6 @@ namespace Coictus
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
             id = tex;
-        }
-
-        public Texture(int glTextureID)
-        {
-            id = glTextureID;
         }
 
         public void use()
