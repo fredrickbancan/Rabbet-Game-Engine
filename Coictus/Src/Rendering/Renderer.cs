@@ -1,5 +1,6 @@
 ﻿using Coictus.Debugging;
 using Coictus.GUI;
+using Coictus.Models;
 using Coictus.SubRendering;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
@@ -13,6 +14,7 @@ namespace Coictus
       This class also contains the projection matrix.*/
     public static class Renderer//TODO: Reduce driver overhead closer to zero
     {
+        private static int privateTotalDrawCallCount;
         private static Matrix4 projectionMatrix;
         public static readonly bool useOffScreenBuffer = false;
         /*Called before any rendering is done*/
@@ -29,6 +31,10 @@ namespace Coictus
             GL.LineWidth(3);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
             if(useOffScreenBuffer) OffScreen.init();
+
+            ShaderUtil.loadAllFoundShaderFiles();
+            TextureUtil.loadAllFoundTextureFiles();
+            ModelUtil.loadAllFoundModelFiles();
         }
 
         /*Called each time the game window is resized*/
@@ -57,21 +63,39 @@ namespace Coictus
         }
         private static void renderWorld()
         {
+            privateTotalDrawCallCount = 0;
             GameInstance.get.currentPlanet.drawEntities(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
             GameInstance.get.currentPlanet.drawVFX(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
             GameInstance.get.currentPlanet.getGroundModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());
             GameInstance.get.currentPlanet.getWallsModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());
             GameInstance.get.currentPlanet.getSkyboxModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getSkyColor(), GameInstance.get.currentPlanet.getFogColor());
             if(GameSettings.drawHitboxes)HitboxRenderer.renderAll(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
-            
         }
+
         /*Called after all draw calls*/
         private static void postRender()
         {
             if (useOffScreenBuffer) OffScreen.renderOffScreenTexture();
             GameInstance.get.SwapBuffers();
         }
+
+        public static int getAndResetTotalDrawCount()
+        {
+            int result = privateTotalDrawCallCount;
+            privateTotalDrawCallCount = 0;
+            return result;
+        }
+
+        /*deletes all loaded opengl assets*/
+        public static void onClosing()
+        {
+            ShaderUtil.deleteAll();
+            TextureUtil.deleteAll();
+            ModelUtil.deleteAll();
+        }
+
         public static Matrix4 projMatrix { get => projectionMatrix; }
+        public static int totalDraws { get { return privateTotalDrawCallCount; } set { privateTotalDrawCallCount = value; } }
     }
 }
  

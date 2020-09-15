@@ -4,6 +4,9 @@ namespace Coictus.Models
 {
     public static class QuadPrefab
     {
+        public static readonly string shaderName = "ColorTextureFog.shader";
+        public static readonly string textureName = "Explosion.png";
+
         public static readonly Vertex[] quadVertices = new Vertex[]
         {
             new Vertex(-0.5F, -0.5F, 0.0F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F),//0
@@ -31,17 +34,7 @@ namespace Coictus.Models
             uint[] indicesCopy = new uint[quadIndices.Length];
             Array.Copy(quadVertices, verticesCopy, quadVertices.Length);
             Array.Copy(quadIndices, indicesCopy, quadIndices.Length);
-            return new ModelDrawable(getShaderDir(), getTextureDir(), verticesCopy, indicesCopy);
-        }
-
-        public static string getShaderDir()
-        {
-            return ResourceUtil.getShaderFileDir("ColorTextureFog3D.shader");
-        }
-
-        public static string getTextureDir()
-        {
-            return ResourceUtil.getTextureFileDir("EntityCactus.png");
+            return new ModelDrawable(shaderName, textureName, verticesCopy, indicesCopy);
         }
     }
 }

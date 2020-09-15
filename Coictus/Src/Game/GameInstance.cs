@@ -4,6 +4,7 @@ using Coictus.GUI.Text;
 using OpenTK;
 using OpenTK.Graphics;
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace Coictus
@@ -39,7 +40,6 @@ namespace Coictus
 
         protected override void OnLoad(EventArgs e)
         {
-            base.OnLoad(e);
             GameInstance.instance = this;
             GameInstance.privateRand = new Random();
             GameInstance.mouseCenterX = this.X + this.Width / 2;
@@ -48,7 +48,7 @@ namespace Coictus
             TextUtil.loadAllFoundTextFiles();
             setDPIScale();
             Renderer.init();
-            TicksAndFps.init(30.0F);
+            TicksAndFps.init(30);
             MainGUI.init();
             DebugInfo.init();
             HitboxRenderer.init();
@@ -65,20 +65,14 @@ namespace Coictus
             //center mouse in preperation for first person 
             Input.centerMouse();
             Input.toggleHideMouse();
-        }
- 
-        
-        /*overriding OpenTk game update function, called every frame.*/
-        protected override void OnUpdateFrame(FrameEventArgs args)
-        {
-            base.OnUpdateFrame(args);
-            
+            base.OnLoad(e);
         }
 
         /*overriding OpenTk render update function, called every frame.*/
         protected override void OnRenderFrame(FrameEventArgs args)
         {
             base.OnRenderFrame(args);
+            
             for (int i = 0; i < TicksAndFps.getTicksElapsed(); i++)//for each tick that has elapsed since the start of last update, run the games logic enough times to catch up. 
             {
                 onTick();
@@ -119,17 +113,19 @@ namespace Coictus
             Profiler.beginEndProfile(Profiler.gameLoopName);
         }
 
-        //TODO: Create event system for handling these events
+        
         /*Called when player lands direct hit on a cactus, TEMPORARY!*/
         public static void onDirectHit()
         {
             MainGUI.onDirectHit();
         }
+
         /*Called when player lands air shot on a cactus, TEMPORARY!*/
         public static void onAirShot()
         {
             MainGUI.onAirShot();
         }
+
         public static void pauseGame()
         {
             Input.centerMouse(); // center the mouse cursor when closing or opening menu
@@ -137,6 +133,11 @@ namespace Coictus
             GameInstance.get.thePlayer.togglePause();
         }
 
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            Renderer.onClosing();
+            base.OnClosing(e);
+        }
         private void setDPIScale()
         {
             Graphics g = Graphics.FromHwnd(this.WindowInfo.Handle);

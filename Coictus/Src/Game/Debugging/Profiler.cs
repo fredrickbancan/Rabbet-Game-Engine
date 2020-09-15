@@ -48,10 +48,11 @@ namespace Coictus.Debugging
         /*private class for profiles.*/
         private class Profile
         {
+            private int[] recordedTimes = new int[100];
             private long startTime;
             private string name;
-            private int totalUpdates;
-            private long combinedTimePassed;
+            private int updateIndex;
+            private int combinedTimePassed;
             public bool hasEnded = false;
 
             public Profile(string name)
@@ -61,38 +62,31 @@ namespace Coictus.Debugging
 
             public Profile begin()
             {
-                startTime = TicksAndFps.getMiliseconds();
+                startTime = TicksAndFps.getCurrentTime();
                 hasEnded = false;
                 return this;
             }
             
             public void end()
             {
-                combinedTimePassed += (TicksAndFps.getMiliseconds() - startTime);
-                totalUpdates++;
+                int time = (int)(TicksAndFps.getCurrentTime() - startTime);
+                combinedTimePassed -= recordedTimes[updateIndex];
+                combinedTimePassed += time;
+                recordedTimes[updateIndex++] = time;
+                updateIndex %= 100;//keep update index within 100
                 hasEnded = true;
             }
 
             public float getAverageCompletionTime()
             {
-                if(totalUpdates < 1)
-                {
-                    return (float)combinedTimePassed; 
-                }
-                float result =  (float)combinedTimePassed / (float)totalUpdates;
-
-                if(totalUpdates >= 100)//resetting after 100 updates to give a more accurate result
-                {
-                    totalUpdates = 0;
-                    combinedTimePassed = 0;
-                }
-                return result;
+                return (float)combinedTimePassed / 100F;
             }
+
             private void printInfo()
             {  
                 Console.BackgroundColor = ConsoleColor.Cyan;
                 Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine("Profile: \"" + name + "\" measured " + (TicksAndFps.getMiliseconds() - startTime) + " miliseconds from start to finish.");
+                Console.WriteLine("Profile: \"" + name + "\" measured " + (TicksAndFps.getCurrentTime() - startTime) + " miliseconds from start to finish.");
                 Console.BackgroundColor = ConsoleColor.White;
                 Console.ForegroundColor = ConsoleColor.White;
             }

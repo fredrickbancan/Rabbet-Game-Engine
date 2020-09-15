@@ -9,20 +9,20 @@ namespace Coictus
         private static Stopwatch stopwatch = new Stopwatch();
         private static long currentTime = 0;
         private static long lastTime = 0;
-        private static double timer = 0;
-        private static int fps = 1;
-        private static int frames;
         private static double deltaTime = 0.005D;
-        private static double ticksPerSecond = 0;
+        private static int ticksPerSecond;
         private static int ticksElapsed = 0;
         private static double timePerTick;
         private static double percentToNextTick; //a decimal value between 0 and 1 which can be used as a percentage of progress towards next tick, usefull for interpolation.
         private static bool paused = false; //true when game is paused
 
-        public static void init(float tps)
+        private static float[] recordedFrameTimes = new float[100];//used for calculating average FPS per frame
+        private static float combinedFrameTimes = 0;
+        private static int frameUpdateIndex = 0;
+        public static void init(int tps)
         {
             ticksPerSecond = tps;
-            timePerTick = 1 / ticksPerSecond;
+            timePerTick = 1 / (double)ticksPerSecond;
             stopwatch.Start();
             lastTime = stopwatch.ElapsedMilliseconds;
         }
@@ -34,15 +34,12 @@ namespace Coictus
             lastTime = currentTime;
             currentTime = stopwatch.ElapsedMilliseconds;
             deltaTime = (currentTime - lastTime) / 1000.0F;
-            timer += deltaTime;
-            if (timer >= 1)
-            {
-                fps = frames;
-                frames = 0;
-                timer -= 1;
-                MainGUI.displayFps(fps);
-            }
-            frames++;
+
+            combinedFrameTimes -= recordedFrameTimes[frameUpdateIndex];
+            combinedFrameTimes += (float)deltaTime;
+            recordedFrameTimes[frameUpdateIndex++] = (float)deltaTime;
+            frameUpdateIndex %= 100;
+
 
             if (paused)
             {
@@ -68,12 +65,12 @@ namespace Coictus
                 /*ticksElapsed is equal to the number of times the passed time has reached the full duration of one tick (at 30 ticks per second, thats 0.0333333)*/
                 ticksElapsed = (int)percentToNextTick;
 
-                /*limit ticks elapsed to Half a second's worth, so the game does not speed out of control in some laggy circumstances
+                /*limit ticks elapsed to a second's worth, so the game does not speed out of control in some laggy circumstances
                   In other words, the game will only "catch up" by half a second at a time. Any hangs more than half a second will not 
                   be corrected for.*/
                 if (ticksElapsed > ticksPerSecond)
                 {
-                    ticksElapsed = (int)ticksPerSecond;
+                    ticksElapsed = ticksPerSecond;
                 }
             }
         }
@@ -106,13 +103,22 @@ namespace Coictus
             return (float)percentToNextTick;
         }
 
-        public static long getMiliseconds()
+        public static long getCurrentTime()
         {
             return stopwatch.ElapsedMilliseconds;
         }
-        public static int getFps()
-        {
-            return fps;
-        }
+
+        /*ticks per second*/
+        public static int tps { get => ticksPerSecond; }
+
+        /*seconds per tick*/
+        public static float spt { get => 1F / (float)ticksPerSecond; }
+
+        /*frames per second*/
+        public static int fps { get => (int)( 1F / (combinedFrameTimes / 100F)); }
+
+        /*seconds per frame*/
+        public static float spf { get => 1F / (float)fps; }
+
     }
 }

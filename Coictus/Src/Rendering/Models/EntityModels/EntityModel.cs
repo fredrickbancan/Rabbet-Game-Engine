@@ -1,5 +1,4 @@
 ﻿using OpenTK;
-using System;
 
 namespace Coictus.Models
 {
@@ -20,6 +19,7 @@ namespace Coictus.Models
             modelMatrix = Matrix4.Identity;
             prevTickModelMatrix = Matrix4.Identity;
         }
+
         public EntityModel(Entity parent)
         {
             this.parent = parent;
@@ -29,10 +29,21 @@ namespace Coictus.Models
             onTick();//updating model twice to set first frame render position to the entity position.
             onTick();
         }
-        public EntityModel(Entity parent,string shaderDir, string textureDir, string modelPath)
+        public EntityModel(Entity parent, string shaderName, string textureName, string modelName)
         {
             this.parent = parent;
-            theModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelPath);//TODO: Inefficient. This will mean we have to load model data each time a model for an entity etc is spawned!, maybe make a list of pre loaded models?
+
+            if(ModelUtil.tryGetModel(modelName, out theModel))
+            {
+                Shader shader; 
+                ShaderUtil.tryGetShader(shaderName, out shader);
+                theModel.setShader(shader);
+
+                Texture texture;
+                TextureUtil.tryGetTexture(textureName, out texture);
+                theModel.setTexture(texture);
+            }
+            
             modelMatrix = Matrix4.Identity;
             prevTickModelMatrix = Matrix4.Identity;
             onTick();//updating model twice to set first frame render position to the entity position.
@@ -76,11 +87,6 @@ namespace Coictus.Models
 
         public virtual void delete()
         {
-            if (theModel != null)
-            {
-                theModel.delete();
-                theModel = null;
-            }
         }
 
         public virtual bool exists()

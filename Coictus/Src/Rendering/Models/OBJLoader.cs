@@ -53,6 +53,40 @@ namespace Coictus.Models
 
         }
 
+        /*Takes in a obj file and returns a model. indices will be assigned the read indices. If processing fails, will return a default debug model*/
+        public static ModelDrawable loadModelDrawableFromObjFile(string objFilePath)
+        {
+            if (objFilePath == "none")
+            {
+                return null;
+            }
+
+            try
+            {
+                reader = new StreamReader(objFilePath);
+            }
+            catch (Exception e)
+            {
+                Application.error("Could not load OBJ File!\nFile Path: " + objFilePath + "\nException: " + e.Message);
+                return DefaultDebugModel.getNewModelDrawable();//returns model by defualt or failing
+            }
+            successfullyLoaded = false;
+            vertexResult = new List<Vertex>();
+            positions = new List<Vector3>();
+            unorderedUVs = new List<Vector2>();
+            OBJLoader.indices = new List<uint>();
+
+            processAllLines();
+
+            if (!successfullyLoaded)
+            {
+                return DefaultDebugModel.getNewModelDrawable();//returns model by defualt or failing
+            }
+            reader.Close();
+            return new ModelDrawable("ColorTexture3D.shader", "debug", vertexResult.ToArray(), indices.ToArray());
+
+        }
+
         /*reads each line and processes it based on its tag, v is vertex position, vt is uv, and f is a face*/
         private static void processAllLines()
         {

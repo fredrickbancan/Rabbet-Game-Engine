@@ -11,8 +11,6 @@ namespace Coictus
     /*This class will be the abstraction of any environment constructed for the player and entities to exist in.*/
     public class World
     {
-        private static ModelDrawable testCube = (ModelDrawable)CubePrefab.getNewModelDrawable().setColor(CustomColor.white).scaleVertices(new Vector3(5, 5, 5)).rotateVertices(new Vector3(15,0,0));
-
         private ModelDrawable groundModel;
         private ModelDrawable wallsModel;
         private ModelDrawable skyboxModel;
@@ -23,7 +21,8 @@ namespace Coictus
         public Dictionary<int, ICollider> entityColliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity
         public List<ICollider> worldColliders = new List<ICollider>();//list of colliders with no parent, ie, walls, ground planes.
         public List<VFXBase> vfxList = new List<VFXBase>();
-        private string wallTextureDir = ResourceUtil.getTextureFileDir("plasterwall.png"); 
+        private string wallTextureName = "plasterwall.png"; 
+        private string terrainShaderName = "ColorTextureFog3D.shader"; 
 
 
         public World()
@@ -32,7 +31,6 @@ namespace Coictus
             skyColor = CustomColor.skyBlue.toNormalVec3();
             buildSkyBox();
             generateWorld();
-            testCube.setNewTexture(new Texture(512));
         }
 
         public void setSkyColor(Vector3 skyColor)
@@ -51,7 +49,7 @@ namespace Coictus
         {
             return fogColor;
         }
-
+      
         /*TODO: INNEFICIENT, loops through each entitiy and draws their model with a seperate call*/
         public void drawEntities(Matrix4 viewMatrix, Matrix4 projectionMatrix)
         {
@@ -62,7 +60,7 @@ namespace Coictus
                     ent.Value.getEntityModel().draw(viewMatrix, projectionMatrix, fogColor);
                 }
             }
-            testCube.draw(viewMatrix, projectionMatrix, fogColor);
+           
         }
 
         /*TODO: INNEFICIENT, loops through each VFX and draws their model with a seperate call*/
@@ -88,7 +86,7 @@ namespace Coictus
             temp[3] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(0, 0, 0), new Vector3(0, 0, -0.5F));//negZ
             temp[4] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(-90, 0, 0), new Vector3(0, 0.5F, 0));//top
             temp[5] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(90, 0, 0), new Vector3(0, -0.5F, 0));//bottom
-            skyboxModel = QuadBatcher.batchQuadModels(temp, ResourceUtil.getShaderFileDir("SkyboxShader3D.shader"), "none");
+            skyboxModel = QuadBatcher.batchQuadModels(temp, "SkyboxShader3D.shader", "none");
         }
 
         private void generateWorld()//creates the playground and world colliders
@@ -105,27 +103,27 @@ namespace Coictus
             {
                 for(int z = 0; z < 64; z++)
                 {
-                    unbatchedGroundQuads[x * 64 + z] = PlanePrefab.getNewModel().scaleVertices(new Vector3(20,1,20)).scaleUV(new Vector2(5F,5F)).translateVertices(new Vector3((x-32)*20, groundHeight, (z-32)*20));
+                    unbatchedGroundQuads[x * 64 + z] = PlanePrefab.copyModel().scaleVertices(new Vector3(20,1,20)).scaleUV(new Vector2(5F,5F)).translateVertices(new Vector3((x-32)*20, groundHeight, (z-32)*20));
                 }
             }
 
             //building the lump in middle of map, quads added after all the flat plane quads.
 
             //top face
-            unbatchedGroundQuads[4096] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3(2,1,2)).translateVertices(new Vector3(0, 1F, 0));
+            unbatchedGroundQuads[4096] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(2,1,2)).translateVertices(new Vector3(0, 1F, 0));
 
             //negZ face
-            unbatchedGroundQuads[4097] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3(2, 1, 1)).rotateVertices(new Vector3(90,0,0)).translateVertices(new Vector3(0, 0.5F, -1F)).setColor(new Vector4(0.8F, 0.8F, 0.8F, 1.0F));//pseudoLighting
+            unbatchedGroundQuads[4097] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(2, 1, 1)).rotateVertices(new Vector3(90,0,0)).translateVertices(new Vector3(0, 0.5F, -1F)).setColor(new Vector4(0.8F, 0.8F, 0.8F, 1.0F));//pseudoLighting
             
             //posZ face
-            unbatchedGroundQuads[4098] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3(2, 1, 1)).rotateVertices(new Vector3(-90,0,0)).translateVertices(new Vector3(0, 0.5F, 1F)).setColor(new Vector4(0.7F, 0.7F, 0.7F, 1.0F));
+            unbatchedGroundQuads[4098] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(2, 1, 1)).rotateVertices(new Vector3(-90,0,0)).translateVertices(new Vector3(0, 0.5F, 1F)).setColor(new Vector4(0.7F, 0.7F, 0.7F, 1.0F));
 
             //negX face
-            unbatchedGroundQuads[4099] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3(1, 1, 2)).rotateVertices(new Vector3(0,0,-90)).translateVertices(new Vector3(-1f, 0.5F, 0)).setColor(new Vector4(0.9F, 0.9F, 0.9F, 1.0F));
+            unbatchedGroundQuads[4099] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(1, 1, 2)).rotateVertices(new Vector3(0,0,-90)).translateVertices(new Vector3(-1f, 0.5F, 0)).setColor(new Vector4(0.9F, 0.9F, 0.9F, 1.0F));
 
             //posX face
-            unbatchedGroundQuads[4100] = PlanePrefab.getNewModel().scaleVerticesAndUV(new Vector3(1, 1, 2)).rotateVertices(new Vector3(0,0,90)).translateVertices(new Vector3(1f, 0.5F, 0)).setColor(new Vector4(0.65F, 0.65F, 0.65F, 1.0F));
-            groundModel = QuadBatcher.batchQuadModels(unbatchedGroundQuads, PlanePrefab.getShaderDir(), PlanePrefab.getTextureDir()); 
+            unbatchedGroundQuads[4100] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(1, 1, 2)).rotateVertices(new Vector3(0,0,90)).translateVertices(new Vector3(1f, 0.5F, 0)).setColor(new Vector4(0.65F, 0.65F, 0.65F, 1.0F));
+            groundModel = QuadBatcher.batchQuadModels(unbatchedGroundQuads, terrainShaderName, "sand.png"); 
 
 
             //build negZ wall
@@ -153,7 +151,7 @@ namespace Coictus
             }
 
 
-            wallsModel = QuadBatcher.batchQuadModels(unbatchedWallQuads, QuadPrefab.getShaderDir(), wallTextureDir);
+            wallsModel = QuadBatcher.batchQuadModels(unbatchedWallQuads, terrainShaderName, wallTextureName);
             //adding all world collider planes
             this.addWorldCollider(new PlaneCollider(new Vector3(0, 1, 0), groundHeight));//ground plane at y groundHeight, facing positive Y
             this.addWorldCollider(new PlaneCollider(new Vector3(0,0,1), -playgroundLength / 2));//Wall at negZ, playgroundLength / 2 units away, facing pos Z
@@ -192,12 +190,8 @@ namespace Coictus
         private void tickEntities()
         {
             for (int i = 0; i < entities.Count; i++)
-            { 
-                entities.Values.ElementAt(i).preTick();
-            }
-
-            for (int i = 0; i < entities.Count; i++)
             {
+                entities.Values.ElementAt(i).preTick();
                 entities.Values.ElementAt(i).onTick();
             }
 
@@ -355,6 +349,10 @@ namespace Coictus
         public int getEntityCount()
         {
             return entities.Count;
+        }
+        public int getVFXCount()
+        {
+            return vfxList.Count;
         }
     }
 }

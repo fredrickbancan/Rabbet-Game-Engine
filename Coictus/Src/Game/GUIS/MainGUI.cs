@@ -48,6 +48,7 @@ namespace Coictus
         /*Called every tick*/
         public static void onTick()
         {
+            displayFps();
             /*Temporary, for arcade popups.*/
             if (showingDirectHitPopup)
             {
@@ -127,17 +128,17 @@ namespace Coictus
         }
 
         /*Called every second by the TicksAndFps class to display new fps if setting is on*/
-        public static void displayFps(int fps)
+        public static void displayFps()
         {
             if (GameSettings.displayFps)
             {
                 GUIHandler.unHideTextPanelInGUI(mainGUIName, fpsPanelName);
-                string fpsstring = fps.ToString();
-                if (fps < 75)
+                string fpsstring = TicksAndFps.fps.ToString();
+                if (TicksAndFps.fps < 75)
                 {
                     GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsstring).setPanelColor(CustomColor.red);
                 }
-                else if (fps < 120)
+                else if (TicksAndFps.fps < 120)
                 {
                     GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsstring).setPanelColor(CustomColor.yellow);
                 }

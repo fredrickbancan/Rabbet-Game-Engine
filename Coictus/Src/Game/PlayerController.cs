@@ -5,7 +5,7 @@ namespace Coictus
 
     /*This class is responsable for detecting input which changes the players state.
       Such as movement, inventory use, attacking etc*/
-    public static class PlayerController//TODO: impliment custom bindings in gamesettings
+    public static class PlayerController
     {
         private static KeyboardState currentKeyboardState;
         private static MouseState currentMouseState;

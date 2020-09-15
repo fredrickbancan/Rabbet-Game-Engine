@@ -14,12 +14,12 @@ namespace Coictus.SubRendering
 
 
         /*Batches together models made of quads for being rendered in 3D*/
-        public static ModelDrawable batchQuadModels(Model[] quadModels, string shaderFile, string textureFile)
+        public static ModelDrawable batchQuadModels(Model[] quadModels, string shaderName, string textureName)
         {
             Vertex[] newVertices;
             combineData(quadModels, out newVertices);
 
-            return new ModelDrawable(shaderFile, textureFile, newVertices, indices);
+            return new ModelDrawable(shaderName, textureName, newVertices, indices);
         }
 
         /*Combines all the data in the model array and outputs the combined ordered arrays.*/

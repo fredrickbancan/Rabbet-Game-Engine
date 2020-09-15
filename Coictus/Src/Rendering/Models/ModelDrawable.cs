@@ -13,8 +13,10 @@ namespace Coictus.Models
     {
         trangles,
         points,
-        singlePoint,
-        lines
+        singlePoint,//for drawing single points, should use vector3 as transform single point shader
+        lines,
+        billboardSphere,//for drawing a mesh that looks at camera in any direction. i.e, sprites. Should use a shader that removes rotational info from viewmatrix. Can use any mesh and matrix transforms.
+        billboardCylindrical//for drawing a mesh that looks at camera in any cylindrical direction. i.e, sprites. But not vertically. should use a shader that removes horizontal rotations from view matrix. Can use any mesh and matrix transforms.
     };
 
     /*Base class for models that can be drawn individually with additional draw calls and have
@@ -30,25 +32,20 @@ namespace Coictus.Models
         protected int VAO;
         protected Texture texture;
         protected Shader shader;
-        protected string shaderDir;
-        protected string textureDir;
         private bool drawErrorPrinted = false;
 
-
-        /*takes in directory for the shader and texture for this model, indices can be null if they wont be used*/
-        public ModelDrawable(string shaderFile, string textureFile, Vertex[] vertices, uint[] indices = null, bool filtering = false) : base(vertices)
+        /*takes in the shader and texture for this model, indices can be null if they wont be used*/
+        public ModelDrawable(string shader, string texture, Vertex[] vertices, uint[] indices = null) : base(vertices)
         {
-            shaderDir = shaderFile;
-            textureDir = textureFile;
+            ShaderUtil.tryGetShader(shader, out this.shader);
+            TextureUtil.tryGetTexture(texture, out this.texture);
             this.indices = indices;
-            texture = new Texture(textureFile, filtering);
-            shader = new Shader(shaderFile);
         }
-        public ModelDrawable(string shaderFile, Texture tex, Vertex[] vertices, uint[] indices) : base(vertices)
+        public ModelDrawable(Shader shader, Texture texture, Vertex[] vertices, uint[] indices = null) : base(vertices)
         {
+            this.shader = shader;
+            this.texture = texture;
             this.indices = indices;
-            texture = tex;
-            shader = new Shader(shaderFile);
         }
 
         public virtual void setIndices(uint[] newind)
@@ -56,21 +53,13 @@ namespace Coictus.Models
             indices = newind;
         }
 
-        public virtual void setNewTexture(Texture tex)
+        public virtual void setTexture(Texture tex)
         {
-            if(this.texture != null)
-            {
-                this.texture.Dispose();
-            }
             this.texture = tex;
         }
 
-        public virtual void setNewShader(Shader shad)
+        public virtual void setShader(Shader shad)
         {
-            if (this.shader != null)
-            {
-                this.shader.Dispose();
-            }
             this.shader = shad;
         }
 
@@ -129,6 +118,7 @@ namespace Coictus.Models
             shader.setUniformVec3F("skyHorizon", skyHorizonColor);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
+            Renderer.totalDraws++;
         }
         public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColour)
         {
@@ -139,6 +129,7 @@ namespace Coictus.Models
             shader.setUniformVec3F("fogColour", fogColour);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
+            Renderer.totalDraws++;
         }
         public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Matrix4 modelMatrix, Vector3 fogColor)
         {
@@ -150,6 +141,7 @@ namespace Coictus.Models
 
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
+            Renderer.totalDraws++;
         }
         public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Matrix4 modelMatrix, PrimitiveType primitive)
         {
@@ -160,6 +152,7 @@ namespace Coictus.Models
 
             GL.DrawElements(primitive, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
+            Renderer.totalDraws++;
         }
         public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Matrix4 modelMatrix)
         {
@@ -170,6 +163,7 @@ namespace Coictus.Models
 
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
+            Renderer.totalDraws++;
         }
 
         public virtual void draw(Matrix4 projectionMatrix, Matrix4 modelMatrix)
@@ -179,6 +173,7 @@ namespace Coictus.Models
             shader.setUniformMat4F("modelMatrix", modelMatrix);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
+            Renderer.totalDraws++;
         }
         public virtual void draw(Matrix4 modelMatrix)
         {
@@ -186,6 +181,7 @@ namespace Coictus.Models
             shader.setUniformMat4F("modelMatrix", modelMatrix);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
+            Renderer.totalDraws++;
         }
 
         public virtual void draw(int textureID)
@@ -194,18 +190,21 @@ namespace Coictus.Models
             shader.setUniform1I("renderedTexture", textureID);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
+            Renderer.totalDraws++;
         }
         public virtual void draw(bool useTex = true)
         {
             bind(useTex);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
+            Renderer.totalDraws++;
         }
         public virtual void draw(PrimitiveType primType, bool useTex = true)
         {
             bind(useTex);
             GL.DrawElements(primType, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
+            Renderer.totalDraws++;
         }
 
         public virtual void drawPoints(Matrix4 viewMatrix, Matrix4 projectionMatrix, Matrix4 modelMatrix, Vector3 fogColor, float pointRadius, bool ambientOcclusion)
@@ -226,6 +225,7 @@ namespace Coictus.Models
             //shader.setUniform1I("renderPass", pass);
             GL.DrawArrays(PrimitiveType.Points, 0, vertices.Length);
             unBind();
+            Renderer.totalDraws++;
         }
 
         #endregion drawMethods
@@ -233,11 +233,11 @@ namespace Coictus.Models
         /*Unbinds this model so the renderer can render different things.*/
         public virtual void unBind()
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+           /* GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.UseProgram(0);
-            GL.BindVertexArray(0);
+            GL.BindVertexArray(0);*/
         }
 
         /*Binds the indicie buffer to the VAO*/
@@ -300,13 +300,14 @@ namespace Coictus.Models
                 uint[] indicesCopy = new uint[indices.Length];
                 Array.Copy(vertices, verticesCopy, vertices.Length);
                 Array.Copy(indices, indicesCopy, indices.Length);
-                return new ModelDrawable(shaderDir, textureDir, verticesCopy, indicesCopy);
+                return new ModelDrawable(shader, texture, verticesCopy, indicesCopy);
             }
 
             Vertex[] verticesCopy2 = new Vertex[vertices.Length];
             Array.Copy(vertices, verticesCopy2, vertices.Length);
-            return new ModelDrawable(shaderDir, textureDir, verticesCopy2, null);
+            return new ModelDrawable(shader, texture, verticesCopy2, null);
         }
+
         /*Called when this model is no longer needed and will be replaced*/
         public virtual void delete()
         {
@@ -315,8 +316,6 @@ namespace Coictus.Models
             {
                 GL.DeleteBuffer(vbo);
             }
-            shader.Dispose();
-            texture.Dispose();
         }
     }
 }

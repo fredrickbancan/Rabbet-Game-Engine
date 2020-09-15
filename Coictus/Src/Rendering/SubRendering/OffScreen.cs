@@ -10,7 +10,7 @@ namespace Coictus.SubRendering
     {
         private static ModelDrawable screenQuad;
         private static Shader screenShader;
-        private static readonly string screenShaderDir = ResourceUtil.getShaderFileDir("Offscreen.shader");
+        private static readonly string screenShaderName = "Offscreen.shader";
         private static int texColorBuffer;
         private static int depthBuffer;
         private static int frameBuffer;
@@ -36,7 +36,7 @@ namespace Coictus.SubRendering
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba16, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
 
-            screenShader = new Shader(screenShaderDir);
+            screenShader = new Shader(screenShaderName);
 
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, depthBuffer);
             GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.DepthComponent32, width, height);
@@ -60,7 +60,7 @@ namespace Coictus.SubRendering
             }
 
             screenQuad = (ModelDrawable)QuadPrefab.getNewModelDrawable().scaleVertices(new Vector3(2.0F, 2.0F, 1.0F));//scale quad to fit screen
-            screenQuad.setNewShader(screenShader);
+            screenQuad.setShader(screenShader);
         }
 
         public static void prepareToRenderToOffScreenTexture()

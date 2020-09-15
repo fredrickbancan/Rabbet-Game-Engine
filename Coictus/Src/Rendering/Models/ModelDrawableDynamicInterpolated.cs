@@ -11,12 +11,12 @@ namespace Coictus.Models
         /*this array of shader directories can be indexed with the ModelDrawType enum.
           each shader in this array must be a shader specifically made for interpolating a dynamic
           model. */
-        private static string[] shaders = new string[] {
+       /* private static string[] shaders = new string[] {
             ResourceUtil.getShaderFileDir(""),//ModelDrawType.triangles 
             ResourceUtil.getShaderFileDir(""),//ModelDrawType.points 
             ResourceUtil.getShaderFileDir(""),//ModelDrawType.singlePoint 
             ResourceUtil.getShaderFileDir("")//ModelDrawType.lines 
-        };
+        };*/
 
         private ModelDrawType drawType;
         private uint maxInstanceCount;
@@ -30,7 +30,7 @@ namespace Coictus.Models
           parameter maxInstanceCount is the maximum number of models to be combined
           into this dynamic model. Determines the max number of model matrices to be
           sent to GPU and interpolated.*/
-        public ModelDrawableDynamicInterpolated(uint maxInstanceCount, ModelDrawType drawType, string textureFile, uint[] indices, int maxVertexCount = 4000) : base(shaders[(int)drawType], textureFile, indices, maxVertexCount)
+        public ModelDrawableDynamicInterpolated(uint maxInstanceCount, ModelDrawType drawType, string textureFile, uint[] indices, int maxVertexCount = 4000) : base(null, textureFile, indices, maxVertexCount)
         {
             this.maxInstanceCount = maxInstanceCount;
             this.drawType = drawType;

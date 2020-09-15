@@ -126,10 +126,8 @@ namespace Coictus
         //removes this entity from existance
         public virtual void ceaseToExist()
         {
-            if (hasModel && entityModel != null)
-            {
-                entityModel.delete();
-            }
+            hasModel = false;
+            entityModel = null;
             removalFlag = true;
         }
 

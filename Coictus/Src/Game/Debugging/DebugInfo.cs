@@ -1,6 +1,5 @@
 ﻿using Coictus.GUI;
 using Coictus.GUI.Text;
-using System;
 
 namespace Coictus.Debugging
 {
@@ -8,7 +7,9 @@ namespace Coictus.Debugging
     public static class DebugInfo
     {
         public static readonly string debugInfoPanelName = "debugInfo";
-
+        private static float collisionsAverage;
+        private static float gameLoopAverage;
+        private static float renderAverage;
         /*Initialize the text panel for the debug info, can only be done if the mainGUI panel is created first*/
         public static void init()
         {
@@ -17,7 +18,7 @@ namespace Coictus.Debugging
                         {
                         ("press F3 to hide debug screen.")
                         }
-                       ).setPanelColor(CustomColor.grey)));
+                       ).setPanelColor(CustomColor.black)));
         }
 
         /*Shows and updates the debug info on the screen, Can be called every tick (Do not call every frame, too expensive)*/
@@ -26,23 +27,32 @@ namespace Coictus.Debugging
             if (GameSettings.debugScreen && GameInstance.get.thePlayer != null)
             {
                 GUIHandler.unHideTextPanelInGUI(MainGUI.mainGUIName, debugInfoPanelName);
+                collisionsAverage = Profiler.getAveragesForProfile(Profiler.collisionsName);
+                gameLoopAverage = Profiler.getAveragesForProfile(Profiler.gameLoopName);
+                renderAverage = Profiler.getAveragesForProfile(Profiler.renderingName);
                 GUIHandler.getTextPanelFormatFromGUI(MainGUI.mainGUIName, debugInfoPanelName).setLines(
                        new string[]
                        {
                         ("Player Name: " + GameInstance.get.thePlayer.getName()),
-                        ("X: " + GameInstance.get.thePlayer.getPosition().X.ToString("0.##")),
-                        ("Y: " + GameInstance.get.thePlayer.getPosition().Y.ToString("0.##")),
-                        ("Z: " + GameInstance.get.thePlayer.getPosition().Z.ToString("0.##")),
-                        ("Velocity X: " + GameInstance.get.thePlayer.getVelocity().X.ToString("0.##")),
-                        ("Velocity Y: " + GameInstance.get.thePlayer.getVelocity().Y.ToString("0.##")),
-                        ("Velocity Z: " + GameInstance.get.thePlayer.getVelocity().Z.ToString("0.##")),
-                        ("Head Pitch: " + GameInstance.get.thePlayer.getHeadPitch().ToString("0.##")),
-                        ("Yaw: " + GameInstance.get.thePlayer.getYaw().ToString("0.##")),
+                        ("X: " + GameInstance.get.thePlayer.getPosition().X.ToString("0.00")),
+                        ("Y: " + GameInstance.get.thePlayer.getPosition().Y.ToString("0.00")),
+                        ("Z: " + GameInstance.get.thePlayer.getPosition().Z.ToString("0.00")),
+                        ("Velocity X: " + GameInstance.get.thePlayer.getVelocity().X.ToString("0.00")),
+                        ("Velocity Y: " + GameInstance.get.thePlayer.getVelocity().Y.ToString("0.00 ")),
+                        ("Velocity Z: " + GameInstance.get.thePlayer.getVelocity().Z.ToString("0.00")),
+                       ("Head Pitch: " + GameInstance.get.thePlayer.getHeadPitch().ToString("0.00")),
+                       ("Yaw: " + GameInstance.get.thePlayer.getYaw().ToString("0.00")),
                         ("Profiler ms averages: "),
-                        ("Render: " + Profiler.getAveragesForProfile(Profiler.renderingName).ToString("0.##") + " ms."),
-                        ("Game loop: " + Profiler.getAveragesForProfile(Profiler.gameLoopName).ToString("0.##") + " ms."),
-                        ("Collisions: " + Profiler.getAveragesForProfile(Profiler.collisionsName).ToString("0.##") + " ms."),
-                        ("Entities: " + GameInstance.get.currentPlanet.getEntityCount())
+                        ("{"),
+                        ("  [Per Frame]Render: " + renderAverage.ToString("0.00 ms")),
+                        ("  [Per Tick]Game loop: " + gameLoopAverage.ToString("0.00 ms") + (gameLoopAverage / TicksAndFps.tps).ToString(" (0.00 ms per frame)")),
+                        ("  {"),
+                        ("      Collisions: " + collisionsAverage.ToString("0.00 ms")  + (collisionsAverage / TicksAndFps.tps).ToString(" (0.00 ms per frame)")),
+                        ("  }Residual: " + (gameLoopAverage - collisionsAverage).ToString("0.00 ms") + ((gameLoopAverage - collisionsAverage) / TicksAndFps.tps).ToString(" (0.00 ms per frame)")),
+                        ("}"),
+                        ("Entities: " + GameInstance.get.currentPlanet.getEntityCount()),
+                        ("VFX's: " + GameInstance.get.currentPlanet.getVFXCount()),
+                        ("Draw Calls: " + Renderer.getAndResetTotalDrawCount()),
                        }); 
             }
             else

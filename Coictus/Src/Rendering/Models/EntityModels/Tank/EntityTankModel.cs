@@ -1,5 +1,4 @@
 ﻿using OpenTK;
-using System;
 
 namespace Coictus.Models
 {
@@ -15,16 +14,19 @@ namespace Coictus.Models
         private Matrix4 tankWheelsModelMatrix = Matrix4.Identity;
         private Matrix4 tankBodyModelMatrix = Matrix4.Identity;
         private Matrix4 tankBarrelModelMatrix = Matrix4.Identity;
-        private string shaderDir = ResourceUtil.getShaderFileDir("ColorTextureFog3D.shader");
-        private string textureDir = ResourceUtil.getTextureFileDir("Camo.png");
+        private string shaderName = "ColorTextureFog3D.shader";
+        private string textureName = "Camo.png";
+        private string wheelModelName = @"Tank\TankWheels.obj";
+        private string bodyModelName = @"Tank\TankBody.obj";
+        private string barrelModelName = @"Tank\TankBarrel.obj";
         
 
         public EntityTankModel(EntityTank parent)//dont want to call the base constructor for this model
         {
             this.parent = parent;
-            tankWheelModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceUtil.getOBJFileDir(@"Tank\TankWheels.obj"));
-            tankBodyModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceUtil.getOBJFileDir(@"Tank\TankBody.obj"));
-            tankBarrelModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, ResourceUtil.getOBJFileDir(@"Tank\TankBarrel.obj"));
+            tankWheelModel = ModelUtil.createModelDrawable(shaderName, textureName, wheelModelName);
+            tankBodyModel = ModelUtil.createModelDrawable(shaderName, textureName, bodyModelName);
+            tankBarrelModel = ModelUtil.createModelDrawable(shaderName, textureName, barrelModelName);
             onTick();
             onTick();
         }

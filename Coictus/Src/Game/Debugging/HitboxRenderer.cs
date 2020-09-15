@@ -10,7 +10,7 @@ namespace Coictus.Debugging
     /*This class handles the rendering of hitboxes for debugging purposes.*/
     public static class HitboxRenderer
     {
-        private static string linesShader = ResourceUtil.getShaderFileDir("Color3D.shader");
+        public static readonly string linesShaderName = "Color3D.shader";
 
 
         public static readonly int maxAABBRenderCount = 512;
@@ -27,9 +27,9 @@ namespace Coictus.Debugging
         /*Builds the prefab model for an AABB, basically a cube made of lines*/
         private static void buildAABBModel()
         {
-            aabbDynamicModel = new ModelDrawableDynamic(linesShader, "none", LineBatcher.getIndicesForLineQuadCount(maxAABBRenderCount * 6), maxAABBRenderCount * 48 /*aabb models have 48 vertices*/);//initializing dynamic model for drawing aabb
+            aabbDynamicModel = new ModelDrawableDynamic(linesShaderName, "none", LineBatcher.getIndicesForLineQuadCount(maxAABBRenderCount * 6), maxAABBRenderCount * 48 /*aabb models have 48 vertices*/);//initializing dynamic model for drawing aabb
 
-            aabbModelPrefab = CubePrefab.getNewModel();
+            aabbModelPrefab = CubePrefab.copyModel();
         }
 
         /*called on tick. Adds all of the provided colliders to a list of hitboxes to be dynamically batched and drawn.*/

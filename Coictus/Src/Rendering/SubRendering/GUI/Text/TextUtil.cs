@@ -8,7 +8,7 @@ namespace Coictus.GUI.Text
     public enum TextAlign { LEFT, CENTER, RIGHT };
     public static class TextUtil
     {
-        public static readonly string textShaderDir = ResourceUtil.getShaderFileDir(@"GUI\GuiTextShader.shader");
+        public static readonly string textShaderName = @"GUI\GuiTextShader.shader";
         public static readonly float defaultFontSize = 0.02F;
         public static readonly int defaultScreenEdgePadding = 5; //5 pixels
 
@@ -28,12 +28,12 @@ namespace Coictus.GUI.Text
         /*Goes through the font file directory and adds all fonts*/
         public static void loadAllFoundTextFiles()
         {
-            string[] allFileDirectoriesAndName = Directory.GetFiles(ResourceUtil.getFontFileDir(""));
+            string[] allFileDirectoriesAndName = Directory.GetFiles(ResourceUtil.getFontFileDir());
             foreach(string dir in allFileDirectoriesAndName)
             {
                 if (dir.Contains(".fnt"))
                 {
-                    string fontName = dir.Replace(ResourceUtil.getFontFileDir(""), "").Replace(".fnt", "");//removes directory and file extension
+                    string fontName = dir.Replace(ResourceUtil.getFontFileDir(), "").Replace(".fnt", "");//removes directory and file extension
                     tryAddNewFontToGlobalList(fontName);
                 }
             }
@@ -52,9 +52,9 @@ namespace Coictus.GUI.Text
             }
         }
 
-        public static string getTextureDirForFont(FontFace font)
+        public static string getTextureNameForScreenFont(FontFace font)
         {
-            return ResourceUtil.getFontFileDir(font.getFontName() + ".png");
+            return font.getFontName() + ".png";
         }
     }
 }

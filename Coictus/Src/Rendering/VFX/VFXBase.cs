@@ -31,12 +31,13 @@ namespace Coictus.VFX
         protected Matrix4 prevTickModelMatrix;
         protected Matrix4 modelMatrix;
         protected bool removalFlag = false;// true if this entity should be removed in the next tick
+        protected bool shouldDeleteModel = false;// true if this vfx is using a model loaded from file. If so, it should NOT be deleted!
 
         protected VFXRenderType renderType;
         public VFXBase(Vector3 pos, float initialScale, string shaderDir, string textureDir, string modelDir, float maxExistingSeconds = 1, VFXRenderType renderType = VFXRenderType.tirangles) : base(pos)
         {
             this.scale = initialScale;
-            this.vfxModel = OBJLoader.loadModelDrawableFromObjFile(shaderDir, textureDir, modelDir, renderType == VFXRenderType.points ? false : true);//TODO:Inneficcient. This will mean we have to load the data every time a VFX is spawned. maybe a list of pre loaded models is needed?
+            this.vfxModel = ModelUtil.createModelDrawable(shaderDir, textureDir, modelDir);
             maxExistingTicks = TicksAndFps.getNumOfTicksForSeconds(maxExistingSeconds);
             updateVFXModel();
             updateVFXModel();
@@ -114,15 +115,17 @@ namespace Coictus.VFX
         {
             if (!removalFlag)
             {
-                if (vfxModel != null)
+                removalFlag = true;
+                if(shouldDeleteModel)
                 {
                     vfxModel.delete();
                 }
-
-                removalFlag = true;
             }
         }
-
+        protected virtual void setShouldDeleteModelOnDeath(bool flag)
+        {
+            shouldDeleteModel = flag;
+        }
         public void Dispose()
         {
             Dispose(true);

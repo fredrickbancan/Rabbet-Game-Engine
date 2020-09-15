@@ -8,6 +8,7 @@ namespace Coictus.Models
     //just an ugly cube for when a model fails to load
     public static class DefaultDebugModel
     {
+        public static string shaderName = "ColorTexture3D.shader";
         public static readonly Vertex[] vertices = new Vertex[]
         {   
             //zPos
@@ -57,18 +58,9 @@ namespace Coictus.Models
             uint[] indicesCopy = new uint[indices.Length];
             Array.Copy(vertices, verticesCopy, vertices.Length);
             Array.Copy(indices, indicesCopy, indices.Length);
-            return (ModelDrawable)new ModelDrawable(getShaderDir(), new Texture(), verticesCopy, indicesCopy).translateVertices(new Vector3(0, 0.5F, 0));
+            return (ModelDrawable)new ModelDrawable(shaderName, "debug", verticesCopy, indicesCopy).translateVertices(new Vector3(0, 0.5F, 0));
         }
 
-        public static string getShaderDir()
-        {
-            return ResourceUtil.getShaderFileDir("ColorTexture3D.shader");
-        }
-
-        public static string getTextureDir()
-        {
-            return "";
-        }
 
     }
 }

@@ -1,13 +1,12 @@
 ﻿using Coictus.Models;
 using OpenTK;
-using System;
 
 namespace Coictus.VFX
 {
     /*Base class for any VFX using point particles*/
     public class VFXPointParticles : VFXBase
     {
-        private static string defaultShaderDir = ResourceUtil.getShaderFileDir(@"VFX\PointParticleFog.shader");
+        private static string defaultShaderName = @"VFX\PointParticleFog.shader";
         protected CustomColor pointColor;
         protected float randomPointPositionSpread;//the maximum distance between points when randomizing a point cloud (e.g, a puff of smoke)
         protected float pointRadius;
@@ -18,16 +17,17 @@ namespace Coictus.VFX
        
 
         /*this constructor is for creating a point particle based VFX which does not create a random point cloud. maybe you will want to construct the points in a specific manner with colors or use a model.*/
-        public VFXPointParticles(Vector3 pos, CustomColor color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
+        public VFXPointParticles(Vector3 pos, CustomColor color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderName, "none", "none", maxExistingSeconds, VFXRenderType.points)
         {
             colorAlpha = alpha;
             pointColor = color;
             pointRadius = radius;
             pointAmbientOcclusion = ambientOcclusion;
+            setShouldDeleteModelOnDeath(true);
         }
 
         /*this constructor is for creating a randomized particle cloud at the position using the provided parameters*/
-        public VFXPointParticles(Vector3 pos, CustomColor color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderDir, "none", "none", maxExistingSeconds, VFXRenderType.points)
+        public VFXPointParticles(Vector3 pos, CustomColor color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderName, "none", "none", maxExistingSeconds, VFXRenderType.points)
         {
             colorAlpha = alpha;
             this.randomBrightness = randomBrightness;
@@ -37,6 +37,7 @@ namespace Coictus.VFX
             pointRadius = radius;
             pointAmbientOcclusion = ambientOcclusion;
             constructPointCloudModel();
+            setShouldDeleteModelOnDeath(true);
         }
 
         /*Builds the vertices for the point cloud to be rendered. By default this method will build a randomized point cloud
@@ -50,7 +51,7 @@ namespace Coictus.VFX
                 points[i] = new Vertex(getRandomParticleOffset(), getPointColor(), Vector2.Zero);
             }
 
-            vfxModel = new ModelDrawable(defaultShaderDir, "none", points);
+            vfxModel = new ModelDrawable(defaultShaderName, "none", points);
         }
 
         protected Vector3 getRandomParticleOffset()

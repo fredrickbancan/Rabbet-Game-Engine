@@ -5,6 +5,9 @@ namespace Coictus.Models
 {
     public static class CubePrefab
     {
+        public static readonly string shaderName = "ColorTextureFog.shader";
+        public static readonly string textureName = "Explosion.png";
+
         public static readonly Vertex[] cubeVertices;
 
         public static readonly uint[] cubeIndices;
@@ -30,29 +33,20 @@ namespace Coictus.Models
         }
 
         /*generates a new model using copies of this models arrays.*/
-        public static Model getNewModel()
+        public static Model copyModel()
         {
             Vertex[] verticesCopy = new Vertex[cubeVertices.Length];
             Array.Copy(cubeVertices, verticesCopy, cubeVertices.Length);
             return new Model(verticesCopy);
         }
-        public static ModelDrawable getNewModelDrawable()
+        public static ModelDrawable copyModelDrawable()
         {
             Vertex[] verticesCopy = new Vertex[cubeVertices.Length];
             uint[] indicesCopy = new uint[cubeIndices.Length];
             Array.Copy(cubeVertices, verticesCopy, cubeVertices.Length);
             Array.Copy(cubeIndices, indicesCopy, cubeIndices.Length);
-            return new ModelDrawable(getShaderDir(), getTextureDir(), verticesCopy, indicesCopy);
+            return new ModelDrawable(shaderName, textureName, verticesCopy, indicesCopy);
         }
 
-        public static string getShaderDir()
-        {
-            return ResourceUtil.getShaderFileDir("ColorTextureFog3D.shader");
-        }
-
-        public static string getTextureDir()
-        {
-            return ResourceUtil.getTextureFileDir("EntityCactus.png");
-        }
     }
 }
