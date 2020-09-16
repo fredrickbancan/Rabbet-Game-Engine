@@ -34,18 +34,8 @@ namespace Coictus.Models
         {
             this.maxInstanceCount = maxInstanceCount;
             this.drawType = drawType;
-
-            /*single points only use positions, not model matrices. This is more efficient.*/
-            if(drawType ==  ModelDrawType.singlePoint)
-            {
-                prevTickSinglePointPositions = new Vector3[maxInstanceCount];
-                singlePointPositions = new Vector3[maxInstanceCount];
-            }
-            else
-            {
-                prevTickModelMatrices = new Matrix4[maxInstanceCount];
-                modelMatrices = new Matrix4[maxInstanceCount];
-            }
+            prevTickModelMatrices = new Matrix4[maxInstanceCount];
+            modelMatrices = new Matrix4[maxInstanceCount];
         }
     }
 }

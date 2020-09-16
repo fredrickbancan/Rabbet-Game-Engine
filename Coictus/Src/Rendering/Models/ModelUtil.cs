@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Coictus.Models
 {
@@ -12,6 +13,7 @@ namespace Coictus.Models
         public static void loadAllFoundModelFiles()
         {
             models = new Dictionary<string, ModelDrawable>();
+            models.Add("debug", DefaultDebugModel.getNewModelDrawable());
             loadAllModelsRecursive(ResourceUtil.getOBJFileDir());
         }
 
@@ -46,7 +48,8 @@ namespace Coictus.Models
             bool success = models.TryGetValue(name, out model);
             if (!success)
             {
-                Application.error("ModelUtil could not find Model named: " + name + " in global list, returning null.");
+                Application.error("ModelUtil could not find Model named: " + name + " in global list, assigning debug model.");
+                model = models.ElementAt(0).Value;
             }
             return success;
         }
@@ -70,6 +73,12 @@ namespace Coictus.Models
                 result.setTexture(tex);
             }
             return result;
+        }
+
+
+        public static int getModelCount()
+        {
+            return models.Count;
         }
 
         public static void deleteAll()

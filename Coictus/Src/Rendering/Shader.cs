@@ -1,24 +1,25 @@
 ﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Coictus
 {
-    struct shaderProgramSource // simple struct for reading both shaders from one file
-    {
-        public string vertexSource;
-        public string fragmentSource;
-    };
-    enum shaderType // simple enum for sorting lines of shader code
-    {
-        NONE,
-        VERTEX,
-        FRAGMENT
-    };
-
     public class Shader : IDisposable
     {
+        private enum shaderType // simple enum for sorting lines of shader code
+        {
+            NONE,
+            VERTEX,
+            FRAGMENT
+        };
+        private struct shaderProgramSource // simple struct for reading both shaders from one file
+        {
+            public string vertexSource;
+            public string fragmentSource;
+        };
+
         public static readonly string debugDefaultVertexShader = 
             "void main()\n" +
             "{\n" +
@@ -32,11 +33,14 @@ namespace Coictus
         private bool disposed = false;
         private int id;
         private string debugShaderPath;
+
+        private Dictionary<string, int> foundUniforms;
         public Shader(string filePath)
         {
             debugShaderPath = filePath;
             shaderProgramSource source = parseShaderFile(filePath);
             this.id = createShader(source);
+            foundUniforms = new Dictionary<string, int>();
         }
 
         private shaderProgramSource parseShaderFile(string path)
@@ -134,6 +138,11 @@ namespace Coictus
             GL.Uniform3(getUniformLocation(name), vec.X, vec.Y, vec.Z);
         }
 
+        public void setUniformMat4FArray(string name, Matrix4[] arr)
+        {
+            GL.UniformMatrix4(getUniformLocation(name), arr.Length, false, ref arr[0].Row0.X);
+        }
+
         public void setUniformVec2F(string name, Vector2 vec)
         {
             GL.Uniform2(getUniformLocation(name), vec.X, vec.Y);
@@ -147,10 +156,19 @@ namespace Coictus
             GL.Uniform1(getUniformLocation(name), val);
         }
 
-        private int getUniformLocation(string name)// later will cache uniforms
+        private int getUniformLocation(string name)
         {
-            return GL.GetUniformLocation(id, name);
+            int result;
+            if(foundUniforms.TryGetValue(name, out result))//storing previously found uniforms in a dictionary helps to avoid gl calls
+            {
+                return result;
+            }
+
+            result = GL.GetUniformLocation(id, name);
+            foundUniforms.Add(name, result);
+            return result;
         }
+
         protected virtual void Dispose(bool disposing)
         {
             if (!disposed)

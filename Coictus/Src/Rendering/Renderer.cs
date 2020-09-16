@@ -35,6 +35,9 @@ namespace Coictus
             ShaderUtil.loadAllFoundShaderFiles();
             TextureUtil.loadAllFoundTextureFiles();
             ModelUtil.loadAllFoundModelFiles();
+            Application.debug("Loaded " + ShaderUtil.getShaderCount() + " shaders.");
+            Application.debug("Loaded " + TextureUtil.getTextureCount() + " textures.");
+            Application.debug("Loaded " + ModelUtil.getModelCount() + " models.");
         }
 
         /*Called each time the game window is resized*/

@@ -39,7 +39,7 @@ namespace Coictus
             {
                 for(int j = 0; j < res; j++)
                 {//exlusive or
-                    bitmap.SetPixel(i, j, i % 2 == 0 ^ j % 2 != 0 ? Color.Magenta : Color.FromArgb(0,0,0,0));//creating black and magenta checker board
+                    bitmap.SetPixel(i, j, i % 2 == 0 ^ j % 2 != 0 ? Color.Magenta : Color.Black);//creating black and magenta checker board
                 }
             }
 

@@ -1,5 +1,5 @@
 ﻿using OpenTK;
-using System.Collections.Generic;
+using OpenTK.Graphics.OpenGL;
 
 namespace Coictus.Models
 {
@@ -19,26 +19,17 @@ namespace Coictus.Models
               ResourceUtil.getShaderFileDir("")//ModelDrawType.billboardCylindrical 
           };*/
 
-        protected Model instance;
+        protected ModelDrawable instance;
         protected uint[] indices;
         protected ModelDrawType drawType;
-        protected List<Matrix4> transforms = null;
-        protected List<Vector3> vecTransforms = null;//for when this model is for instancing points/sprites
 
+         //TODO: solve instance individualism, set shader based on draw type (ModelDrawableInstanced)
         /*the provided model instance will be re-drawn at each transform*/
-        public ModelDrawableInstanced(Model instance, uint[] indices, ModelDrawType drawType)
+        public ModelDrawableInstanced(ModelDrawable instance, uint[] indices, ModelDrawType drawType)
         {
             this.instance = instance;
             this.indices = indices;
             this.drawType = drawType;
-            if(drawType == ModelDrawType.singlePoint)
-            {
-                vecTransforms = new List<Vector3>();
-            }
-            else
-            {
-                transforms = new List<Matrix4>();
-            }
         }
 
         /*the provided model instance will be re-drawn at each transform*/
@@ -47,41 +38,38 @@ namespace Coictus.Models
             this.instance = instance;
             this.indices = instance.indices;
             this.drawType = drawType;
-            if (drawType == ModelDrawType.singlePoint)
-            {
-                vecTransforms = new List<Vector3>();
-            }
-            else
-            {
-                transforms = new List<Matrix4>();
-            }
+            Shader shader;
+            ShaderUtil.tryGetShader("ColorTextureFogInstanced3D.shader", out shader);
+            instance.setShader(shader);
         }
 
         /*when called adds a transform to the list and when this model is drawn, an
           instance will be drawn with the provided transform.*/
         public void addRenderAt(Matrix4 transform)
         {
-            if (drawType == ModelDrawType.singlePoint)
-            {
-                Application.error("ModelDrawableInstanced was requested to add a matrix4 as a transform forsingle point drawing!");
-            }
-            else
-            {
-                transforms.Add(transform);
-            }
         }
 
-        public void addRenderAt(Vector3 transform)//for use with single points
+        public void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColor)
         {
-            if (drawType != ModelDrawType.singlePoint)
+            instance.bind();
+            instance.getShader().setUniformMat4F("viewMatrix", viewMatrix); 
+            instance.getShader().setUniformMat4F("projectionMatrix", projectionMatrix); 
+            instance.getShader().setUniformVec3F("fogColor", fogColor); 
+            switch (drawType)
             {
-                Application.error("ModelDrawableInstanced was requested to add a vector3 as a transform for non single point drawing!");
-            }
-            else
-            {
-                vecTransforms.Add(transform);
+                case ModelDrawType.points:
+                    GL.DrawArraysInstanced(PrimitiveType.Points, 0, instance.vertices.Length, 0);
+                    break;
+
+                case ModelDrawType.lines:
+                    GL.DrawElementsInstanced(PrimitiveType.Lines, indices.Length, DrawElementsType.UnsignedInt, System.IntPtr.Zero, 0);
+                    break;
+
+                default:
+                    GL.DrawElementsInstanced(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, System.IntPtr.Zero, 0);
+                    break;
             }
         }
-        //TODO: impliment (ModelDrawableInstanced)
+        
     }
 }

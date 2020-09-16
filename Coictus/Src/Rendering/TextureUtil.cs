@@ -60,9 +60,15 @@ namespace Coictus
             bool success = textures.TryGetValue(name, out texture);
             if (!success)
             {
-                Application.error("TextureUtil could not find texture named: " + name + " in global list, returning null.");
+                Application.error("TextureUtil could not find texture named: " + name + " in global list, assigning debug texture.");
+                texture = textures.ElementAt(1).Value;
             }
             return success;
+        }
+
+        public static int getTextureCount()
+        {
+            return textures.Count;
         }
 
         public static void deleteAll()

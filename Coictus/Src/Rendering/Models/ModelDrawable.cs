@@ -13,7 +13,6 @@ namespace Coictus.Models
     {
         trangles,
         points,
-        singlePoint,//for drawing single points, should use vector3 as transform single point shader
         lines,
         billboardSphere,//for drawing a mesh that looks at camera in any direction. i.e, sprites. Should use a shader that removes rotational info from viewmatrix. Can use any mesh and matrix transforms.
         billboardCylindrical//for drawing a mesh that looks at camera in any cylindrical direction. i.e, sprites. But not vertically. should use a shader that removes horizontal rotations from view matrix. Can use any mesh and matrix transforms.
@@ -291,6 +290,10 @@ namespace Coictus.Models
             GL.BindBuffer(BufferTarget.ArrayBuffer, VBOS[0]);
         }
 
+        public virtual Shader getShader()
+        {
+            return shader;
+        }
 
         public ModelDrawable copyModelDrawable()
         {

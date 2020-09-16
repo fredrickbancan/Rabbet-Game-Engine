@@ -27,7 +27,7 @@ namespace Coictus
         protected float headPitch; // Pitch of the living entity head
         public static readonly float defaultWalkSpeed = 0.1572F;
         protected float walkSpeed = defaultWalkSpeed;
-        protected bool isPlayer = false;
+        
 
         /*array of actions being requested by player user. When an action is requested, the bool at the index of the action (enum) value
           is set to true. To detect if an action is requested, check the index. e.g: if(actions[Action.attack])*/
@@ -202,11 +202,6 @@ namespace Coictus
         public virtual void strafeLeft()
         {
             addAction(Action.strafeLeft);
-        }
-
-        public virtual bool getIsPlayer()//returns true if this entityliving is a player
-        {
-            return isPlayer;
         }
 
         public virtual void setHeadPitch(float Pitch)

@@ -21,9 +21,11 @@ namespace Coictus
         public Dictionary<int, ICollider> entityColliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity
         public List<ICollider> worldColliders = new List<ICollider>();//list of colliders with no parent, ie, walls, ground planes.
         public List<VFXBase> vfxList = new List<VFXBase>();
-        private string wallTextureName = "plasterwall.png"; 
-        private string terrainShaderName = "ColorTextureFog3D.shader"; 
+        private string wallTextureName = "leafyrocks.png"; 
+        private string groundTextureName = "jungleground.png"; 
+        private string terrainShaderName = "ColorTextureFog3D.shader";
 
+        private ModelDrawableInstanced test = new ModelDrawableInstanced(CubePrefab.copyModelDrawable(), ModelDrawType.trangles);
 
         public World()
         {
@@ -31,6 +33,10 @@ namespace Coictus
             skyColor = CustomColor.skyBlue.toNormalVec3();
             buildSkyBox();
             generateWorld();
+            for(int i = 0; i < 2000; i++)
+            {
+                test.addRenderAt(Matrix4.CreateTranslation(0,i + 2,0));
+            }
         }
 
         public void setSkyColor(Vector3 skyColor)
@@ -60,7 +66,7 @@ namespace Coictus
                     ent.Value.getEntityModel().draw(viewMatrix, projectionMatrix, fogColor);
                 }
             }
-           
+            test.draw(viewMatrix, projectionMatrix, fogColor);//temp
         }
 
         /*TODO: INNEFICIENT, loops through each VFX and draws their model with a seperate call*/
@@ -123,7 +129,7 @@ namespace Coictus
 
             //posX face
             unbatchedGroundQuads[4100] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(1, 1, 2)).rotateVertices(new Vector3(0,0,90)).translateVertices(new Vector3(1f, 0.5F, 0)).setColor(new Vector4(0.65F, 0.65F, 0.65F, 1.0F));
-            groundModel = QuadBatcher.batchQuadModels(unbatchedGroundQuads, terrainShaderName, "sand.png"); 
+            groundModel = QuadBatcher.batchQuadModels(unbatchedGroundQuads, terrainShaderName, groundTextureName); 
 
 
             //build negZ wall
@@ -163,11 +169,12 @@ namespace Coictus
         
         public void onTick()
         {
-            removeMarkedEntities();
-            removeMarkedVFX();
             tickEntities();
             tickVFX();
-            doCollisions();//this should be done AFTER ticking entities.
+
+            //TODO: Inneficient! this requires multiple loops and slows down drastically with large numbers of entities!
+            doCollisions();
+
             if (GameSettings.drawHitboxes)
             {
                 updateAllEntityColliders();//For correcting the drawing of hitboxes after a collision
@@ -180,43 +187,68 @@ namespace Coictus
         {
             foreach (Entity ent in entities.Values)
             {
-                if (ent != null)
-                {
-                    ent.onFrame();
-                }
+                ent.onFrame();
             }
         }
 
         private void tickEntities()
         {
-            for (int i = 0; i < entities.Count; i++)
-            {
-                entities.Values.ElementAt(i).preTick();
-                entities.Values.ElementAt(i).onTick();
-            }
+            GameInstance.get.thePlayer.preTick();
+            GameInstance.get.thePlayer.onTick();//player must be ticked before entities to properly handle input
 
             for (int i = 0; i < entities.Count; i++)
             {
-                entities.Values.ElementAt(i).postTick();
+                Entity entAt = entities.ElementAt(i).Value;
+                if (entAt == null)
+                {
+                    entities.Remove(entities.ElementAt(i).Key);
+                    i--;
+                }
+                else if (entAt.getIsMarkedForRemoval())
+                {
+                    entAt.setCurrentPlanet(null);
+                    if (entAt.getHasCollider())
+                    {
+                        entityColliders.Remove(entities.ElementAt(i).Key);
+                    }
+                    entities.Remove(entities.ElementAt(i).Key);
+                    i--;
+                }
+                else if(!entAt.getIsPlayer())
+                {
+                    entAt.preTick();
+                    entAt.onTick();
+                    entAt.postTick();
+                }
             }
+
+            GameInstance.get.thePlayer.postTick();
         }
 
         private void updateAllEntityColliders()
         {
             foreach (Entity ent in entities.Values)
             {
-                if (ent != null)
-                {
-                    ent.tickUpdateCollider();
-                }
+                ent.tickUpdateCollider();
             }
         }
 
         private void tickVFX()
         {
-            foreach (VFXBase vfx in vfxList)
+            for(int i = 0; i < vfxList.Count; i++)
             {
-                if (vfx != null)
+                VFXBase vfx = vfxList.ElementAt(i);
+                if (vfx == null)
+                {
+                    vfxList.Remove(vfx);
+                    i--;
+                }
+                else if (!vfx.exists())
+                {
+                    vfxList.Remove(vfxList.ElementAt(i));
+                    i--;
+                }
+                else
                 {
                     vfx.preTick();
                     vfx.onTick();
@@ -246,44 +278,6 @@ namespace Coictus
         public void addWorldCollider(ICollider collider)
         {
             worldColliders.Add(collider);
-        }
-
-        private void removeMarkedEntities()
-        {
-            for(int i = 0; i < entities.Count; i++)
-            {
-                Entity entAt = entities.ElementAt(i).Value;
-
-                if (entAt != null && entAt.getIsMarkedForRemoval())
-                {
-                    entAt.setCurrentPlanet(null);
-                    if(entAt.getHasCollider())
-                    {
-                        entityColliders.Remove(entities.ElementAt(i).Key);
-                    }
-                    entities.Remove(entities.ElementAt(i).Key);
-                    
-                }
-                else if(entAt == null)
-                {
-                    entities.Remove(entities.ElementAt(i).Key);
-                }
-            }
-        }
-
-        private void removeMarkedVFX()
-        {
-            for (int i = 0; i < vfxList.Count; i++)
-            {
-                if (vfxList.ElementAt(i) != null && !vfxList.ElementAt(i).exists())
-                {
-                    vfxList.Remove(vfxList.ElementAt(i));
-                }
-                else if(vfxList.ElementAt(i) == null)
-                {
-                    vfxList.Remove(vfxList.ElementAt(i));
-                }
-            }
         }
 
         /*creates an impulse at the given location which will push entities away, 

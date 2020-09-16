@@ -15,6 +15,7 @@ namespace Coictus
         protected bool isGrounded = false;
         private bool removalFlag = false;// true if this entity should be removed in the next tick
         protected int existedTicks = 0;//number of ticks this entity has existed for
+        protected bool isPlayer = false;
         public Entity() : base()
         {
             setYAccel(-gravity);
@@ -174,6 +175,10 @@ namespace Coictus
                 isFlying = false;
             }
         }
-        
+        public virtual bool getIsPlayer()//returns true if this entityliving is a player
+        {
+            return isPlayer;
+        }
+
     }
 }

@@ -45,9 +45,14 @@ namespace Coictus
             bool success = shaders.TryGetValue(name, out shader);
             if (!success)
             {
-                Application.error("ShaderUtil could not find shader named: " + name + " in global list, returning null.");
+                Application.error("ShaderUtil could not find shader named: " + name + " in global list, assigning debug shader.");
             }
             return success;
+        }
+
+        public static int getShaderCount()
+        {
+            return shaders.Count;
         }
 
         public static void deleteAll()

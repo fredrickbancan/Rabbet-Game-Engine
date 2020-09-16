@@ -48,7 +48,7 @@ namespace Coictus.Models
         public override void onFrame()
         {
             if (parent.getIsplayerDriving()) ;
-            //TODO: when parent is the player, rotate barrel and body pitch & yaw to the cameras for seamless alignment when rendering
+           
             base.onFrame();
         }
 
