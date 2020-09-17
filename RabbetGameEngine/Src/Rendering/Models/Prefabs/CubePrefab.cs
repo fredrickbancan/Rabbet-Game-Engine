@@ -1,5 +1,5 @@
-﻿using RabbetGameEngine.SubRendering;
-using OpenTK;
+﻿using OpenTK;
+using RabbetGameEngine.SubRendering;
 using System;
 namespace RabbetGameEngine.Models
 {
@@ -18,7 +18,7 @@ namespace RabbetGameEngine.Models
 
             for (int i = 0; i < boxSides.Length; i++)
             {
-                boxSides[i] = QuadPrefab.getNewModel().setColor(CustomColor.magenta);
+                boxSides[i] = QuadPrefab.getNewModel();
             }
 
             boxSides[0].rotateVertices(new Vector3(0, 180, 0)).translateVertices(new Vector3(0, 0, -0.5F));//negZ face

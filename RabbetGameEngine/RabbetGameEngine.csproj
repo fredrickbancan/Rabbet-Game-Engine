@@ -138,7 +138,7 @@
     <Compile Include="Src\Rendering\Texture.cs" />
     <Compile Include="Src\Rendering\Vertex.cs" />
     <Compile Include="Src\Rendering\VFX\VFXBase.cs" />
-    <Compile Include="Src\World\PositionalObject.cs" />
+    <Compile Include="Src\Physics\PositionalObject.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

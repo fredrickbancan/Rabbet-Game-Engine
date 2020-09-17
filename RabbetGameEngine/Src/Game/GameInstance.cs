@@ -135,6 +135,7 @@ namespace RabbetGameEngine
 
         protected override void OnClosing(CancelEventArgs e)
         {
+            currentPlanet.onLeavingWorld();
             Renderer.onClosing();
             base.OnClosing(e);
         }

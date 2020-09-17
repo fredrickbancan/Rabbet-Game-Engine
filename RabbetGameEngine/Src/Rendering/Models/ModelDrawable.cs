@@ -1,6 +1,6 @@
-﻿using RabbetGameEngine.SubRendering;
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using RabbetGameEngine.SubRendering;
 using System;
 using System.Collections.Generic;
 
@@ -84,6 +84,50 @@ namespace RabbetGameEngine.Models
                 genAndBindIndices(); //for indices
             }
             storeVertexDataInAttributeList();
+        }
+        /*Unbinds this model so the renderer can render different things.*/
+        public virtual void unBind()
+        {
+            /* GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+             GL.BindTexture(TextureTarget.Texture2D, 0);
+             GL.UseProgram(0);
+             GL.BindVertexArray(0);*/
+        }
+
+        /*Binds the indicie buffer to the VAO*/
+        protected virtual void genAndBindIndices()
+        {
+            if (indices != null)
+            {
+                indicesBufferObject = GL.GenBuffer();
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBufferObject);
+                GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+            }
+        }
+
+        protected virtual void storeVertexDataInAttributeList()
+        {
+            int vbo = GL.GenBuffer();
+            VBOS.Add(vbo);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * Vertex.vertexByteSize, vertices, BufferUsageHint.StaticDraw);
+            /*Stride: the size in bytes between the start of one vertex to the start of another.
+              Offset: the size in byts between the start of the vertex to the first bit of information for this specific attribute.*/
+            GL.EnableVertexAttribArray(0);
+            GL.VertexAttribPointer(0, Vertex.positionLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.positionOffset);
+
+            GL.EnableVertexAttribArray(1);
+            GL.VertexAttribPointer(1, Vertex.colorLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.colorOffset);
+
+            GL.EnableVertexAttribArray(2);
+            GL.VertexAttribPointer(2, Vertex.uvLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.uvOffset);
+        }
+
+        /*Used for binding the vertex buffer object in the array at the given index, any vbo's get unbound in unbind()*/
+        public virtual void bindVertexBuffer(int index = 0)
+        {
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VBOS[index]);
         }
 
         /*Binds the models texture and shader, if its the first time binding, will gen buffers. Can be overwritten and used for more*/
@@ -229,67 +273,7 @@ namespace RabbetGameEngine.Models
 
         #endregion drawMethods
 
-        /*Unbinds this model so the renderer can render different things.*/
-        public virtual void unBind()
-        {
-           /* GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-            GL.UseProgram(0);
-            GL.BindVertexArray(0);*/
-        }
-
-        /*Binds the indicie buffer to the VAO*/
-        protected virtual void genAndBindIndices()
-        {
-            if (indices != null)
-            {
-                indicesBufferObject = GL.GenBuffer();
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBufferObject);
-                GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
-            }
-        }
-
-        /*Binds the provided data to the VAO using the provided information*/
-        [Obsolete("This method is depricated as now the system works with Vertex objects instead of float arrays. Use storeVertexDataInAttributeList() instead.")]
-        protected virtual void storeDataInAttributeList(int attributeNumber, int coordinateCount, float[] data)
-        {
-            int vbo = GL.GenBuffer();
-            VBOS.Add(vbo);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-            GL.BufferData(BufferTarget.ArrayBuffer, data.Length * sizeof(float), data, BufferUsageHint.StaticDraw);
-            /*Stride: the size in bytes between the start of one vertex to the start of another.
-              Offset: the size in byts between the start of the vertex to the first bit of information for this specific attribute.*/
-            GL.EnableVertexAttribArray(attributeNumber);
-            GL.VertexAttribPointer(attributeNumber, coordinateCount, VertexAttribPointerType.Float, false, 0, 0);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-        }
-
-        protected virtual void storeVertexDataInAttributeList()
-        {
-            int vbo = GL.GenBuffer();
-            VBOS.Add(vbo);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * Vertex.vertexByteSize, vertices, BufferUsageHint.StaticDraw);
-            /*Stride: the size in bytes between the start of one vertex to the start of another.
-              Offset: the size in byts between the start of the vertex to the first bit of information for this specific attribute.*/
-            GL.EnableVertexAttribArray(0);
-            GL.VertexAttribPointer(0, Vertex.positionLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.positionOffset);
-
-            GL.EnableVertexAttribArray(1);
-            GL.VertexAttribPointer(1, Vertex.colorLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.colorOffset);
-
-            GL.EnableVertexAttribArray(2);
-            GL.VertexAttribPointer(2, Vertex.uvLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.uvOffset);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-        }
-
-        /*Used for binding the vertex buffer object in the array at the given index, any vbo's get unbound in unbind()*/
-        public virtual void bindVertexBuffer(int index = 0)
-        {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VBOS[index]);
-        }
-
+        
         public virtual Shader getShader()
         {
             return shader;

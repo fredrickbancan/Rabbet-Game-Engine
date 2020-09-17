@@ -5,7 +5,7 @@
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 colour;
 layout(location = 2) in vec2 texCoord; //other data such as color and uv can also be provided for each instance rendered
-layout(location = 4) in mat4 modelMatrix; //( index in array ) model matrix for this instance. Chosen by using GL.vertexAttribDivisor(4,1);, meaning each instance drawn, layout location 4 will be itterated by 1 stride (16 floats in the case of a mat4)
+layout(location = 3) in mat4 modelMatrix; //( index in array ) model matrix for this instance. Chosen by using GL.vertexAttribDivisor(3,1);, meaning each instance drawn, layout location 3 will be itterated by 1 stride (16 floats in the case of a mat4)
 
 uniform float fogDensity = 0.0075;
 const float fogGradient = 2.5;

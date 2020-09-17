@@ -19,7 +19,7 @@ namespace RabbetGameEngine
 
     public class EntityLiving : Entity
     {
-        public static readonly float interactInterval = 1.0F;
+        public static readonly float interactIntervalSeconds = 1.0F;
         protected EntityVehicle currentVehicle;
         protected Vector3 frontVector;//vector pointing to the direction the entity is facing
         protected Vector3 upVector;
@@ -39,14 +39,14 @@ namespace RabbetGameEngine
         {
             frontVector = new Vector3(0.0F, 0.0F, -1.0F);
             upVector = new Vector3(0.0F, 1.0F, 0.0F);
-            interactTimer = new TickTimer(interactInterval);
+            interactTimer = new TickTimer(interactIntervalSeconds);
         }
 
         public EntityLiving(Vector3 pos) : base(pos)
         {
             frontVector = new Vector3(0.0F, 0.0F, -1.0F);
             upVector = new Vector3(0.0F, 1.0F, 0.0F);
-            interactTimer = new TickTimer(interactInterval);
+            interactTimer = new TickTimer(interactIntervalSeconds);
         }
 
         public override void preTick()

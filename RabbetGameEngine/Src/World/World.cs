@@ -6,6 +6,7 @@ using RabbetGameEngine.SubRendering;
 using RabbetGameEngine.VFX;
 using System.Collections.Generic;
 using System.Linq;
+
 namespace RabbetGameEngine
 {
     /*This class will be the abstraction of any environment constructed for the player and entities to exist in.*/
@@ -25,7 +26,7 @@ namespace RabbetGameEngine
         private string groundTextureName = "sand.png"; 
         private string terrainShaderName = "ColorTextureFog3D.shader";
 
-        private ModelDrawableInstanced test = new ModelDrawableInstanced(CubePrefab.copyModelDrawable(), ModelDrawType.trangles);
+        ModelDrawableInstanced test;
 
         public World()
         {
@@ -33,9 +34,10 @@ namespace RabbetGameEngine
             skyColor = CustomColor.skyBlue.toNormalVec3();
             buildSkyBox();
             generateWorld();
-            for(int i = 0; i < 2000; i++)
+            test = new ModelDrawableInstanced(CubePrefab.copyModelDrawable(), ModelDrawType.trangles);
+            for(int i = 0; i < 3; i++)
             {
-                test.addRenderAt(Matrix4.CreateTranslation(0,i + 2,0));
+                test.addRenderAt(Matrix4.CreateTranslation(0,i + 2, 0));
             }
         }
 
@@ -66,7 +68,7 @@ namespace RabbetGameEngine
                     ent.Value.getEntityModel().draw(viewMatrix, projectionMatrix, fogColor);
                 }
             }
-            test.draw(viewMatrix, projectionMatrix, fogColor);//temp
+            test.draw(viewMatrix, projectionMatrix, fogColor);
         }
 
         /*TODO: INNEFICIENT, loops through each VFX and draws their model with a seperate call*/
@@ -343,6 +345,11 @@ namespace RabbetGameEngine
         public int getVFXCount()
         {
             return vfxList.Count;
+        }
+
+        public void onLeavingWorld()
+        {
+            test.delete();
         }
     }
 }
