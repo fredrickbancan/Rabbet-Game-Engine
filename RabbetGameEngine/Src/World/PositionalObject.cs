@@ -1,5 +1,5 @@
 ﻿using OpenTK;
-
+using RabbetGameEngine.Physics;
 namespace RabbetGameEngine
 {
     /*Abstraction base class of objects with any type of position, rotation, velocity, interpolation.*/

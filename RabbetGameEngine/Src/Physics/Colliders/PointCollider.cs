@@ -1,6 +1,6 @@
 ﻿using OpenTK;
 
-namespace RabbetGameEngine
+namespace RabbetGameEngine.Physics
 {
     public struct PointCollider : ICollider
     {

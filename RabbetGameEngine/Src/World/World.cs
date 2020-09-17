@@ -1,11 +1,11 @@
-﻿using RabbetGameEngine.Debugging;
+﻿using OpenTK;
+using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Models;
+using RabbetGameEngine.Physics;
 using RabbetGameEngine.SubRendering;
 using RabbetGameEngine.VFX;
-using OpenTK;
 using System.Collections.Generic;
 using System.Linq;
-
 namespace RabbetGameEngine
 {
     /*This class will be the abstraction of any environment constructed for the player and entities to exist in.*/
@@ -21,8 +21,8 @@ namespace RabbetGameEngine
         public Dictionary<int, ICollider> entityColliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity
         public List<ICollider> worldColliders = new List<ICollider>();//list of colliders with no parent, ie, walls, ground planes.
         public List<VFXBase> vfxList = new List<VFXBase>();
-        private string wallTextureName = "leafyrocks.png"; 
-        private string groundTextureName = "jungleground.png"; 
+        private string wallTextureName = "plasterwall.png"; 
+        private string groundTextureName = "sand.png"; 
         private string terrainShaderName = "ColorTextureFog3D.shader";
 
         private ModelDrawableInstanced test = new ModelDrawableInstanced(CubePrefab.copyModelDrawable(), ModelDrawType.trangles);
@@ -193,9 +193,6 @@ namespace RabbetGameEngine
 
         private void tickEntities()
         {
-            GameInstance.get.thePlayer.preTick();
-            GameInstance.get.thePlayer.onTick();//player must be ticked before entities to properly handle input
-
             for (int i = 0; i < entities.Count; i++)
             {
                 Entity entAt = entities.ElementAt(i).Value;
@@ -214,7 +211,7 @@ namespace RabbetGameEngine
                     entities.Remove(entities.ElementAt(i).Key);
                     i--;
                 }
-                else if(!entAt.getIsPlayer())
+                else
                 {
                     entAt.preTick();
                     entAt.onTick();
@@ -222,7 +219,6 @@ namespace RabbetGameEngine
                 }
             }
 
-            GameInstance.get.thePlayer.postTick();
         }
 
         private void updateAllEntityColliders()

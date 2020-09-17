@@ -1,28 +1,31 @@
-﻿using RabbetGameEngine.Models;
+﻿using OpenTK;
+using RabbetGameEngine.Models;
+using RabbetGameEngine.Physics;
 using RabbetGameEngine.VFX;
-using OpenTK;
 using System;
-
 namespace RabbetGameEngine
 {
     public class EntityTank : EntityVehicle
     {
         public static readonly float projectileHopupAngle = 7.2F;
+        public static readonly float roundsPerSecond = 3F;//fire rate of tank
         private float bodyYaw;
         private float barrelPitch;
         public static readonly float barrelLength = 6.75F;
-        Random rand = new Random();
+        private TickTimer fireTimer;
         public EntityTank() : base()
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
             this.setCollider(new AABBCollider(new Vector3(-2.5F, -1.25F, -2.5F), new Vector3(2.5F, 1.25F, 2.5F), this), 2);
+            fireTimer = new TickTimer(1F / roundsPerSecond);
         }
         public EntityTank(Vector3 initialPos) : base(initialPos)
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
             this.setCollider(new AABBCollider(new Vector3(-2.5F, -1.25F, -2.5F), new Vector3(2.5F, 1.25F, 2.5F), this), 2);
+            fireTimer = new TickTimer(1F / roundsPerSecond);
         }
 
         public override void onTick()
@@ -34,6 +37,7 @@ namespace RabbetGameEngine
                     bodyYaw = mountingEntity.getYaw() + 90;
                     barrelPitch = mountingEntity.getHeadPitch() + projectileHopupAngle;
                 }
+                fireTimer.doFunctionAtIntervalOnTick(onDriverAttack, mountingEntity.doingAction(Action.attack));
             }
             base.onTick();
         }
@@ -84,7 +88,7 @@ namespace RabbetGameEngine
         }
 
         /*called when player left clicks while driving this vehicle*/
-        public override void onDriverAttack()
+        public void onDriverAttack()
         {
             Vector3 muzzleLocation = getMuzzleLocation();
             currentPlanet.spawnEntityInWorld(new EntityTankProjectile(muzzleLocation, getMuzzleFrontVector(), barrelPitch, bodyYaw));

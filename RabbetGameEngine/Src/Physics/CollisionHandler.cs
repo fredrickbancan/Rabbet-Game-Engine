@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RabbetGameEngine
+namespace RabbetGameEngine.Physics
 {
     /*An abstraction class which manipulates multiple entity velocities based on their colliders and detects collisions.
       All collisions will be FLAT using this system. Meaning all collisions will be axis aligned. Any collision on any axis should

@@ -1,5 +1,5 @@
 ﻿using OpenTK;
-namespace RabbetGameEngine
+namespace RabbetGameEngine.Physics
 {
     public struct PlaneCollider : ICollider
     {

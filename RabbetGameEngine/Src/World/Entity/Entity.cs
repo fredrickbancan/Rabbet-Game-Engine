@@ -1,6 +1,6 @@
-﻿using RabbetGameEngine.Models;
-using OpenTK;
-
+﻿using OpenTK;
+using RabbetGameEngine.Models;
+using RabbetGameEngine.Physics;
 namespace RabbetGameEngine
 {
     /*Base class for every entity in the game, Anything with movement, vectors,

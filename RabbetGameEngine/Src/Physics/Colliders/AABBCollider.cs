@@ -1,5 +1,5 @@
 ﻿using OpenTK;
-namespace RabbetGameEngine
+namespace RabbetGameEngine.Physics
 {
     /*A struct for doing axis aligned bounding box collisions*/
     public struct AABBCollider : ICollider

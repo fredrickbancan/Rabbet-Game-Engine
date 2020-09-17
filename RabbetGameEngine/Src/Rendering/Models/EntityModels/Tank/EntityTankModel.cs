@@ -44,14 +44,6 @@ namespace RabbetGameEngine.Models
             
         }
 
-        /*Called every frame by base before rendering*/
-        public override void onFrame()
-        {
-            if (parent.getIsplayerDriving()) ;
-           
-            base.onFrame();
-        }
-
         /*Called every frame by base*/
         public override void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColor)
         {

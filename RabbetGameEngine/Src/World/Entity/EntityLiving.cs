@@ -19,7 +19,7 @@ namespace RabbetGameEngine
 
     public class EntityLiving : Entity
     {
-        
+        public static readonly float interactInterval = 1.0F;
         protected EntityVehicle currentVehicle;
         protected Vector3 frontVector;//vector pointing to the direction the entity is facing
         protected Vector3 upVector;
@@ -27,24 +27,33 @@ namespace RabbetGameEngine
         protected float headPitch; // Pitch of the living entity head
         public static readonly float defaultWalkSpeed = 0.1572F;
         protected float walkSpeed = defaultWalkSpeed;
-        
+        public static readonly int actionsCount = Enum.GetNames(typeof(Action)).Length;
+        protected TickTimer interactTimer;
+
 
         /*array of actions being requested by player user. When an action is requested, the bool at the index of the action (enum) value
           is set to true. To detect if an action is requested, check the index. e.g: if(actions[Action.attack])*/
-        protected bool[] actions = new bool[GameInstance.actionsCount];
+        protected bool[] actions = new bool[EntityLiving.actionsCount];
 
         public EntityLiving() : base()
         {
             frontVector = new Vector3(0.0F, 0.0F, -1.0F);
             upVector = new Vector3(0.0F, 1.0F, 0.0F);
+            interactTimer = new TickTimer(interactInterval);
         }
 
         public EntityLiving(Vector3 pos) : base(pos)
         {
             frontVector = new Vector3(0.0F, 0.0F, -1.0F);
             upVector = new Vector3(0.0F, 1.0F, 0.0F);
+            interactTimer = new TickTimer(interactInterval);
         }
 
+        public override void preTick()
+        {
+            base.preTick();
+            resetActions();
+        }
         public override void onTick()
         {
             base.onTick();//do first
@@ -62,13 +71,10 @@ namespace RabbetGameEngine
             alignVectors();
 
             moveByMovementVector();
+
+            interactTimer.doFunctionAtIntervalOnTick(interact, doingAction(Action.interact));
         }
 
-        public override void postTick()
-        {
-            resetActions();//this must be done in post tick so other entities (namely vehicles) can read this entity's movement when they tick
-            base.postTick();
-        }
         /*When called, aligns vectors according to the entities state and rotations.*/
         protected virtual void alignVectors()
         {
@@ -232,7 +238,7 @@ namespace RabbetGameEngine
         }
 
         /*returns true if entity is doing the specified action*/
-        public bool doingAction(Action act)
+        public virtual bool doingAction(Action act)
         {
             return actions[(int)act];
         }
@@ -244,9 +250,9 @@ namespace RabbetGameEngine
         }
 
         /*should be called every update at the end of onTick() to reset the entity actions.*/
-        public void resetActions()
+        public virtual void resetActions()
         {
-            for (int i = 0; i < GameInstance.actionsCount; i++)
+            for (int i = 0; i < EntityLiving.actionsCount; i++)
             {
                 actions[i] = false;
             }

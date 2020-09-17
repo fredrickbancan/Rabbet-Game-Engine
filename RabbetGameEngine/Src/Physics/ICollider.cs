@@ -1,4 +1,4 @@
-﻿namespace RabbetGameEngine
+﻿namespace RabbetGameEngine.Physics
 {
     /*An abstract interface for handling many different colliders.*/
     public interface ICollider

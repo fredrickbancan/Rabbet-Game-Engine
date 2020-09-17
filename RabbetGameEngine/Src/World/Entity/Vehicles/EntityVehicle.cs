@@ -39,10 +39,7 @@ namespace RabbetGameEngine
             if (mountingEntity != null)
             {
                 playerDriving = mountingEntity.getIsPlayer();
-                if (mountingEntity.doingAction(Action.attack))
-                {
-                    onDriverAttack();
-                }
+
                 alignVectors();
 
                 //setting movementVector.X to -1, 0 or 1 based on driver strafing actions
@@ -113,12 +110,6 @@ namespace RabbetGameEngine
             {
                 playerDriving = false;
             }
-        }
-
-        /*Called when the driving entity attacks (for tank)*/
-        public virtual void onDriverAttack()
-        {
-
         }
 
         public virtual bool getIsplayerDriving()

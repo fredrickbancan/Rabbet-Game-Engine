@@ -13,7 +13,7 @@ namespace RabbetGameEngine
     /*This class is the main game class. It contains all the execution code for rendering, logic loops and loading.*/
     public class GameInstance : GameWindow
     {
-        public static readonly int actionsCount = Enum.GetNames(typeof(Action)).Length;
+        
         public static int temp = 0;
         private static GameInstance instance;
         private static Random privateRand;
@@ -26,7 +26,6 @@ namespace RabbetGameEngine
         private static float dpiY;
         public EntityPlayer thePlayer;
         public World currentPlanet;
-       
 
         public GameInstance(int screenWidth, int screenHeight, int initialWindowWidth, int initialWindowHeight, string title) : base(initialWindowWidth, initialWindowHeight, GraphicsMode.Default, title)
         {
@@ -73,11 +72,12 @@ namespace RabbetGameEngine
         {
             base.OnRenderFrame(args);
             
+            Input.updateInput();
             for (int i = 0; i < TicksAndFps.getTicksElapsed(); i++)//for each tick that has elapsed since the start of last update, run the games logic enough times to catch up. 
             {
                 onTick();
             }
-            Input.updateInput();
+            PlayerController.resetActions();
             TicksAndFps.update();
             thePlayer.onCameraUpdate();//do this before calling on tick to prepare camera variables
             currentPlanet.onFrame();//should be called before rendering world since this may prepare certain elements for a frame perfect render

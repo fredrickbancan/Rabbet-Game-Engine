@@ -2,11 +2,11 @@
 
 namespace RabbetGameEngine
 {
-
     /*This class is responsable for detecting input which changes the players state.
       Such as movement, inventory use, attacking etc*/
     public static class PlayerController
     {
+        private static bool[] playerActions = new bool[EntityLiving.actionsCount];
         private static KeyboardState currentKeyboardState;
         private static MouseState currentMouseState;
         /*Called every tick from Input.cs if a key is being pressed. for detecting player input*/
@@ -20,6 +20,7 @@ namespace RabbetGameEngine
                 checkAndAddAction(Key.A, Action.strafeLeft);
                 checkAndAddAction(Key.D, Action.strafeRight);
                 checkAndAddAction(Key.Space, Action.jump);
+                checkAndAddAction(Key.F, Action.interact);
             }
         }
 
@@ -45,23 +46,33 @@ namespace RabbetGameEngine
             {
                 GameInstance.get.thePlayer.toggleFlying();
             }
-
-            if (Input.singleKeyPress(Key.F))
-            {
-                GameInstance.get.thePlayer.interact();
-            }
         }
 
         /*if key is down, adds action to player.*/
         private static void checkAndAddAction(Key key, Action act)
         {
             if(currentKeyboardState.IsKeyDown(key))
-            GameInstance.get.thePlayer.addAction(act);
+                playerActions[(int)act] = true;
         }
         private static void checkAndAddAction(MouseButton button, Action act)//for mouse buttons
         {
             if (currentMouseState.IsButtonDown(button))
-                GameInstance.get.thePlayer.addAction(act);
+                playerActions[(int)act] = true;
+        }
+
+        /*can be called to determine if the player (user) is performing a certain action*/
+        public static bool getDoingAction(Action act)
+        {
+           return playerActions[(int)act];
+        }
+
+        /*should be called at the end of each tick to reset inputs*/
+        public static void resetActions()
+        {
+            for (int i = 0; i < EntityLiving.actionsCount; i++)
+            {
+                playerActions[i] = false;
+            }
         }
     }
 }

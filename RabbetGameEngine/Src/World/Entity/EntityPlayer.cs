@@ -1,15 +1,15 @@
 ﻿using OpenTK;
-using System;
+using RabbetGameEngine.Physics;
 namespace RabbetGameEngine
 {
     /*Class for the player. Contains the players name, inventory etc.*/
     public class EntityPlayer : EntityLiving
     {
+        
         private string playerName;
         private Camera camera;
         public bool paused = false;
         public bool debugScreenOn = false;
-
 
         public static readonly Vector3 eyeOffset = new Vector3(0.0F, 0.62F, 0.0F);
         public EntityPlayer(string name) : base()
@@ -31,7 +31,7 @@ namespace RabbetGameEngine
         {
             if (!paused)
             {
-                base.onTick();//do first
+                base.onTick();
             }
             camera.onTick();
         }
@@ -88,6 +88,9 @@ namespace RabbetGameEngine
             return this.camera;
         }
 
-        
+        public override bool doingAction(Action act)
+        {
+            return PlayerController.getDoingAction(act);
+        }
     }
 }

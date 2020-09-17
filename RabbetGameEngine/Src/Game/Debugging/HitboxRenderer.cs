@@ -1,10 +1,10 @@
-﻿using RabbetGameEngine.Models;
-using RabbetGameEngine.SubRendering;
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using RabbetGameEngine.Models;
+using RabbetGameEngine.Physics;
+using RabbetGameEngine.SubRendering;
 using System;
 using System.Collections.Generic;
-
 namespace RabbetGameEngine.Debugging
 {
     /*This class handles the rendering of hitboxes for debugging purposes.*/

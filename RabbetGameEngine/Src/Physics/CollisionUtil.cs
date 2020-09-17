@@ -1,6 +1,6 @@
 ﻿using OpenTK;
 
-namespace RabbetGameEngine
+namespace RabbetGameEngine.Physics
 {
     public enum ColliderType//used for detecting which type a collider is
     {
