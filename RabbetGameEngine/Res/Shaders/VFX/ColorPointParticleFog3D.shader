@@ -55,7 +55,7 @@ in float visibility;
 in vec4 vcolour;
 
 uniform int renderPass = 0;
-uniform vec3 fogColour;
+uniform vec3 fogColor;
 uniform bool aoc = false;
 uniform vec2 viewPortSize;//vector of viewport dimensions
 
@@ -103,5 +103,5 @@ void main()
     }
 
 	//add fog effect to frag
-	color = mix(vec4(fogColour, fragmentAlpha), vec4(colorModified, fragmentAlpha), visibility);
+	color = mix(vec4(fogColor, fragmentAlpha), vec4(colorModified, fragmentAlpha), visibility);
 }

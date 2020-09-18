@@ -26,7 +26,7 @@ namespace RabbetGameEngine
         private string groundTextureName = "sand.png"; 
         private string terrainShaderName = "ColorTextureFog3D.shader";
 
-        ModelDrawable test;
+        ModelDrawableInstanced test;
 
         public World()
         {
@@ -36,7 +36,11 @@ namespace RabbetGameEngine
             generateWorld();
             Texture tex;
             TextureUtil.tryGetTexture("transparent.png", out tex);
-            test = (ModelDrawable)CubePrefab.copyModelDrawable().setTexture(tex).scaleVertices(new Vector3(3,3,3));
+            test = new ModelDrawableInstanced(CubePrefab.copyModelDrawable(), ModelDrawType.trangles).setTexture(tex);
+            for(int i = 0; i < 5; i++)
+            { 
+                test.addRenderAt(Matrix4.CreateScale(3) * Matrix4.CreateTranslation(0, 2, i * 3 + 3));
+            }
         }
 
         public void setSkyColor(Vector3 skyColor)
@@ -66,10 +70,7 @@ namespace RabbetGameEngine
                     ent.Value.getEntityModel().draw(viewMatrix, projectionMatrix, fogColor);
                 }
             }
-            for (int i = 0; i < 10; i++)
-            {
-                test.draw(viewMatrix, projectionMatrix, Matrix4.CreateTranslation(0,2,i*3+2), fogColor);
-            }
+            test.draw(viewMatrix, projectionMatrix, fogColor);
         }
 
         /*TODO: INNEFICIENT, loops through each VFX and draws their model with a seperate call*/
@@ -182,6 +183,11 @@ namespace RabbetGameEngine
             {
                 updateAllEntityColliders();//For correcting the drawing of hitboxes after a collision
                 HitboxRenderer.addAllHitboxesToBeRendered(worldColliders, entityColliders);
+            }
+            test.prepare();
+            for (int i = 0; i < GameInstance.get.thePlayer.posY; i++)
+            {
+                test.addRenderAt(Matrix4.CreateScale(3) * Matrix4.CreateTranslation(0, 2, i * 3 + 3));
             }
         }
 

@@ -14,7 +14,7 @@ namespace RabbetGameEngine.Debugging
 
 
         public static readonly int maxAABBRenderCount = 512;
-        private static ModelDrawableDynamic aabbDynamicModel;
+        private static ModelDrawableDynamic aabbDynamicModel;//lines dont seem to perform well with instancing.
         private static Model aabbModelPrefab;
         private static List<Model> aabbToBeRendered = new List<Model>();
 

@@ -65,6 +65,7 @@
   <ItemGroup>
     <None Include="Res\Shaders\Color3D.shader" />
     <None Include="Res\Shaders\ColorFog3D.shader" />
+    <None Include="Res\Shaders\ColorInstanced3D.shader" />
     <None Include="Res\Shaders\ColorTextureFogInstanced3D.shader" />
     <None Include="Res\Shaders\Offscreen.shader" />
     <None Include="Res\Shaders\VFX\ColorPointParticleFog3D.shader" />

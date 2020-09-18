@@ -164,13 +164,13 @@ namespace RabbetGameEngine.Models
             unBind();
             Renderer.totalDraws++;
         }
-        public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColour)
+        public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColor)
         {
             bind();
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
             shader.setUniformMat4F("modelMatrix", Matrix4.Identity);
-            shader.setUniformVec3F("fogColour", fogColour);
+            shader.setUniformVec3F("fogColor", fogColor);
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
             Renderer.totalDraws++;
@@ -181,7 +181,7 @@ namespace RabbetGameEngine.Models
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
             shader.setUniformMat4F("modelMatrix", modelMatrix);
-            shader.setUniformVec3F("fogColour", fogColor);
+            shader.setUniformVec3F("fogColor", fogColor);
 
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             unBind();
@@ -262,7 +262,7 @@ namespace RabbetGameEngine.Models
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
             shader.setUniformMat4F("modelMatrix", modelMatrix);
-            shader.setUniformVec3F("fogColour", fogColor);
+            shader.setUniformVec3F("fogColor", fogColor);
             shader.setUniformVec2F("viewPortSize", Renderer.useOffScreenBuffer ? new Vector2(OffScreen.getWidth, OffScreen.getHeight) : new Vector2(GameInstance.get.Width, GameInstance.get.Height));
             shader.setUniform1F("pointRadius", pointRadius);
             shader.setUniform1I("aoc", ambientOcclusion ? 1 : 0);

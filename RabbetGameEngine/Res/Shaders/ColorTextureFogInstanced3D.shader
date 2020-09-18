@@ -5,11 +5,16 @@
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 colour;
 layout(location = 2) in vec2 texCoord; //other data such as color and uv can also be provided for each instance rendered
-layout(location = 3) in mat4 modelMatrix; //( index in array ) model matrix for this instance. Chosen by using GL.vertexAttribDivisor(3,1);, meaning each instance drawn, layout location 3 will be itterated by 1 stride (16 floats in the case of a mat4)
+layout(location = 3) in vec4 modelMatrixRow0; 
+layout(location = 4) in vec4 modelMatrixRow1;
+layout(location = 5) in vec4 modelMatrixRow2;
+layout(location = 6) in vec4 modelMatrixRow3;
+
 
 uniform float fogDensity = 0.0075;
-const float fogGradient = 2.5;
+uniform float fogGradient = 2.5;
 
+out vec3 fogColorV;
 out vec2 vTexCoord;
 out vec4 vcolour;
 out float visibility;//for fog
@@ -22,6 +27,11 @@ uniform mat4 viewMatrix;
 
 void main()
 {
+	mat4 modelMatrix = mat4(1.0F);
+	modelMatrix[0] = modelMatrixRow0;
+	modelMatrix[1] = modelMatrixRow1;
+	modelMatrix[2] = modelMatrixRow2;
+	modelMatrix[3] = modelMatrixRow3;
 	vec4 worldPosition = modelMatrix * position;
 
 	vec4 positionRelativeToCam = viewMatrix * worldPosition;
@@ -43,11 +53,10 @@ void main()
 in vec2 vTexCoord;
 in vec4 vcolour;
 in float visibility;
-out vec4 color;
 
 uniform sampler2D uTexture;
-
-uniform vec3 fogColour;
+uniform vec3 fogColor;
+out vec4 color;
 
 float rand3D(in vec3 xyz) 
 {
@@ -66,5 +75,5 @@ void main()
 		fragmentAlpha = float(randomFloat < textureColor.a);//do stochastic transparency, noise can be reduced with sampling. 
 	}
 
-	color = mix(vec4(fogColour, fragmentAlpha), vec4(textureColor.rgb, fragmentAlpha), visibility);
+	color = mix(vec4(fogColor, fragmentAlpha), vec4(textureColor.rgb, fragmentAlpha), visibility);
 }

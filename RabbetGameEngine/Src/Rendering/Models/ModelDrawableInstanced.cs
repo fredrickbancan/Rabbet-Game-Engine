@@ -21,8 +21,10 @@ namespace RabbetGameEngine.Models
           };*/
         protected int maxInstances;
         protected bool hasInitialized = false;
+        protected bool needsToSubmit = true;
         protected int vertexAOID;
         protected int vertexBOID;
+        protected int matricesBOID;
         protected int indicesBOID;
         protected Texture texture;
         protected Shader shader;
@@ -32,7 +34,7 @@ namespace RabbetGameEngine.Models
         protected int matricesItterator = 0;
         protected ModelDrawType drawType;
 
-         //TODO: set shader based on draw type (ModelDrawableInstanced)
+         
         /*the provided model instance will be re-drawn at each transform*/
         public ModelDrawableInstanced(Vertex[] vertices, uint[] indices, ModelDrawType drawType, int maxInstances = 1000)
         {
@@ -43,8 +45,19 @@ namespace RabbetGameEngine.Models
             this.drawType = drawType;
             this.maxInstances = maxInstances;
             matrices = new Matrix4[maxInstances];
-            ShaderUtil.tryGetShader("ColorTextureFogInstanced3D.shader", out shader);
-            TextureUtil.tryGetTexture("sand.png", out texture);
+
+            TextureUtil.tryGetTexture("debug", out texture);
+
+            switch(drawType)//TODO: set shader based on draw type 
+            {
+                case ModelDrawType.lines:
+                    ShaderUtil.tryGetShader("ColorInstanced3D.shader", out shader);
+                    break;
+
+                default:
+                    ShaderUtil.tryGetShader("ColorTextureFogInstanced3D.shader", out shader);
+                    break;
+            }
         }
 
         /*the provided model instance will be re-drawn at each transform*/
@@ -57,8 +70,19 @@ namespace RabbetGameEngine.Models
             this.drawType = drawType;
             this.maxInstances = maxInstances;
             matrices = new Matrix4[maxInstances];
-            ShaderUtil.tryGetShader("ColorTextureFogInstanced3D.shader", out shader);
-            TextureUtil.tryGetTexture("sand.png", out texture);
+
+            TextureUtil.tryGetTexture("debug", out texture);
+
+            switch (drawType)//TODO: set shader based on draw type 
+            {
+                case ModelDrawType.lines:
+                    ShaderUtil.tryGetShader("ColorInstanced3D.shader", out shader);
+                    break;
+
+                default:
+                    ShaderUtil.tryGetShader("ColorTextureFogInstanced3D.shader", out shader);
+                    break;
+            }
         }
 
         protected virtual void init()
@@ -80,7 +104,28 @@ namespace RabbetGameEngine.Models
 
             GL.EnableVertexAttribArray(2);
             GL.VertexAttribPointer(2, Vertex.uvLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.uvOffset);
-            
+
+            matricesBOID = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, matricesBOID);
+            GL.BufferData(BufferTarget.ArrayBuffer, matrices.Length * 4 * 16, matrices, BufferUsageHint.DynamicRead);
+          
+            GL.EnableVertexAttribArray(3);
+            GL.VertexAttribPointer(3, 4, VertexAttribPointerType.Float, false,  4 * 16, 0);
+            GL.VertexAttribDivisor(3, 1);
+
+            GL.EnableVertexAttribArray(4);
+            GL.VertexAttribPointer(4, 4, VertexAttribPointerType.Float, false, 4 * 16, 16);
+            GL.VertexAttribDivisor(4, 1);
+
+            GL.EnableVertexAttribArray(5);
+            GL.VertexAttribPointer(5, 4, VertexAttribPointerType.Float, false, 4 * 16, 32);
+            GL.VertexAttribDivisor(5, 1);
+
+            GL.EnableVertexAttribArray(6);
+            GL.VertexAttribPointer(6, 4, VertexAttribPointerType.Float, false, 4 * 16, 48);
+            GL.VertexAttribDivisor(6, 1);
+
+
             indicesBOID = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBOID);
             GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
@@ -110,6 +155,18 @@ namespace RabbetGameEngine.Models
 
         public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColor)
         {
+            if(matricesItterator < 1)
+            {
+                return;
+            }
+
+            if(needsToSubmit)
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, matricesBOID);
+                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, matrices.Length * 4 * 16, matrices);
+                needsToSubmit = false;
+            }
+
             bind();
             texture.use();
             shader.use();
@@ -131,6 +188,44 @@ namespace RabbetGameEngine.Models
                     GL.DrawElementsInstanced(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, System.IntPtr.Zero, matricesItterator);
                     break;
             }
+            
+        }
+
+        public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix)
+        {
+            if (matricesItterator < 1)
+            {
+                return;
+            }
+
+            if (needsToSubmit)
+            {
+                GL.BindBuffer(BufferTarget.ArrayBuffer, matricesBOID);
+                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, matrices.Length * 4 * 16, matrices);
+                needsToSubmit = false;
+            }
+
+            bind();
+            texture.use();
+            shader.use();
+            shader.setUniformMat4F("viewMatrix", viewMatrix);
+            shader.setUniformMat4F("projectionMatrix", projectionMatrix);
+
+            switch (drawType)
+            {
+                case ModelDrawType.points:
+                    GL.DrawArraysInstanced(PrimitiveType.Points, 0, vertices.Length, matricesItterator);
+                    break;
+
+                case ModelDrawType.lines:
+                    GL.DrawElementsInstanced(PrimitiveType.Lines, indices.Length, DrawElementsType.UnsignedInt, System.IntPtr.Zero, matricesItterator);
+                    break;
+
+                default:
+                    GL.DrawElementsInstanced(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, System.IntPtr.Zero, matricesItterator);
+                    break;
+            }
+
         }
 
         /*Can be called to prepare for instance requests from other parts of the game engine.*/
@@ -138,18 +233,28 @@ namespace RabbetGameEngine.Models
         {
             //this must be called so any matrices that arent requested wont exist in the array for the next draw call. Prevents rendering ghost models.
             clearTransforms();
+            needsToSubmit = true;
         }
 
         protected virtual void clearTransforms()
         {
-            Array.Clear(matrices, 0, matricesItterator - 1);
-            matricesItterator = 0;
+            if (matricesItterator >= 1)
+            {
+                Array.Clear(matrices, 0, matricesItterator - 1);
+                matricesItterator = 0;
+            }
         }
 
+        public virtual ModelDrawableInstanced setTexture(Texture tex)
+        {
+            this.texture = tex;
+            return this;
+        }
         public virtual void delete()
         {
             GL.DeleteBuffer(indicesBOID);
             GL.DeleteBuffer(vertexBOID);
+            GL.DeleteBuffer(matricesBOID);
             GL.DeleteVertexArray(vertexAOID);
         }
         

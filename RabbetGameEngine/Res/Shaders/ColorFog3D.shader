@@ -9,7 +9,7 @@ layout(location = 2) in vec2 texCoord;
 out vec4 vcolour;
 
 uniform float fogDensity = 0.0075;
-const float fogGradient = 2.5;
+uniform float fogGradient = 2.5;
 out float visibility;//for fog
 
 //matrix for projection transformations.
@@ -43,7 +43,7 @@ in vec4 vcolour;
 out vec4 color;
 in float visibility;
 
-uniform vec3 fogColour;
+uniform vec3 fogColor;
 
 float rand3D(in vec3 xyz) 
 {
@@ -60,5 +60,5 @@ void main()
 		fragmentAlpha = float(randomFloat < vcolour.a);//do stochastic transparency, noise can be reduced with sampling. 
 	}
 
-	color = mix(vec4(fogColour, fragmentAlpha), vec4(vcolour.rgb, fragmentAlpha), visibility);
+	color = mix(vec4(fogColor, fragmentAlpha), vec4(vcolour.rgb, fragmentAlpha), visibility);
 }

@@ -7,7 +7,7 @@ layout(location = 1) in vec4 colour;
 layout(location = 2) in vec2 texCoord;
 
 uniform float fogDensity = 0.0075;
-const float fogGradient = 2.5;
+uniform float fogGradient = 2.5;
 
 out vec2 vTexCoord;
 out vec4 vcolour;
@@ -19,6 +19,7 @@ uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 //matrix for model transformations. All transformations in this matrix are relative to the model origin.
 uniform mat4 modelMatrix;
+
 void main()
 {
 	vec4 worldPosition = modelMatrix * position;
@@ -46,7 +47,7 @@ out vec4 color;
 
 uniform sampler2D uTexture;
 
-uniform vec3 fogColour;
+uniform vec3 fogColor;
 
 float rand3D(in vec3 xyz) 
 {
@@ -65,5 +66,5 @@ void main()
 		fragmentAlpha = float(randomFloat < textureColor.a);//do stochastic transparency, noise can be reduced with sampling. 
 	}
 
-	color = mix(vec4(fogColour, fragmentAlpha), vec4(textureColor.rgb, fragmentAlpha), visibility);
+	color = mix(vec4(fogColor, fragmentAlpha), vec4(textureColor.rgb, fragmentAlpha), visibility);
 }
