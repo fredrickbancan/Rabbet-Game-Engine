@@ -29,7 +29,7 @@ namespace RabbetGameEngine.Debugging
         {
             aabbDynamicModel = new ModelDrawableDynamic(linesShaderName, "none", LineBatcher.getIndicesForLineQuadCount(maxAABBRenderCount * 6), maxAABBRenderCount * 48 /*aabb models have 48 vertices*/);//initializing dynamic model for drawing aabb
 
-            aabbModelPrefab = CubePrefab.copyModel();
+            aabbModelPrefab = CubePrefab.copyModel().setColor(CustomColor.magenta);
         }
 
         /*called on tick. Adds all of the provided colliders to a list of hitboxes to be dynamically batched and drawn.*/

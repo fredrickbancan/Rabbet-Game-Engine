@@ -24,7 +24,6 @@ namespace RabbetGameEngine.Models
         protected int vertexAOID;
         protected int vertexBOID;
         protected int indicesBOID;
-        protected int matricesBOID;
         protected Texture texture;
         protected Shader shader;
         protected Vertex[] vertices;
@@ -66,11 +65,7 @@ namespace RabbetGameEngine.Models
         {
             vertexAOID = GL.GenVertexArray();
             GL.BindVertexArray(vertexAOID);
-
-            indicesBOID = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBOID);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
-
+            
             vertexBOID = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBOID);
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * Vertex.vertexByteSize, vertices, BufferUsageHint.StaticDraw);
@@ -85,18 +80,12 @@ namespace RabbetGameEngine.Models
 
             GL.EnableVertexAttribArray(2);
             GL.VertexAttribPointer(2, Vertex.uvLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.uvOffset);
-
-
-            //matrices
-            matricesBOID = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, matricesBOID);
-            GL.BufferData(BufferTarget.ArrayBuffer, maxInstances * sizeof(float) * 16, matrices, BufferUsageHint.StaticDraw);
-          
-            GL.EnableVertexAttribArray(3);
-            GL.VertexAttribPointer(3, 16, VertexAttribPointerType.Float, false, maxInstances * sizeof(float) * 16, 0);
-            GL.VertexAttribDivisor(3, 1);
-
             
+            indicesBOID = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBOID);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+
+
             hasInitialized = true;
         }
         protected virtual void bind()
@@ -108,9 +97,8 @@ namespace RabbetGameEngine.Models
             else
             {
                 GL.BindVertexArray(vertexAOID);
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBOID);
             }
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBOID);
-            // GL.BindBuffer(BufferTarget.ElementArrayBuffer, indicesBOID);
         }
 
         /*when called adds a transform to the list and when this model is drawn, an
@@ -128,7 +116,7 @@ namespace RabbetGameEngine.Models
             shader.setUniformMat4F("viewMatrix", viewMatrix);
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformVec3F("fogColor", fogColor);
-
+            
             switch (drawType)
             {
                 case ModelDrawType.points:
@@ -161,7 +149,6 @@ namespace RabbetGameEngine.Models
         public virtual void delete()
         {
             GL.DeleteBuffer(indicesBOID);
-            GL.DeleteBuffer(matricesBOID);
             GL.DeleteBuffer(vertexBOID);
             GL.DeleteVertexArray(vertexAOID);
         }

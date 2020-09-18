@@ -1,12 +1,12 @@
-﻿using RabbetGameEngine.Models;
-using OpenTK;
+﻿using OpenTK;
+using RabbetGameEngine.Models;
 
 namespace RabbetGameEngine.VFX
 {
     /*Base class for any VFX using point particles*/
     public class VFXPointParticles : VFXBase
     {
-        private static string defaultShaderName = @"VFX\PointParticleFog.shader";
+        private static string defaultShaderName = @"VFX\ColorPointParticleFog3D.shader";
         protected CustomColor pointColor;
         protected float randomPointPositionSpread;//the maximum distance between points when randomizing a point cloud (e.g, a puff of smoke)
         protected float pointRadius;

@@ -52,9 +52,10 @@ namespace RabbetGameEngine.Models
             indices = newind;
         }
 
-        public virtual void setTexture(Texture tex)
+        public virtual ModelDrawable setTexture(Texture tex)
         {
             this.texture = tex;
+            return this;
         }
 
         public virtual void setShader(Shader shad)

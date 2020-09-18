@@ -31,9 +31,23 @@ in vec2 vTexCoord;
 out vec4 color;
 
 uniform sampler2D uTexture;
+
+float rand3D(in vec3 xyz)
+{
+	return fract(tan(distance(xyz.xy * 1.61803398874989484820459, xyz.xy) * xyz.z) * xyz.y);
+}
+
 void main()
 {
+	float fragmentAlpha = 1.0F;
+
 	vec4 textureColor = texture(uTexture, vTexCoord) * vcolour;// *texture(uTexture, vTexCoord); // mixes colour and textures
 
-	color = textureColor;
+	if (textureColor.a < 1.0)
+	{
+		float randomFloat = rand3D(gl_FragCoord.xyz);
+		fragmentAlpha = float(randomFloat < textureColor.a);//do stochastic transparency, noise can be reduced with sampling. 
+	}
+
+	color = vec4(textureColor.rgb, fragmentAlpha);
 }

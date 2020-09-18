@@ -1,9 +1,10 @@
-﻿using RabbetGameEngine.Debugging;
+﻿using OpenTK;
+using OpenTK.Graphics.OpenGL;
+using RabbetGameEngine.Debugging;
 using RabbetGameEngine.GUI;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.SubRendering;
-using OpenTK;
-using OpenTK.Graphics.OpenGL;
+using System.Drawing;
 
 namespace RabbetGameEngine
 {
@@ -17,11 +18,21 @@ namespace RabbetGameEngine
         private static int privateTotalDrawCallCount;
         private static Matrix4 projectionMatrix;
         public static readonly bool useOffScreenBuffer = false;
+
+        private static bool prevFullscreenBool;//used to check if the fullscreen setting has changed
+        private static Rectangle preFullScreenSize;//used to store the window dimentions before going into full screen
+
         /*Called before any rendering is done*/
         public static void init()
         {
-            GL.Viewport(GameInstance.get.ClientRectangle);
-            
+            ShaderUtil.loadAllFoundShaderFiles();
+            TextureUtil.loadAllFoundTextureFiles();
+            ModelUtil.loadAllFoundModelFiles();
+            Application.debug("Loaded " + ShaderUtil.getShaderCount() + " shaders.");
+            Application.debug("Loaded " + TextureUtil.getTextureCount() + " textures.");
+            Application.debug("Loaded " + ModelUtil.getModelCount() + " models.");
+
+            GL.Viewport(preFullScreenSize = GameInstance.get.ClientRectangle);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.VertexProgramPointSize);//allows shaders for GL_POINTS to change size of points.
@@ -29,15 +40,10 @@ namespace RabbetGameEngine
             GL.Enable(EnableCap.AlphaTest);
             GL.AlphaFunc(AlphaFunction.Equal, 1);
             GL.LineWidth(3);
-            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
             if(useOffScreenBuffer) OffScreen.init();
 
-            ShaderUtil.loadAllFoundShaderFiles();
-            TextureUtil.loadAllFoundTextureFiles();
-            ModelUtil.loadAllFoundModelFiles();
-            Application.debug("Loaded " + ShaderUtil.getShaderCount() + " shaders.");
-            Application.debug("Loaded " + TextureUtil.getTextureCount() + " textures.");
-            Application.debug("Loaded " + ModelUtil.getModelCount() + " models.");
+            prevFullscreenBool = GameSettings.fullscreen;
         }
 
         /*Called each time the game window is resized*/
@@ -87,6 +93,24 @@ namespace RabbetGameEngine
             int result = privateTotalDrawCallCount;
             privateTotalDrawCallCount = 0;
             return result;
+        }
+
+        public static void onToggleFullscreen()
+        {
+            if (prevFullscreenBool != GameSettings.fullscreen)
+            {
+                prevFullscreenBool = GameSettings.fullscreen;
+                if (GameSettings.fullscreen)
+                {
+                    preFullScreenSize = GameInstance.get.ClientRectangle;
+                    GameInstance.get.WindowState = WindowState.Fullscreen;
+                }
+                else
+                {
+                    GameInstance.get.WindowState = WindowState.Normal;
+                    GameInstance.get.ClientRectangle = preFullScreenSize;
+                }
+            }
         }
 
         /*deletes all loaded opengl assets*/

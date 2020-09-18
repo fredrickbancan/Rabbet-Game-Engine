@@ -1,15 +1,15 @@
 ﻿#shader vertex
 #version 330 core
-//In order to properly render objects with pixelation, Any object rendered with PS1 shader must first be rendererd to an off screen texture and then projected.
+//location is the location of the value in the vertex atrib array
+//for vec4 position, the gpu automatically fills in the 4th component with a 1.0F. This means you can treat position as a vec4 no problem. (no need for messy conversions)
 layout(location = 0) in vec4 position;
-layout(location = 1) in vec4 Color;
+layout(location = 1) in vec4 colour;
 layout(location = 2) in vec2 texCoord;
 
-const float fogDensity = 0.025;
-const float fogGradient = 3.5;
+out vec4 vcolour;
 
-out vec2 vTexCoord;
-out vec4 vColor;
+uniform float fogDensity = 0.0075;
+const float fogGradient = 2.5;
 out float visibility;//for fog
 
 //matrix for projection transformations.
@@ -18,8 +18,10 @@ uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 //matrix for model transformations. All transformations in this matrix are relative to the model origin.
 uniform mat4 modelMatrix;
+
 void main()
 {
+
 	vec4 worldPosition = modelMatrix * position;
 
 	vec4 positionRelativeToCam = viewMatrix * worldPosition;
@@ -30,30 +32,33 @@ void main()
 	visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));
 	visibility = clamp(visibility, 0.0, 1.0);
 
-	vTexCoord = texCoord;
-	vColor = Color;
+	vcolour = colour;
 }
 
 /*#############################################################################################################################################################################################*/
 //Out variables from vertex shader are passed into the fragment shaders in variables, part of glsl language.
 #shader fragment
 #version 330 core
-noperspective in vec2 vTexCoord;//removing texture perspective
-in vec4 vColor;
-in float visibility;
-layout(origin_upper_left) in vec4 gl_FragCoord;
+in vec4 vcolour;
 out vec4 color;
-uniform sampler2D uTexture;
+in float visibility;
 
-uniform vec3 fogColor;
+uniform vec3 fogColour;
+
+float rand3D(in vec3 xyz) 
+{
+	return fract(tan(distance(xyz.xy * 1.61803398874989484820459, xyz.xy) * xyz.z) * xyz.y);
+}
+
 void main()
 {
+	float fragmentAlpha = 1.0F;
 
-	vec4 textureColor = texture(uTexture, vTexCoord) * vColor;// *texture(uTexture, vTexCoord); // mixes Color and textures
-	if (textureColor.a < 0.9)
+	if (vcolour.a < 1.0)
 	{
-		discard;
+		float randomFloat = rand3D(gl_FragCoord.xyz);
+		fragmentAlpha = float(randomFloat < vcolour.a);//do stochastic transparency, noise can be reduced with sampling. 
 	}
-	color = textureColor;
-	color = mix(vec4(fogColor, color.a), color, visibility);
+
+	color = mix(vec4(fogColour, fragmentAlpha), vec4(vcolour.rgb, fragmentAlpha), visibility);
 }

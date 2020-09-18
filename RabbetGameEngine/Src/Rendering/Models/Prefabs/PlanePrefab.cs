@@ -4,7 +4,7 @@ namespace RabbetGameEngine.Models
 {
     public static class PlanePrefab
     {
-        public static readonly string shaderName = "ColorTextureFog.shader";
+        public static readonly string shaderName = "ColorTextureFog3D.shader";
         public static readonly string textureName = "Explosion.png";
 
         public static readonly Vertex[] quadVertices = new Vertex[]

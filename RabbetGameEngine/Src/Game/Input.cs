@@ -60,6 +60,12 @@ namespace RabbetGameEngine
                 {
                     toggleBoolean(ref GameSettings.noclip);
                 }
+
+                if (singleKeyPress(Key.F12))
+                {
+                    toggleBoolean(ref GameSettings.fullscreen);
+                    Renderer.onToggleFullscreen();
+                }
                 PlayerController.updateInput(keyboardState);//do player input 
                 PlayerController.updateSinglePressInput(keyboardState);//do player single button input
             }

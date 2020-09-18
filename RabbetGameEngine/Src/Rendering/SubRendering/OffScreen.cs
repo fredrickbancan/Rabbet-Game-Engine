@@ -1,6 +1,6 @@
-﻿using RabbetGameEngine.Models;
-using OpenTK;
+﻿using OpenTK;
 using OpenTK.Graphics.OpenGL;
+using RabbetGameEngine.Models;
 using System;
 
 namespace RabbetGameEngine.SubRendering
@@ -28,15 +28,11 @@ namespace RabbetGameEngine.SubRendering
             width = (int)(GameInstance.realScreenWidth * superSamplingMultiplyer);//*2 on width and height for 4x super sampling
             height = (int)(GameInstance.realScreenHeight * superSamplingMultiplyer);
 
-            Application.debug("Offscreen resolution width: " + width);
-            Application.debug("Offscreen resolution height: " + height);
-
             GL.BindTexture(TextureTarget.Texture2D, texColorBuffer);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba16, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
 
-            screenShader = new Shader(screenShaderName);
 
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, depthBuffer);
             GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.DepthComponent32, width, height);
@@ -59,6 +55,7 @@ namespace RabbetGameEngine.SubRendering
                 Application.debug("Offscreen frame buffer successfully initialized!");
             }
 
+            ShaderUtil.tryGetShader(screenShaderName, out screenShader);
             screenQuad = (ModelDrawable)QuadPrefab.getNewModelDrawable().scaleVertices(new Vector3(2.0F, 2.0F, 1.0F));//scale quad to fit screen
             screenQuad.setShader(screenShader);
         }

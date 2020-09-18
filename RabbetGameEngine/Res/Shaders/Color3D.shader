@@ -26,7 +26,20 @@ void main()
 in vec4 vcolour;
 out vec4 color;
 
+float rand3D(in vec3 xyz) 
+{
+	return fract(tan(distance(xyz.xy * 1.61803398874989484820459, xyz.xy) * xyz.z) * xyz.y);
+}
+
 void main()
 {
-	color = vcolour;
+	float fragmentAlpha = 1.0F;
+
+	if (vcolour.a < 1.0)
+	{
+		float randomFloat = rand3D(gl_FragCoord.xyz);
+		fragmentAlpha = float(randomFloat < vcolour.a);//do stochastic transparency, noise can be reduced with sampling. 
+	}
+
+	color = vec4(vcolour.rgb, fragmentAlpha);
 }

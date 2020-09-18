@@ -61,8 +61,8 @@ uniform vec2 viewPortSize;//vector of viewport dimensions
 
 float ambientOcclusion;//variable for applying a shadowing effect towards the edges of the point to give the illusion of a sphereical shape
 
-float rand3D(in vec3 co) {
-    return fract(sin(dot(co.xyz, vec3(12.9898, 78.233, 144.7272))) * 43758.5453);
+float rand3D(in vec3 xyz) {
+    return fract(tan(distance(xyz.xy * 1.61803398874989484820459, xyz.xy) * xyz.z) * xyz.y);
 }
 
 void makeCircle()

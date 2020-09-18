@@ -26,7 +26,7 @@ namespace RabbetGameEngine
         private string groundTextureName = "sand.png"; 
         private string terrainShaderName = "ColorTextureFog3D.shader";
 
-        ModelDrawableInstanced test;
+        ModelDrawable test;
 
         public World()
         {
@@ -34,11 +34,9 @@ namespace RabbetGameEngine
             skyColor = CustomColor.skyBlue.toNormalVec3();
             buildSkyBox();
             generateWorld();
-            test = new ModelDrawableInstanced(CubePrefab.copyModelDrawable(), ModelDrawType.trangles);
-            for(int i = 0; i < 3; i++)
-            {
-                test.addRenderAt(Matrix4.CreateTranslation(0,i + 2, 0));
-            }
+            Texture tex;
+            TextureUtil.tryGetTexture("transparent.png", out tex);
+            test = (ModelDrawable)CubePrefab.copyModelDrawable().setTexture(tex).scaleVertices(new Vector3(3,3,3));
         }
 
         public void setSkyColor(Vector3 skyColor)
@@ -68,7 +66,10 @@ namespace RabbetGameEngine
                     ent.Value.getEntityModel().draw(viewMatrix, projectionMatrix, fogColor);
                 }
             }
-            test.draw(viewMatrix, projectionMatrix, fogColor);
+            for (int i = 0; i < 10; i++)
+            {
+                test.draw(viewMatrix, projectionMatrix, Matrix4.CreateTranslation(0,2,i*3+2), fogColor);
+            }
         }
 
         /*TODO: INNEFICIENT, loops through each VFX and draws their model with a seperate call*/
