@@ -22,16 +22,16 @@ namespace RabbetGameEngine
         public Dictionary<int, ICollider> entityColliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity
         public List<ICollider> worldColliders = new List<ICollider>();//list of colliders with no parent, ie, walls, ground planes.
         public List<VFXBase> vfxList = new List<VFXBase>();
-        private string wallTextureName = "plasterwall.png"; 
-        private string groundTextureName = "sand.png"; 
+        private string wallTextureName = "transparent.png"; 
+        private string groundTextureName = "wood.png"; 
         private string terrainShaderName = "ColorTextureFog3D.shader";
 
         ModelDrawableInstanced test;
 
         public World()
         {
-            fogColor = CustomColor.lightBlossom.toNormalVec3();
-            skyColor = CustomColor.skyBlue.toNormalVec3();
+            fogColor = CustomColor.grey.toNormalVec3();
+            skyColor = CustomColor.darkGrey.toNormalVec3();
             buildSkyBox();
             generateWorld();
             Texture tex;
@@ -39,7 +39,7 @@ namespace RabbetGameEngine
             test = new ModelDrawableInstanced(CubePrefab.copyModelDrawable(), 8138).setTexture(tex);
             for(int i = 0; i < 8138; i++)
             { 
-                test.addRenderAt(Matrix4.CreateTranslation(i % 16, i /  (16 * 16), (i / 16) % 16));
+                test.addRenderAt(Matrix4.CreateTranslation(i % 16 + 1.5F, i /  (16 * 16) + 0.5F, (i / 16) % 16 + 1.5F));
             }
         }
 
@@ -70,7 +70,7 @@ namespace RabbetGameEngine
                     ent.Value.getEntityModel().draw(viewMatrix, projectionMatrix, fogColor);
                 }
             }
-            test.draw(viewMatrix, projectionMatrix, fogColor);
+            //test.draw(viewMatrix, projectionMatrix, fogColor);
         }
 
         /*TODO: INNEFICIENT, loops through each VFX and draws their model with a seperate call*/

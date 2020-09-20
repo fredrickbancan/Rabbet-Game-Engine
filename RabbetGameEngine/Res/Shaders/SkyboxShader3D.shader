@@ -37,8 +37,6 @@ void main()
 {
 	gl_FragDepth = 0.9999F;//force fragdepth to be in background at all times
 	vec3 pointOnSphere = normalize(worldSpacePos.xyz);//normalizing the position of the frag to form a spherical depth from the camera, leaving out the w coordinate
-	float gradient = pointOnSphere.y; //The higher the fragment is on the skybox, the more it will be Colored as skyTop, and vice versa for skyHorizon
-	gradient = clamp(gradient, 0, 1);//clamp the gradient so it does not go over or under the skytop and skyhorizon values causing the Colors to change
-	vec4 mixedSkyColor = mix(vec4(skyHorizon, 1.0F), vec4(skyTop, 1.0F), gradient);
-	color = mixedSkyColor;
+
+	color.rgb = mix(skyHorizon, skyTop, clamp(pointOnSphere.y, 0, 1));
 }

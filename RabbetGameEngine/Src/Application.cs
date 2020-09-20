@@ -44,7 +44,7 @@ namespace RabbetGameEngine
             Console.BackgroundColor = ConsoleColor.White;
             Console.ForegroundColor = ConsoleColor.White;
         }
-        public static void debug(object s)
+        public static void debugPrint(object s)
         {
             Console.BackgroundColor = ConsoleColor.Green;
             Console.ForegroundColor = ConsoleColor.Black;

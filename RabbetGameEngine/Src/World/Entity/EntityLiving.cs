@@ -25,7 +25,7 @@ namespace RabbetGameEngine
         protected Vector3 upVector;
         protected Vector3 movementVector;//a unit vector describing the direction of movement by this entity, e.g: walking
         protected float headPitch; // Pitch of the living entity head
-        public static readonly float defaultWalkSpeed = 0.1572F;
+        public static readonly float defaultWalkSpeed = 0.075F;
         protected float walkSpeed = defaultWalkSpeed;
         public static readonly int actionsCount = Enum.GetNames(typeof(Action)).Length;
         protected TickTimer interactTimer;
@@ -88,7 +88,7 @@ namespace RabbetGameEngine
             else
             {
                 frontVector.X = (float)(Math.Cos(MathUtil.radians(yaw)));
-                frontVector.Y = (float)(Math.Sin(MathUtil.radians(headPitch)));
+                frontVector.Y = 0;
                 frontVector.Z = (float)(Math.Sin(MathUtil.radians(yaw)));
             }
             frontVector.Normalize();

@@ -17,7 +17,7 @@ namespace RabbetGameEngine
     {
         private static int privateTotalDrawCallCount;
         private static Matrix4 projectionMatrix;
-        public static readonly bool useOffScreenBuffer = true;
+        public static readonly bool useOffScreenBuffer = false;
         private static int renderFrame;//used to animate textures (noise texture for now)
         private static Rectangle preFullScreenSize;//used to store the window dimentions before going into full screen
 
@@ -27,9 +27,9 @@ namespace RabbetGameEngine
             ShaderUtil.loadAllFoundShaderFiles();
             TextureUtil.loadAllFoundTextureFiles();
             ModelUtil.loadAllFoundModelFiles();
-            Application.debug("Loaded " + ShaderUtil.getShaderCount() + " shaders.");
-            Application.debug("Loaded " + TextureUtil.getTextureCount() + " textures.");
-            Application.debug("Loaded " + ModelUtil.getModelCount() + " models.");
+            Application.debugPrint("Loaded " + ShaderUtil.getShaderCount() + " shaders.");
+            Application.debugPrint("Loaded " + TextureUtil.getTextureCount() + " textures.");
+            Application.debugPrint("Loaded " + ModelUtil.getModelCount() + " models.");
 
             GL.Viewport(preFullScreenSize = GameInstance.get.ClientRectangle);
             GL.Enable(EnableCap.DepthTest);
@@ -53,17 +53,9 @@ namespace RabbetGameEngine
         /*called once per frame*/
         public static void onFrame()
         {
-            renderFrame++;
-            renderFrame %= 4096;
+            
         }
 
-        /*Called before all draw calls*/
-        private static void preRender()
-        {
-            if (useOffScreenBuffer) OffScreen.prepareToRenderToOffScreenTexture();
-            GL.Clear(ClearBufferMask.DepthBufferBit);
-        }
-        
         public static void renderAll()
         {
             Profiler.beginEndProfile(Profiler.renderingName);
@@ -73,6 +65,14 @@ namespace RabbetGameEngine
             postRender();
             Profiler.beginEndProfile(Profiler.renderingName);
         }
+
+        /*Called before all draw calls*/
+        private static void preRender()
+        {
+            if (useOffScreenBuffer) OffScreen.prepareToRenderToOffScreenTexture();
+            GL.Clear(ClearBufferMask.DepthBufferBit);
+        }
+        
         private static void renderWorld()
         {
             privateTotalDrawCallCount = 0;
@@ -89,6 +89,8 @@ namespace RabbetGameEngine
         {
             if (useOffScreenBuffer) OffScreen.renderOffScreenTexture();
             GameInstance.get.SwapBuffers();
+            renderFrame++;
+            renderFrame %= 4096;
         }
 
         public static int getAndResetTotalDrawCount()
@@ -119,6 +121,7 @@ namespace RabbetGameEngine
             ShaderUtil.deleteAll();
             TextureUtil.deleteAll();
             ModelUtil.deleteAll();
+            OffScreen.onClose();
         }
 
         public static Matrix4 projMatrix { get => projectionMatrix; }

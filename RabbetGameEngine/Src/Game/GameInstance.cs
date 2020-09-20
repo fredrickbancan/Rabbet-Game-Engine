@@ -29,8 +29,8 @@ namespace RabbetGameEngine
 
         public GameInstance(int screenWidth, int screenHeight, int initialWindowWidth, int initialWindowHeight, string title) : base(initialWindowWidth, initialWindowHeight, GraphicsMode.Default, title)
         {
-            Application.debug("Game window width: " + initialWindowWidth);
-            Application.debug("Game window height: " + initialWindowHeight);
+            Application.debugPrint("Game window width: " + initialWindowWidth);
+            Application.debugPrint("Game window height: " + initialWindowHeight);
             GameInstance.windowWidth = initialWindowWidth;
             GameInstance.windowHeight = initialWindowHeight;
             GameInstance.screenHeight = screenHeight;
@@ -54,12 +54,12 @@ namespace RabbetGameEngine
             //create and spawn player in new world
             thePlayer = new EntityPlayer("Steve", new Vector3(0, 0, 2));
             currentPlanet = new World();
-            for (int i = 0; i < 0; i++)
+            for (int i = 0; i < 10; i++)
             {
-                currentPlanet.spawnEntityInWorld(new EntityCactus(new Vector3(0, 10, 0)));
+               // currentPlanet.spawnEntityInWorld(new EntityCactus(new Vector3(0, 10, 0)));
             }
             currentPlanet.spawnEntityInWorld(thePlayer);
-            //currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3(5, 10, -5)));
+          //  currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3(5, 10, -5)));
 
             //center mouse in preperation for first person 
             Input.centerMouse();

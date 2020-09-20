@@ -36,21 +36,19 @@ uniform sampler2D uTexture;
 
 float rand3D(in vec3 xyz)
 {
-	return fract(tan(distance(xyz.xy * 1.61803398874989484820459, xyz.xy) * xyz.z) * xyz.y);
+	return fract(cos(dot(xyz.xy * 1.6F, xyz.xy) * xyz.z) * xyz.x);
 }
+
 
 void main()
 {
 	vec4 textureColor = texture(uTexture, vTexCoord) * vColor;// *texture(uTexture, vTexCoord); // mixes colour and textures
-	if (!bool(textureColor.a))
-	{
-		discard;
-	}
+
 	if (textureColor.a < 0.99)
 	{
-		if (rand3D(gl_FragCoord.xyz + (float(frame) * 0.001F)) > textureColor.a)//do stochastic transparency
+		if (rand3D(gl_FragCoord.xyz + (float(frame) * 0.0000001F)) > textureColor.a)//do stochastic transparency
 			discard;
 	}
 
-	color = vec4(textureColor.rgb, 1.0F);
+	color.rgb = textureColor.rgb;
 }
