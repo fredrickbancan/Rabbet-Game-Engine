@@ -16,6 +16,11 @@ namespace RabbetGameEngine.Debugging
           Apon ending a profile the time difference between starting and ending will be displayed. This allows us to measure how long different things take.*/
         public static void beginEndProfile(string profileName)
         {
+            if(!GameSettings.debugScreen)
+            {
+                return;
+            }
+
             if(profiles.TryGetValue(profileName, out Profile foundProfile))
             {
                 if (foundProfile.hasEnded)
@@ -37,11 +42,15 @@ namespace RabbetGameEngine.Debugging
         /*Returns the average completion time in ms for the requested profile. returns -1 if profile isnt found*/
         public static float getAveragesForProfile(string profileName)
         {
+            if (!GameSettings.debugScreen)
+            {
+                return 0;
+            }
             if (profiles.TryGetValue(profileName, out Profile foundProfile))
             {
                 return foundProfile.getAverageCompletionTime();
             }
-            return -1;
+            return 0;
         }
 
         

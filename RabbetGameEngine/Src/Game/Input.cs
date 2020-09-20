@@ -61,7 +61,7 @@ namespace RabbetGameEngine
                     toggleBoolean(ref GameSettings.noclip);
                 }
 
-                if (singleKeyPress(Key.F12))
+                if (singleKeyPress(Key.F11))
                 {
                     toggleBoolean(ref GameSettings.fullscreen);
                     Renderer.onToggleFullscreen();

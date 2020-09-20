@@ -4,11 +4,11 @@
       Uses two matrices for each instance, and a interpolation factor passed to shader each draw call.*/
     public class ModelDrawableInstancedInterpolated : ModelDrawableInstanced
     {
-        public ModelDrawableInstancedInterpolated(Vertex[] vertices, uint[] indices, ModelDrawType drawType) : base(vertices, indices, drawType)
+        public ModelDrawableInstancedInterpolated(Vertex[] vertices, uint[] indices) : base(vertices, indices)
         {
         }
 
-        public ModelDrawableInstancedInterpolated(ModelDrawable instance,  ModelDrawType drawType) : base(instance, drawType)
+        public ModelDrawableInstancedInterpolated(ModelDrawable instance) : base(instance)
         {
         }
     }

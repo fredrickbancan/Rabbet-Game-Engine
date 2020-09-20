@@ -3,7 +3,7 @@
 //location is the location of the value in the vertex atrib array
 //for vec4 position, the gpu automatically fills in the 4th component with a 1.0F. This means you can treat position as a vec4 no problem. (no need for messy conversions)
 layout(location = 0) in vec4 position;
-layout(location = 1) in vec4 colour;
+layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 texCoord; //other data such as color and uv can also be provided for each instance rendered
 layout(location = 3) in vec4 modelMatrixRow0; 
 layout(location = 4) in vec4 modelMatrixRow1;
@@ -16,7 +16,7 @@ uniform float fogGradient = 2.5;
 
 out vec3 fogColorV;
 out vec2 vTexCoord;
-out vec4 vcolour;
+out vec4 vColor;
 out float visibility;//for fog
 
 //matrix for projection transformations.
@@ -43,7 +43,7 @@ void main()
 	visibility = clamp(visibility, 0.0, 1.0);
 
 	vTexCoord = texCoord;
-	vcolour = colour;
+	vColor = vertexColor;
 }
 
 /*#############################################################################################################################################################################################*/
@@ -51,29 +51,34 @@ void main()
 #shader fragment
 #version 330 core
 in vec2 vTexCoord;
-in vec4 vcolour;
+in vec4 vColor;
 in float visibility;
 
+uniform int frame = 0;//number of frame, used to itterate noise
+
 uniform sampler2D uTexture;
+
 uniform vec3 fogColor;
 out vec4 color;
 
 float rand3D(in vec3 xyz) 
 {
-	return fract(tan(distance(xyz.xy * 1.61803398874989484820459, xyz.xy) * xyz.z) * xyz.y);
+	return fract(tan(distance(xyz.xy * 1.6180339, xyz.xy) * xyz.z) * xyz.y);
 }
 
 void main()
 {
-	float fragmentAlpha = 1.0F;
+	vec4 textureColor = texture(uTexture, vTexCoord) * vColor;// mixes colour and textures
 
-	vec4 textureColor = texture(uTexture, vTexCoord) * vcolour;// *texture(uTexture, vTexCoord); // mixes colour and textures
-
-	if (textureColor.a < 1.0)
+	if (!bool(textureColor.a))
 	{
-		float randomFloat = rand3D(gl_FragCoord.xyz);
-		fragmentAlpha = float(randomFloat < textureColor.a);//do stochastic transparency, noise can be reduced with sampling. 
+		discard;
+	}
+	if (textureColor.a < 0.99)
+	{
+		if(rand3D(gl_FragCoord.xyz + (float(frame) * 0.001F)) > textureColor.a)//do stochastic transparency
+	    discard;
 	}
 
-	color = mix(vec4(fogColor, fragmentAlpha), vec4(textureColor.rgb, fragmentAlpha), visibility);
+	color = mix(vec4(fogColor, 1.0F), vec4(textureColor.rgb, 1.0F), visibility);
 }

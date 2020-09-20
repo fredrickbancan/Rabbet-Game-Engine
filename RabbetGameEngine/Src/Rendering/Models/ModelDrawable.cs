@@ -6,17 +6,6 @@ using System.Collections.Generic;
 
 namespace RabbetGameEngine.Models
 {
-    /*enum for determining how to draw a model. Important for dynamic models so they can automatically 
-      chose a shader for the specific type. E.G: singlePoint only needs a position vector, not a whole
-      model matrix.*/
-    public enum ModelDrawType
-    {
-        trangles,
-        points,
-        lines,
-        billboardSphere,//for drawing a mesh that looks at camera in any direction. i.e, sprites. Should use a shader that removes rotational info from viewmatrix. Can use any mesh and matrix transforms.
-        billboardCylindrical//for drawing a mesh that looks at camera in any cylindrical direction. i.e, sprites. But not vertically. should use a shader that removes horizontal rotations from view matrix. Can use any mesh and matrix transforms.
-    };
 
     /*Base class for models that can be drawn individually with additional draw calls and have
      *individual VAO's.*/

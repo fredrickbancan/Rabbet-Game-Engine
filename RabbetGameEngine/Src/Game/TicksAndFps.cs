@@ -15,10 +15,9 @@ namespace RabbetGameEngine
         private static double timePerTick;
         private static double percentToNextTick; //a decimal value between 0 and 1 which can be used as a percentage of progress towards next tick, usefull for interpolation.
         private static bool paused = false; //true when game is paused
-
-        private static float[] recordedFrameTimes = new float[100];//used for calculating average FPS per frame
-        private static float combinedFrameTimes = 0;
-        private static int frameUpdateIndex = 0;
+        private static int frames;
+        private static int framesPerSec;
+        private static double timer;
         public static void init(int tps)
         {
             ticksPerSecond = tps;
@@ -34,12 +33,15 @@ namespace RabbetGameEngine
             lastTime = currentTime;
             currentTime = stopwatch.ElapsedMilliseconds;
             deltaTime = (currentTime - lastTime) / 1000.0F;
+            timer += deltaTime;
 
-            combinedFrameTimes -= recordedFrameTimes[frameUpdateIndex];
-            combinedFrameTimes += (float)deltaTime;
-            recordedFrameTimes[frameUpdateIndex++] = (float)deltaTime;
-            frameUpdateIndex %= 100;
-
+            if(timer >= 1D)
+            {
+                framesPerSec = frames;
+                frames = 0;
+                timer--;
+            }
+            frames++;
 
             if (paused)
             {
@@ -115,10 +117,7 @@ namespace RabbetGameEngine
         public static float spt { get => 1F / (float)ticksPerSecond; }
 
         /*frames per second*/
-        public static int fps { get => (int)( 1F / (combinedFrameTimes / 100F)); }
-
-        /*seconds per frame*/
-        public static float spf { get => 1F / (float)fps; }
+        public static int fps { get => framesPerSec; }
 
     }
 }

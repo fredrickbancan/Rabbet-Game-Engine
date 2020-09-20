@@ -3,7 +3,7 @@
 //location is the location of the value in the vertex atrib array
 //for vec4 position, the gpu automatically fills in the 4th component with a 1.0F. This means you can treat position as a vec4 no problem. (no need for messy conversions)
 layout(location = 0) in vec4 position;
-layout(location = 1) in vec4 color;
+layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 texCoord; //other data such as color and uv can also be provided for each instance rendered
 layout(location = 3) in vec4 modelMatrixRow0; 
 layout(location = 4) in vec4 modelMatrixRow1;
@@ -28,7 +28,7 @@ void main()
 
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * position;
 
-	vColor = color;
+	vColor = vertexColor;
 }
 
 /*#############################################################################################################################################################################################*/
@@ -38,6 +38,9 @@ void main()
 in vec4 vColor;
 out vec4 fragColor;
 
+
+uniform int frame = 0;
+
 float rand3D(in vec3 xyz) 
 {
 	return fract(tan(distance(xyz.xy * 1.61803398874989484820459, xyz.xy) * xyz.z) * xyz.y);
@@ -45,13 +48,11 @@ float rand3D(in vec3 xyz)
 
 void main()
 {
-	float fragmentAlpha = 1.0F;
-
-	if (vColor.a < 1.0)
+	if (vColor.a < 0.99)
 	{
-		float randomFloat = rand3D(gl_FragCoord.xyz);
-		fragmentAlpha = float(randomFloat < vColor.a);//do stochastic transparency, noise can be reduced with sampling. 
+		if (rand3D(gl_FragCoord.xyz + (float(frame) * 0.001F)) > vColor.a)//stochastic transparency
+			discard;
 	}
 
-	fragColor = vec4(vColor.rgb, fragmentAlpha);
+	fragColor = vec4(vColor.rgb, 1.0F);
 }

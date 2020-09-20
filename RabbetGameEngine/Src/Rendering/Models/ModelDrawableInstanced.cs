@@ -5,20 +5,11 @@ using System;
 namespace RabbetGameEngine.Models
 {
     /*This class is for rendering the same model data many times with different transforms, colors and textures.
-      It is more efficient to use this instead of ModelDrawableDynamic if its just multiple instances of one mesh.*/
+      It is more efficient to use this instead of ModelDrawableDynamic if its just multiple instances of one mesh.
+      ModelDrawableInstanced should only be used when repeatidly rendering the same mesh as triangles. lines and points
+      benefit more from dynamic rendering instead of instanced.*/
     public class ModelDrawableInstanced
     {
-        /*this array of shader directories can be indexed with the ModelDrawType enum.
-          each shader in this array must be a shader specifically made for interpolating a dynamic
-          model. */
-        /*  private static string[] shaders = new string[] {
-              ResourceUtil.getShaderFileDir(""),//ModelDrawType.triangles 
-              ResourceUtil.getShaderFileDir(""),//ModelDrawType.points 
-              ResourceUtil.getShaderFileDir(""),//ModelDrawType.singlePoint 
-              ResourceUtil.getShaderFileDir(""),//ModelDrawType.lines 
-              ResourceUtil.getShaderFileDir(""),//ModelDrawType.billboardSpherical 
-              ResourceUtil.getShaderFileDir("")//ModelDrawType.billboardCylindrical 
-          };*/
         protected int maxInstances;
         protected bool hasInitialized = false;
         protected bool needsToSubmit = true;
@@ -32,57 +23,32 @@ namespace RabbetGameEngine.Models
         protected uint[] indices;
         protected Matrix4[] matrices;
         protected int matricesItterator = 0;
-        protected ModelDrawType drawType;
 
          
-        /*the provided model instance will be re-drawn at each transform*/
-        public ModelDrawableInstanced(Vertex[] vertices, uint[] indices, ModelDrawType drawType, int maxInstances = 1000)
+        /*the provided vertices and indices will be re-drawn at each transform*/
+        public ModelDrawableInstanced(Vertex[] vertices, uint[] indices, int maxInstances = 1000)
         {
             this.indices = new uint[indices.Length];
             this.vertices = new Vertex[vertices.Length];
             Array.Copy(indices, this.indices, indices.Length);
             Array.Copy(vertices, this.vertices, vertices.Length);
-            this.drawType = drawType;
             this.maxInstances = maxInstances;
             matrices = new Matrix4[maxInstances];
-
             TextureUtil.tryGetTexture("debug", out texture);
-
-            switch(drawType)//TODO: set shader based on draw type 
-            {
-                case ModelDrawType.lines:
-                    ShaderUtil.tryGetShader("ColorInstanced3D.shader", out shader);
-                    break;
-
-                default:
-                    ShaderUtil.tryGetShader("ColorTextureFogInstanced3D.shader", out shader);
-                    break;
-            }
+            ShaderUtil.tryGetShader("ColorTextureFogInstanced3D.shader", out shader);
         }
 
         /*the provided model instance will be re-drawn at each transform*/
-        public ModelDrawableInstanced(ModelDrawable instance, ModelDrawType drawType, int maxInstances = 1000)
+        public ModelDrawableInstanced(ModelDrawable instance, int maxInstances = 1000)
         {
             indices = new uint[instance.indices.Length];
             vertices = new Vertex[instance.vertices.Length];
             Array.Copy(instance.indices, indices, instance.indices.Length);
             Array.Copy(instance.vertices, vertices, instance.vertices.Length);
-            this.drawType = drawType;
             this.maxInstances = maxInstances;
             matrices = new Matrix4[maxInstances];
-
             TextureUtil.tryGetTexture("debug", out texture);
-
-            switch (drawType)//TODO: set shader based on draw type 
-            {
-                case ModelDrawType.lines:
-                    ShaderUtil.tryGetShader("ColorInstanced3D.shader", out shader);
-                    break;
-
-                default:
-                    ShaderUtil.tryGetShader("ColorTextureFogInstanced3D.shader", out shader);
-                    break;
-            }
+            ShaderUtil.tryGetShader("ColorTextureFogInstanced3D.shader", out shader);
         }
 
         protected virtual void init()
@@ -107,7 +73,7 @@ namespace RabbetGameEngine.Models
 
             matricesBOID = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, matricesBOID);
-            GL.BufferData(BufferTarget.ArrayBuffer, matrices.Length * 4 * 16, matrices, BufferUsageHint.DynamicRead);
+            GL.BufferData(BufferTarget.ArrayBuffer, matrices.Length * 4 * 16, matrices, BufferUsageHint.StaticDraw);
           
             GL.EnableVertexAttribArray(3);
             GL.VertexAttribPointer(3, 4, VertexAttribPointerType.Float, false,  4 * 16, 0);
@@ -173,58 +139,10 @@ namespace RabbetGameEngine.Models
             shader.setUniformMat4F("viewMatrix", viewMatrix);
             shader.setUniformMat4F("projectionMatrix", projectionMatrix);
             shader.setUniformVec3F("fogColor", fogColor);
-            
-            switch (drawType)
-            {
-                case ModelDrawType.points:
-                    GL.DrawArraysInstanced(PrimitiveType.Points, 0, vertices.Length, matricesItterator);
-                    break;
+            shader.setUniform1I("frame", Renderer.frame);
 
-                case ModelDrawType.lines:
-                    GL.DrawElementsInstanced(PrimitiveType.Lines, indices.Length, DrawElementsType.UnsignedInt, System.IntPtr.Zero, matricesItterator);
-                    break;
-
-                default:
-                    GL.DrawElementsInstanced(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, System.IntPtr.Zero, matricesItterator);
-                    break;
-            }
-            
-        }
-
-        public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix)
-        {
-            if (matricesItterator < 1)
-            {
-                return;
-            }
-
-            if (needsToSubmit)
-            {
-                GL.BindBuffer(BufferTarget.ArrayBuffer, matricesBOID);
-                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, matrices.Length * 4 * 16, matrices);
-                needsToSubmit = false;
-            }
-
-            bind();
-            texture.use();
-            shader.use();
-            shader.setUniformMat4F("viewMatrix", viewMatrix);
-            shader.setUniformMat4F("projectionMatrix", projectionMatrix);
-
-            switch (drawType)
-            {
-                case ModelDrawType.points:
-                    GL.DrawArraysInstanced(PrimitiveType.Points, 0, vertices.Length, matricesItterator);
-                    break;
-
-                case ModelDrawType.lines:
-                    GL.DrawElementsInstanced(PrimitiveType.Lines, indices.Length, DrawElementsType.UnsignedInt, System.IntPtr.Zero, matricesItterator);
-                    break;
-
-                default:
-                    GL.DrawElementsInstanced(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, System.IntPtr.Zero, matricesItterator);
-                    break;
-            }
+            GL.DrawElementsInstanced(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, System.IntPtr.Zero, matricesItterator);
+            Renderer.totalDraws++;
 
         }
 

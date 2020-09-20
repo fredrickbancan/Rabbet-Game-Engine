@@ -54,12 +54,12 @@ namespace RabbetGameEngine
             //create and spawn player in new world
             thePlayer = new EntityPlayer("Steve", new Vector3(0, 0, 2));
             currentPlanet = new World();
-            for (int i = 0; i < 35; i++)
+            for (int i = 0; i < 0; i++)
             {
                 currentPlanet.spawnEntityInWorld(new EntityCactus(new Vector3(0, 10, 0)));
             }
             currentPlanet.spawnEntityInWorld(thePlayer);
-            currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3(5, 10, -5)));
+            //currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3(5, 10, -5)));
 
             //center mouse in preperation for first person 
             Input.centerMouse();
@@ -81,6 +81,7 @@ namespace RabbetGameEngine
             TicksAndFps.update();
             thePlayer.onCameraUpdate();//do this before calling on tick to prepare camera variables
             currentPlanet.onFrame();//should be called before rendering world since this may prepare certain elements for a frame perfect render
+            Renderer.onFrame();
             Renderer.renderAll();
         }
 

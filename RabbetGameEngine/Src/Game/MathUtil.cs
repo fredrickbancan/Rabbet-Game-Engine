@@ -4,6 +4,16 @@ namespace RabbetGameEngine
 {
     static class MathUtil
     {
+        public static float rand(Vector3 xyz)//returns random float using input vector3 as seed
+        {
+            return fract((float)(System.Math.Tan(Vector2.Distance(xyz.Xy * 1.6180339F, xyz.Xy) * xyz.Z) * xyz.Y));
+        }
+
+        public static float fract(float f)//returns the fractional value of the float passed. eg: 1.5F will return 0.5F
+        {
+            return f - (int)f;
+        }
+
         public static float normalize(float min, float max, float val)//returns a float in between 0 and 1 representing the percentage that VAL is from Min to Max e.g: min of 0 and max of 100 with value 50 will return 0.5
         {
             return (val - min) / (max - min);

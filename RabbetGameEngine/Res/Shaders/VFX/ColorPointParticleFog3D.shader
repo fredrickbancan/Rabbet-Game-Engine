@@ -3,13 +3,13 @@
 //location is the location of the value in the vertex atrib array
 //for vec4 position, the gpu automatically fills in the 4th component with a 1.0F. This means you can treat position as a vec4 no problem. (no need for messy conversions)
 layout(location = 0) in vec4 position;
-layout(location = 1) in vec4 colour;
+layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 texCoord;
 
 uniform float fogDensity = 0.0075;
 const float fogGradient = 2.5;
 
-out vec4 vcolour;
+out vec4 vColor;
 out float visibility;//for fog
 
 //matrix for projection transformations.
@@ -41,7 +41,7 @@ void main()
     visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));
     visibility = clamp(visibility, 0.0, 1.0);
 
-    vcolour = colour;
+    vColor = vertexColor;
 }
 
 
@@ -52,16 +52,17 @@ void main()
 
 layout(location = 0) out vec4 color;
 in float visibility;
-in vec4 vcolour;
+in vec4 vColor;
 
 uniform int renderPass = 0;
 uniform vec3 fogColor;
 uniform bool aoc = false;
 uniform vec2 viewPortSize;//vector of viewport dimensions
-
+uniform int frame = 0;
 float ambientOcclusion;//variable for applying a shadowing effect towards the edges of the point to give the illusion of a sphereical shape
 
-float rand3D(in vec3 xyz) {
+float rand3D(in vec3 xyz) 
+{
     return fract(tan(distance(xyz.xy * 1.61803398874989484820459, xyz.xy) * xyz.z) * xyz.y);
 }
 
@@ -85,9 +86,18 @@ void makeCircle()
 void main()
 {
     makeCircle();
-    vec3 colorModified = vcolour.rgb;
-    float fragmentAlpha = 1.0;
 
+    if (!bool(vColor.a))
+	{
+		discard;
+	}
+	if (vColor.a < 0.99)
+	{
+		if(rand3D(gl_FragCoord.xyz + (float(frame) * 0.001F)) > vColor.a)//do stochastic transparency
+	    discard;
+	}
+
+    vec3 colorModified = vColor.rgb;
     if (aoc)
     {
         //add ambient occlusion shading
@@ -96,12 +106,6 @@ void main()
         colorModified.b *= ambientOcclusion;
     }
 
-    if (vcolour.a < 1.0)
-    {
-        float randomFloat = rand3D(gl_FragCoord.xyz);
-        fragmentAlpha = float(randomFloat < vcolour.a);//do stochastic transparency, noise can be reduced with sampling. 
-    }
-
 	//add fog effect to frag
-	color = mix(vec4(fogColor, fragmentAlpha), vec4(colorModified, fragmentAlpha), visibility);
+	color = mix(vec4(fogColor, 1.0F), vec4(colorModified, 1.0F), visibility);
 }

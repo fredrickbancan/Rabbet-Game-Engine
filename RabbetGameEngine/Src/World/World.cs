@@ -36,10 +36,10 @@ namespace RabbetGameEngine
             generateWorld();
             Texture tex;
             TextureUtil.tryGetTexture("transparent.png", out tex);
-            test = new ModelDrawableInstanced(CubePrefab.copyModelDrawable(), ModelDrawType.trangles).setTexture(tex);
-            for(int i = 0; i < 5; i++)
+            test = new ModelDrawableInstanced(CubePrefab.copyModelDrawable(), 8138).setTexture(tex);
+            for(int i = 0; i < 8138; i++)
             { 
-                test.addRenderAt(Matrix4.CreateScale(3) * Matrix4.CreateTranslation(0, 2, i * 3 + 3));
+                test.addRenderAt(Matrix4.CreateTranslation(i % 16, i /  (16 * 16), (i / 16) % 16));
             }
         }
 
@@ -183,11 +183,6 @@ namespace RabbetGameEngine
             {
                 updateAllEntityColliders();//For correcting the drawing of hitboxes after a collision
                 HitboxRenderer.addAllHitboxesToBeRendered(worldColliders, entityColliders);
-            }
-            test.prepare();
-            for (int i = 0; i < GameInstance.get.thePlayer.posY; i++)
-            {
-                test.addRenderAt(Matrix4.CreateScale(3) * Matrix4.CreateTranslation(0, 2, i * 3 + 3));
             }
         }
 

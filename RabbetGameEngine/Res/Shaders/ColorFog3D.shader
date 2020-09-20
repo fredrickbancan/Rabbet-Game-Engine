@@ -3,10 +3,10 @@
 //location is the location of the value in the vertex atrib array
 //for vec4 position, the gpu automatically fills in the 4th component with a 1.0F. This means you can treat position as a vec4 no problem. (no need for messy conversions)
 layout(location = 0) in vec4 position;
-layout(location = 1) in vec4 colour;
+layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 texCoord;
 
-out vec4 vcolour;
+out vec4 vColor;
 
 uniform float fogDensity = 0.0075;
 uniform float fogGradient = 2.5;
@@ -32,17 +32,18 @@ void main()
 	visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));
 	visibility = clamp(visibility, 0.0, 1.0);
 
-	vcolour = colour;
+	vColor = vertexColor;
 }
 
 /*#############################################################################################################################################################################################*/
 //Out variables from vertex shader are passed into the fragment shaders in variables, part of glsl language.
 #shader fragment
 #version 330 core
-in vec4 vcolour;
+in vec4 vColor;
 out vec4 color;
 in float visibility;
 
+uniform int frame = 0;
 uniform vec3 fogColor;
 
 float rand3D(in vec3 xyz) 
@@ -52,13 +53,16 @@ float rand3D(in vec3 xyz)
 
 void main()
 {
-	float fragmentAlpha = 1.0F;
 
-	if (vcolour.a < 1.0)
+	if (!bool(vColor.a))
 	{
-		float randomFloat = rand3D(gl_FragCoord.xyz);
-		fragmentAlpha = float(randomFloat < vcolour.a);//do stochastic transparency, noise can be reduced with sampling. 
+		discard;
+	}
+	if (vColor.a < 0.99)
+	{
+		if (rand3D(gl_FragCoord.xyz + (float(frame) * 0.001F)) > vColor.a)//do stochastic transparency
+			discard;
 	}
 
-	color = mix(vec4(fogColor, fragmentAlpha), vec4(vcolour.rgb, fragmentAlpha), visibility);
+	color = mix(vec4(fogColor, 1.0F), vec4(vColor.rgb, 1.0F), visibility);
 }
