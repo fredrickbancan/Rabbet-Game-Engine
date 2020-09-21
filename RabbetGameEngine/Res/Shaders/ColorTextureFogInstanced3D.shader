@@ -63,7 +63,7 @@ out vec4 color;
 
 float rand3D(in vec3 xyz) 
 {
-	return fract(cos(dot(xyz.xy * 1.6F, xyz.xy) * xyz.z) * xyz.x);
+	return fract(tan(distance(xyz.xy * 1.6F, xyz.xy) * xyz.z) * xyz.x);
 }
 
 void main()
@@ -72,7 +72,7 @@ void main()
 
 	if (textureColor.a < 0.99)
 	{
-		if(rand3D(gl_FragCoord.xyz + (float(frame) * 0.0000001F)) > textureColor.a)//do stochastic transparency
+		if(rand3D(gl_FragCoord.xyz + (float(frame) * 0.1F)) > textureColor.a)//do stochastic transparency
 	    discard;
 	}
 

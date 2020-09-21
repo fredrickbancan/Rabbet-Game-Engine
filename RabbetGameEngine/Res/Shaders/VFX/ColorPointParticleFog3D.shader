@@ -63,7 +63,7 @@ float ambientOcclusion;//variable for applying a shadowing effect towards the ed
 
 float rand3D(in vec3 xyz)
 {
-    return fract(cos(dot(xyz.xy * 1.6F, xyz.xy) * xyz.z) * xyz.x);
+    return fract(tan(distance(xyz.xy * 1.6F, xyz.xy) * xyz.z) * xyz.x);
 }
 
 

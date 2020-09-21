@@ -7,7 +7,7 @@ namespace RabbetGameEngine.Models
     /*A ModelDrawableDynamicInterpolated has the functionality of a ModelDrawableDynamic (ability to combine frequently changing models into one draw call)
       While interpolating the transforms of each instance of models within it. Useful for dynamically drawing multiple moving objects with interpolation.
       This differs from ModelDrawableInstanced because it works with many different models instead of just one*/
-    public class ModelDrawableDynamicInterpolated : ModelDrawableDynamic
+    public class ModelDrawableDynamicInterpolated : ModelDrawableDynamic//TODO impliment
     {
         private PrimitiveType drawType;
         private uint maxInstanceCount;

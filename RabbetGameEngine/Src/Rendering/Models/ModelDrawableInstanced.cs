@@ -73,7 +73,7 @@ namespace RabbetGameEngine.Models
 
             matricesBOID = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, matricesBOID);
-            GL.BufferData(BufferTarget.ArrayBuffer, matrices.Length * 4 * 16, matrices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, matrices.Length * 4 * 16, matrices, BufferUsageHint.DynamicDraw);
           
             GL.EnableVertexAttribArray(3);
             GL.VertexAttribPointer(3, 4, VertexAttribPointerType.Float, false,  4 * 16, 0);

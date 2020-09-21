@@ -70,7 +70,7 @@ namespace RabbetGameEngine
                     ent.Value.getEntityModel().draw(viewMatrix, projectionMatrix, fogColor);
                 }
             }
-            //test.draw(viewMatrix, projectionMatrix, fogColor);
+            test.draw(viewMatrix, projectionMatrix, fogColor);
         }
 
         /*TODO: INNEFICIENT, loops through each VFX and draws their model with a seperate call*/

@@ -21,9 +21,17 @@ void main()
 in vec2 vTexCoord;
 layout(location = 0) out vec4 color;
 
-uniform sampler2D renderedTexture;
+uniform sampler2D frameTexture0;
+uniform sampler2D frameTexture1;
+uniform sampler2D frameTexture2;
+uniform sampler2D frameTexture3;
 
 void main()
 {
-	color = texture(renderedTexture, vTexCoord);
+	vec4 frameColor0 = texture(frameTexture0, vTexCoord);
+	vec4 frameColor1 = texture(frameTexture1, vTexCoord);
+	vec4 frameColor2 = texture(frameTexture2, vTexCoord);
+	vec4 frameColor3 = texture(frameTexture3, vTexCoord);
+
+	color = (frameColor0 * 0.25F) + (frameColor1 * 0.25F) + (frameColor2 * 0.25F) + (frameColor3 * 0.25F);
 }

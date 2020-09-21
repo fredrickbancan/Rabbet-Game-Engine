@@ -219,14 +219,6 @@ namespace RabbetGameEngine.Models
             Renderer.totalDraws++;
         }
 
-        public virtual void draw(int textureID)
-        {
-            bind(false);
-            shader.setUniform1I("renderedTexture", textureID);
-            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
-            unBind();
-            Renderer.totalDraws++;
-        }
         public virtual void draw(bool useTex = true)
         {
             bind(useTex);
