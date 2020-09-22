@@ -17,6 +17,7 @@ namespace RabbetGameEngine
         /*called every tick to check which keys are being pressed and manipulates the provided game instance reference's logic and entities */
         public static void updateInput()
         {
+            PlayerController.resetActions();
             updateMouseButtonInput();
             updateKeyboardInput();
         }

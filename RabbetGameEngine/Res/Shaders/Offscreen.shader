@@ -41,5 +41,6 @@ void main()
 	vec4 frameColor6 = texture(frameTexture6, vTexCoord);
 	vec4 frameColor7 = texture(frameTexture7, vTexCoord);
 
-	color = (frameColor0 * 0.125F) + (frameColor1 * 0.125F) + (frameColor2 * 0.125F) + (frameColor3 * 0.125F) + (frameColor4 * 0.125F) + (frameColor5 * 0.125F) + (frameColor6 * 0.125F) + (frameColor7 * 0.125F);
+//	color = (frameColor0 * 0.125F) + (frameColor1 * 0.125F) + (frameColor2 * 0.125F) + (frameColor3 * 0.125F) + (frameColor4 * 0.125F) + (frameColor5 * 0.125F) + (frameColor6 * 0.125F) + (frameColor7 * 0.125F);
+	color = (frameColor0 * 0.5F) + (frameColor1 * 0.5F);// +(frameColor2 * 0.125F) + (frameColor3 * 0.125F) + (frameColor4 * 0.125F) + (frameColor5 * 0.125F) + (frameColor6 * 0.125F) + (frameColor7 * 0.125F);
 }

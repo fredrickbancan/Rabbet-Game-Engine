@@ -8,7 +8,7 @@ namespace RabbetGameEngine.SubRendering
     /*This static class will be used for rendering scenes to an off-screen buffer for super sampling and other effects.*/
     public static class OffScreen
     {
-        private static readonly int blendFrames = 8;//number of frames to store and blend together must be atleast 1
+        private static readonly int blendFrames = 2;//number of frames to store and blend together must be atleast 1
         private static uint[] screenQuadIndices;
         private static int screenQuadVAO;
         private static int screenQuadVBO;
@@ -122,12 +122,12 @@ namespace RabbetGameEngine.SubRendering
 
         public static void prepareToRenderToOffScreenTexture()
         {
-            GL.BindFramebuffer(FramebufferTarget.Framebuffer, frameBuffers[0]);
-
-            for(int i = blendFrames - 2; i > -1; i--)
+            for (int i = blendFrames - 2; i > -1; i--)
             {
-                 GL.BlitNamedFramebuffer(frameBuffers[i], frameBuffers[i + 1], 0, 0, width, height, 0, 0, width, height, ClearBufferMask.ColorBufferBit, BlitFramebufferFilter.Linear);
+                GL.BlitNamedFramebuffer(0, frameBuffers[i + 1], 0, 0, GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0, 0, width, height, ClearBufferMask.ColorBufferBit, BlitFramebufferFilter.Linear);
             }
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, frameBuffers[0]);
+            
            // GL.BlitNamedFramebuffer(frameBuffers[0], frameBuffers[1], 0, 0, width, height, 0, 0, width, height, ClearBufferMask.ColorBufferBit, BlitFramebufferFilter.Linear);
             GL.Viewport(0, 0, width, height);
         }
@@ -154,6 +154,8 @@ namespace RabbetGameEngine.SubRendering
 
         public static void onClose()
         {
+            if (!Renderer.useOffScreenBuffer)
+                return;
             GL.DeleteRenderbuffer(depthBuffer);
             GL.DeleteTextures(blendFrames - 1, colorBuffers);
             GL.DeleteFramebuffers(blendFrames - 1, frameBuffers);

@@ -7,7 +7,7 @@ namespace RabbetGameEngine
     {
         public static float fov = 80; //fov of player camera
         public static float mouseSensitivity = 0.08F;
-        public static bool vsync = false;// DO NOT set to true for now, causes game loop speed to be limited by screen refresh rate.
+        public static bool vsync = false;
         public static bool displayFps = true;
         public static bool debugScreen = true;
         public static bool drawHitboxes = false;

@@ -1,18 +1,15 @@
-﻿using System.Diagnostics;
-
-namespace RabbetGameEngine
+﻿namespace RabbetGameEngine
 {
     /*This class is responasble for providing game loop timings so that the game runs
       at a consistant rate over multiple fps rates and refresh rates.*/
     public static class TicksAndFps
     {
-        private static Stopwatch stopwatch = new Stopwatch();
-        private static long currentTime = 0;
-        private static long lastTime = 0;
-        private static double deltaTime = 0.005D;
+        private static long currentFrameTime = 0;
+        private static long lastFrameTime = 0;
+        private static double deltaFrameTime;
         private static int ticksPerSecond;
-        private static int ticksElapsed = 0;
-        private static double timePerTick;
+        private static double msPerTick;
+        private static long applicationTime; //last updated UTC time of application. When ticking game, needs to be ticked untill application catches up with real time.
         private static double percentToNextTick; //a decimal value between 0 and 1 which can be used as a percentage of progress towards next tick, usefull for interpolation.
         private static bool paused = false; //true when game is paused
         private static int frames;
@@ -21,60 +18,48 @@ namespace RabbetGameEngine
         public static void init(int tps)
         {
             ticksPerSecond = tps;
-            timePerTick = 1 / (double)ticksPerSecond;
-            stopwatch.Start();
-            lastTime = stopwatch.ElapsedMilliseconds;
+            msPerTick = 1000D / (double)ticksPerSecond;
+            lastFrameTime = getRealTimeMS();
+            applicationTime = getRealTimeMS();
+            currentFrameTime = getRealTimeMS();
         }
 
         /*called every frame*/
-        public static void update()
+        public static void updateFPS()
         {
             /*updating FPS*/
-            lastTime = currentTime;
-            currentTime = stopwatch.ElapsedMilliseconds;
-            deltaTime = (currentTime - lastTime) / 1000.0F;
-            timer += deltaTime;
+            lastFrameTime = currentFrameTime;
+            currentFrameTime = getRealTimeMS();
+            deltaFrameTime = (currentFrameTime - lastFrameTime) / 1000D;
+            timer += deltaFrameTime;
 
             if(timer >= 1D)
             {
                 framesPerSec = frames;
                 frames = 0;
-                timer--;
+                timer -= 1D;
             }
             frames++;
+            
+        }
 
-            if (paused)
+        /*runs the provided onTick function repeatidly untill application has synced with realtime*/
+        public static void doOnTickUntillRealtimeSync(System.Action onTickFunc)//experimental
+        {
+            if(paused)
             {
-                ticksElapsed = 0;
+                while ((applicationTime + msPerTick) < getRealTimeMS())
+                {
+                    applicationTime += (long)msPerTick;
+                }
+                return;
             }
-            else
+            while((applicationTime + msPerTick) < getRealTimeMS())
             {
-                /*updating Ticks*/
-
-                /*resets tick counts if atleast 1 tick time has passed. Update() must only be called after using ticksElapsed to tick the game. This way we can
-                  access the accumulated tick value since the last update before it resets.*/
-                if (ticksElapsed > 0)
-                {
-                    ticksElapsed = 0;
-                    percentToNextTick = 0;
-                }
-
-
-                /*increase partialTicks by the time passed divided by time per tick. Time per tick is calulcated in constructor and is a constant.
-                In other words, How many "time per ticks"'s has passed since the last update? Each time the time of one tick is passed (30 tps is 0.0333333 seconds)
-                parialTicks is increased by 1.*/
-                percentToNextTick += deltaTime / timePerTick;
-                /*ticksElapsed is equal to the number of times the passed time has reached the full duration of one tick (at 30 ticks per second, thats 0.0333333)*/
-                ticksElapsed = (int)percentToNextTick;
-
-                /*limit ticks elapsed to a second's worth, so the game does not speed out of control in some laggy circumstances
-                  In other words, the game will only "catch up" by half a second at a time. Any hangs more than half a second will not 
-                  be corrected for.*/
-                if (ticksElapsed > ticksPerSecond)
-                {
-                    ticksElapsed = ticksPerSecond;
-                }
+                onTickFunc();
+                applicationTime += (long)msPerTick;
             }
+            percentToNextTick = (double)(getRealTimeMS() - applicationTime) / msPerTick;
         }
 
         public static void pause()
@@ -86,28 +71,20 @@ namespace RabbetGameEngine
         {
             paused = false;
         }
-       
-        public static int getTicksElapsed()
-        {
-            return ticksElapsed;
-        }
 
         public static float getNumOfTicksForSeconds(float seconds)
         {
             return (float) (seconds * ticksPerSecond);
         }
-        public static double getFrameTickPercentage()
-        {
-           return deltaTime / timePerTick;
-        }
+
         public static float getPercentageToNextTick()
         {
             return (float)percentToNextTick;
         }
 
-        public static long getCurrentTime()
+        public static long getRealTimeMS()
         {
-            return stopwatch.ElapsedMilliseconds;
+            return System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         }
 
         /*ticks per second*/

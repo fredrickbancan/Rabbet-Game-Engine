@@ -71,14 +71,14 @@ namespace RabbetGameEngine.Debugging
 
             public Profile begin()
             {
-                startTime = TicksAndFps.getCurrentTime();
+                startTime = TicksAndFps.getRealTimeMS();
                 hasEnded = false;
                 return this;
             }
             
             public void end()
             {
-                int time = (int)(TicksAndFps.getCurrentTime() - startTime);
+                int time = (int)(TicksAndFps.getRealTimeMS() - startTime);
                 combinedTimePassed -= recordedTimes[updateIndex];
                 combinedTimePassed += time;
                 recordedTimes[updateIndex++] = time;
@@ -95,7 +95,7 @@ namespace RabbetGameEngine.Debugging
             {  
                 Console.BackgroundColor = ConsoleColor.Cyan;
                 Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine("Profile: \"" + name + "\" measured " + (TicksAndFps.getCurrentTime() - startTime) + " miliseconds from start to finish.");
+                Console.WriteLine("Profile: \"" + name + "\" measured " + (TicksAndFps.getRealTimeMS() - startTime) + " miliseconds from start to finish.");
                 Console.BackgroundColor = ConsoleColor.White;
                 Console.ForegroundColor = ConsoleColor.White;
             }
