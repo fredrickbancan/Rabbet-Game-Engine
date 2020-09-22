@@ -8,7 +8,7 @@ namespace RabbetGameEngine.SubRendering
     /*This static class will be used for rendering scenes to an off-screen buffer for super sampling and other effects.*/
     public static class OffScreen
     {
-        private static readonly int blendFrames = 4;//number of frames to store and blend together must be atleast 1
+        private static readonly int blendFrames = 8;//number of frames to store and blend together must be atleast 1
         private static uint[] screenQuadIndices;
         private static int screenQuadVAO;
         private static int screenQuadVBO;
@@ -87,6 +87,10 @@ namespace RabbetGameEngine.SubRendering
             screenShader.setUniform1I("frameTexture1", 1);
             screenShader.setUniform1I("frameTexture2", 2);
             screenShader.setUniform1I("frameTexture3", 3);
+            screenShader.setUniform1I("frameTexture4", 4);
+            screenShader.setUniform1I("frameTexture5", 5);
+            screenShader.setUniform1I("frameTexture6", 6);
+            screenShader.setUniform1I("frameTexture7", 7);
             screenQuad = QuadPrefab.getNewModel().scaleVertices(new Vector3(2.0F, 2.0F, 1.0F));//scale quad to fit screen
             screenQuadIndices = QuadBatcher.getIndicesForQuadCount(1);
 
@@ -151,8 +155,8 @@ namespace RabbetGameEngine.SubRendering
         public static void onClose()
         {
             GL.DeleteRenderbuffer(depthBuffer);
-            GL.DeleteTextures(blendFrames, colorBuffers);
-            GL.DeleteFramebuffers(blendFrames, frameBuffers);
+            GL.DeleteTextures(blendFrames - 1, colorBuffers);
+            GL.DeleteFramebuffers(blendFrames - 1, frameBuffers);
             GL.DeleteBuffer(screenQuadIBO);
             GL.DeleteBuffer(screenQuadVBO);
             GL.DeleteVertexArray(screenQuadVAO);

@@ -17,7 +17,7 @@ namespace RabbetGameEngine
     {
         private static int privateTotalDrawCallCount;
         private static Matrix4 projectionMatrix;
-        public static readonly bool useOffScreenBuffer = false;
+        public static readonly bool useOffScreenBuffer = true;
         private static int renderFrame;//used to animate textures (noise texture for now)
         private static Rectangle preFullScreenSize;//used to store the window dimentions before going into full screen
 

@@ -25,6 +25,10 @@ uniform sampler2D frameTexture0;
 uniform sampler2D frameTexture1;
 uniform sampler2D frameTexture2;
 uniform sampler2D frameTexture3;
+uniform sampler2D frameTexture4;
+uniform sampler2D frameTexture5;
+uniform sampler2D frameTexture6;
+uniform sampler2D frameTexture7;
 
 void main()
 {
@@ -32,6 +36,10 @@ void main()
 	vec4 frameColor1 = texture(frameTexture1, vTexCoord);
 	vec4 frameColor2 = texture(frameTexture2, vTexCoord);
 	vec4 frameColor3 = texture(frameTexture3, vTexCoord);
+	vec4 frameColor4 = texture(frameTexture4, vTexCoord);
+	vec4 frameColor5 = texture(frameTexture5, vTexCoord);
+	vec4 frameColor6 = texture(frameTexture6, vTexCoord);
+	vec4 frameColor7 = texture(frameTexture7, vTexCoord);
 
-	color = (frameColor0 * 0.25F) + (frameColor1 * 0.25F) + (frameColor2 * 0.25F) + (frameColor3 * 0.25F);
+	color = (frameColor0 * 0.125F) + (frameColor1 * 0.125F) + (frameColor2 * 0.125F) + (frameColor3 * 0.125F) + (frameColor4 * 0.125F) + (frameColor5 * 0.125F) + (frameColor6 * 0.125F) + (frameColor7 * 0.125F);
 }
