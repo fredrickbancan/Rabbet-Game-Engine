@@ -38,7 +38,7 @@ namespace RabbetGameEngine
 
         private static void tryAddNewTexture(string textureDir)
         {
-            string shaderName = textureDir.Replace(ResourceUtil.getTextureFileDir(), "").Replace(ResourceUtil.getFontFileDir(), "");//removes directory
+            string shaderName = Path.GetFileName(textureDir).Replace(".png", "");//removes directory
             Texture addingTexture = new Texture(textureDir, false);
             textures.Add(shaderName, addingTexture);
         }

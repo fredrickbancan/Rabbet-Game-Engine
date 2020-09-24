@@ -15,7 +15,7 @@ namespace RabbetGameEngine.SubRendering
         private static int screenQuadIBO;
         private static Model screenQuad;
         private static Shader screenShader;
-        private static readonly string screenShaderName = "Offscreen.shader";
+        private static readonly string screenShaderName = "Offscreen";
         private static int[] frameBuffers;//for storing the previous frame's image data, useful for frame blending. frameBuffers[0] will always be the main FBO render target.
         private static int[] colorBuffers;//for storing the previous frame's image data, useful for frame blending. frameBuffers[0] will always be the main FBO render target.
         private static int depthBuffer;
@@ -40,7 +40,7 @@ namespace RabbetGameEngine.SubRendering
             GL.BindTexture(TextureTarget.Texture2D, colorBuffers[0]);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb8, width, height, 0, PixelFormat.Bgr, PixelType.UnsignedByte, IntPtr.Zero);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, width, height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
 
 
             GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, depthBuffer);
@@ -61,7 +61,7 @@ namespace RabbetGameEngine.SubRendering
                 GL.BindTexture(TextureTarget.Texture2D, colorBuffers[i]);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
-                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgb8, width, height, 0, PixelFormat.Bgr, PixelType.UnsignedByte, IntPtr.Zero);
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, width, height, 0, PixelFormat.Bgra, PixelType.UnsignedByte, IntPtr.Zero);
 
                 GL.BindFramebuffer(FramebufferTarget.Framebuffer, frameBuffers[i]);
                 GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, colorBuffers[i], 0);

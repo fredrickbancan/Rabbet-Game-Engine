@@ -10,6 +10,7 @@ namespace RabbetGameEngine.Models
       benefit more from dynamic rendering instead of instanced.*/
     public class ModelDrawableInstanced
     {
+        public static readonly string shaderName = "EntityWorld_FBI";
         protected int maxInstances;
         protected bool hasInitialized = false;
         protected bool needsToSubmit = true;
@@ -35,7 +36,7 @@ namespace RabbetGameEngine.Models
             this.maxInstances = maxInstances;
             matrices = new Matrix4[maxInstances];
             TextureUtil.tryGetTexture("debug", out texture);
-            ShaderUtil.tryGetShader("ColorTextureFogInstanced3D.shader", out shader);
+            ShaderUtil.tryGetShader(shaderName, out shader);
         }
 
         /*the provided model instance will be re-drawn at each transform*/
@@ -48,7 +49,7 @@ namespace RabbetGameEngine.Models
             this.maxInstances = maxInstances;
             matrices = new Matrix4[maxInstances];
             TextureUtil.tryGetTexture("debug", out texture);
-            ShaderUtil.tryGetShader("ColorTextureFogInstanced3D.shader", out shader);
+            ShaderUtil.tryGetShader(shaderName, out shader);
         }
 
         protected virtual void init()

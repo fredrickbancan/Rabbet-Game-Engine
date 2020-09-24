@@ -39,4 +39,5 @@ void main()
 	vec3 pointOnSphere = normalize(worldSpacePos.xyz);//normalizing the position of the frag to form a spherical depth from the camera, leaving out the w coordinate
 
 	color.rgb = mix(skyHorizon, skyTop, clamp(pointOnSphere.y, 0, 1));
+	color.a = 1;
 }

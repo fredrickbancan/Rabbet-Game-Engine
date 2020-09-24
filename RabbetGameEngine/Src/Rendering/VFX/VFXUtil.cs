@@ -13,9 +13,9 @@ namespace RabbetGameEngine.VFX
 
             VFXBase sparks = new VFXPointParticles(location, CustomColor.orange, (12 - (int)radius / 4) + (int)(radius / 4 * radius / 4), radius / 15, 0.05F, true, false, 0.75F);
 
-            VFXBase explosion1 = new VFXPointParticles(location, CustomColor.flame, (128 - (int)radius/2) + (int)(radius/2*radius/2), radius / 15, 0.125F, false, false, 0.2F);
+            VFXBase explosion1 = new VFXPointParticles(location, CustomColor.flame, (128 - (int)radius/2) + (int)(radius/2*radius/2), radius / 15, 0.125F, false, true, 0.2F);
 
-            VFXBase explosion2 = new VFXPointParticles(location, CustomColor.ember, (128 - (int)radius/2) + (int)(radius/2*radius/2), radius / 20, 0.125F, true, false, 0.15F);
+            VFXBase explosion2 = new VFXPointParticles(location, CustomColor.ember, (128 - (int)radius/2) + (int)(radius/2*radius/2), radius / 20, 0.125F, true, true, 0.15F);
 
             smoke.setYAccel(0.003572F);
             smoke.setExpansionResistance(0.2F);

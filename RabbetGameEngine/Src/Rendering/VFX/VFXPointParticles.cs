@@ -6,7 +6,7 @@ namespace RabbetGameEngine.VFX
     /*Base class for any VFX using point particles*/
     public class VFXPointParticles : VFXBase
     {
-        private static string defaultShaderName = @"VFX\ColorPointParticleFog3D.shader";
+        private static string defaultShaderName = "ColorPointParticleFog3D";
         protected CustomColor pointColor;
         protected float randomPointPositionSpread;//the maximum distance between points when randomizing a point cloud (e.g, a puff of smoke)
         protected float pointRadius;

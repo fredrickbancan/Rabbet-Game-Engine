@@ -10,6 +10,7 @@ namespace RabbetGameEngine.Models
     /*This class will be responsable for loading models and converting them to vertex arrays for use with rendering.*/
     public static class OBJLoader
     {
+        private static readonly string defaultShaderName = "EntityWorld_F";
         private static string currentLine = "empty";
         private static StreamReader reader;
         private static bool successfullyLoaded = false;
@@ -83,7 +84,7 @@ namespace RabbetGameEngine.Models
                 return DefaultDebugModel.getNewModelDrawable();//returns model by defualt or failing
             }
             reader.Close();
-            return new ModelDrawable("ColorTexture3D.shader", "debug", vertexResult.ToArray(), indices.ToArray());
+            return new ModelDrawable(defaultShaderName, "debug", vertexResult.ToArray(), indices.ToArray());
 
         }
 

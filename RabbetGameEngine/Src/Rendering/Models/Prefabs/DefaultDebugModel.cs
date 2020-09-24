@@ -1,6 +1,6 @@
 ﻿
-using RabbetGameEngine.SubRendering;
 using OpenTK;
+using RabbetGameEngine.SubRendering;
 using System;
 namespace RabbetGameEngine.Models
 {
@@ -8,7 +8,7 @@ namespace RabbetGameEngine.Models
     //just an ugly cube for when a model fails to load
     public static class DefaultDebugModel
     {
-        public static string shaderName = "ColorTexture3D.shader";
+        public static string shaderName = "EntityWorld_F";
         public static readonly Vertex[] vertices = new Vertex[]
         {   
             //zPos

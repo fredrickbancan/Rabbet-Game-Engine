@@ -1,7 +1,7 @@
-﻿#shader vertex
+﻿//base shader for rendering objects with only vertex colors
+#shader vertex
 #version 330 core
-//location is the location of the value in the vertex atrib array
-//for vec4 position, the gpu automatically fills in the 4th component with a 1.0F. This means you can treat position as a vec4 no problem. (no need for messy conversions)
+
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 texCoord;
@@ -27,19 +27,9 @@ in vec4 vColor;
 out vec4 color;
 
 uniform int frame = 0;
-
-float rand3D(in vec3 xyz)
-{
-	return fract(tan(distance(xyz.xy * 1.6F, xyz.xy) * xyz.z) * xyz.x);
-}
-
 void main()
 {
-	if (vColor.a < 0.99)
-	{
-		if (rand3D(gl_FragCoord.xyz + (float(frame) * 0.0000001F)) > vColor.a)//do stochastic transparency
-			discard;
-	}
 
 	color.rgb = vColor.rgb;
+	color.a = 1;
 }

@@ -1,6 +1,6 @@
-﻿using RabbetGameEngine.Models;
+﻿using OpenTK;
+using RabbetGameEngine.Models;
 using RabbetGameEngine.SubRendering.GUI;
-using OpenTK;
 namespace RabbetGameEngine.GUI
 {
     public enum CrosshairType//enum for all different types of crosshairs
@@ -17,10 +17,11 @@ namespace RabbetGameEngine.GUI
         private float texutrePixelWidth = 0F;
         private float texutrePixelHeight = 0F;
         private CustomColor crosshairColor = CustomColor.black;
+        public static readonly string shaderName = "GuiCutout";
 
         public GUICrosshair(CustomColor color,float crosshairSize = 2.0F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0.5F, 0.5F))
         {
-            ShaderUtil.tryGetShader("GUI\\GuiStencilShader.shader", out crosshairShader);
+            ShaderUtil.tryGetShader(shaderName, out crosshairShader);
             crosshairColor = color;
             setCrosshairTextureAndSize(crosshairType, crosshairSize);
             setModel(new ModelDrawable(crosshairShader, crosshairTexture, QuadPrefab.getNewModel().setColor(crosshairColor).vertices, QuadPrefab.quadIndices));
@@ -28,7 +29,7 @@ namespace RabbetGameEngine.GUI
 
         public GUICrosshair(float crosshairSize = 2.0F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0.5F, 0.5F))
         {
-            ShaderUtil.tryGetShader("GUI\\GuiStencilShader.shader", out crosshairShader);
+            ShaderUtil.tryGetShader(shaderName, out crosshairShader);
             setCrosshairTextureAndSize(crosshairType, crosshairSize);
             setModel(new ModelDrawable(crosshairShader, crosshairTexture, QuadPrefab.getNewModel().setColor(crosshairColor).vertices, QuadPrefab.quadIndices));
         }
@@ -38,7 +39,7 @@ namespace RabbetGameEngine.GUI
             switch(type)
             {
                 case CrosshairType.normal:
-                    TextureUtil.tryGetTexture("GUI\\Crosshairs\\CrosshairNormal.png", out crosshairTexture);
+                    TextureUtil.tryGetTexture("CrosshairNormal", out crosshairTexture);
                     texutrePixelWidth = crosshairTexture.getWidth() * crosshairSize;
                     texutrePixelHeight = crosshairTexture.getHeight() * crosshairSize;
                     break;

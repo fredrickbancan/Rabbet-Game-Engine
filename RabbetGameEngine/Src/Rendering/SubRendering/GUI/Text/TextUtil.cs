@@ -8,7 +8,7 @@ namespace RabbetGameEngine.GUI.Text
     public enum TextAlign { LEFT, CENTER, RIGHT };
     public static class TextUtil
     {
-        public static readonly string textShaderName = @"GUI\GuiTextShader.shader";
+        public static readonly string textShaderName = "GuiText";
         public static readonly float defaultFontSize = 0.02F;
         public static readonly int defaultScreenEdgePadding = 5; //5 pixels
 
@@ -54,7 +54,7 @@ namespace RabbetGameEngine.GUI.Text
 
         public static string getTextureNameForScreenFont(FontFace font)
         {
-            return font.getFontName() + ".png";
+            return font.getFontName() + "";
         }
     }
 }

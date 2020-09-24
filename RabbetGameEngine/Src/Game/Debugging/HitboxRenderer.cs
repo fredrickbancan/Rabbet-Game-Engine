@@ -10,7 +10,7 @@ namespace RabbetGameEngine.Debugging
     /*This class handles the rendering of hitboxes for debugging purposes.*/
     public static class HitboxRenderer
     {
-        public static readonly string linesShaderName = "Color3D.shader";
+        public static readonly string linesShaderName = "Color";
 
 
         public static readonly int maxAABBRenderCount = 512;

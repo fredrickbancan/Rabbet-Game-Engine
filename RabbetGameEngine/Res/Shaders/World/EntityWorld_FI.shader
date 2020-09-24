@@ -1,7 +1,7 @@
-﻿#shader vertex
+﻿//base shader for instance rendering a large model multiple times with fog and transparency
+#shader vertex
 #version 330 core
-//location is the location of the value in the vertex atrib array
-//for vec4 position, the gpu automatically fills in the 4th component with a 1.0F. This means you can treat position as a vec4 no problem. (no need for messy conversions)
+
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 texCoord; //other data such as color and uv can also be provided for each instance rendered
@@ -61,20 +61,13 @@ uniform sampler2D uTexture;
 uniform vec3 fogColor;
 out vec4 color;
 
-float rand3D(in vec3 xyz) 
-{
-	return fract(tan(distance(xyz.xy * 1.6F, xyz.xy) * xyz.z) * xyz.x);
-}
-
 void main()
 {
 	vec4 textureColor = texture(uTexture, vTexCoord) * vColor;// mixes colour and textures
-
-	if (textureColor.a < 0.99)
+	if (textureColor.a < 0.99F)
 	{
-		if(rand3D(gl_FragCoord.xyz + (float(frame) * 0.1F)) > textureColor.a)//do stochastic transparency
-	    discard;
+		discard;//cutout
 	}
-
 	color.rgb = mix(fogColor, textureColor.rgb, visibility);
+	color.a = 1;
 }

@@ -5,8 +5,8 @@ namespace RabbetGameEngine.Models
 {
     public static class CubePrefab
     {
-        public static readonly string shaderName = "ColorTextureFog3D.shader";
-        public static readonly string textureName = "Explosion.png";
+        public static readonly string shaderName = "EntityWorld_F";
+        public static readonly string textureName = "Explosion";
 
         public static readonly Vertex[] cubeVertices;
 

@@ -14,8 +14,8 @@ namespace RabbetGameEngine.Models
         private Matrix4 tankWheelsModelMatrix = Matrix4.Identity;
         private Matrix4 tankBodyModelMatrix = Matrix4.Identity;
         private Matrix4 tankBarrelModelMatrix = Matrix4.Identity;
-        private string shaderName = "ColorTextureFog3D.shader";
-        private string textureName = "Camo.png";
+        private string shaderName = "EntityWorld_F";
+        private string textureName = "Camo";
         private string wheelModelName = @"Tank\TankWheels.obj";
         private string bodyModelName = @"Tank\TankBody.obj";
         private string barrelModelName = @"Tank\TankBarrel.obj";

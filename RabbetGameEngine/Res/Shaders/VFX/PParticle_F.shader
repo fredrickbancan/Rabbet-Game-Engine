@@ -1,7 +1,6 @@
-﻿#shader vertex
+﻿//shader for rendering point particles opaque
+#shader vertex
 #version 330 
-//location is the location of the value in the vertex atrib array
-//for vec4 position, the gpu automatically fills in the 4th component with a 1.0F. This means you can treat position as a vec4 no problem. (no need for messy conversions)
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 texCoord;
@@ -10,7 +9,7 @@ uniform float fogDensity = 0.0075;
 const float fogGradient = 2.5;
 
 out vec4 vColor;
-out float visibility;//for fog
+out float visibility;
 
 //matrix for projection transformations.
 uniform mat4 projectionMatrix;
@@ -46,11 +45,10 @@ void main()
 
 
 /*#############################################################################################################################################################################################*/
-//Out variables from vertex shader are passed into the fragment shaders in variables, part of glsl language.
 #shader fragment
 #version 330
 
-layout(location = 0) out vec4 color;
+layout(location = 0) out vec4 fragColor;
 in float visibility;
 in vec4 vColor;
 
@@ -82,7 +80,7 @@ void main()
 {
     makeCircle();
 
-    vec4 colorModified = vColor;
+    vec3 colorModified = vColor.rgb;
     if (aoc)
     {
         //add ambient occlusion shading
@@ -92,5 +90,6 @@ void main()
     }
 
 	//add fog effect to frag
-    color = mix(vec4(fogColor, colorModified.a), colorModified, visibility);
+    fragColor.rgb = mix(fogColor, colorModified, visibility);
+    fragColor.a = 1;
 }

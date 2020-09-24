@@ -4,8 +4,8 @@ namespace RabbetGameEngine.VFX
 {
     public class VFXExplosion : VFXBase
     {
-        protected static readonly string shaderName = "ColorTextureFog3D.shader";
-        protected static readonly string textureName = "Explosion.png";
+        protected static readonly string shaderName = "EntityWorld_F";
+        protected static readonly string textureName = "Explosion";
         protected static readonly string modelname = "IcoSphere.obj";
         private static Random rand = new Random();
 

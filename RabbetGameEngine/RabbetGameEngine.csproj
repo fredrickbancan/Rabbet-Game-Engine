@@ -63,11 +63,11 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Res\Shaders\Color3D.shader" />
-    <None Include="Res\Shaders\ColorFog3D.shader" />
-    <None Include="Res\Shaders\ColorInstanced3D.shader" />
-    <None Include="Res\Shaders\ColorTextureFogInstanced3D.shader" />
-    <None Include="Res\Shaders\Offscreen.shader" />
+    <None Include="Res\Shaders\Color.shader" />
+    <None Include="Res\Shaders\Color_F.shader" />
+    <None Include="Res\Shaders\FrameBuffer.shader" />
+    <None Include="Res\Shaders\VFX\PParticle_FB.shader" />
+    <None Include="Res\Shaders\VFX\PParticle_F.shader" />
     <None Include="Res\Shaders\VFX\ColorPointParticleFog3D.shader" />
     <Compile Include="Src\Game\CustomColor.cs" />
     <Compile Include="Src\Game\Debugging\HitboxRenderer.cs" />
@@ -141,6 +141,10 @@
     <Compile Include="Src\Rendering\Vertex.cs" />
     <Compile Include="Src\Rendering\VFX\VFXBase.cs" />
     <Compile Include="Src\Physics\PositionalObject.cs" />
+    <None Include="Res\Shaders\World\EntityWorld_FI.shader" />
+    <None Include="Res\Shaders\World\EntityWorld_FBI.shader" />
+    <None Include="Res\Shaders\World\EntityWorld_FB.shader" />
+    <None Include="Res\Shaders\World\EntityWorld_F.shader" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -157,11 +161,9 @@
     <None Include="Res\OBJ\Tank\TankBody.obj" />
     <None Include="Res\OBJ\Tank\TankProjectile.obj" />
     <None Include="Res\OBJ\Tank\TankWheels.obj" />
-    <None Include="Res\Shaders\ColorTexture3D.shader" />
-    <None Include="Res\Shaders\ColorTextureFog3D.shader" />
-    <None Include="Res\Shaders\GUI\GuiStencilShader.shader" />
-    <None Include="Res\Shaders\GUI\GuiTextShader.shader" />
-    <None Include="Res\Shaders\SkyboxShader3D.shader" />
+    <None Include="Res\Shaders\GUI\GuiCutout.shader" />
+    <None Include="Res\Shaders\GUI\GuiText.shader" />
+    <None Include="Res\Shaders\World\Skybox.shader" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
@@ -179,6 +181,7 @@
     <Content Include="Res\Font\Arial.png" />
     <Content Include="Res\Font\Consolas.png" />
     <Content Include="Res\Font\Trebuchet.png" />
+    <Content Include="Res\Shaders\ReadMe.txt" />
     <Content Include="Res\Texture\aie.png" />
     <Content Include="Res\Texture\blanket.png" />
     <Content Include="Res\Texture\Camo.png" />

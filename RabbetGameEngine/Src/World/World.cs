@@ -22,9 +22,9 @@ namespace RabbetGameEngine
         public Dictionary<int, ICollider> entityColliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity
         public List<ICollider> worldColliders = new List<ICollider>();//list of colliders with no parent, ie, walls, ground planes.
         public List<VFXBase> vfxList = new List<VFXBase>();
-        private string wallTextureName = "transparent.png"; 
-        private string groundTextureName = "wood.png"; 
-        private string terrainShaderName = "ColorTextureFog3D.shader";
+        private string wallTextureName = "transparent"; 
+        private string groundTextureName = "wood"; 
+        private string groundWallShaderName = "EntityWorld_F";
 
         ModelDrawableInstanced test;
 
@@ -35,7 +35,7 @@ namespace RabbetGameEngine
             buildSkyBox();
             generateWorld();
             Texture tex;
-            TextureUtil.tryGetTexture("transparent.png", out tex);
+            TextureUtil.tryGetTexture("transparent", out tex);
             test = new ModelDrawableInstanced(CubePrefab.copyModelDrawable(), 8138).setTexture(tex);
             for(int i = 0; i < 8138; i++)
             { 
@@ -96,7 +96,7 @@ namespace RabbetGameEngine
             temp[3] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(0, 0, 0), new Vector3(0, 0, -0.5F));//negZ
             temp[4] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(-90, 0, 0), new Vector3(0, 0.5F, 0));//top
             temp[5] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(90, 0, 0), new Vector3(0, -0.5F, 0));//bottom
-            skyboxModel = QuadBatcher.batchQuadModels(temp, "SkyboxShader3D.shader", "none");
+            skyboxModel = QuadBatcher.batchQuadModels(temp, "Skybox", "none");
         }
 
         private void generateWorld()//creates the playground and world colliders
@@ -133,7 +133,7 @@ namespace RabbetGameEngine
 
             //posX face
             unbatchedGroundQuads[4100] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(1, 1, 2)).rotateVertices(new Vector3(0,0,90)).translateVertices(new Vector3(1f, 0.5F, 0)).setColor(new Vector4(0.65F, 0.65F, 0.65F, 1.0F));
-            groundModel = QuadBatcher.batchQuadModels(unbatchedGroundQuads, terrainShaderName, groundTextureName); 
+            groundModel = QuadBatcher.batchQuadModels(unbatchedGroundQuads, groundWallShaderName, groundTextureName); 
 
 
             //build negZ wall
@@ -161,7 +161,7 @@ namespace RabbetGameEngine
             }
 
 
-            wallsModel = QuadBatcher.batchQuadModels(unbatchedWallQuads, terrainShaderName, wallTextureName);
+            wallsModel = QuadBatcher.batchQuadModels(unbatchedWallQuads, groundWallShaderName, wallTextureName);
             //adding all world collider planes
             this.addWorldCollider(new PlaneCollider(new Vector3(0, 1, 0), groundHeight));//ground plane at y groundHeight, facing positive Y
             this.addWorldCollider(new PlaneCollider(new Vector3(0,0,1), -playgroundLength / 2));//Wall at negZ, playgroundLength / 2 units away, facing pos Z

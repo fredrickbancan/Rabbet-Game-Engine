@@ -1,7 +1,7 @@
-﻿#shader vertex
+﻿//Shader for rendering point particles with transparency
+#shader vertex
 #version 330 
-//location is the location of the value in the vertex atrib array
-//for vec4 position, the gpu automatically fills in the 4th component with a 1.0F. This means you can treat position as a vec4 no problem. (no need for messy conversions)
+
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 texCoord;
@@ -46,7 +46,7 @@ void main()
 
 
 /*#############################################################################################################################################################################################*/
-//Out variables from vertex shader are passed into the fragment shaders in variables, part of glsl language.
+
 #shader fragment
 #version 330
 
@@ -57,9 +57,9 @@ in vec4 vColor;
 uniform int renderPass = 0;
 uniform vec3 fogColor;
 uniform bool aoc = false;
-uniform vec2 viewPortSize;//vector of viewport dimensions
+uniform vec2 viewPortSize;
 uniform int frame = 0;
-float ambientOcclusion;//variable for applying a shadowing effect towards the edges of the point to give the illusion of a sphereical shape
+float ambientOcclusion;
 
 void makeCircle()
 {
@@ -91,6 +91,5 @@ void main()
         colorModified.b *= ambientOcclusion;
     }
 
-	//add fog effect to frag
     color = mix(vec4(fogColor, colorModified.a), colorModified, visibility);
 }

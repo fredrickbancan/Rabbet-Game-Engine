@@ -20,7 +20,7 @@ namespace RabbetGameEngine
             string[] allDirectories = Directory.GetDirectories(directory);
             foreach (string file in allFiles)
             {
-                if (file.Contains(".shader"))
+                if (file.Contains(""))
                 {
                     tryAddNewShader(file);
                 }
@@ -34,7 +34,7 @@ namespace RabbetGameEngine
 
         private static void tryAddNewShader(string shaderDir)
         {
-            string shaderName = shaderDir.Replace(ResourceUtil.getShaderFileDir(), "");//removes directory
+            string shaderName = Path.GetFileName(shaderDir).Replace(".shader", "");//removes directory
             Shader addingShader = new Shader(shaderDir);
             shaders.Add(shaderName, addingShader);
         }
