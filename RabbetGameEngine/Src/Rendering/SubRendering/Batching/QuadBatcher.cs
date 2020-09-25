@@ -1,5 +1,4 @@
 ﻿using RabbetGameEngine.Models;
-using System;
 
 namespace RabbetGameEngine.SubRendering
 {
@@ -8,10 +7,6 @@ namespace RabbetGameEngine.SubRendering
      *Drawable Model for one draw call.*/
     static class QuadBatcher
     {
-        public static readonly int maxQuadCount = 196608; // maximum number of quads that can be batched into one call, otherwise a new one must be made.
-        public static readonly int maxVertexCount = maxQuadCount * 4;
-        private static readonly uint[] indices = getIndicesForQuadCount(maxQuadCount);
-
 
         /*Batches together models made of quads for being rendered in 3D*/
         public static ModelDrawable batchQuadModels(Model[] quadModels, string shaderName, string textureName)
@@ -19,7 +14,7 @@ namespace RabbetGameEngine.SubRendering
             Vertex[] newVertices;
             combineData(quadModels, out newVertices);
 
-            return new ModelDrawable(shaderName, textureName, newVertices, indices);
+            return new ModelDrawable(shaderName, textureName, newVertices, getIndicesForQuadCount(newVertices.Length / 4));
         }
 
         /*Combines all the data in the model array and outputs the combined ordered arrays.*/

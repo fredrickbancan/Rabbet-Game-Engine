@@ -64,7 +64,7 @@ out vec4 color;
 void main()
 {
 	vec4 textureColor = texture(uTexture, vTexCoord) * vColor;// mixes colour and textures
-	if (textureColor.a < 0.99F)
+	if (textureColor.a < 0.01F)
 	{
 		discard;//cutout
 	}

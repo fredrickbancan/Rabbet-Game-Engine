@@ -137,6 +137,15 @@ namespace RabbetGameEngine
             GC.SuppressFinalize(this);
         }
 
+        public bool equals(Texture other)
+        {
+            return this.id == other.getID();
+        }
+
+        public int getID()
+        {
+            return this.id;
+        }
         public int getWidth()
         {
             return width;

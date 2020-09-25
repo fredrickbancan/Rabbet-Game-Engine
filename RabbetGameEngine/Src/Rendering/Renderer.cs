@@ -4,10 +4,18 @@ using RabbetGameEngine.Debugging;
 using RabbetGameEngine.GUI;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.SubRendering;
+using RabbetGameEngine.VFX;
 using System.Drawing;
 
 namespace RabbetGameEngine
 {
+    public enum RenderType//enum for chosing how to render certain objects
+    {
+        OPAQUE,//opaque objects, movement updated per tick.
+        OPAQUE_ENTITY,//opaque objects, movement updated per frame.
+        TRANSPARENT,//transparent objects, movement updated per tick.
+        TRANSPARENT_ENTITY,//transparent objects, movement updated per frame.
+    }
 
     /*This class will be responsable for most of the games rendering requests. It will then send the requests to the suitable sub renderers.
       e.g, when the game requests text to be rendered on the screen, the renderer will send a request to the TextRenderer2D.
@@ -27,6 +35,9 @@ namespace RabbetGameEngine
             ShaderUtil.loadAllFoundShaderFiles();
             TextureUtil.loadAllFoundTextureFiles();
             ModelUtil.loadAllFoundModelFiles();
+            Application.infoPrint("OpenGL Version: " + GL.GetString(StringName.Version));
+            Application.infoPrint("OpenGL Vendor: " + GL.GetString(StringName.Vendor));
+            Application.infoPrint("Shading Language Version: " + GL.GetString(StringName.ShadingLanguageVersion));
             Application.debugPrint("Loaded " + ShaderUtil.getShaderCount() + " shaders.");
             Application.debugPrint("Loaded " + TextureUtil.getTextureCount() + " textures.");
             Application.debugPrint("Loaded " + ModelUtil.getModelCount() + " models.");
@@ -75,16 +86,18 @@ namespace RabbetGameEngine
             GL.Clear(ClearBufferMask.DepthBufferBit);
         }
         
-        private static void renderWorld()
+        private static void renderWorld()//TODO: obselete,  impliment batcher pipeline
         {
             privateTotalDrawCallCount = 0;
             GameInstance.get.currentPlanet.getSkyboxModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getSkyColor(), GameInstance.get.currentPlanet.getFogColor());
+            if(GameSettings.drawHitboxes)HitboxRenderer.renderAll(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
             GameInstance.get.currentPlanet.getGroundModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());
             GameInstance.get.currentPlanet.getWallsModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());
             GameInstance.get.currentPlanet.drawEntities(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
             GameInstance.get.currentPlanet.drawVFX(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
-            if(GameSettings.drawHitboxes)HitboxRenderer.renderAll(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
         }
+
+
 
         /*Called after all draw calls*/
         private static void postRender()
@@ -93,6 +106,22 @@ namespace RabbetGameEngine
             GameInstance.get.SwapBuffers();
             renderFrame++;
             renderFrame %= 4096;
+        }
+
+        /*render requests will add a new entry to a suitable batch*/
+        public static void requestRenderObject(PositionalObject obj, Model viewModel, uint[] indices, RenderType renderType)
+        {
+            //TODO: impliment
+        }
+
+        public static void requestRenderObject(PositionalObject obj, ModelDrawable viewModel, RenderType renderType)
+        {
+            //TODO: impliment
+        }
+
+        public static void requestRenderVFX(VFXBase obj, ModelDrawable viewModel, RenderType renderType)
+        {
+            //TODO: impliment
         }
 
         public static int getAndResetTotalDrawCount()

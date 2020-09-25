@@ -19,7 +19,7 @@ namespace RabbetGameEngine
         public static readonly string version = "0.0.6_id";
 
         #region Print functions
-        public static void say(object s)
+        public static void infoPrint(object s)
         {
             Console.BackgroundColor = ConsoleColor.Blue;
             Console.ForegroundColor = ConsoleColor.Black;

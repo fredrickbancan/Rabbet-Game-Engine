@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace RabbetGameEngine.Models
 {
-
+    //TODO: replace modelDrawable with just a model which contains indices as part of the batcher pipeline.
     /*Base class for models that can be drawn individually with additional draw calls and have
      *individual VAO's.*/
     public class ModelDrawable : Model

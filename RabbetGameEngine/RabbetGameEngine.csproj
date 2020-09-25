@@ -66,9 +66,8 @@
     <None Include="Res\Shaders\Color.shader" />
     <None Include="Res\Shaders\Color_F.shader" />
     <None Include="Res\Shaders\FrameBuffer.shader" />
-    <None Include="Res\Shaders\VFX\PParticle_FB.shader" />
+    <None Include="Res\Shaders\VFX\PParticle_FT.shader" />
     <None Include="Res\Shaders\VFX\PParticle_F.shader" />
-    <None Include="Res\Shaders\VFX\ColorPointParticleFog3D.shader" />
     <Compile Include="Src\Game\CustomColor.cs" />
     <Compile Include="Src\Game\Debugging\HitboxRenderer.cs" />
     <Compile Include="Src\Game\GUIS\MainGUI.cs" />
@@ -76,6 +75,7 @@
     <Compile Include="Src\Game\TickTimer.cs" />
     <Compile Include="Src\Rendering\GUIComponents\GUICrosshair.cs" />
     <Compile Include="Src\Rendering\GUIHandler.cs" />
+    <Compile Include="Src\Rendering\IndicesBufferObject.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\EntityCactusModel.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankModel.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankProjectileModel.cs" />
@@ -87,12 +87,16 @@
     <Compile Include="Src\Rendering\Models\Prefabs\DefaultDebugModel.cs" />
     <Compile Include="Src\Rendering\Models\OBJLoader.cs" />
     <Compile Include="Src\Rendering\ShaderUtil.cs" />
+    <Compile Include="Src\Rendering\SubRendering\Batching\Batch.cs" />
+    <Compile Include="Src\Rendering\SubRendering\Batching\BatchManager.cs" />
     <Compile Include="Src\Rendering\SubRendering\Batching\LineBatcher.cs" />
     <Compile Include="Src\Rendering\SubRendering\GUI\GUIScreen.cs" />
     <Compile Include="Src\Rendering\SubRendering\GUI\GUIScreenComponent.cs" />
     <Compile Include="Src\Rendering\SubRendering\Batching\TriangleBatcher.cs" />
     <Compile Include="Src\Rendering\SubRendering\OffScreen.cs" />
     <Compile Include="Src\Rendering\TextureUtil.cs" />
+    <Compile Include="Src\Rendering\VertexArrayObject.cs" />
+    <Compile Include="Src\Rendering\VertexBufferObject.cs" />
     <Compile Include="Src\Rendering\VFX\VFXExplosion.cs" />
     <Compile Include="Src\Rendering\VFX\VFXPointParticles.cs" />
     <Compile Include="Src\Rendering\VFX\VFXUtil.cs" />
@@ -142,8 +146,8 @@
     <Compile Include="Src\Rendering\VFX\VFXBase.cs" />
     <Compile Include="Src\Physics\PositionalObject.cs" />
     <None Include="Res\Shaders\World\EntityWorld_FI.shader" />
-    <None Include="Res\Shaders\World\EntityWorld_FBI.shader" />
-    <None Include="Res\Shaders\World\EntityWorld_FB.shader" />
+    <None Include="Res\Shaders\World\EntityWorld_FTI.shader" />
+    <None Include="Res\Shaders\World\EntityWorld_FT.shader" />
     <None Include="Res\Shaders\World\EntityWorld_F.shader" />
   </ItemGroup>
   <ItemGroup>

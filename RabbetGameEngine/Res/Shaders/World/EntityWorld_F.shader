@@ -51,7 +51,7 @@ uniform vec3 fogColor;
 void main()
 {
 	vec4 textureColor = texture(uTexture, vTexCoord) * vColor;
-	if (textureColor.a < 0.99F)
+	if (textureColor.a < 0.01F)
 	{
 		discard;//cutout
 	}

@@ -61,7 +61,7 @@ namespace RabbetGameEngine
         }
       
         /*TODO: INNEFICIENT, loops through each entitiy and draws their model with a seperate call*/
-        public void drawEntities(Matrix4 viewMatrix, Matrix4 projectionMatrix)
+        public void drawEntities(Matrix4 viewMatrix, Matrix4 projectionMatrix)//obselete, move to batcher pipeline
         {
             foreach(KeyValuePair<int, Entity> ent in entities)
             {

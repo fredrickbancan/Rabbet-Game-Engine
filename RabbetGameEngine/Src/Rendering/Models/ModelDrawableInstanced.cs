@@ -10,7 +10,7 @@ namespace RabbetGameEngine.Models
       benefit more from dynamic rendering instead of instanced.*/
     public class ModelDrawableInstanced
     {
-        public static readonly string shaderName = "EntityWorld_FBI";
+        public static readonly string shaderName = "EntityWorld_FTI";
         protected int maxInstances;
         protected bool hasInitialized = false;
         protected bool needsToSubmit = true;
