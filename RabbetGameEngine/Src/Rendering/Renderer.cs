@@ -9,13 +9,6 @@ using System.Drawing;
 
 namespace RabbetGameEngine
 {
-    public enum RenderType//enum for chosing how to render certain objects
-    {
-        OPAQUE,//opaque objects, movement updated per tick.
-        OPAQUE_ENTITY,//opaque objects, movement updated per frame.
-        TRANSPARENT,//transparent objects, movement updated per tick.
-        TRANSPARENT_ENTITY,//transparent objects, movement updated per frame.
-    }
 
     /*This class will be responsable for most of the games rendering requests. It will then send the requests to the suitable sub renderers.
       e.g, when the game requests text to be rendered on the screen, the renderer will send a request to the TextRenderer2D.
@@ -109,17 +102,17 @@ namespace RabbetGameEngine
         }
 
         /*render requests will add a new entry to a suitable batch*/
-        public static void requestRenderObject(PositionalObject obj, Model viewModel, uint[] indices, RenderType renderType)
+        public static void requestRenderObject(PositionalObject obj, Model viewModel, uint[] indices, BatchType BatchType)
         {
             //TODO: impliment
         }
 
-        public static void requestRenderObject(PositionalObject obj, ModelDrawable viewModel, RenderType renderType)
+        public static void requestRenderObject(PositionalObject obj, ModelDrawable viewModel, BatchType BatchType)
         {
             //TODO: impliment
         }
 
-        public static void requestRenderVFX(VFXBase obj, ModelDrawable viewModel, RenderType renderType)
+        public static void requestRenderVFX(VFXBase obj, ModelDrawable viewModel, BatchType BatchType)
         {
             //TODO: impliment
         }

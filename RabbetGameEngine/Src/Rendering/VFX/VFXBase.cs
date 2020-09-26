@@ -3,7 +3,7 @@ using OpenTK;
 using System;
 namespace RabbetGameEngine
 {
-    public enum VFXRenderType//used to determine how to batch vfx objects
+    public enum VFXBatchType//used to determine how to batch vfx objects
     {
         tirangles,
         points,
@@ -33,8 +33,8 @@ namespace RabbetGameEngine.VFX
         protected bool removalFlag = false;// true if this entity should be removed in the next tick
         protected bool shouldDeleteModel = false;// true if this vfx is using a model loaded from file. If so, it should NOT be deleted!
 
-        protected VFXRenderType renderType;
-        public VFXBase(Vector3 pos, float initialScale, string shaderDir, string textureDir, string modelDir, float maxExistingSeconds = 1, VFXRenderType renderType = VFXRenderType.tirangles) : base(pos)
+        protected VFXBatchType BatchType;
+        public VFXBase(Vector3 pos, float initialScale, string shaderDir, string textureDir, string modelDir, float maxExistingSeconds = 1, VFXBatchType BatchType = VFXBatchType.tirangles) : base(pos)
         {
             this.scale = initialScale;
             this.vfxModel = ModelUtil.createModelDrawable(shaderDir, textureDir, modelDir);
@@ -42,7 +42,7 @@ namespace RabbetGameEngine.VFX
             updateVFXModel();
             updateVFXModel();
 
-            this.renderType = renderType;
+            this.BatchType = BatchType;
         }
 
         /*called every tick*/
@@ -137,9 +137,9 @@ namespace RabbetGameEngine.VFX
             return !removalFlag;
         }
 
-        public VFXRenderType getRenderType()
+        public VFXBatchType getBatchType()
         {
-            return renderType;
+            return BatchType;
         }
     }
 }

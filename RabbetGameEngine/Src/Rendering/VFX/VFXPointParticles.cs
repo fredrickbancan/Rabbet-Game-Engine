@@ -17,7 +17,7 @@ namespace RabbetGameEngine.VFX
        
 
         /*this constructor is for creating a point particle based VFX which does not create a random point cloud. maybe you will want to construct the points in a specific manner with colors or use a model.*/
-        public VFXPointParticles(Vector3 pos, CustomColor color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderName, "none", "none", maxExistingSeconds, VFXRenderType.points)
+        public VFXPointParticles(Vector3 pos, CustomColor color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderName, "none", "none", maxExistingSeconds, VFXBatchType.points)
         {
             colorAlpha = alpha;
             pointColor = color;
@@ -27,7 +27,7 @@ namespace RabbetGameEngine.VFX
         }
 
         /*this constructor is for creating a randomized particle cloud at the position using the provided parameters*/
-        public VFXPointParticles(Vector3 pos, CustomColor color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderName, "none", "none", maxExistingSeconds, VFXRenderType.points)
+        public VFXPointParticles(Vector3 pos, CustomColor color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderName, "none", "none", maxExistingSeconds, VFXBatchType.points)
         {
             colorAlpha = alpha;
             this.randomBrightness = randomBrightness;

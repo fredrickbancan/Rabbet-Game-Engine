@@ -75,7 +75,6 @@
     <Compile Include="Src\Game\TickTimer.cs" />
     <Compile Include="Src\Rendering\GUIComponents\GUICrosshair.cs" />
     <Compile Include="Src\Rendering\GUIHandler.cs" />
-    <Compile Include="Src\Rendering\IndicesBufferObject.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\EntityCactusModel.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankModel.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankProjectileModel.cs" />
@@ -96,7 +95,6 @@
     <Compile Include="Src\Rendering\SubRendering\OffScreen.cs" />
     <Compile Include="Src\Rendering\TextureUtil.cs" />
     <Compile Include="Src\Rendering\VertexArrayObject.cs" />
-    <Compile Include="Src\Rendering\VertexBufferObject.cs" />
     <Compile Include="Src\Rendering\VFX\VFXExplosion.cs" />
     <Compile Include="Src\Rendering\VFX\VFXPointParticles.cs" />
     <Compile Include="Src\Rendering\VFX\VFXUtil.cs" />

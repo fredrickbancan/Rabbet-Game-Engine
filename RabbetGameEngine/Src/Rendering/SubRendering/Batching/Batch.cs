@@ -10,9 +10,9 @@
         private Vertex[] batchedVertices = new Vertex[maxVertexCount];
         private int submittedVerticesCount = 0;
         private uint[] indices;
-        private BatchManager.BatchType batchType;
+        private BatchType batchType;
 
-        public Batch(BatchManager.BatchType type)
+        public Batch(BatchType type)
         {
             batchType = type;
             //TODO: impliment
