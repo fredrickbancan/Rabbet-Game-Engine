@@ -13,17 +13,38 @@ namespace RabbetGameEngine
         private bool dynamic = false;
         private bool hasInitialized = false;
         private BatchType type;
+        private Vertex[] verticesReference;
+        private uint[] indicesReference;
 
-        public VertexArrayObject(bool dynamic, BatchType type = BatchType.triangles)
+        public VertexArrayObject(BatchType type, Vertex[] vertices, uint[] indices)//for static 
         {
-            this.dynamic = dynamic;
+            if((int)type > (int)BatchType.lines)//if type requires dynamic VAO
+            {
+                Application.warn("VAO is being initialized as static with a BatchType which requires a dynamic VAO!");
+            }
+
+            this.type = type;
+            verticesReference = vertices;
+            indicesReference = indices;
+        }
+        public VertexArrayObject(BatchType type, int maxVertices)//for dynamic
+        {
             this.type = type;
         }
-        
+
         //can be called to initialize this vao with the provided data
         //this binds the vao
         //if vao is dynamic, null can be passed.
-        public void initialize(Vertex[] vertices, uint[] indices)
+        private void initialize(Vertex[] vertices, uint[] indices)
+        {
+            if (hasInitialized) return;
+
+            //TODO: impliment
+
+            hasInitialized = true;
+        }
+
+        private void initializeDynamic(int maxVertices)
         {
             if (hasInitialized) return;
 

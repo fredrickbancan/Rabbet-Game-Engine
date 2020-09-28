@@ -125,9 +125,29 @@ namespace RabbetGameEngine
             return f;
         }
 
-        
+        //returns the centroid pos vector of the provided triangle
+        public static Vector3 getTriangleCentroid(Vector3 cornerA, Vector3 cornerB, Vector3 cornerC)
+        {
+            return new Vector3((cornerA.X + cornerB.X + cornerC.X) / 3, (cornerA.Y + cornerB.Y + cornerC.Y) / 3, (cornerA.Z + cornerB.Z + cornerC.Z) / 3);
+        }
 
-        
+        //returns the Z value of the centroid of the provided triangle, useful for Z sorting when converting points to screenspace
+        public static float getTriangleCentroidZ(Vector3 cornerA, Vector3 cornerB, Vector3 cornerC)
+        {
+            return (cornerA.Z + cornerB.Z + cornerC.Z) / 3;
+        }
+
+        public static Vector3 getQuadCentroid(Vector3 cornerA, Vector3 cornerB, Vector3 cornerC, Vector3 cornerD)
+        {
+            return new Vector3((cornerA.X + cornerB.X + cornerC.X + cornerD.X) / 4, (cornerA.Y + cornerB.Y + cornerC.Y + cornerD.Y) / 4, (cornerA.Z + cornerB.Z + cornerC.Z + cornerD.Z) / 4);
+        }
+
+        //returns the Z value of the centroid of the provided quad, useful for Z sorting when converting points to screenspace
+        public static float getQuadCentroidZ(Vector3 cornerA, Vector3 cornerB, Vector3 cornerC, Vector3 cornerD)
+        {
+            return (cornerA.Z + cornerB.Z + cornerC.Z + cornerD.Z) / 4;
+        }
+
 
         /*Returns a vector 3 with the absolute values negated from one, only useful for axis aligned collisions*/
         public static Vector3 oneMinusAbsolute(Vector3 vec)

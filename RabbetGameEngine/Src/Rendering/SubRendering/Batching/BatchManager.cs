@@ -6,10 +6,11 @@ namespace RabbetGameEngine.SubRendering
     {
         triangles,
         trianglesTransparent,
-        lerpTriangles,
-        lerpTrianglesTransparent,
         quads,
         quadsTransparent,
+        lines,
+        lerpTrianglesTransparent,
+        lerpTriangles,
         lerpQuads,
         lerpQuadsTransparent,
         lerpVertices,
@@ -18,7 +19,6 @@ namespace RabbetGameEngine.SubRendering
         lerpPointsTransparent,
         lerpSinglePoints,
         lerpSinglePointsTransparent,
-        lines,
         lerpLines
     };
 
