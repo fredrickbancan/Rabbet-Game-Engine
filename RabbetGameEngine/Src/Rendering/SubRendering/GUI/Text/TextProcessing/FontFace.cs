@@ -88,15 +88,15 @@ namespace RabbetGameEngine.SubRendering.GUI.Text
             byte id = (byte)getValueFromLineData("id");
             if(id == spaceAscii)
             {
-                spaceWidth = getValueFromLineData("xadvance");
+                spaceWidth = getValueFromLineData("xadvance") + paddingRight;
                 return null;
             }
             float u = ((float)getValueFromLineData("x")) / scaleW;
             float v = ((float)getValueFromLineData("y")) / scaleH;
-            float uMax = u + ((float)getValueFromLineData("width") - paddingRight) / scaleW;
-            float vMax = v + ((float)getValueFromLineData("height") - paddingBottom) / scaleH;
-            float pixelsWidth = getValueFromLineData("width");
-            float pixelsHeight = getValueFromLineData("height");
+            float uMax = u + ((float)getValueFromLineData("width")) / scaleW;
+            float vMax = v + ((float)getValueFromLineData("height")) / scaleH;
+            float pixelsWidth = getValueFromLineData("width") + paddingRight + paddingLeft;
+            float pixelsHeight = getValueFromLineData("height") + paddingTop + paddingBottom;
             float xOffsetPixels = getValueFromLineData("xoffset");
             float yOffsetPixels = getValueFromLineData("yoffset");
             float xAdvancePixels = getValueFromLineData("xadvance") + paddingRight;

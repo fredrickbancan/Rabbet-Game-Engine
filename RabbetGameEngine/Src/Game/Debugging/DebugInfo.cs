@@ -18,7 +18,7 @@ namespace RabbetGameEngine.Debugging
                         {
                         ("press F3 to hide debug screen.")
                         }
-                       ).setPanelColor(CustomColor.black)));
+                       ).setPanelColor(CustomColor.lightGrey)));
         }
 
         /*Shows and updates the debug info on the screen, Can be called every tick (Do not call every frame, too expensive)*/

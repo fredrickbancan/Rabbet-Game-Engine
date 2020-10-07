@@ -22,7 +22,7 @@ namespace RabbetGameEngine
         /*Initialize this gui*/
         public static void init()
         {
-            GUIHandler.addNewGUIScreen(mainGUIName, "Trebuchet");
+            GUIHandler.addNewGUIScreen(mainGUIName, "Arial_Shadow");
             GUIHandler.addTextPanelToGUI(mainGUIName, "flying", new GUITextPanel(new TextFormat().setAlign(TextAlign.RIGHT).setLine("Flying: OFF").setPanelColor(CustomColor.darkRed)));
             GUIHandler.addTextPanelToGUI(mainGUIName, "noclip", new GUITextPanel(new TextFormat(0, 0.03F).setAlign(TextAlign.RIGHT).setLine("Noclip: OFF").setPanelColor(CustomColor.darkRed)));
             GUIHandler.addTextPanelToGUI(mainGUIName, "label", new GUITextPanel(new TextFormat(0, 0.97F).setLine("Rabbet Game Engine Version " + Application.version).setPanelColor(CustomColor.black)));
