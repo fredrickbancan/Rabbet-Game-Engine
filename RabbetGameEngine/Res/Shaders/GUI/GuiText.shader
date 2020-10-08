@@ -26,4 +26,8 @@ void main()
 {
 	gl_FragDepth = -1;//render on top
 	color = texture(uTexture, fTexCoord) * vColor;
+	if (color.a < 0.01)
+	{
+		discard;
+	}
 }

@@ -92,4 +92,8 @@ void main()
     }
 
     color = mix(vec4(fogColor, colorModified.a), colorModified, visibility);
+    if (color.a < 0.01)
+    {
+        discard;
+    }
 }

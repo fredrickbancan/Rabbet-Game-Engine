@@ -54,4 +54,8 @@ void main()
 	vec4 textureColor = texture(uTexture, vTexCoord) * vColor;
 
 	fragColor = mix(vec4(fogColor, textureColor.a), textureColor, visibility);
+	if (fragColor.a < 0.01)
+	{
+		discard;
+	}
 }

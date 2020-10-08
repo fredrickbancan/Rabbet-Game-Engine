@@ -66,4 +66,8 @@ void main()
 	vec4 textureColor = texture(uTexture, vTexCoord) * vColor;// mixes colour and textures
 
 	color = mix(vec4(fogColor, textureColor.a), textureColor, visibility);
+	if (color.a < 0.01)
+	{
+		discard;
+	}
 }
