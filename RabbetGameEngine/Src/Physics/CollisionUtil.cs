@@ -266,6 +266,9 @@ namespace RabbetGameEngine.Physics
                     Vector3.Dot(aabb.vecToBackRight, plane.normal), Vector3.Dot(aabb.vecToBackLeft, plane.normal), Vector3.Dot(aabb.vecToFrontRight, plane.normal),
                     Vector3.Dot(-aabb.vecToBackRight, plane.normal), Vector3.Dot(-aabb.vecToBackLeft, plane.normal), Vector3.Dot(-aabb.vecToFrontRight, plane.normal));
             }
+
+           
+
             return getOverlapAndDirection(plane, new SphereCollider(aabb.centerVec, radiusOfTesterSphere), out direction, out overlap);
         }
 

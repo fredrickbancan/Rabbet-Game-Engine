@@ -25,7 +25,7 @@ namespace RabbetGameEngine.Physics
         {
             return int.MaxValue;
         }
-         void setParent(PositionalObject parent)
+        public void setParent(PositionalObject parent)
         {
             
         }

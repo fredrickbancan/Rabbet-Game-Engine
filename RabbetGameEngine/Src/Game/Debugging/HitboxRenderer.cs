@@ -33,16 +33,17 @@ namespace RabbetGameEngine.Debugging
         }
 
         /*called on tick. Adds all of the provided colliders to a list of hitboxes to be dynamically batched and drawn.*/
-        public static void addAllHitboxesToBeRendered(List<ICollider> worldColliders, Dictionary<int, ICollider> entityColliders)
+        public static void addAllHitboxesToBeRendered(List<ICollider> worldColliders, Dictionary<int, Entity> entities)
         {
             foreach(ICollider hitBox in worldColliders)
             {
                 addHitboxToBeRendered(hitBox);
             }
 
-            foreach(ICollider hitBox in entityColliders.Values)
+            foreach(Entity ent in entities.Values)
             {
-                addHitboxToBeRendered(hitBox);
+                if(ent.getHasCollider())
+                addHitboxToBeRendered(ent.getCollider());
             }
 
             combineAndSubmitAABBModels();

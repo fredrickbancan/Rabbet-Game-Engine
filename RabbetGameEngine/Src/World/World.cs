@@ -19,7 +19,7 @@ namespace RabbetGameEngine
         private Vector3 fogColor;
         private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
         public Dictionary<int, Entity> entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
-        public Dictionary<int, ICollider> entityColliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity
+       // public Dictionary<int, ICollider> entityColliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity
         public List<ICollider> worldColliders = new List<ICollider>();//list of colliders with no parent, ie, walls, ground planes.
         public List<VFXBase> vfxList = new List<VFXBase>();
         private string wallTextureName = "transparent"; 
@@ -167,8 +167,8 @@ namespace RabbetGameEngine
             this.addWorldCollider(new PlaneCollider(new Vector3(0,0,1), -playgroundLength / 2));//Wall at negZ, playgroundLength / 2 units away, facing pos Z
             this.addWorldCollider(new PlaneCollider(new Vector3(0,0,-1), -playgroundLength / 2));//Wall at posZ, playgroundLength / 2 units away, facing negZ
             this.addWorldCollider(new PlaneCollider(new Vector3(1,0,0), -playgroundWidth / 2));//Wall at negX, playgroundWidth / 2 units away, facing pos X
-            this.addWorldCollider(new PlaneCollider(new Vector3(-1,0,0), -playgroundWidth / 2));//Wall at posX, playgroundWidth / 2 units away, facint negX
-            this.addWorldCollider(new AABBCollider(new Vector3(-1,0,-1), new Vector3(1,1,1)));//2x2 lump in middle of playground
+            this.addWorldCollider(new PlaneCollider(new Vector3(-1,0,0), -playgroundWidth / 2));//Wall at posX, playgroundWidth / 2 units away, facing negX
+            this.addWorldCollider(new AABBCollider(new Vector3(-1,0,-1), new Vector3(1,1,1)));//2x1x2 lump in middle of playground
         }
         
         public void onTick()
@@ -176,13 +176,13 @@ namespace RabbetGameEngine
             tickEntities();
             tickVFX();
 
-            //TODO: Inneficient! this requires multiple loops and slows down drastically with large numbers of entities!
+            
             doCollisions();
 
             if (GameSettings.drawHitboxes)
             {
-                updateAllEntityColliders();//For correcting the drawing of hitboxes after a collision
-                HitboxRenderer.addAllHitboxesToBeRendered(worldColliders, entityColliders);
+              //  updateAllEntityColliders();//For correcting the drawing of hitboxes after a collision
+                HitboxRenderer.addAllHitboxesToBeRendered(worldColliders, entities);
             }
         }
 
@@ -208,10 +208,10 @@ namespace RabbetGameEngine
                 else if (entAt.getIsMarkedForRemoval())
                 {
                     entAt.setCurrentPlanet(null);
-                    if (entAt.getHasCollider())
+                   /* if (entAt.getHasCollider())
                     {
                         entityColliders.Remove(entities.ElementAt(i).Key);
-                    }
+                    }*/
                     entities.Remove(entities.ElementAt(i).Key);
                     i--;
                 }
@@ -220,7 +220,6 @@ namespace RabbetGameEngine
                     entAt.preTick();
                     entAt.onTick();
                     entAt.postTick();
-                    CollisionHandler.tryToMoveObject(entAt, worldColliders, entityColliders);
                 }
             }
 
@@ -263,15 +262,19 @@ namespace RabbetGameEngine
         private void doCollisions()
         {
             Profiler.beginEndProfile(Profiler.collisionsName);
-            if (entityColliders.Count >= 2)
+             // Inneficient! this requires multiple loops and slows down drastically with large numbers of entities!
+            /* if (entityColliders.Count >= 2)
+             {
+                 CollisionHandler.doEntityCollisions(entityColliders);
+             }
+             if(worldColliders.Count > 0 && entityColliders.Count >= 1)
+             {
+                 CollisionHandler.doWorldCollisions(worldColliders, entityColliders);
+             }*/
+            for (int i = 0; i < entities.Values.Count; i++)
             {
-                CollisionHandler.doEntityCollisions(entityColliders);
+                CollisionHandler.tryToMoveObject(entities.Values.ElementAt(i), worldColliders, entities);
             }
-            if(worldColliders.Count > 0 && entityColliders.Count >= 1)
-            {
-                CollisionHandler.doWorldCollisions(worldColliders, entityColliders);
-            }
-
             Profiler.beginEndProfile(Profiler.collisionsName);
         }
 
@@ -322,10 +325,10 @@ namespace RabbetGameEngine
 
             entities.Add(entityIDItterator, theEntity);
 
-            if(theEntity.getHasCollider())
+            /*if(theEntity.getHasCollider())
             {
                 entityColliders.Add(entityIDItterator, theEntity.getCollider());
-            }
+            }*/
 
             entityIDItterator++;
         }

@@ -104,7 +104,7 @@ namespace RabbetGameEngine
             {
                 if (isFlying)
                 {
-                    walkSpeedModified *= 0.1F;//reduce movespeed when flying as to not accellerate out of control
+                    walkSpeedModified *= 0.9F;//reduce movespeed when flying as to not accellerate out of control
                 }
                 else
                 {

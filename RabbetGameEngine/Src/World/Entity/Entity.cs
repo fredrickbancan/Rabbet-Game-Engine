@@ -1,6 +1,5 @@
 ﻿using OpenTK;
 using RabbetGameEngine.Models;
-using RabbetGameEngine.Physics;
 namespace RabbetGameEngine
 {
     /*Base class for every entity in the game, Anything with movement, vectors,
@@ -108,16 +107,6 @@ namespace RabbetGameEngine
                 isGrounded = true;
             }
             base.applyCollision(direction, overlap);
-        }
-
-        public virtual bool getHasCollider()
-        {
-            return hasCollider;
-        }
-
-        public virtual ICollider getCollider()
-        {
-            return collider;
         }
         public virtual void setCurrentPlanet(World p)
         {

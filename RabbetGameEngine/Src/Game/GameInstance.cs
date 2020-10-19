@@ -56,10 +56,10 @@ namespace RabbetGameEngine
             currentPlanet = new World();
             for (int i = 0; i < 10; i++)
             {
-                currentPlanet.spawnEntityInWorld(new EntityCactus(new Vector3(0, 10, 0)));
+              //  currentPlanet.spawnEntityInWorld(new EntityCactus(new Vector3(0, 10, 0)));
             }
             currentPlanet.spawnEntityInWorld(thePlayer);
-            currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3(5, 10, -5)));
+           // currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3(5, 10, -5)));
 
             //center mouse in preperation for first person 
             Input.centerMouse();

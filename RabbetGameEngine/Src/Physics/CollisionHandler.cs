@@ -100,8 +100,8 @@ namespace RabbetGameEngine.Physics
         /// </summary>
         /// <param name="obj"> the object to move </param>
         /// <param name="worldColliders"> all world colliders </param>
-        /// <param name="entityColliders"> all entity colliders </param>
-        public static void tryToMoveObject(PositionalObject obj, List<ICollider> worldColliders, Dictionary<int, ICollider> entityColliders)
+        /// <param name="entities"> all entity colliders </param>
+        public static void tryToMoveObject(PositionalObject obj, List<ICollider> worldColliders, Dictionary<int, Entity> entities)
         {
             if(!obj.getHasCollider())
             {
@@ -119,10 +119,14 @@ namespace RabbetGameEngine.Physics
             }
 
             //do all entity collisions
-            for (int i = 0; i < entityColliders.Count; i++)
+            for (int i = 0; i < entities.Count; i++)
             {
-                applyCollisionForColliderType(ref objVel, ref objCollider, entityColliders.Values.ElementAt(i));
+                Entity entAt;
+                if((entAt = entities.Values.ElementAt(i)).getHasCollider())
+                applyCollisionForColliderType(ref objVel, ref objCollider, entAt.getCollider());
             }
+
+            objCollider.offset(objVel);
 
             //set modified collider
             obj.setCollider(objCollider);
@@ -207,8 +211,30 @@ namespace RabbetGameEngine.Physics
         /// <returns>The provided AABB collider for the object properly offset during collision resolution</returns>
         private static AABBCollider applyCollisionAABBVsPlane(ref Vector3 objVel, AABBCollider objAABB, PlaneCollider worldPlane)
         {
-            //TODO: impliment
-            return new AABBCollider();
+            float dotProduct;
+            //if object velocity is moving in general direction towards plane
+            if((dotProduct = Vector3.Dot(objVel, worldPlane.normal)) < 0.0F)
+            {
+                float radiusOfTesterSphere;
+                //Check if the plane normal aligns with any axis
+                if (worldPlane.normal.X == 0 || worldPlane.normal.Y == 0 || worldPlane.normal.Z == 0)
+                {
+                    //if the plane normal aligns with a given axis, then the sphere will have the radius of the aabb extent of that axis,so the spheres edge will be aligning with the "Face" of the aabb
+                    radiusOfTesterSphere = worldPlane.normal.X != 0 ? objAABB.extentX : worldPlane.normal.Y != 0 ? objAABB.extentY : objAABB.extentZ;
+                }
+                else
+                {
+                    radiusOfTesterSphere = MathUtil.max6(
+                        Vector3.Dot(objAABB.vecToBackRight, worldPlane.normal), Vector3.Dot(objAABB.vecToBackLeft, worldPlane.normal), Vector3.Dot(objAABB.vecToFrontRight, worldPlane.normal),
+                        Vector3.Dot(-objAABB.vecToBackRight, worldPlane.normal), Vector3.Dot(-objAABB.vecToBackLeft, worldPlane.normal), Vector3.Dot(-objAABB.vecToFrontRight, worldPlane.normal));
+                }
+                float dist = PlaneCollider.vectorDistanceFromPlane(worldPlane, objAABB.centerVec) - radiusOfTesterSphere;
+                if(dist <= objVel.Length)
+                {
+                    objVel -= (dotProduct + dist) * worldPlane.normal;
+                }
+            }
+            return objAABB;
         }
 
         /// <summary>
@@ -221,7 +247,7 @@ namespace RabbetGameEngine.Physics
         private static AABBCollider applyCollisionAABBVsAABB(ref Vector3 objVel, AABBCollider objAABB, AABBCollider otherAABB)
         {
             //TODO: impliment
-            return new AABBCollider();
+            return objAABB;
         }
 
         /// <summary>
@@ -234,7 +260,7 @@ namespace RabbetGameEngine.Physics
         private static AABBCollider applyCollisionAABBVsSphere(ref Vector3 objVel, AABBCollider objAABB, SphereCollider otherSphere)
         {
             //TODO: impliment
-            return new AABBCollider();
+            return objAABB;
         }
 
         /// <summary>
@@ -247,7 +273,7 @@ namespace RabbetGameEngine.Physics
         private static SphereCollider applyCollisionSphereVsPlane(ref Vector3 objVel, SphereCollider objSphere, PlaneCollider otherPlane)
         {
             //TODO: impliment
-            return new SphereCollider();
+            return objSphere;
         }
 
 
@@ -261,7 +287,7 @@ namespace RabbetGameEngine.Physics
         private static SphereCollider applyCollisionSphereVsAABB(ref Vector3 objVel, SphereCollider objSphere, AABBCollider otherAABB)
         {
             //TODO: impliment
-            return new SphereCollider();
+            return objSphere;
         }
 
         /// <summary>
@@ -274,7 +300,7 @@ namespace RabbetGameEngine.Physics
         private static SphereCollider applyCollisionSphereVsSphere(ref Vector3 objVel, SphereCollider objSphere, SphereCollider otherSphere)
         {
             //TODO: impliment
-            return new SphereCollider();
+            return objSphere;
         }
 
 
@@ -288,7 +314,7 @@ namespace RabbetGameEngine.Physics
         private static PointCollider applyCollisionPointVsPlane(ref Vector3 objVel, PointCollider objPoint, PlaneCollider otherPlane)
         {
             //TODO: impliment
-            return new PointCollider();
+            return objPoint;
         }
 
         /// <summary>
@@ -301,7 +327,7 @@ namespace RabbetGameEngine.Physics
         private static PointCollider applyCollisionPointVsAABB(ref Vector3 objVel, PointCollider objPoint, AABBCollider otherAABB)
         {
             //TODO: impliment
-            return new PointCollider();
+            return objPoint;
         }
 
         /// <summary>
@@ -314,7 +340,7 @@ namespace RabbetGameEngine.Physics
         private static PointCollider applyCollisionPointVsSphere(ref Vector3 objVel, PointCollider objPoint, SphereCollider otherSphere)
         {
             //TODO: impliment
-            return new PointCollider();
+            return objPoint;
         }
     }
 }
