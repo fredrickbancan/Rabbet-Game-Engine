@@ -1,5 +1,6 @@
 ﻿using OpenTK;
 using RabbetGameEngine.Physics;
+
 namespace RabbetGameEngine
 {
     /*Abstraction base class of objects with any type of position, rotation, velocity, interpolation.*/
@@ -27,6 +28,7 @@ namespace RabbetGameEngine
         protected ICollider collider = null;
         protected bool hasCollider = false;
         protected bool hasDoneFirstUpdate = false;
+        protected bool isGrounded = false;
 
         public PositionalObject()
         {
@@ -231,6 +233,15 @@ namespace RabbetGameEngine
         public virtual bool getHasCollider()
         {
             return hasCollider;
+        }
+        public virtual bool getIsGrounded()
+        {
+            return isGrounded;
+        }
+
+        public virtual void setIsGrounded(bool flag)
+        {
+            isGrounded = flag;
         }
 
         public virtual ref ICollider getColliderHandle()

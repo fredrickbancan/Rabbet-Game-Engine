@@ -11,7 +11,6 @@ namespace RabbetGameEngine
         protected EntityModel entityModel;
         protected bool hasModel = false;
         protected bool isFlying = false;
-        protected bool isGrounded = false;
         private bool removalFlag = false;// true if this entity should be removed in the next tick
         protected int existedTicks = 0;//number of ticks this entity has existed for
         protected bool isPlayer = false;
@@ -114,11 +113,6 @@ namespace RabbetGameEngine
         public virtual bool getIsFlying()
         {
             return isFlying;
-        }
-
-        public virtual bool getIsGrounded()
-        {
-            return isGrounded;
         }
         public virtual void setFlying(bool flag)
         {

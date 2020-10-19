@@ -70,7 +70,7 @@ namespace RabbetGameEngine.Physics
         /// <returns>returns true if the provided boxes overlap in the x direction, else returns false</returns>
         public static bool overlappingX(AABB a, AABB b)
         {
-            return a.maxX >= b.minX && b.maxX >= a.minX;
+            return a.maxX > b.minX && b.maxX > a.minX;
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace RabbetGameEngine.Physics
         /// <returns>returns true if the provided boxes overlap in the y direction, else returns false</returns>
         public static bool overlappingY(AABB a, AABB b)
         {
-            return a.maxY >= b.minY && b.maxY >= a.minY;
+            return a.maxY > b.minY && b.maxY > a.minY;
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace RabbetGameEngine.Physics
         /// <returns>returns true if the provided boxes overlap in the z direction, else returns false</returns>
         public static bool overlappingZ(AABB a, AABB b)
         {
-            return a.maxZ >= b.minZ && b.maxZ >= a.minZ;
+            return a.maxZ > b.minZ && b.maxZ > a.minZ;
         }
 
         public ColliderType getType()

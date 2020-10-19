@@ -49,6 +49,7 @@ namespace RabbetGameEngine.Physics
 
             ICollider objCollider = obj.getColliderHandle();
             Vector3 objVel = obj.getVelocity();
+            Vector3 prevObjVel = objVel;
 
             //do all world collisions first 
             for(int i = 0; i < worldColliders.Count; i++)
@@ -69,25 +70,12 @@ namespace RabbetGameEngine.Physics
             }
             objCollider.offset(objVel.X, 0, 0);
 
-            //do all entity collisions
-          /*  for (int i = 0; i < entities.Count; i++)
+            //if the object was moving downwards and a collision has changed its vertical velocity then it is now grounded
+            if(prevObjVel.Y != objVel.Y && prevObjVel.Y < 0.0F)
             {
-                applyCollisionForColliderType(ref objVel, objCollider, entities.Values.ElementAt(i).getCollider(), OffsetDirection.Y);
+                obj.setIsGrounded(true);
             }
-            objCollider.offset(0, objVel.Y, 0);
-
-            for (int i = 0; i < entities.Count; i++)
-            {
-                applyCollisionForColliderType(ref objVel, objCollider, entities.Values.ElementAt(i).getCollider(), OffsetDirection.Z);
-            }
-            objCollider.offset(0, 0, objVel.Z);
-
-            for (int i = 0; i < entities.Count; i++)
-            {
-                applyCollisionForColliderType(ref objVel, objCollider, entities.Values.ElementAt(i).getCollider(), OffsetDirection.X);
-            }
-            objCollider.offset(objVel.X, 0, 0);*/
-
+            
             //apply new velocity
             obj.setVelocity(objVel);
 
