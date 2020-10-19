@@ -17,14 +17,16 @@ namespace RabbetGameEngine
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
-            this.setCollider(new AABBCollider(new Vector3(-2.5F, -1.25F, -2.5F), new Vector3(2.5F, 1.25F, 2.5F), this), 2);
+            this.collider = new AABBCollider(new Vector3(-2.5F, -1.25F, -2.5F), new Vector3(2.5F, 1.25F, 2.5F), this);
+            this.hasCollider = true;
             fireTimer = new TickTimer(1F / roundsPerSecond);
         }
         public EntityTank(Vector3 initialPos) : base(initialPos)
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
-            this.setCollider(new AABBCollider(new Vector3(-2.5F, -1.25F, -2.5F), new Vector3(2.5F, 1.25F, 2.5F), this), 2);
+            this.collider = new AABBCollider(new Vector3(-2.5F, -1.25F, -2.5F), new Vector3(2.5F, 1.25F, 2.5F), this);
+            this.hasCollider = true;
             fireTimer = new TickTimer(1F / roundsPerSecond);
         }
 

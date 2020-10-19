@@ -78,36 +78,8 @@ namespace RabbetGameEngine
                 velocity.Y *= (1 - airResistance);
                 velocity.Z *= (1 - groundResistance);
             }
-
-            pos += velocity;
-
-            //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-            //updating hitboxes 
-            if (hasCollider && collider != null)
-            {
-                collider.onTick();
-            }
         }
 
-        /*This method can be called to update the collider of this entity manually.
-          e.g, this is useful for correcting hitboxes after collisions so they are ready to be 
-          rendered for debugging*/
-        public virtual void tickUpdateCollider()
-        {
-            if (hasCollider && collider != null)
-            {
-                collider.onTick();
-            }
-        }
-        
-        public override void applyCollision(Vector3 direction, float overlap)
-        {
-            if (direction.Y >= 0.35D)//if the entity is being collided from a generally upwards direction
-            {
-                isGrounded = true;
-            }
-            base.applyCollision(direction, overlap);
-        }
         public virtual void setCurrentPlanet(World p)
         {
             this.currentPlanet = p;

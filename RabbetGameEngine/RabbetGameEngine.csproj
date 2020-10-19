@@ -99,9 +99,7 @@
     <Compile Include="Src\Rendering\VFX\VFXPointParticles.cs" />
     <Compile Include="Src\Rendering\VFX\VFXUtil.cs" />
     <Compile Include="Src\Physics\CollisionHandler.cs" />
-    <Compile Include="Src\Physics\CollisionUtil.cs" />
     <Compile Include="Src\Physics\ICollider.cs" />
-    <Compile Include="Src\Physics\Colliders\PlaneCollider.cs" />
     <Compile Include="Src\Physics\Colliders\PointCollider.cs" />
     <Compile Include="Src\Physics\Colliders\SphereCollider.cs" />
     <Compile Include="Src\World\Entity\Entity.cs" />

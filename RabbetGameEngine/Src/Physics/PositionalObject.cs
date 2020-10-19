@@ -26,8 +26,6 @@ namespace RabbetGameEngine
 
         protected ICollider collider = null;
         protected bool hasCollider = false;
-        protected int collisionWeight; //Objects with more collisionweight than other objects have priority in doing coliisions. If they are equal, they can push eachother.
-
         protected bool hasDoneFirstUpdate = false;
 
         public PositionalObject()
@@ -58,12 +56,6 @@ namespace RabbetGameEngine
         {
             velocity += acceleration;
             velocity *= (1 - airResistance);
-            //pos += velocity;
-
-            if (hasCollider && collider != null)
-            {
-                collider.onTick();
-            }
         }
 
         /*Called every frame, can be overwritten*/
@@ -72,48 +64,11 @@ namespace RabbetGameEngine
             
         }
 
-        /*Done after the entity has ticked, so will correct for overlap AFTER movement. Will change velocity, accelleration and positon.
-          Can be overritten.*/
-        public virtual void applyCollision(Vector3 direction, float overlap)
-        {
-            //make sure direction is normal vec
-            if(direction != Vector3.Zero)
-            direction.Normalize();
-
-            //correct position
-            pos += direction * overlap;
-
-            //clip velocity
-            velocity *= MathUtil.oneMinusAbsolute(direction);//TODO: Only works with axis-aligned collision directions. anything else, will still work, but velocity will be slowed in wrong directions.
-        }
-
         /*Apply a force to this entity from the location with the power.*/
         public virtual void applyImpulseFromLocation(Vector3 loc, float power)
         {
             //adding a tiny pos y bias to the impulses
             velocity += Vector3.Normalize((pos + new Vector3(0, 0.5F, 0)) - loc) * power;
-        }
-
-        /*used for setting the collider of this object*/
-        protected virtual void setCollider(ICollider collider, int collisionWeight = 0)
-        {
-            this.collider = collider;
-            if (this.collider != null)
-            {
-                this.hasCollider = true;
-                this.collisionWeight = collisionWeight;
-            }
-        }
-
-        /*Called when an object touches another. Can be used for doing things such as detecting direct hits with projectiles, damage on touching a damaging trigger etc.*/
-        public virtual void onCollidedBy(PositionalObject other)
-        {
-
-        }
-
-        public virtual int getCollisionWeight()
-        {
-            return collisionWeight;
         }
 
         public virtual void rotateRoll(float amount)
@@ -278,6 +233,10 @@ namespace RabbetGameEngine
             return hasCollider;
         }
 
+        public virtual ref ICollider getColliderHandle()
+        {
+            return ref collider;
+        }
         public virtual ICollider getCollider()
         {
             return collider;
@@ -285,9 +244,7 @@ namespace RabbetGameEngine
 
         public virtual void setCollider(ICollider collider)
         {
-            collider.setParent(this);
             this.collider = collider;
-            this.hasCollider = true;
         }
         public virtual float posX { get => pos.X; set => pos.X = value; }
         public virtual float posY { get => pos.Y; set => pos.Y = value; }

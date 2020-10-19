@@ -12,7 +12,8 @@ namespace RabbetGameEngine
         {
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
-            this.setCollider(new AABBCollider(new Vector3(-0.5F, -0.5F, -0.5F), new Vector3(0.5F, 0.5F, 0.5F), this), 1);
+            this.collider = new AABBCollider(new Vector3(-0.5F, -0.5F, -0.5F), new Vector3(0.5F, 0.5F, 0.5F), this);
+            this.hasCollider = true;
             yaw = (float)rand.NextDouble() * 360;
             walkFowards();
         }
@@ -20,7 +21,8 @@ namespace RabbetGameEngine
         {
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
-            this.setCollider(new AABBCollider(new Vector3(-0.5F, -0.5F, -0.5F), new Vector3(0.5F, 0.5F, 0.5F), this), 1);
+            this.collider = new AABBCollider(new Vector3(-0.5F, -0.5F, -0.5F), new Vector3(0.5F, 0.5F, 0.5F), this);
+            this.hasCollider = true;
             yaw = (float)rand.NextDouble() * 360;
             walkFowards();
         }
@@ -41,19 +43,6 @@ namespace RabbetGameEngine
                 jump();
             }
             base.onTick();//do last
-        }
-        public override void onCollidedBy(PositionalObject other)
-        {
-            /*TEMPORARY, for arcade effects*/
-            if (other is EntityProjectile )
-            {
-                GameInstance.onDirectHit();
-                if (!getIsGrounded())
-                {
-                    GameInstance.onAirShot();
-                }
-            }
-            base.onCollidedBy(other);
         }
     }
 }

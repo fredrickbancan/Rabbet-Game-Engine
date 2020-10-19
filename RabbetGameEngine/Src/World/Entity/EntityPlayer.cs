@@ -17,14 +17,16 @@ namespace RabbetGameEngine
             isPlayer = true;
             this.playerName = name;
             camera = new Camera(this);
-            this.setCollider(new AABBCollider(new Vector3(-0.5F, -1, -0.5F), new Vector3(0.5F, 1, 0.5F), this));
+            this.collider = new AABBCollider(new Vector3(-0.5F, -1, -0.5F), new Vector3(0.5F, 1, 0.5F), this);
+            this.hasCollider = true;
         }
         public EntityPlayer(string name, Vector3 spawnPosition) : base(spawnPosition)
         {
             isPlayer = true;
             this.playerName = name;
             camera = new Camera(this);
-            this.setCollider(new AABBCollider(new Vector3(-0.5F, -1, -0.5F), new Vector3(0.5F, 1, 0.5F), this));
+            this.collider = new AABBCollider(new Vector3(-0.5F, -1, -0.5F), new Vector3(0.5F, 1, 0.5F), this);
+            this.hasCollider = true;
         }
 
         public override void onTick()
@@ -72,12 +74,6 @@ namespace RabbetGameEngine
                 paused = false;
                 TicksAndFps.unPause();
             }
-        }
-
-        public override void applyCollision(Vector3 direction, float overlap)
-        {
-            if(!GameSettings.noclip)
-            base.applyCollision(direction, overlap);
         }
         public Matrix4 getViewMatrix()
         {

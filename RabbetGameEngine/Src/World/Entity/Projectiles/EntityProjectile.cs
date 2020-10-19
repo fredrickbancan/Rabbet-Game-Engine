@@ -12,7 +12,8 @@ namespace RabbetGameEngine
             airResistance = 0.001F;
             velocity += direction * initialVelocity;
             this.maxExistedTicks = TicksAndFps.getNumOfTicksForSeconds(maxLivingSeconds);
-            this.setCollider(new SphereCollider(pos, 0.15F, this));
+            this.collider = new SphereCollider(pos, 0.15F);
+            this.hasCollider = true;
         }
 
         public override void onTick()

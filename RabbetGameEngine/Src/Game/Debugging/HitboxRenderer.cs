@@ -61,10 +61,6 @@ namespace RabbetGameEngine.Debugging
                     addSphereToBeRendered((SphereCollider)hitBox);
                     break;
 
-                case ColliderType.plane:
-                    addPlaneToBeRendered((PlaneCollider)hitBox);
-                    break;
-
                 case ColliderType.point:
                     addPointToBeRendered((PointCollider)hitBox);
                     break;
@@ -89,12 +85,6 @@ namespace RabbetGameEngine.Debugging
         {
 
         }
-
-        public static void addPlaneToBeRendered(PlaneCollider plane)
-        {
-
-        }
-
         /*Renders all of the requested hitboxes via dynamic draw*/
         public static void renderAll(Matrix4 viewMatrix, Matrix4 projectionMatrix)
         {

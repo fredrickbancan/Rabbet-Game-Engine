@@ -63,16 +63,6 @@ namespace RabbetGameEngine
             }
         }
 
-        public override void applyCollision(Vector3 direction, float overlap)
-        {
-            base.applyCollision(direction, overlap);
-            if (mountingEntity != null)
-            {
-                mountingEntity.setPosition(pos + mountingOffset);
-                mountingEntity.setVelocity(velocity);
-            }
-        }
-
         /*When called, aligns vectors according to the entities state and rotations.*/
         protected virtual void alignVectors()
         {

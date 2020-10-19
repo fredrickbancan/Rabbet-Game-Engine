@@ -135,15 +135,6 @@ namespace RabbetGameEngine
                 isGrounded = false;
             }
         }
-
-        public override void applyCollision(Vector3 direction, float overlap)
-        {
-            if (currentVehicle == null)
-            {
-                base.applyCollision(direction, overlap);
-            }
-        }
-
         public virtual void jump()
         {
             addAction(Action.jump);

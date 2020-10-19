@@ -4,7 +4,6 @@ namespace RabbetGameEngine.Physics
     /*A struct for doing axis aligned bounding box collisions*/
     public struct AABBCollider : ICollider
     {
-        public PositionalObject parent;
         public Vector3 minBounds;
         public Vector3 maxBounds;
 
@@ -23,7 +22,6 @@ namespace RabbetGameEngine.Physics
             vecToBackRight = Vector3.Zero;
             vecToBackLeft = Vector3.Zero;
             vecToFrontRight = Vector3.Zero;
-            this.parent = parent;
             setBounds(minBounds, maxBounds, parent);
         }
 
@@ -63,58 +61,10 @@ namespace RabbetGameEngine.Physics
                 || position.Y > box.maxY || position.Y < box.minY
                 || position.Z > box.maxZ || position.Z < box.minZ;
         }
-        public void onTick()
-        {
-            //replaced by new tryToMoveEntity() func which offsets the aabb
-           /* if (this.getHasParent())
-            {
-                Vector3 boundDistFromCenter = (maxBounds - minBounds) / 2;
-                maxBounds = parent.getPosition() + boundDistFromCenter;
-                minBounds = parent.getPosition() - boundDistFromCenter;
-            }*/
-        }
-
-        public bool getHasParent()
-        {
-            return parent != null;
-        }
-        
-        public int getCollisionWeight()
-        {
-            if(getHasParent())
-            {
-                return parent.getCollisionWeight();
-            }
-
-            return 0;
-        }
-
-        public ICollider getNextTickPredictedHitbox()
-        {
-            if(this.getHasParent())
-            {
-                Vector3 boundDistFromCenter = (maxBounds - minBounds) / 2;
-                AABBCollider result = new AABBCollider(minBounds, maxBounds, parent);
-                result.maxBounds = parent.getPredictedNextTickPos() + boundDistFromCenter;
-                result.minBounds = parent.getPredictedNextTickPos() - boundDistFromCenter;
-                return result;
-            }
-            return this;
-        }
 
         public ColliderType getType()
         {
             return ColliderType.aabb;
-        }
-
-        public PositionalObject getParent()
-        {
-            return parent;
-        }
-
-        public void setParent(PositionalObject parent)
-        {
-            this.parent = parent;
         }
 
         public Vector3 getCenterVec()
