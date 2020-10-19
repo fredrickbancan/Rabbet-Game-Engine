@@ -17,7 +17,7 @@ namespace RabbetGameEngine
             isPlayer = true;
             this.playerName = name;
             camera = new Camera(this);
-            this.collider = new AABBCollider(new Vector3(-0.5F, -1, -0.5F), new Vector3(0.5F, 1, 0.5F), this);
+            this.collider = new AABB(new Vector3(-0.5F, -1, -0.5F), new Vector3(0.5F, 1, 0.5F), this);
             this.hasCollider = true;
         }
         public EntityPlayer(string name, Vector3 spawnPosition) : base(spawnPosition)
@@ -25,7 +25,7 @@ namespace RabbetGameEngine
             isPlayer = true;
             this.playerName = name;
             camera = new Camera(this);
-            this.collider = new AABBCollider(new Vector3(-0.5F, -1, -0.5F), new Vector3(0.5F, 1, 0.5F), this);
+            this.collider = new AABB(new Vector3(-0.5F, -1, -0.5F), new Vector3(0.5F, 1, 0.5F), this);
             this.hasCollider = true;
         }
 

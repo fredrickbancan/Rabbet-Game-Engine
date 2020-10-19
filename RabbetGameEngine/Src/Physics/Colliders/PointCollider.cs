@@ -20,6 +20,13 @@ namespace RabbetGameEngine.Physics
         {
             pos += vec;
         }
+
+        public void offset(float x, float y, float z)
+        {
+            pos.X += x;
+            pos.Y += y;
+            pos.Z += z;
+        }
         public ColliderType getType()
         {
             return ColliderType.point;

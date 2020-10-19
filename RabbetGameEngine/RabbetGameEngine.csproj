@@ -73,6 +73,7 @@
     <Compile Include="Src\Game\GUIS\MainGUI.cs" />
     <Compile Include="Src\Game\MathUtil.cs" />
     <Compile Include="Src\Game\TickTimer.cs" />
+    <Compile Include="Src\Physics\Ray.cs" />
     <Compile Include="Src\Rendering\GUIComponents\GUICrosshair.cs" />
     <Compile Include="Src\Rendering\GUIHandler.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\EntityCactusModel.cs" />
@@ -101,13 +102,12 @@
     <Compile Include="Src\Physics\CollisionHandler.cs" />
     <Compile Include="Src\Physics\ICollider.cs" />
     <Compile Include="Src\Physics\Colliders\PointCollider.cs" />
-    <Compile Include="Src\Physics\Colliders\SphereCollider.cs" />
     <Compile Include="Src\World\Entity\Entity.cs" />
     <Compile Include="Src\World\Entity\EntityCactus.cs" />
     <Compile Include="Src\World\Entity\EntityLiving.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\EntityModel.cs" />
     <Compile Include="Src\World\Entity\EntityPlayer.cs" />
-    <Compile Include="Src\Physics\Colliders\AABBCollider.cs" />
+    <Compile Include="Src\Physics\Colliders\AABB.cs" />
     <Compile Include="Src\Game\Debugging\DebugInfo.cs" />
     <Compile Include="Src\Game\GameInstance.cs" />
     <Compile Include="Src\Application.cs" />

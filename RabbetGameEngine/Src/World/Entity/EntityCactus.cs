@@ -12,7 +12,7 @@ namespace RabbetGameEngine
         {
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
-            this.collider = new AABBCollider(new Vector3(-0.5F, -0.5F, -0.5F), new Vector3(0.5F, 0.5F, 0.5F), this);
+            this.collider = new AABB(new Vector3(-0.5F, -0.5F, -0.5F), new Vector3(0.5F, 0.5F, 0.5F), this);
             this.hasCollider = true;
             yaw = (float)rand.NextDouble() * 360;
             walkFowards();
@@ -21,7 +21,7 @@ namespace RabbetGameEngine
         {
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
-            this.collider = new AABBCollider(new Vector3(-0.5F, -0.5F, -0.5F), new Vector3(0.5F, 0.5F, 0.5F), this);
+            this.collider = new AABB(new Vector3(-0.5F, -0.5F, -0.5F), new Vector3(0.5F, 0.5F, 0.5F), this);
             this.hasCollider = true;
             yaw = (float)rand.NextDouble() * 360;
             walkFowards();

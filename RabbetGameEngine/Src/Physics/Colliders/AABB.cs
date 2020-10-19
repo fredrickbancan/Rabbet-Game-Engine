@@ -2,7 +2,7 @@
 namespace RabbetGameEngine.Physics
 {
     /*A struct for doing axis aligned bounding box collisions*/
-    public struct AABBCollider : ICollider
+    public struct AABB : ICollider
     {
         public Vector3 minBounds;
         public Vector3 maxBounds;
@@ -15,7 +15,7 @@ namespace RabbetGameEngine.Physics
         public Vector3 vecToBackLeft;
         public Vector3 vecToFrontRight;
 
-        public AABBCollider(Vector3 minBounds, Vector3 maxBounds, PositionalObject parent = null)
+        public AABB(Vector3 minBounds, Vector3 maxBounds, PositionalObject parent = null)
         {
             this.minBounds = Vector3.Zero;
             this.maxBounds = Vector3.Zero;
@@ -27,7 +27,7 @@ namespace RabbetGameEngine.Physics
 
         /*sets the bounds for this aabb. if the parent entity is provided and is not null, the bounds will be relative to the parent entity as a center origin
           otherwise the bounds will be absolutely world space orientated.*/
-        public AABBCollider setBounds(Vector3 minBounds, Vector3 maxBounds, PositionalObject parent = null)
+        public AABB setBounds(Vector3 minBounds, Vector3 maxBounds, PositionalObject parent = null)
         {
             
             if(parent != null)
@@ -48,18 +48,51 @@ namespace RabbetGameEngine.Physics
         }
 
         /*returns true if two bounding boxes are NOT touching in any way*/
-        public static bool areBoxesNotTouching(AABBCollider boxA, AABBCollider boxB)
+        public static bool areBoxesNotTouching(AABB boxA, AABB boxB)
         {
             return boxA.minX > boxB.maxX || boxA.minY > boxB.maxY || boxA.minZ > boxB.maxZ
                 || boxA.maxX < boxB.minX || boxA.maxY < boxB.minY || boxA.maxZ < boxB.minZ;
         }
 
         /*returns true if a vector is NOT within a box's bounds*/
-        public static bool isPositionNotInsideBox(AABBCollider box, Vector3 position)
+        public static bool isPositionNotInsideBox(AABB box, Vector3 position)
         {
             return position.X > box.maxX || position.X < box.minX
                 || position.Y > box.maxY || position.Y < box.minY
                 || position.Z > box.maxZ || position.Z < box.minZ;
+        }
+
+        /// <summary>
+        /// returns true if the provided boxes overlap in the x direction
+        /// </summary>
+        /// <param name="a">Box A</param>
+        /// <param name="b">Box B</param>
+        /// <returns>returns true if the provided boxes overlap in the x direction, else returns false</returns>
+        public static bool overlappingX(AABB a, AABB b)
+        {
+            return a.maxX >= b.minX && b.maxX >= a.minX;
+        }
+
+        /// <summary>
+        /// returns true if the provided boxes overlap in the y direction
+        /// </summary>
+        /// <param name="a">Box A</param>
+        /// <param name="b">Box B</param>
+        /// <returns>returns true if the provided boxes overlap in the y direction, else returns false</returns>
+        public static bool overlappingY(AABB a, AABB b)
+        {
+            return a.maxY >= b.minY && b.maxY >= a.minY;
+        }
+
+        /// <summary>
+        /// returns true if the provided boxes overlap in the z direction
+        /// </summary>
+        /// <param name="a">Box A</param>
+        /// <param name="b">Box B</param>
+        /// <returns>returns true if the provided boxes overlap in the z direction, else returns false</returns>
+        public static bool overlappingZ(AABB a, AABB b)
+        {
+            return a.maxZ >= b.minZ && b.maxZ >= a.minZ;
         }
 
         public ColliderType getType()
@@ -76,6 +109,17 @@ namespace RabbetGameEngine.Physics
         {
             minBounds += direction;
             maxBounds += direction;
+        }
+
+        public void offset(float x, float y, float z)
+        {
+            minBounds.X += x;
+            minBounds.Y += y;
+            minBounds.Z += z;
+
+            maxBounds.X += x;
+            maxBounds.Y += y;
+            maxBounds.Z += z;
         }
 
         public float minX { get => minBounds.X; set => minBounds.X = value; }

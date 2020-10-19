@@ -17,6 +17,14 @@ namespace RabbetGameEngine.Physics
         /// <param name="direction">direction vector of offset</param>
         void offset(Vector3 direction);
 
+        /// <summary>
+        /// offsets this hitbox by the provided directions
+        /// </summary>
+        /// <param name="x">x direction of offset</param>
+        /// <param name="y">y direction of offset</param>
+        /// <param name="z">z direction of offset</param>
+        void offset(float x, float y, float z);
+
         ColliderType getType();
     }
 }

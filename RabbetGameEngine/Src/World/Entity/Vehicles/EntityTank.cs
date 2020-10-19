@@ -17,7 +17,7 @@ namespace RabbetGameEngine
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
-            this.collider = new AABBCollider(new Vector3(-2.5F, -1.25F, -2.5F), new Vector3(2.5F, 1.25F, 2.5F), this);
+            this.collider = new AABB(new Vector3(-2.5F, -1.25F, -2.5F), new Vector3(2.5F, 1.25F, 2.5F), this);
             this.hasCollider = true;
             fireTimer = new TickTimer(1F / roundsPerSecond);
         }
@@ -25,7 +25,7 @@ namespace RabbetGameEngine
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
-            this.collider = new AABBCollider(new Vector3(-2.5F, -1.25F, -2.5F), new Vector3(2.5F, 1.25F, 2.5F), this);
+            this.collider = new AABB(new Vector3(-2.5F, -1.25F, -2.5F), new Vector3(2.5F, 1.25F, 2.5F), this);
             this.hasCollider = true;
             fireTimer = new TickTimer(1F / roundsPerSecond);
         }

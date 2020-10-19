@@ -52,7 +52,7 @@ namespace RabbetGameEngine
             DebugInfo.init();
             HitboxRenderer.init();
             //create and spawn player in new world
-            thePlayer = new EntityPlayer("Steve", new Vector3(0, 0, 2));
+            thePlayer = new EntityPlayer("Steve", new Vector3(0, 3, 2));
             currentPlanet = new World();
             for (int i = 0; i < 10; i++)
             {

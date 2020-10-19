@@ -54,11 +54,7 @@ namespace RabbetGameEngine.Debugging
             switch(hitBox.getType())
             {
                 case ColliderType.aabb:
-                    addBoxToBeRendered((AABBCollider)hitBox);
-                    break;
-
-                case ColliderType.sphere:
-                    addSphereToBeRendered((SphereCollider)hitBox);
+                    addBoxToBeRendered((AABB)hitBox);
                     break;
 
                 case ColliderType.point:
@@ -67,18 +63,13 @@ namespace RabbetGameEngine.Debugging
             }
         }
 
-        public static void addBoxToBeRendered(AABBCollider box)
+        public static void addBoxToBeRendered(AABB box)
         {
             if(aabbToBeRendered.Count < maxAABBRenderCount)
             {
                 //add a copy of the aabb line model transformed to aabb collider specs
                 aabbToBeRendered.Add(aabbModelPrefab.copyModel().transformVertices(new Vector3((float)box.extentX * 2, (float)box.extentY * 2, (float)box.extentZ * 2), Vector3.Zero, box.centerVec));
             }
-        }
-
-        public static void addSphereToBeRendered(SphereCollider sphere)
-        {
-
         }
 
         public static void addPointToBeRendered(PointCollider point)

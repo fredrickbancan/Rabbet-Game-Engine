@@ -55,38 +55,38 @@ namespace RabbetGameEngine.Physics
             {
                 applyCollisionForColliderType(ref objVel, objCollider, worldColliders.ElementAt(i), OffsetDirection.Y);
             }
-            objCollider.offset(new Vector3(0, objVel.Y, 0));
+            objCollider.offset(0, objVel.Y, 0);
 
             for (int i = 0; i < worldColliders.Count; i++)
             {
                 applyCollisionForColliderType(ref objVel, objCollider, worldColliders.ElementAt(i), OffsetDirection.Z);
             }
-            objCollider.offset(new Vector3(0, 0, objVel.Z));
+            objCollider.offset(0, 0, objVel.Z);
 
             for (int i = 0; i < worldColliders.Count; i++)
             {
                 applyCollisionForColliderType(ref objVel, objCollider, worldColliders.ElementAt(i), OffsetDirection.X);
             }
-            objCollider.offset(new Vector3(objVel.X, 0, 0));
+            objCollider.offset(objVel.X, 0, 0);
 
             //do all entity collisions
-            for (int i = 0; i < entities.Count; i++)
+          /*  for (int i = 0; i < entities.Count; i++)
             {
                 applyCollisionForColliderType(ref objVel, objCollider, entities.Values.ElementAt(i).getCollider(), OffsetDirection.Y);
             }
-            objCollider.offset(new Vector3(0,objVel.Y,0));
+            objCollider.offset(0, objVel.Y, 0);
 
             for (int i = 0; i < entities.Count; i++)
             {
                 applyCollisionForColliderType(ref objVel, objCollider, entities.Values.ElementAt(i).getCollider(), OffsetDirection.Z);
             }
-            objCollider.offset(new Vector3(0, 0, objVel.Z));
+            objCollider.offset(0, 0, objVel.Z);
 
             for (int i = 0; i < entities.Count; i++)
             {
                 applyCollisionForColliderType(ref objVel, objCollider, entities.Values.ElementAt(i).getCollider(), OffsetDirection.X);
             }
-            objCollider.offset(new Vector3(objVel.X, 0, 0));
+            objCollider.offset(objVel.X, 0, 0);*/
 
             //apply new velocity
             obj.setVelocity(objVel);
@@ -114,15 +114,17 @@ namespace RabbetGameEngine.Physics
                     switch(dir)
                     {
                         case OffsetDirection.X:
-                            vel = applyCollisionAABBVsAABBX(vel, (AABBCollider)objCollider, (AABBCollider)otherCollider);
+                            vel = applyCollisionAABBVsAABBX(vel, (AABB)objCollider, (AABB)otherCollider);
                             break;
 
                         case OffsetDirection.Y:
-                            vel = applyCollisionAABBVsAABBY(vel, (AABBCollider)objCollider, (AABBCollider)otherCollider);
+                            vel = applyCollisionAABBVsAABBY(vel, (AABB)objCollider, (AABB)otherCollider);
                             break;
+
                         case OffsetDirection.Z:
-                            vel = applyCollisionAABBVsAABBZ(vel, (AABBCollider)objCollider, (AABBCollider)otherCollider);
+                            vel = applyCollisionAABBVsAABBZ(vel, (AABB)objCollider, (AABB)otherCollider);
                             break;
+
                         default:
                             break;
                     }
@@ -132,19 +134,22 @@ namespace RabbetGameEngine.Physics
                     switch (dir)
                     {
                         case OffsetDirection.X:
-                            vel = applyCollisionPointVsAABBX(vel, (PointCollider)objCollider, (AABBCollider)otherCollider);
+                            vel = applyCollisionPointVsAABBX(vel, (PointCollider)objCollider, (AABB)otherCollider);
                             break;
 
                         case OffsetDirection.Y:
-                            vel = applyCollisionPointVsAABBY(vel, (PointCollider)objCollider, (AABBCollider)otherCollider);
+                            vel = applyCollisionPointVsAABBY(vel, (PointCollider)objCollider, (AABB)otherCollider);
                             break;
+
                         case OffsetDirection.Z:
-                            vel = applyCollisionPointVsAABBZ(vel, (PointCollider)objCollider, (AABBCollider)otherCollider);
+                            vel = applyCollisionPointVsAABBZ(vel, (PointCollider)objCollider, (AABB)otherCollider);
                             break;
+
                         default:
                             break;
                     }
                     break;
+
                 default:
                     break;
             }
@@ -159,9 +164,32 @@ namespace RabbetGameEngine.Physics
         /// <param name="objAABB">object AABB hitbox</param>
         /// <param name="otherAABB">other AABB hitbox</param>
         /// <returns>The provided velocity the object properly offset during collision resolution</returns>
-        private static Vector3 applyCollisionAABBVsAABBX(Vector3 objVel, AABBCollider objAABB, AABBCollider otherAABB)
+        private static Vector3 applyCollisionAABBVsAABBX(Vector3 objVel, AABB objAABB, AABB otherAABB)
         {
-            //TODO: impliment
+            if (AABB.overlappingY(objAABB, otherAABB) && AABB.overlappingZ(objAABB, otherAABB))
+            {
+                float zDist;//distance between boxes in X direction, depending on position and velocitx
+
+                //if ent is moving towards positive x and entitx box is "to left" of other box
+                if (objVel.X > 0.0F && objAABB.maxX <= otherAABB.minX)
+                {
+                    zDist = otherAABB.minX - objAABB.maxX;
+                    if (zDist < objVel.X)
+                    {
+                        objVel.X = zDist;
+                    }
+                }
+
+                //if ent is moving towards negative x and entitx box is "to right" of other box
+                if (objVel.X < 0.0F && objAABB.minX >= otherAABB.maxX)
+                {
+                    zDist = otherAABB.maxX - objAABB.minX;//creating negative dist for comparing with negative velocitx so there is no need to use abs() func
+                    if (zDist > objVel.X)
+                    {
+                        objVel.X = zDist;
+                    }
+                }
+            }
             return objVel;
         }
 
@@ -172,9 +200,32 @@ namespace RabbetGameEngine.Physics
         /// <param name="objAABB">object AABB hitbox</param>
         /// <param name="otherAABB">other AABB hitbox</param>
         /// <returns>The provided velocity the object properly offset during collision resolution</returns>
-        private static Vector3 applyCollisionAABBVsAABBY(Vector3 objVel, AABBCollider objAABB, AABBCollider otherAABB)
+        private static Vector3 applyCollisionAABBVsAABBY(Vector3 objVel, AABB objAABB, AABB otherAABB)
         {
-            //TODO: impliment
+            if(AABB.overlappingX(objAABB, otherAABB) && AABB.overlappingZ(objAABB, otherAABB))
+            {
+                float yDist;//distance between boxes in Y direction, depending on position and velocity
+
+                //if ent is moving towards positive y and entity box is "below" of other box
+                if(objVel.Y > 0.0F && objAABB.maxY <= otherAABB.minY)
+                {
+                    yDist = otherAABB.minY - objAABB.maxY;
+                    if(yDist < objVel.Y)
+                    {
+                        objVel.Y = yDist;
+                    }
+                }
+
+                //if ent is moving towards negative y and entity box is "above" of other box
+                if (objVel.Y < 0.0F && objAABB.minY >= otherAABB.maxY)
+                {
+                    yDist = otherAABB.maxY - objAABB.minY;//creating negative dist for comparing with negative velocity so there is no need to use abs() func
+                    if (yDist > objVel.Y)
+                    {
+                        objVel.Y = yDist;
+                    }
+                }
+            }
             return objVel;
         }
 
@@ -185,9 +236,32 @@ namespace RabbetGameEngine.Physics
         /// <param name="objAABB">object AABB hitbox</param>
         /// <param name="otherAABB">other AABB hitbox</param>
         /// <returns>The provided velocity the object properly offset during collision resolution</returns>
-        private static Vector3 applyCollisionAABBVsAABBZ(Vector3 objVel, AABBCollider objAABB, AABBCollider otherAABB)
+        private static Vector3 applyCollisionAABBVsAABBZ(Vector3 objVel, AABB objAABB, AABB otherAABB)
         {
-            //TODO: impliment
+            if (AABB.overlappingY(objAABB, otherAABB) && AABB.overlappingX(objAABB, otherAABB))
+            {
+                float zDist;//distance between boxes in Z direction, depending on position and velocitx
+
+                //if ent is moving towards positive z and entitx box is "behnid" of other box
+                if (objVel.Z > 0.0F && objAABB.maxZ <= otherAABB.minZ)
+                {
+                    zDist = otherAABB.minZ - objAABB.maxZ;
+                    if (zDist < objVel.Z)
+                    {
+                        objVel.Z = zDist;
+                    }
+                }
+
+                //if ent is moving towards negative z and entitx box is "in front" of other box
+                if (objVel.Z < 0.0F && objAABB.minZ >= otherAABB.maxZ)
+                {
+                    zDist = otherAABB.maxZ - objAABB.minZ;//creating negative dist for comparing with negative velocitx so there is no need to use abs() func
+                    if (zDist > objVel.Z)
+                    {
+                        objVel.Z = zDist;
+                    }
+                }
+            }
             return objVel;
         }
         #endregion
@@ -200,7 +274,7 @@ namespace RabbetGameEngine.Physics
         /// <param name="objPoint">object Sphere hitbox</param>
         /// <param name="otherAABB">other plane hitbox</param>
         /// <returns>The provided Point collider for the object properly offset during collision resolution</returns>
-        private static Vector3 applyCollisionPointVsAABBX(Vector3 objVel, PointCollider objPoint, AABBCollider otherAABB)
+        private static Vector3 applyCollisionPointVsAABBX(Vector3 objVel, PointCollider objPoint, AABB otherAABB)
         {
             //TODO: impliment
             return objVel;
@@ -213,7 +287,7 @@ namespace RabbetGameEngine.Physics
         /// <param name="objPoint">object Sphere hitbox</param>
         /// <param name="otherAABB">other plane hitbox</param>
         /// <returns>The provided Point collider for the object properly offset during collision resolution</returns>
-        private static Vector3 applyCollisionPointVsAABBY(Vector3 objVel, PointCollider objPoint, AABBCollider otherAABB)
+        private static Vector3 applyCollisionPointVsAABBY(Vector3 objVel, PointCollider objPoint, AABB otherAABB)
         {
             //TODO: impliment
             return objVel;
@@ -226,7 +300,7 @@ namespace RabbetGameEngine.Physics
         /// <param name="objPoint">object Sphere hitbox</param>
         /// <param name="otherAABB">other plane hitbox</param>
         /// <returns>The provided Point collider for the object properly offset during collision resolution</returns>
-        private static Vector3 applyCollisionPointVsAABBZ(Vector3 objVel, PointCollider objPoint, AABBCollider otherAABB)
+        private static Vector3 applyCollisionPointVsAABBZ(Vector3 objVel, PointCollider objPoint, AABB otherAABB)
         {
             //TODO: impliment
             return objVel;

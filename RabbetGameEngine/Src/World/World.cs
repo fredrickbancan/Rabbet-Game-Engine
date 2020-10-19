@@ -162,10 +162,10 @@ namespace RabbetGameEngine
 
 
             wallsModel = QuadBatcher.batchQuadModels(unbatchedWallQuads, groundWallShaderName, wallTextureName);
-            
+
             //adding world colliders
-            
-            this.addWorldCollider(new AABBCollider(new Vector3(-1,0,-1), new Vector3(1,1,1)));//2x1x2 lump in middle of playground
+            this.addWorldCollider(new AABB(new Vector3(-(playgroundWidth * 0.5F), -2, -(playgroundLength * 0.5F)), new Vector3(playgroundWidth * 0.5F, 0, playgroundLength * 0.5F)));//AABB for ground
+            this.addWorldCollider(new AABB(new Vector3(-1,0,-1), new Vector3(1,1,1)));//2x1x2 lump in middle of playground
         }
         
         public void onTick()
