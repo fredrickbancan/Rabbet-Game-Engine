@@ -220,6 +220,7 @@ namespace RabbetGameEngine
                     entAt.preTick();
                     entAt.onTick();
                     entAt.postTick();
+                    CollisionHandler.tryToMoveObject(entAt, worldColliders, entityColliders);
                 }
             }
 

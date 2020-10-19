@@ -58,7 +58,7 @@ namespace RabbetGameEngine
         {
             velocity += acceleration;
             velocity *= (1 - airResistance);
-            pos += velocity;
+            //pos += velocity;
 
             if (hasCollider && collider != null)
             {
@@ -273,6 +273,22 @@ namespace RabbetGameEngine
             return roll;
         }
 
+        public virtual bool getHasCollider()
+        {
+            return hasCollider;
+        }
+
+        public virtual ICollider getCollider()
+        {
+            return collider;
+        }
+
+        public virtual void setCollider(ICollider collider)
+        {
+            collider.setParent(this);
+            this.collider = collider;
+            this.hasCollider = true;
+        }
         public virtual float posX { get => pos.X; set => pos.X = value; }
         public virtual float posY { get => pos.Y; set => pos.Y = value; }
         public virtual float posZ { get => pos.Z; set => pos.Z = value; }

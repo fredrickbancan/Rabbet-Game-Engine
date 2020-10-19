@@ -17,7 +17,10 @@ namespace RabbetGameEngine.Physics
         {
             return parent != null;
         }
-
+        public void setParent(PositionalObject parent)
+        {
+            this.parent = parent;
+        }
         public ICollider getNextTickPredictedHitbox()
         {
             if (parent != null)
@@ -46,9 +49,19 @@ namespace RabbetGameEngine.Physics
 
         public void onTick()
         {
-            pos = parent.getPosition();
+            //replaced by new tryToMoveEntity()
+           /* pos = parent.getPosition();*/
         }
 
+        public Vector3 getCenterVec()
+        {
+            return pos;
+        }
+
+        public void offset(Vector3 vec)
+        {
+            pos += vec;
+        }
         public ColliderType getType()
         {
             return ColliderType.point;

@@ -93,6 +93,228 @@ namespace RabbetGameEngine.Physics
             }
         }
 
-        
+        /// <summary>
+        /// Should be done after on tick and before post tick.
+        /// tries to move the provided positional object by its velocity with respect to all of the provided colliders.
+        /// NOTE: This loops through each collider for now! meaning this is O(n^2) Complexity since entities collide with each other!
+        /// </summary>
+        /// <param name="obj"> the object to move </param>
+        /// <param name="worldColliders"> all world colliders </param>
+        /// <param name="entityColliders"> all entity colliders </param>
+        public static void tryToMoveObject(PositionalObject obj, List<ICollider> worldColliders, Dictionary<int, ICollider> entityColliders)
+        {
+            if(!obj.getHasCollider())
+            {
+                obj.setPosition(obj.getPosition() + obj.getVelocity());
+                return;
+            }
+
+            ICollider objCollider = obj.getCollider();
+            Vector3 objVel = obj.getVelocity();
+
+            //do all world collisions first
+            for(int i = 0; i < worldColliders.Count; i++)
+            {
+                applyCollisionForColliderType(ref objVel, ref objCollider, worldColliders.ElementAt(i));
+            }
+
+            //do all entity collisions
+            for (int i = 0; i < entityColliders.Count; i++)
+            {
+                applyCollisionForColliderType(ref objVel, ref objCollider, entityColliders.Values.ElementAt(i));
+            }
+
+            //set modified collider
+            obj.setCollider(objCollider);
+
+            //apply new velocity
+            obj.setVelocity(objVel);
+
+            //lastly, position obj to center of hitbox offset
+            obj.setPosition(objCollider.getCenterVec());
+            
+        }
+
+        /// <summary>
+        /// Changes the provided velocity vector depending if it is colliding with the provided collider.
+        /// </summary>
+        /// <param name="vel">The velocity vector to be changed</param>
+        /// <param name="objCollider">The collider of the object</param>
+        /// <param name="otherColider">The collider to test collisions with</param>
+        private static void applyCollisionForColliderType(ref Vector3 vel, ref ICollider objCollider, ICollider otherCollider)
+        { 
+            switch(objCollider.getType())
+            {
+                case ColliderType.aabb:
+                    switch (otherCollider.getType())
+                    {
+                        case ColliderType.plane:
+                            objCollider = applyCollisionAABBVsPlane(ref vel, (AABBCollider)objCollider, (PlaneCollider)otherCollider);
+                            break;
+                        case ColliderType.aabb:
+                            objCollider = applyCollisionAABBVsAABB(ref vel, (AABBCollider)objCollider, (AABBCollider)otherCollider);
+                            break;
+                        case ColliderType.sphere:
+                            objCollider = applyCollisionAABBVsSphere(ref vel, (AABBCollider)objCollider, (SphereCollider)otherCollider);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case ColliderType.sphere:
+                    switch (otherCollider.getType())
+                    {
+                        case ColliderType.plane:
+                            objCollider = applyCollisionSphereVsPlane(ref vel, (SphereCollider)objCollider, (PlaneCollider)otherCollider);
+                            break;
+                        case ColliderType.aabb:
+                            objCollider = applyCollisionSphereVsAABB(ref vel, (SphereCollider)objCollider, (AABBCollider)otherCollider);
+                            break;
+                        case ColliderType.sphere:
+                            objCollider = applyCollisionSphereVsSphere(ref vel, (SphereCollider)objCollider, (SphereCollider)otherCollider);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                case ColliderType.point:
+                    switch (otherCollider.getType())
+                    {
+                        case ColliderType.plane:
+                            objCollider = applyCollisionPointVsPlane(ref vel, (PointCollider)objCollider, (PlaneCollider)otherCollider);
+                            break;
+                        case ColliderType.aabb:
+                            objCollider = applyCollisionPointVsAABB(ref vel, (PointCollider)objCollider, (AABBCollider)otherCollider);
+                            break;
+                        case ColliderType.sphere:
+                            objCollider = applyCollisionPointVsSphere(ref vel, (PointCollider)objCollider, (SphereCollider)otherCollider);
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Applies collision resolution velocity to the provided object velocity vector. Resulting from an AABB vs Plane collision.
+        /// </summary>
+        /// <param name="objVel">object velocity to be modified</param>
+        /// <param name="objAABB">object AABB hitbox</param>
+        /// <param name="worldPlane">plane collider usually from the world</param>
+        /// <returns>The provided AABB collider for the object properly offset during collision resolution</returns>
+        private static AABBCollider applyCollisionAABBVsPlane(ref Vector3 objVel, AABBCollider objAABB, PlaneCollider worldPlane)
+        {
+            //TODO: impliment
+            return new AABBCollider();
+        }
+
+        /// <summary>
+        /// Applies collision resolution velocity to the provided object velocity vector. Resulting from an AABB vs AABB collision.
+        /// </summary>
+        /// <param name="objVel">velocity to be modified</param>
+        /// <param name="objAABB">object AABB hitbox</param>
+        /// <param name="otherAABB">other AABB hitbox</param>
+        /// <returns>The provided AABB collider for the object properly offset during collision resolution</returns>
+        private static AABBCollider applyCollisionAABBVsAABB(ref Vector3 objVel, AABBCollider objAABB, AABBCollider otherAABB)
+        {
+            //TODO: impliment
+            return new AABBCollider();
+        }
+
+        /// <summary>
+        /// Applies collision resolution velocity to the provided object velocity vector. Resulting from an AABB vs Sphere collision.
+        /// </summary>
+        /// <param name="objVel">velocity to be modified</param>
+        /// <param name="objAABB">object AABB hitbox</param>
+        /// <param name="otherSphere">other sphere hitbox</param>
+        /// <returns>The provided AABB collider for the object properly offset during collision resolution</returns>
+        private static AABBCollider applyCollisionAABBVsSphere(ref Vector3 objVel, AABBCollider objAABB, SphereCollider otherSphere)
+        {
+            //TODO: impliment
+            return new AABBCollider();
+        }
+
+        /// <summary>
+        /// Applies collision resolution velocity to the provided object velocity vector. Resulting from a Sphere vs Plane collision.
+        /// </summary>
+        /// <param name="objVel">velocity to be modified</param>
+        /// <param name="objSphere">object Sphere hitbox</param>
+        /// <param name="otherPlane">other plane hitbox</param>
+        /// <returns>The provided Sphere collider for the object properly offset during collision resolution</returns>
+        private static SphereCollider applyCollisionSphereVsPlane(ref Vector3 objVel, SphereCollider objSphere, PlaneCollider otherPlane)
+        {
+            //TODO: impliment
+            return new SphereCollider();
+        }
+
+
+        /// <summary>
+        /// Applies collision resolution velocity to the provided object velocity vector. Resulting from a Sphere vs AABB collision.
+        /// </summary>
+        /// <param name="objVel">velocity to be modified</param>
+        /// <param name="objSphere">object Sphere hitbox</param>
+        /// <param name="otherAABB">other AABB hitbox</param>
+        /// <returns>The provided Sphere collider for the object properly offset during collision resolution</returns>
+        private static SphereCollider applyCollisionSphereVsAABB(ref Vector3 objVel, SphereCollider objSphere, AABBCollider otherAABB)
+        {
+            //TODO: impliment
+            return new SphereCollider();
+        }
+
+        /// <summary>
+        /// Applies collision resolution velocity to the provided object velocity vector. Resulting from a Sphere vs Sphere collision.
+        /// </summary>
+        /// <param name="objVel">velocity to be modified</param>
+        /// <param name="objSphere">object Sphere hitbox</param>
+        /// <param name="otherSphere">other plane hitbox</param>
+        /// <returns>The provided Sphere collider for the object properly offset during collision resolution</returns>
+        private static SphereCollider applyCollisionSphereVsSphere(ref Vector3 objVel, SphereCollider objSphere, SphereCollider otherSphere)
+        {
+            //TODO: impliment
+            return new SphereCollider();
+        }
+
+
+        /// <summary>
+        /// Applies collision resolution velocity to the provided object velocity vector. Resulting from a Point vs Plane collision.
+        /// </summary>
+        /// <param name="objVel">velocity to be modified</param>
+        /// <param name="objPoint">object Sphere hitbox</param>
+        /// <param name="otherPlane">other plane hitbox</param>
+        /// <returns>The provided Point collider for the object properly offset during collision resolution</returns>
+        private static PointCollider applyCollisionPointVsPlane(ref Vector3 objVel, PointCollider objPoint, PlaneCollider otherPlane)
+        {
+            //TODO: impliment
+            return new PointCollider();
+        }
+
+        /// <summary>
+        /// Applies collision resolution velocity to the provided object velocity vector. Resulting from a Point vs AABB collision.
+        /// </summary>
+        /// <param name="objVel">velocity to be modified</param>
+        /// <param name="objPoint">object Sphere hitbox</param>
+        /// <param name="otherAABB">other plane hitbox</param>
+        /// <returns>The provided Point collider for the object properly offset during collision resolution</returns>
+        private static PointCollider applyCollisionPointVsAABB(ref Vector3 objVel, PointCollider objPoint, AABBCollider otherAABB)
+        {
+            //TODO: impliment
+            return new PointCollider();
+        }
+
+        /// <summary>
+        /// Applies collision resolution velocity to the provided object velocity vector. Resulting from a Point vs Sphere collision.
+        /// </summary>
+        /// <param name="objVel">velocity to be modified</param>
+        /// <param name="objPoint">object Sphere hitbox</param>
+        /// <param name="otherSphere">other plane hitbox</param>
+        /// <returns>The provided Point collider for the object properly offset during collision resolution</returns>
+        private static PointCollider applyCollisionPointVsSphere(ref Vector3 objVel, PointCollider objPoint, SphereCollider otherSphere)
+        {
+            //TODO: impliment
+            return new PointCollider();
+        }
     }
 }

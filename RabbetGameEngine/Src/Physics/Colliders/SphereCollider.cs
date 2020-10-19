@@ -19,7 +19,10 @@ namespace RabbetGameEngine.Physics
         {
             return parent != null;
         }
-
+        public void setParent(PositionalObject parent)
+        {
+            this.parent = parent;
+        }
         public ICollider getNextTickPredictedHitbox()
         {
             if (this.getHasParent())
@@ -49,12 +52,23 @@ namespace RabbetGameEngine.Physics
             return 0;
         }
 
+        public Vector3 getCenterVec()
+        {
+            return pos;
+        }
+
+        public void offset(Vector3 vec)
+        {
+            pos += vec;
+        }
+
         public void onTick()
         {
-            if (parent != null)
+            //replaced by new tryToMoveEntity() func which offsets pos
+            /*if (parent != null)
             {
                 pos = parent.getPosition();
-            }
+            }*/
         }
         public ColliderType getType()
         {

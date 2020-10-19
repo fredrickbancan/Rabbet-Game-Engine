@@ -65,12 +65,13 @@ namespace RabbetGameEngine.Physics
         }
         public void onTick()
         {
-            if (this.getHasParent())
+            //replaced by new tryToMoveEntity() func which offsets the aabb
+           /* if (this.getHasParent())
             {
                 Vector3 boundDistFromCenter = (maxBounds - minBounds) / 2;
                 maxBounds = parent.getPosition() + boundDistFromCenter;
                 minBounds = parent.getPosition() - boundDistFromCenter;
-            }
+            }*/
         }
 
         public bool getHasParent()
@@ -109,6 +110,22 @@ namespace RabbetGameEngine.Physics
         public PositionalObject getParent()
         {
             return parent;
+        }
+
+        public void setParent(PositionalObject parent)
+        {
+            this.parent = parent;
+        }
+
+        public Vector3 getCenterVec()
+        {
+            return centerVec;
+        }
+
+        public void offset(Vector3 direction)
+        {
+            minBounds += direction;
+            maxBounds += direction;
         }
 
         public float minX { get => minBounds.X; set => minBounds.X = value; }

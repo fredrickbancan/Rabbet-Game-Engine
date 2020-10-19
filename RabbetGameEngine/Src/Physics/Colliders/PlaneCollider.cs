@@ -25,7 +25,10 @@ namespace RabbetGameEngine.Physics
         {
             return int.MaxValue;
         }
-
+         void setParent(PositionalObject parent)
+        {
+            
+        }
         public PositionalObject getParent()
         {
             return null;
@@ -39,6 +42,18 @@ namespace RabbetGameEngine.Physics
         {
          
         }
+
+        public Vector3 getCenterVec()
+        {
+            return Vector3.Zero;
+        }
+
+        public void offset(Vector3 vec)
+        {
+            normal += vec;
+            normal.Normalize();
+        }
+
         public ColliderType getType()
         {
             return ColliderType.plane;
