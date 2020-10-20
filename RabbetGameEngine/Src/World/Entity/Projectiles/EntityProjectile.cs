@@ -23,10 +23,10 @@ namespace RabbetGameEngine
             //rotate to match direction
 
 
-            //do basic collisions
-            if(isGrounded)
+            
+            if(hasCollided)
             {
-                onCollideWithGround();
+                onCollide();
             }
 
             //do last
@@ -36,7 +36,7 @@ namespace RabbetGameEngine
             }
         }
 
-        public virtual void onCollideWithGround()
+        public virtual void onCollide()
         {
             Dispose();
         }

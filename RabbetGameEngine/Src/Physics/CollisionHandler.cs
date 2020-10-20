@@ -21,25 +21,56 @@ namespace RabbetGameEngine.Physics
     /// </summary>
     public static class CollisionHandler
     {
+        //TODO: impliment ability to get only AABB that are going to touch the entity expanded with velocity.
         /// <summary>
-        /// Enum for determining which offset direction to operate on
+        /// Does collisions with each entity against all other entities it is touching.
+        /// No hard collisions, only pushing eachother away.
         /// </summary>
-        private enum OffsetDirection
+        /// <param name="entities"> All world entities to collide eachother.</param>
+        public static void collideEntities(Dictionary<int, Entity> entities)
         {
-            X,
-            Y,
-            Z
-        };
+            for(int i = 0; i < entities.Count; ++i)
+            { 
+                Entity entAt = entities.Values.ElementAt(i);
+                if (!entAt.getHasCollider())
+                {
+                    continue;
+                }
+
+                ICollider entCollider = entAt.getColliderHandle();
+
+                //Exclude entity collisions if they dont use aabb
+                if(entCollider.getType() != ColliderType.aabb)
+                {
+                    continue;
+                }
+
+                ICollider otherEntCollider;
+                for(int j = i + 1; j < entities.Count; ++j)
+                {
+                    Entity otherEntAt = entities.Values.ElementAt(j);
+                    if(!otherEntAt.getHasCollider())
+                    {
+                        continue;
+                    }
+                    otherEntCollider = otherEntAt.getColliderHandle();
+                    if(otherEntCollider.getType() != ColliderType.aabb)
+                    {
+                        continue;
+                    }
+                    //TODO: impliment
+                }
+
+            }
+        }
 
         /// <summary>
         /// Should be done after on tick and before post tick.
         /// tries to move the provided positional object by its velocity with respect to all of the provided colliders.
-        /// NOTE: This loops through each collider for now! meaning this is O(n^2) Complexity since entities collide with each other!
         /// </summary>
         /// <param name="obj"> the object to move </param>
-        /// <param name="worldColliders"> all world colliders </param>
-        /// <param name="entities"> all entity colliders </param>
-        public static void tryToMoveObject(PositionalObject obj, List<ICollider> worldColliders, Dictionary<int, Entity> entities)
+        /// <param name="worldAABB"> all world colliders </param>
+        public static void tryToMoveObject(PositionalObject obj, List<AABB> worldAABB)
         {
             if(!obj.getHasCollider())
             {
@@ -51,24 +82,55 @@ namespace RabbetGameEngine.Physics
             Vector3 objVel = obj.getVelocity();
             Vector3 prevObjVel = objVel;
 
-            //do all world collisions first 
-            for(int i = 0; i < worldColliders.Count; i++)
+            switch(objCollider.getType())
             {
-                applyCollisionForColliderType(ref objVel, objCollider, worldColliders.ElementAt(i), OffsetDirection.Y);
-            }
-            objCollider.offset(0, objVel.Y, 0);
+                case ColliderType.aabb:
+                    AABB objBox = (AABB)objCollider;//using this to avoid casting inside the loops
+                    for (int i = 0; i < worldAABB.Count; i++)
+                    {
+                        objVel = applyCollisionAABBVsAABBY(objVel, objBox, worldAABB.ElementAt(i));
+                    }
+                    objCollider.offset(0, objVel.Y, 0);
+                    objBox = (AABB)objCollider;
+                    for (int i = 0; i < worldAABB.Count; i++)
+                    {
+                        objVel = applyCollisionAABBVsAABBX(objVel, objBox, worldAABB.ElementAt(i));
+                    }
+                    objCollider.offset(objVel.X, 0, 0);
+                    objBox = (AABB)objCollider;
+                    for (int i = 0; i < worldAABB.Count; i++)
+                    {
+                        objVel = applyCollisionAABBVsAABBZ(objVel, objBox, worldAABB.ElementAt(i));
+                    }
+                    objCollider.offset(0, 0, objVel.Z);
+                    break;
 
-            for (int i = 0; i < worldColliders.Count; i++)
-            {
-                applyCollisionForColliderType(ref objVel, objCollider, worldColliders.ElementAt(i), OffsetDirection.Z);
-            }
-            objCollider.offset(0, 0, objVel.Z);
+                case ColliderType.point:
+                    PointCollider objPoint = (PointCollider)objCollider;
+                    for (int i = 0; i < worldAABB.Count; i++)
+                    {
+                        objVel = applyCollisionPointVsAABBY(objVel, objPoint, worldAABB.ElementAt(i));
+                    }
+                    objCollider.offset(0, objVel.Y, 0);
 
-            for (int i = 0; i < worldColliders.Count; i++)
-            {
-                applyCollisionForColliderType(ref objVel, objCollider, worldColliders.ElementAt(i), OffsetDirection.X);
+                    for (int i = 0; i < worldAABB.Count; i++)
+                    {
+                        objVel = applyCollisionPointVsAABBZ(objVel, objPoint, worldAABB.ElementAt(i));
+                    }
+                    objCollider.offset(0, 0, objVel.Z);
+
+                    for (int i = 0; i < worldAABB.Count; i++)
+                    {
+                        objVel = applyCollisionPointVsAABBX(objVel, objPoint, worldAABB.ElementAt(i));
+                    }
+                    objCollider.offset(objVel.X, 0, 0);
+                    break;
             }
-            objCollider.offset(objVel.X, 0, 0);
+            
+            if(prevObjVel.X != objVel.X || prevObjVel.Y != objVel.Y || prevObjVel.Z != objVel.Z)
+            {
+                obj.setHasCollided(true);
+            }
 
             //if the object was moving downwards and a collision has changed its vertical velocity then it is now grounded
             if(prevObjVel.Y != objVel.Y && prevObjVel.Y < 0.0F)
@@ -84,66 +146,6 @@ namespace RabbetGameEngine.Physics
             
         }
 
-        /// <summary>
-        /// Changes the provided velocity vector depending if it is colliding with the provided collider.
-        /// </summary>
-        /// <param name="vel">The velocity vector to be changed</param>
-        /// <param name="objCollider">The collider of the object</param>
-        /// <param name="otherColider">The collider to test collisions with</param>
-        /// <param name="dir">The direction to calculate offsets in</param>
-        private static void applyCollisionForColliderType(ref Vector3 vel, ICollider objCollider, ICollider otherCollider, OffsetDirection dir)
-        {
-            if (otherCollider.getType() != ColliderType.aabb)
-            { return; }
-
-            switch (objCollider.getType())
-            {
-                case ColliderType.aabb:
-                    switch(dir)
-                    {
-                        case OffsetDirection.X:
-                            vel = applyCollisionAABBVsAABBX(vel, (AABB)objCollider, (AABB)otherCollider);
-                            break;
-
-                        case OffsetDirection.Y:
-                            vel = applyCollisionAABBVsAABBY(vel, (AABB)objCollider, (AABB)otherCollider);
-                            break;
-
-                        case OffsetDirection.Z:
-                            vel = applyCollisionAABBVsAABBZ(vel, (AABB)objCollider, (AABB)otherCollider);
-                            break;
-
-                        default:
-                            break;
-                    }
-                    break;
-
-                case ColliderType.point:
-                    switch (dir)
-                    {
-                        case OffsetDirection.X:
-                            vel = applyCollisionPointVsAABBX(vel, (PointCollider)objCollider, (AABB)otherCollider);
-                            break;
-
-                        case OffsetDirection.Y:
-                            vel = applyCollisionPointVsAABBY(vel, (PointCollider)objCollider, (AABB)otherCollider);
-                            break;
-
-                        case OffsetDirection.Z:
-                            vel = applyCollisionPointVsAABBZ(vel, (PointCollider)objCollider, (AABB)otherCollider);
-                            break;
-
-                        default:
-                            break;
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-        }
-       
-
         #region AABBvsAABB
         /// <summary>
         /// Applies collision resolution velocity to the provided object velocity vector. Resulting from an AABB vs AABB collision.
@@ -156,25 +158,25 @@ namespace RabbetGameEngine.Physics
         {
             if (AABB.overlappingY(objAABB, otherAABB) && AABB.overlappingZ(objAABB, otherAABB))
             {
-                float zDist;//distance between boxes in X direction, depending on position and velocitx
+                float xDist;//distance between boxes in X direction, depending on position and velocitx
 
                 //if ent is moving towards positive x and entitx box is "to left" of other box
                 if (objVel.X > 0.0F && objAABB.maxX <= otherAABB.minX)
                 {
-                    zDist = otherAABB.minX - objAABB.maxX;
-                    if (zDist < objVel.X)
+                    xDist = otherAABB.minX - objAABB.maxX;
+                    if (xDist < objVel.X)
                     {
-                        objVel.X = zDist;
+                        objVel.X = xDist;
                     }
                 }
 
                 //if ent is moving towards negative x and entitx box is "to right" of other box
                 if (objVel.X < 0.0F && objAABB.minX >= otherAABB.maxX)
                 {
-                    zDist = otherAABB.maxX - objAABB.minX;//creating negative dist for comparing with negative velocitx so there is no need to use abs() func
-                    if (zDist > objVel.X)
+                    xDist = otherAABB.maxX - objAABB.minX;//creating negative dist for comparing with negative velocitx so there is no need to use abs() func
+                    if (xDist > objVel.X)
                     {
-                        objVel.X = zDist;
+                        objVel.X = xDist;
                     }
                 }
             }

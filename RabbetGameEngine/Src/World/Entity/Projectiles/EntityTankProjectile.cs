@@ -23,5 +23,11 @@ namespace RabbetGameEngine
             yaw = (float)((Math.Atan2(velocityNormalVec.Z, velocityNormalVec.X) * 180) / Math.PI );
             pitch = (float)(Math.Atan2(velocityNormalVec.Y, velocityNormalVec.Xz.Length) * (180D / Math.PI));
         }
+
+        public override void ceaseToExist()
+        {
+            this.currentPlanet.doExplosionAt(pos);
+            base.ceaseToExist();
+        }
     }
 }

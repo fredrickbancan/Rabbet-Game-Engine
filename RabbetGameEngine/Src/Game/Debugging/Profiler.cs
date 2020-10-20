@@ -6,10 +6,11 @@ namespace RabbetGameEngine.Debugging
     /*This class will be responsable for debugging, measuring and testing performance of the subsystems in this program.*/
     public static class Profiler
     {
-        public static string textRender2DBuildingName = "TextRenderer2D Building";
-        public static string gameLoopName = "Game Loop";
-        public static string collisionsName = "Collisions";
-        public static string renderingName = "Rendering";
+        public static string textRender2DBuildingName = "TextBuild";
+        public static string gameLoopName = "Game";
+        public static string collisionsName = "Col";
+        public static string entCollisionsName = "EntCol";
+        public static string renderingName = "Rend";
         private static Dictionary<string, Profile> profiles = new Dictionary<string, Profile>();
 
         /*Calling this function with a name will either create and begin a profile or end an existing running profile, or run an existing non running profile.

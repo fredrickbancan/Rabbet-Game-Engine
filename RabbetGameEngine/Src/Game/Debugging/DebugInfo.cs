@@ -8,6 +8,7 @@ namespace RabbetGameEngine.Debugging
     {
         public static readonly string debugInfoPanelName = "debugInfo";
         private static float collisionsAverage;
+        private static float entCollisionsAverage;
         private static float gameLoopAverage;
         private static float renderAverage;
         /*Initialize the text panel for the debug info, can only be done if the mainGUI panel is created first*/
@@ -28,6 +29,7 @@ namespace RabbetGameEngine.Debugging
             {
                 GUIHandler.unHideTextPanelInGUI(MainGUI.mainGUIName, debugInfoPanelName);
                 collisionsAverage = Profiler.getAveragesForProfile(Profiler.collisionsName);
+                entCollisionsAverage = Profiler.getAveragesForProfile(Profiler.entCollisionsName);
                 gameLoopAverage = Profiler.getAveragesForProfile(Profiler.gameLoopName);
                 renderAverage = Profiler.getAveragesForProfile(Profiler.renderingName);
                 GUIHandler.getTextPanelFormatFromGUI(MainGUI.mainGUIName, debugInfoPanelName).setLines(
@@ -48,6 +50,7 @@ namespace RabbetGameEngine.Debugging
                         ("  [Per Tick]Game loop: " + gameLoopAverage.ToString("0.00 ms")),
                         ("  {"),
                         ("      Collisions: " + collisionsAverage.ToString("0.00 ms")),
+                        ("      Entity Collisions: " + entCollisionsAverage.ToString("0.00 ms")),
                         ("  }Residual: " + (gameLoopAverage - collisionsAverage).ToString("0.00 ms")),
                         ("}"),
                         ("Entities: " + GameInstance.get.currentPlanet.getEntityCount()),

@@ -52,14 +52,7 @@ namespace RabbetGameEngine
                     hasModel = false;
                 }
             }
-
             
-
-            //do last
-            if (!hasDoneFirstUpdate)
-            {
-                hasDoneFirstUpdate = true;
-            }
         }
 
         /*Do this after manipulating any movement of this object*/
@@ -76,6 +69,12 @@ namespace RabbetGameEngine
                 velocity.X *= (1 - groundResistance);
                 velocity.Y *= (1 - airResistance);
                 velocity.Z *= (1 - groundResistance);
+            }
+
+            //do last
+            if (!hasDoneFirstUpdate)
+            {
+                hasDoneFirstUpdate = true;
             }
         }
 

@@ -10,6 +10,7 @@ namespace RabbetGameEngine
         private static Random rand = new Random();
         public EntityCactus() : base()
         {
+            this.walkSpeed = 0.025F;
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
             this.collider = new AABB(new Vector3(-0.5F, -0.5F, -0.5F), new Vector3(0.5F, 0.5F, 0.5F), this);
@@ -19,6 +20,7 @@ namespace RabbetGameEngine
         }
         public EntityCactus(Vector3 pos) : base(pos)
         {
+            this.walkSpeed = 0.025F;
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
             this.collider = new AABB(new Vector3(-0.5F, -0.5F, -0.5F), new Vector3(0.5F, 0.5F, 0.5F), this);

@@ -19,11 +19,11 @@ namespace RabbetGameEngine
         private Vector3 fogColor;
         private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
         public Dictionary<int, Entity> entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
-       // public Dictionary<int, ICollider> entityColliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity
-        public List<ICollider> worldColliders = new List<ICollider>();//list of colliders with no parent, ie, walls, ground planes.
+                                                                                // public Dictionary<int, ICollider> entityColliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity
+        public List<AABB> worldColliders = new List<AABB>();//list of colliders with no parent, ie, walls.
         public List<VFXBase> vfxList = new List<VFXBase>();
-        private string wallTextureName = "transparent"; 
-        private string groundTextureName = "wood"; 
+        private string wallTextureName = "transparent";
+        private string groundTextureName = "wood";
         private string groundWallShaderName = "EntityWorld_F";
 
         ModelDrawableInstanced test;
@@ -37,9 +37,9 @@ namespace RabbetGameEngine
             Texture tex;
             TextureUtil.tryGetTexture("transparent", out tex);
             test = new ModelDrawableInstanced(CubePrefab.copyModelDrawable(), 8138).setTexture(tex);
-            for(int i = 0; i < 8138; i++)
-            { 
-                test.addRenderAt(Matrix4.CreateTranslation(i % 16 + 1.5F, i /  (16 * 16) + 0.5F, (i / 16) % 16 + 1.5F));
+            for (int i = 0; i < 8138; i++)
+            {
+                test.addRenderAt(Matrix4.CreateTranslation(i % 16 + 1.5F, i / (16 * 16) + 0.5F, (i / 16) % 16 + 1.5F));
             }
         }
 
@@ -55,17 +55,17 @@ namespace RabbetGameEngine
         public Vector3 getSkyColor()
         {
             return skyColor;
-        }public Vector3 getFogColor()
+        } public Vector3 getFogColor()
         {
             return fogColor;
         }
-      
+
         /*TODO: INNEFICIENT, loops through each entitiy and draws their model with a seperate call*/
         public void drawEntities(Matrix4 viewMatrix, Matrix4 projectionMatrix)//obselete, move to batcher pipeline
         {
-            foreach(KeyValuePair<int, Entity> ent in entities)
+            foreach (KeyValuePair<int, Entity> ent in entities)
             {
-                if(ent.Value.getHasModel())
+                if (ent.Value.getHasModel())
                 {
                     ent.Value.getEntityModel().draw(viewMatrix, projectionMatrix, fogColor);
                 }
@@ -109,43 +109,43 @@ namespace RabbetGameEngine
             Model[] unbatchedWallQuads = new Model[16];
 
             //Generating ground quads
-            for(int x = 0; x < 64; x++)
+            for (int x = 0; x < 64; x++)
             {
-                for(int z = 0; z < 64; z++)
+                for (int z = 0; z < 64; z++)
                 {
-                    unbatchedGroundQuads[x * 64 + z] = PlanePrefab.copyModel().scaleVertices(new Vector3(20,1,20)).scaleUV(new Vector2(5F,5F)).translateVertices(new Vector3((x-32)*20, groundHeight, (z-32)*20));
+                    unbatchedGroundQuads[x * 64 + z] = PlanePrefab.copyModel().scaleVertices(new Vector3(20, 1, 20)).scaleUV(new Vector2(5F, 5F)).translateVertices(new Vector3((x - 32) * 20, groundHeight, (z - 32) * 20));
                 }
             }
 
             //building the lump in middle of map, quads added after all the flat plane quads.
 
             //top face
-            unbatchedGroundQuads[4096] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(2,1,2)).translateVertices(new Vector3(0, 1F, 0));
+            unbatchedGroundQuads[4096] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(2, 1, 2)).translateVertices(new Vector3(0, 1F, 0));
 
             //negZ face
-            unbatchedGroundQuads[4097] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(2, 1, 1)).rotateVertices(new Vector3(90,0,0)).translateVertices(new Vector3(0, 0.5F, -1F)).setColor(new Vector4(0.8F, 0.8F, 0.8F, 1.0F));//pseudoLighting
-            
+            unbatchedGroundQuads[4097] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(2, 1, 1)).rotateVertices(new Vector3(90, 0, 0)).translateVertices(new Vector3(0, 0.5F, -1F)).setColor(new Vector4(0.8F, 0.8F, 0.8F, 1.0F));//pseudoLighting
+
             //posZ face
-            unbatchedGroundQuads[4098] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(2, 1, 1)).rotateVertices(new Vector3(-90,0,0)).translateVertices(new Vector3(0, 0.5F, 1F)).setColor(new Vector4(0.7F, 0.7F, 0.7F, 1.0F));
+            unbatchedGroundQuads[4098] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(2, 1, 1)).rotateVertices(new Vector3(-90, 0, 0)).translateVertices(new Vector3(0, 0.5F, 1F)).setColor(new Vector4(0.7F, 0.7F, 0.7F, 1.0F));
 
             //negX face
-            unbatchedGroundQuads[4099] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(1, 1, 2)).rotateVertices(new Vector3(0,0,-90)).translateVertices(new Vector3(-1f, 0.5F, 0)).setColor(new Vector4(0.9F, 0.9F, 0.9F, 1.0F));
+            unbatchedGroundQuads[4099] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(1, 1, 2)).rotateVertices(new Vector3(0, 0, -90)).translateVertices(new Vector3(-1f, 0.5F, 0)).setColor(new Vector4(0.9F, 0.9F, 0.9F, 1.0F));
 
             //posX face
-            unbatchedGroundQuads[4100] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(1, 1, 2)).rotateVertices(new Vector3(0,0,90)).translateVertices(new Vector3(1f, 0.5F, 0)).setColor(new Vector4(0.65F, 0.65F, 0.65F, 1.0F));
-            groundModel = QuadBatcher.batchQuadModels(unbatchedGroundQuads, groundWallShaderName, groundTextureName); 
+            unbatchedGroundQuads[4100] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(1, 1, 2)).rotateVertices(new Vector3(0, 0, 90)).translateVertices(new Vector3(1f, 0.5F, 0)).setColor(new Vector4(0.65F, 0.65F, 0.65F, 1.0F));
+            groundModel = QuadBatcher.batchQuadModels(unbatchedGroundQuads, groundWallShaderName, groundTextureName);
 
 
             //build negZ wall
-            for(int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
             {
-                unbatchedWallQuads[i] = QuadPrefab.getNewModel().scaleVertices(new Vector3(playgroundWidth/4, wallHeight, 1)).scaleUV(new Vector2(playgroundWidth / (wallHeight * 4), 1)).translateVertices(new Vector3((-playgroundWidth/2) + ((playgroundWidth/4)/2) + ((playgroundWidth / 4) * i), groundHeight + wallHeight / 2, -playgroundLength/2)).setColor(new Vector4(0.7F, 0.7F, 0.7F, 1.0F));
+                unbatchedWallQuads[i] = QuadPrefab.getNewModel().scaleVertices(new Vector3(playgroundWidth / 4, wallHeight, 1)).scaleUV(new Vector2(playgroundWidth / (wallHeight * 4), 1)).translateVertices(new Vector3((-playgroundWidth / 2) + ((playgroundWidth / 4) / 2) + ((playgroundWidth / 4) * i), groundHeight + wallHeight / 2, -playgroundLength / 2)).setColor(new Vector4(0.7F, 0.7F, 0.7F, 1.0F));
             }
 
             //build posZ wall
             for (int i = 0; i < 4; i++)
             {
-                unbatchedWallQuads[ 4 + i] = QuadPrefab.getNewModel().scaleVertices(new Vector3(playgroundWidth / 4, wallHeight, 1)).scaleUV(new Vector2(playgroundWidth / (wallHeight * 4), 1)).rotateVertices(new Vector3(0, 180, 0)).translateVertices(new Vector3((playgroundWidth / 2) - ((playgroundWidth / 4) / 2) - ((playgroundWidth / 4) * i), groundHeight + wallHeight / 2, playgroundLength / 2)).setColor(new Vector4(0.8F, 0.8F, 0.8F, 1.0F)); ;
+                unbatchedWallQuads[4 + i] = QuadPrefab.getNewModel().scaleVertices(new Vector3(playgroundWidth / 4, wallHeight, 1)).scaleUV(new Vector2(playgroundWidth / (wallHeight * 4), 1)).rotateVertices(new Vector3(0, 180, 0)).translateVertices(new Vector3((playgroundWidth / 2) - ((playgroundWidth / 4) / 2) - ((playgroundWidth / 4) * i), groundHeight + wallHeight / 2, playgroundLength / 2)).setColor(new Vector4(0.8F, 0.8F, 0.8F, 1.0F)); ;
             }
 
             //build negX wall
@@ -164,21 +164,26 @@ namespace RabbetGameEngine
             wallsModel = QuadBatcher.batchQuadModels(unbatchedWallQuads, groundWallShaderName, wallTextureName);
 
             //adding world colliders
-            this.addWorldCollider(new AABB(new Vector3(-(playgroundWidth * 0.5F), -2, -(playgroundLength * 0.5F)), new Vector3(playgroundWidth * 0.5F, 0, playgroundLength * 0.5F)));//AABB for ground
-            this.addWorldCollider(new AABB(new Vector3(-1,0,-1), new Vector3(1,1,1)));//2x1x2 lump in middle of playground
+            this.addWorldAABB(new AABB(new Vector3(-(playgroundWidth * 0.5F), -2, -(playgroundLength * 0.5F)), new Vector3(playgroundWidth * 0.5F, 0, playgroundLength * 0.5F)));//AABB for ground
+            this.addWorldAABB(new AABB(new Vector3(-(playgroundWidth * 0.5F), 0, playgroundLength * 0.5F), new Vector3(playgroundWidth * 0.5F, wallHeight, playgroundLength * 0.5F + 2)));//AABB for pos Z wall
+            this.addWorldAABB(new AABB(new Vector3(-(playgroundWidth * 0.5F), 0, -(playgroundLength * 0.5F) - 2), new Vector3(playgroundWidth * 0.5F, wallHeight, -(playgroundLength * 0.5F))));//AABB for neg Z wall
+            this.addWorldAABB(new AABB(new Vector3(playgroundWidth * 0.5F, 0, -(playgroundLength * 0.5F)), new Vector3(playgroundWidth * 0.5F + 2, wallHeight, playgroundLength * 0.5F)));//AABB for pos X wall
+            this.addWorldAABB(new AABB(new Vector3(-(playgroundWidth * 0.5F) - 2, 0, -(playgroundLength * 0.5F)), new Vector3(-(playgroundWidth * 0.5F), wallHeight, playgroundLength * 0.5F)));//AABB for neg X wall
+            this.addWorldAABB(new AABB(new Vector3(-1, 0, -1), new Vector3(1, 1, 1)));//2x1x2 lump in middle of playground
         }
-        
+
         public void onTick()
         {
-            tickEntities();
             tickVFX();
 
-            
-            doCollisions();
+            doEntityCollisions();
+
+            tickEntities();
+
+            doWorldCollisions();
 
             if (GameSettings.drawHitboxes)
             {
-              //  updateAllEntityColliders();//For correcting the drawing of hitboxes after a collision
                 HitboxRenderer.addAllHitboxesToBeRendered(worldColliders, entities);
             }
         }
@@ -205,10 +210,10 @@ namespace RabbetGameEngine
                 else if (entAt.getIsMarkedForRemoval())
                 {
                     entAt.setCurrentPlanet(null);
-                   /* if (entAt.getHasCollider())
-                    {
-                        entityColliders.Remove(entities.ElementAt(i).Key);
-                    }*/
+                    /* if (entAt.getHasCollider())
+                     {
+                         entityColliders.Remove(entities.ElementAt(i).Key);
+                     }*/
                     entities.Remove(entities.ElementAt(i).Key);
                     i--;
                 }
@@ -223,7 +228,7 @@ namespace RabbetGameEngine
         }
         private void tickVFX()
         {
-            for(int i = 0; i < vfxList.Count; i++)
+            for (int i = 0; i < vfxList.Count; i++)
             {
                 VFXBase vfx = vfxList.ElementAt(i);
                 if (vfx == null)
@@ -245,29 +250,34 @@ namespace RabbetGameEngine
             }
         }
 
+        private void doEntityCollisions()
+        {
+            Profiler.beginEndProfile(Profiler.entCollisionsName);
+            CollisionHandler.collideEntities(entities);
+            Profiler.beginEndProfile(Profiler.entCollisionsName);
+        }
+
         /*Loops through all the different colliders in the world in the right order and applies physics to the
           parent entities.*/
-        private void doCollisions()
+        private void doWorldCollisions()
         {
             Profiler.beginEndProfile(Profiler.collisionsName);
-             // Inneficient! this requires multiple loops and slows down drastically with large numbers of entities!
-            /* if (entityColliders.Count >= 2)
-             {
-                 CollisionHandler.doEntityCollisions(entityColliders);
-             }
-             if(worldColliders.Count > 0 && entityColliders.Count >= 1)
-             {
-                 CollisionHandler.doWorldCollisions(worldColliders, entityColliders);
-             }*/
+            
+            for (int i = 0; i < vfxList.Count; i++)
+            {
+                CollisionHandler.tryToMoveObject(vfxList.ElementAt(i), worldColliders);
+            }
+
             for (int i = 0; i < entities.Values.Count; i++)
             {
-                CollisionHandler.tryToMoveObject(entities.Values.ElementAt(i), worldColliders, entities);
+                CollisionHandler.tryToMoveObject(entities.Values.ElementAt(i), worldColliders);
             }
+
             Profiler.beginEndProfile(Profiler.collisionsName);
         }
 
         /*For adding colliders with no entity parent, eg, for map collisions, inanimate immovable uncolliding objects.*/
-        public void addWorldCollider(ICollider collider)
+        public void addWorldAABB(AABB collider)
         {
             worldColliders.Add(collider);
         }

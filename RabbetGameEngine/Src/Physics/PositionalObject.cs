@@ -29,6 +29,7 @@ namespace RabbetGameEngine
         protected bool hasCollider = false;
         protected bool hasDoneFirstUpdate = false;
         protected bool isGrounded = false;
+        protected bool hasCollided = false;
 
         public PositionalObject()
         {
@@ -52,12 +53,18 @@ namespace RabbetGameEngine
             prevTickRoll = roll;
         }
 
-
         /*Do this after manipulating any movement of this object*/
         public virtual void postTick()
         {
             velocity += acceleration;
             velocity *= (1 - airResistance);
+            pos += velocity;
+
+            //do last
+            if (!hasDoneFirstUpdate)
+            {
+                hasDoneFirstUpdate = true;
+            }
         }
 
         /*Called every frame, can be overwritten*/
@@ -251,6 +258,11 @@ namespace RabbetGameEngine
         public virtual ICollider getCollider()
         {
             return collider;
+        }
+
+        public void setHasCollided(bool flag)
+        {
+            hasCollided = flag;
         }
 
         public virtual void setCollider(ICollider collider)
