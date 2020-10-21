@@ -102,8 +102,8 @@ namespace RabbetGameEngine
         private void generateWorld()//creates the playground and world colliders
         {
             float groundHeight = 0;
-            float playgroundLength = 200;//"playground" is the term i am using for the playable area of the world
-            float playgroundWidth = 100;
+            float playgroundLength = 10;//"playground" is the term i am using for the playable area of the world
+            float playgroundWidth = 10;
             float wallHeight = 20;
             Model[] unbatchedGroundQuads = new Model[4101];//all ground and wall quads, walls are divided into 4 quads each.
             Model[] unbatchedWallQuads = new Model[16];
@@ -180,8 +180,6 @@ namespace RabbetGameEngine
 
             tickEntities();
 
-            doWorldCollisions();
-
             if (GameSettings.drawHitboxes)
             {
                 HitboxRenderer.addAllHitboxesToBeRendered(worldColliders, entities);
@@ -222,6 +220,7 @@ namespace RabbetGameEngine
                     entAt.preTick();
                     entAt.onTick();
                     entAt.postTick();
+                    CollisionHandler.tryToMoveObject(entAt, worldColliders);
                 }
             }
 
@@ -246,6 +245,7 @@ namespace RabbetGameEngine
                     vfx.preTick();
                     vfx.onTick();
                     vfx.postTick();
+                    CollisionHandler.tryToMoveObject(vfx, worldColliders);
                 }
             }
         }
@@ -257,24 +257,6 @@ namespace RabbetGameEngine
             Profiler.beginEndProfile(Profiler.entCollisionsName);
         }
 
-        /*Loops through all the different colliders in the world in the right order and applies physics to the
-          parent entities.*/
-        private void doWorldCollisions()
-        {
-            Profiler.beginEndProfile(Profiler.collisionsName);
-            
-            for (int i = 0; i < vfxList.Count; i++)
-            {
-                CollisionHandler.tryToMoveObject(vfxList.ElementAt(i), worldColliders);
-            }
-
-            for (int i = 0; i < entities.Values.Count; i++)
-            {
-                CollisionHandler.tryToMoveObject(entities.Values.ElementAt(i), worldColliders);
-            }
-
-            Profiler.beginEndProfile(Profiler.collisionsName);
-        }
 
         /*For adding colliders with no entity parent, eg, for map collisions, inanimate immovable uncolliding objects.*/
         public void addWorldAABB(AABB collider)

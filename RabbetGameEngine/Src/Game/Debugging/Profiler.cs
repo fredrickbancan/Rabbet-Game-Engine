@@ -3,54 +3,26 @@ using System.Collections.Generic;
 
 namespace RabbetGameEngine.Debugging
 {
+    //TODO: REWORK PROFILER.
+    /*INFO: The profiler needs to be able to collect data from a profile being measured
+            multiple times a tick.*/
     /*This class will be responsable for debugging, measuring and testing performance of the subsystems in this program.*/
     public static class Profiler
     {
-        public static string textRender2DBuildingName = "TextBuild";
-        public static string gameLoopName = "Game";
-        public static string collisionsName = "Col";
-        public static string entCollisionsName = "EntCol";
-        public static string renderingName = "Rend";
         private static Dictionary<string, Profile> profiles = new Dictionary<string, Profile>();
 
         /*Calling this function with a name will either create and begin a profile or end an existing running profile, or run an existing non running profile.
           Apon ending a profile the time difference between starting and ending will be displayed. This allows us to measure how long different things take.*/
         public static void beginEndProfile(string profileName)
         {
-            if(!GameSettings.debugScreen)
-            {
-                return;
-            }
-
-            if(profiles.TryGetValue(profileName, out Profile foundProfile))
-            {
-                if (foundProfile.hasEnded)
-                {
-                    foundProfile.begin();
-                }
-                else
-                {
-                    foundProfile.end();
-                }
-            }
-            else
-            {
-                profiles.Add(profileName, new Profile(profileName).begin());
-            }
+          
 
         }
 
         /*Returns the average completion time in ms for the requested profile. returns -1 if profile isnt found*/
         public static float getAveragesForProfile(string profileName)
         {
-            if (!GameSettings.debugScreen)
-            {
-                return 0;
-            }
-            if (profiles.TryGetValue(profileName, out Profile foundProfile))
-            {
-                return foundProfile.getAverageCompletionTime();
-            }
+           
             return 0;
         }
 

@@ -26,7 +26,7 @@ namespace RabbetGameEngine
 
         public override void ceaseToExist()
         {
-            this.currentPlanet.doExplosionAt(pos);
+            this.currentPlanet.doExplosionAt(previousTickPos);
             base.ceaseToExist();
         }
     }

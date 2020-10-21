@@ -21,7 +21,7 @@ namespace RabbetGameEngine.Physics
     /// </summary>
     public static class CollisionHandler
     {
-        //TODO: impliment ability to get only AABB that are going to touch the entity expanded with velocity.
+        //TODO: impliment some sort of space partitioning (i.e, chunks) to avoid O(n^2 - n) complexity.
         /// <summary>
         /// Does collisions with each entity against all other entities it is touching.
         /// No hard collisions, only pushing eachother away.
@@ -36,29 +36,33 @@ namespace RabbetGameEngine.Physics
                 {
                     continue;
                 }
-
-                ICollider entCollider = entAt.getColliderHandle();
-
                 //Exclude entity collisions if they dont use aabb
-                if(entCollider.getType() != ColliderType.aabb)
+                if(entAt.getCollider().getType() != ColliderType.aabb)
                 {
                     continue;
                 }
-
-                ICollider otherEntCollider;
                 for(int j = i + 1; j < entities.Count; ++j)
                 {
                     Entity otherEntAt = entities.Values.ElementAt(j);
-                    if(!otherEntAt.getHasCollider())
+                    if(!otherEntAt.getHasCollider() || otherEntAt.getCollider().getType() != ColliderType.aabb)
                     {
                         continue;
                     }
-                    otherEntCollider = otherEntAt.getColliderHandle();
-                    if(otherEntCollider.getType() != ColliderType.aabb)
+
+                    //if boxes touch
+                    if(!AABB.areBoxesNotTouching((AABB)entAt.getCollider(), (AABB)otherEntAt.getCollider()))
                     {
-                        continue;
+                        float pushVel = 0.05F;
+                        pushVel *= 0.5F;
+                        Vector2 entXZ;
+                        Vector2 otherEntXZ;
+                        if ((otherEntXZ = otherEntAt.getPosition().Xz) != (entXZ = entAt.getPosition().Xz))
+                        {
+                            Vector2 pushVec = Vector2.Normalize(otherEntXZ - entXZ) * pushVel;
+                            entAt.addVelocity(new Vector3(-pushVec.X, 0, -pushVec.Y));
+                            otherEntAt.addVelocity(new Vector3(pushVec.X, 0, pushVec.Y));
+                        }
                     }
-                    //TODO: impliment
                 }
 
             }
@@ -296,6 +300,5 @@ namespace RabbetGameEngine.Physics
             return objVel;
         }
         #endregion
-
     }
 }

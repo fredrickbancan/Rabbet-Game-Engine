@@ -6,15 +6,11 @@ namespace RabbetGameEngine.Debugging
     /*A class for abstracting the process of displaying debug information on the screen when active.*/
     public static class DebugInfo
     {
-        public static readonly string debugInfoPanelName = "debugInfo";
-        private static float collisionsAverage;
-        private static float entCollisionsAverage;
-        private static float gameLoopAverage;
-        private static float renderAverage;
+        public static readonly string debugInfoTextPanelName = "debugInfo";
         /*Initialize the text panel for the debug info, can only be done if the mainGUI panel is created first*/
         public static void init()
         {
-            GUIHandler.addTextPanelToGUI(MainGUI.mainGUIName, debugInfoPanelName, new GUITextPanel(new TextFormat(0.0F, 0.05F)
+            GUIHandler.addTextPanelToGUI(MainGUI.mainGUIName, debugInfoTextPanelName, new GUITextPanel(new TextFormat(0.0F, 0.05F)
                 .setLines(new string[]
                         {
                         ("press F3 to hide debug screen.")
@@ -27,12 +23,8 @@ namespace RabbetGameEngine.Debugging
         {
             if (GameSettings.debugScreen && GameInstance.get.thePlayer != null)
             {
-                GUIHandler.unHideTextPanelInGUI(MainGUI.mainGUIName, debugInfoPanelName);
-                collisionsAverage = Profiler.getAveragesForProfile(Profiler.collisionsName);
-                entCollisionsAverage = Profiler.getAveragesForProfile(Profiler.entCollisionsName);
-                gameLoopAverage = Profiler.getAveragesForProfile(Profiler.gameLoopName);
-                renderAverage = Profiler.getAveragesForProfile(Profiler.renderingName);
-                GUIHandler.getTextPanelFormatFromGUI(MainGUI.mainGUIName, debugInfoPanelName).setLines(
+                GUIHandler.unHideTextPanelInGUI(MainGUI.mainGUIName, debugInfoTextPanelName);
+                GUIHandler.getTextPanelFormatFromGUI(MainGUI.mainGUIName, debugInfoTextPanelName).setLines(
                        new string[]
                        {
                         ("Player Name: " + GameInstance.get.thePlayer.getName()),
@@ -44,15 +36,6 @@ namespace RabbetGameEngine.Debugging
                         ("Velocity Z: " + GameInstance.get.thePlayer.getVelocity().Z.ToString("0.00")),
                        ("Head Pitch: " + GameInstance.get.thePlayer.getHeadPitch().ToString("0.00")),
                        ("Yaw: " + GameInstance.get.thePlayer.getYaw().ToString("0.00")),
-                        ("Profiler ms averages: "),
-                        ("{"),
-                        ("  [Per Frame]Render: " + renderAverage.ToString("0.00 ms")),
-                        ("  [Per Tick]Game loop: " + gameLoopAverage.ToString("0.00 ms")),
-                        ("  {"),
-                        ("      Collisions: " + collisionsAverage.ToString("0.00 ms")),
-                        ("      Entity Collisions: " + entCollisionsAverage.ToString("0.00 ms")),
-                        ("  }Residual: " + (gameLoopAverage - collisionsAverage).ToString("0.00 ms")),
-                        ("}"),
                         ("Entities: " + GameInstance.get.currentPlanet.getEntityCount()),
                         ("VFX's: " + GameInstance.get.currentPlanet.getVFXCount()),
                         ("Draw Calls: " + Renderer.getAndResetTotalDrawCount()),
@@ -60,7 +43,7 @@ namespace RabbetGameEngine.Debugging
             }
             else
             {
-                GUIHandler.hideTextPanelInGUI(MainGUI.mainGUIName, debugInfoPanelName);
+                GUIHandler.hideTextPanelInGUI(MainGUI.mainGUIName, debugInfoTextPanelName);
             }
         }
     }
