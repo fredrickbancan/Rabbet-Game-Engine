@@ -15,7 +15,7 @@ namespace RabbetGameEngine
         protected float driveSpeed = defaultDriveSpeed;
         protected float turnRate = defaultTurnRate;
         protected bool playerDriving = false;
-        public EntityVehicle() : base()
+        public EntityVehicle(Planet p) : base(p)
         {
             frontVector = new Vector3(0.0F, 0.0F, -1.0F);
             upVector = new Vector3(0.0F, 1.0F, 0.0F);
@@ -23,7 +23,7 @@ namespace RabbetGameEngine
             mountingOffset  = new Vector3(0.0F, 1.9F, 0.0F);
         }
 
-        public EntityVehicle(Vector3 pos) : base(pos)
+        public EntityVehicle(Planet p, Vector3 pos) : base(p, pos)
         {
             frontVector = new Vector3(0.0F, 0.0F, -1.0F);
             upVector = new Vector3(0.0F, 1.0F, 0.0F);

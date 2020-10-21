@@ -1,50 +1,84 @@
 ﻿using OpenTK;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Physics;
-using System;
 namespace RabbetGameEngine
 {
     public class EntityCactus : EntityLiving
     {
-        private bool turn = true;
-        private static Random rand = new Random();
-        public EntityCactus() : base()
+        private bool turningRight = false;
+        private bool turningLeft = false;
+        private bool walkingFowards = false;
+		private float rotationSpeed = 2.5F;
+        public EntityCactus(Planet planet) : base(planet)
         {
             this.walkSpeed = 0.025F;
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
             this.collider = new AABB(new Vector3(-0.5F, -0.5F, -0.5F), new Vector3(0.5F, 0.5F, 0.5F), this);
             this.hasCollider = true;
-            yaw = (float)rand.NextDouble() * 360;
+            yaw = (float)currentPlanet.rand.NextDouble() * 360;
             walkFowards();
         }
-        public EntityCactus(Vector3 pos) : base(pos)
+        public EntityCactus(Planet planet, Vector3 pos) : base(planet, pos)
         {
             this.walkSpeed = 0.025F;
             this.entityModel = new EntityCactusModel(this);
             this.hasModel = true;
             this.collider = new AABB(new Vector3(-0.5F, -0.5F, -0.5F), new Vector3(0.5F, 0.5F, 0.5F), this);
             this.hasCollider = true;
-            yaw = (float)rand.NextDouble() * 360;
+            yaw = (float)currentPlanet.rand.NextDouble() * 360;
             walkFowards();
         }
 
         public override void onTick()
         {
-            if(rand.Next(0, 25) == 1)
-            {
-                turn = !turn;
-            }
+			if (currentPlanet.rand.Next() % 100 == 0)
+			{
+				walkingFowards = true;
+			}
 
-            if (turn) rotateYaw(-3.0F); else rotateYaw(3.0F);
+			if (walkingFowards && currentPlanet.rand.Next() % 20 == 0)
+			{
+				walkingFowards = false;
+			}
+			if (walkingFowards)
+			{
+				turningLeft = turningRight = false;
+			}
+			else
+			{
+				if (currentPlanet.rand.Next() % 100 == 0)
+				{
+					turningLeft = true;
+				}
+				if (turningLeft && currentPlanet.rand.Next() % 10 == 0)
+				{
+					turningLeft = false;
+				}
+				if (currentPlanet.rand.Next() % 100 == 0)
+				{
+					turningRight = true;
+				}
+				if (turningRight && currentPlanet.rand.Next() % 10 == 0)
+				{
+					turningRight = false;
+				}
+			}
+			if (walkingFowards)
+			{
+				walkFowards();
+			}
 
-            walkFowards();
+			if (turningLeft)
+			{
+				yaw -= rotationSpeed;
+			}
 
-            if (rand.Next(0, 50) == 1)
-            {
-                jump();
-            }
-            base.onTick();//do last
+			if (turningRight)
+			{
+				yaw += rotationSpeed;
+			}
+			base.onTick();//do last
         }
     }
 }

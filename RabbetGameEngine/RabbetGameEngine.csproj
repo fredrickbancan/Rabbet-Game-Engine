@@ -52,6 +52,12 @@
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MedallionRandom, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MedallionRandom.1.1.0\lib\net452\MedallionRandom.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
     </Reference>
@@ -73,6 +79,7 @@
     <Compile Include="Src\Game\GUIS\MainGUI.cs" />
     <Compile Include="Src\Game\MathUtil.cs" />
     <Compile Include="Src\Game\TickTimer.cs" />
+    <Compile Include="Src\Physics\AxisAlignedRay.cs" />
     <Compile Include="Src\Physics\Ray.cs" />
     <Compile Include="Src\Rendering\GUIComponents\GUICrosshair.cs" />
     <Compile Include="Src\Rendering\GUIHandler.cs" />
@@ -122,7 +129,7 @@
     <Compile Include="Src\World\Entity\Projectiles\EntityTankProjectile.cs" />
     <Compile Include="Src\World\Entity\Vehicles\EntityTank.cs" />
     <Compile Include="Src\World\Entity\Vehicles\EntityVehicle.cs" />
-    <Compile Include="Src\World\World.cs" />
+    <Compile Include="Src\World\Planet.cs" />
     <Compile Include="Src\Rendering\Camera.cs" />
     <Compile Include="Src\Rendering\Models\Model.cs" />
     <Compile Include="Src\Rendering\Models\ModelDrawable.cs" />

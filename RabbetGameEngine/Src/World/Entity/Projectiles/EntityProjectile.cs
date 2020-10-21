@@ -7,7 +7,7 @@ namespace RabbetGameEngine
     {
         protected float maxExistedTicks;
 
-        public EntityProjectile(Vector3 pos, Vector3 direction, float initialVelocity = 2.5F, float maxLivingSeconds = 20) : base(pos)
+        public EntityProjectile(Planet p, Vector3 pos, Vector3 direction, float initialVelocity = 2.5F, float maxLivingSeconds = 20) : base(p, pos)
         {
             airResistance = 0.001F;
             velocity += direction * initialVelocity;

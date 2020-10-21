@@ -7,20 +7,22 @@ namespace RabbetGameEngine
 
     public class Entity : PositionalObject
     {
-        protected World currentPlanet;
+        protected Planet currentPlanet;
         protected EntityModel entityModel;
         protected bool hasModel = false;
         protected bool isFlying = false;
         private bool removalFlag = false;// true if this entity should be removed in the next tick
         protected int existedTicks = 0;//number of ticks this entity has existed for
         protected bool isPlayer = false;
-        public Entity() : base()
+        public Entity(Planet planet) : base()
         {
+            currentPlanet = planet;
             setYAccel(-gravity);
         }
         
-        public Entity(Vector3 spawnPosition) : base(spawnPosition)
+        public Entity(Planet planet, Vector3 spawnPosition) : base(spawnPosition)
         {
+            currentPlanet = planet;
             setYAccel(-gravity);
         }
 
@@ -78,7 +80,7 @@ namespace RabbetGameEngine
             }
         }
 
-        public virtual void setCurrentPlanet(World p)
+        public virtual void setCurrentPlanet(Planet p)
         {
             this.currentPlanet = p;
         }

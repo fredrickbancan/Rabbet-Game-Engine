@@ -64,12 +64,10 @@ namespace RabbetGameEngine
 
         public static void renderAll()
         {
-            Profiler.beginEndProfile(Profiler.renderingName);
             preRender();
             renderWorld();
             GUIHandler.drawCurrentGUIScreen();
             postRender();
-            Profiler.beginEndProfile(Profiler.renderingName);
         }
 
         /*Called before all draw calls*/

@@ -25,7 +25,7 @@ namespace RabbetGameEngine
         private static int mouseCenterY;//the y position of the center of the game window
         private static float dpiY;
         public EntityPlayer thePlayer;
-        public World currentPlanet;
+        public Planet currentPlanet;
 
         public GameInstance(int screenWidth, int screenHeight, int initialWindowWidth, int initialWindowHeight, string title) : base(initialWindowWidth, initialWindowHeight, GraphicsMode.Default, title)
         {
@@ -52,14 +52,14 @@ namespace RabbetGameEngine
             DebugInfo.init();
             HitboxRenderer.init();
             //create and spawn player in new world
-            thePlayer = new EntityPlayer("Steve", new Vector3(0, 3, 2));
-            currentPlanet = new World();
+            thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
+            currentPlanet = new Planet(0xdeadbeef);
             for (int i = 0; i <  35; i++)
             {
-                currentPlanet.spawnEntityInWorld(new EntityCactus(new Vector3(0, 10, 0)));
+                currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(0, 10, 0)));
             }
             currentPlanet.spawnEntityInWorld(thePlayer);
-            currentPlanet.spawnEntityInWorld(new EntityTank(new Vector3(5, 10, -5)));
+           // currentPlanet.spawnEntityInWorld(new EntityTank(currentPlanet, new Vector3(5, 10, -5)));
 
             //center mouse in preperation for first person 
             Input.centerMouse();
@@ -101,13 +101,11 @@ namespace RabbetGameEngine
         /*Each itteration of game logic is done here*/
         private void onTick()
         {
-            Profiler.beginEndProfile(Profiler.gameLoopName);
             mouseCenterX = this.X + this.Width / 2;
             mouseCenterY = this.Y + this.Height / 2;
             GUIHandler.onTick();
             MainGUI.onTick();
             currentPlanet.onTick();
-            Profiler.beginEndProfile(Profiler.gameLoopName);
         }
 
         

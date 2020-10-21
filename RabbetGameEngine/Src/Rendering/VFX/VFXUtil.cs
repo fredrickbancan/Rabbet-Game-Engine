@@ -7,7 +7,7 @@ namespace RabbetGameEngine.VFX
       change certain VFX*/
     public static class VFXUtil
     {
-        public static void doExplosionEffect(World planet, Vector3 location, float radius, float pitch = 0, float yaw = -90, float roll = 0)
+        public static void doExplosionEffect(Planet planet, Vector3 location, float radius, float pitch = 0, float yaw = -90, float roll = 0)
         {
             VFXBase smoke = new VFXPointParticles(location, CustomColor.darkGrey, (25 - (int)radius / 2) + (int)(radius / 2 * radius / 2), radius / 15, 0.15F, true, false, 2F, 0.8F);
 
@@ -36,7 +36,7 @@ namespace RabbetGameEngine.VFX
             planet.spawnVFXInWorld(explosion2);
         }
 
-        public static void doSmallSmokePuffEffect(World planet, Vector3 location, float pitch = 0, float yaw = -90, float roll = 0)
+        public static void doSmallSmokePuffEffect(Planet planet, Vector3 location, float pitch = 0, float yaw = -90, float roll = 0)
         {
             VFXBase smoke = new VFXPointParticles(location, CustomColor.darkGrey, 7, 0.05F, 0.05F, true, false, .5F, 0.8F);
 
@@ -52,7 +52,7 @@ namespace RabbetGameEngine.VFX
             planet.spawnVFXInWorld(smoke);
         }
 
-        public static void doDebugSmokeEffect(World planet)
+        public static void doDebugSmokeEffect(Planet planet)
         {
             VFXBase smoke = new VFXPointParticles(new Vector3(0, 2F, 0), new CustomColor(Color.DarkGray), 5, 0.5F, 0.5F, true, false, 2F, 0.5F);
             smoke.setExpansionResistance(0.05F);

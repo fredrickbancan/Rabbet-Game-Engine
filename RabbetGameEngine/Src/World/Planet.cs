@@ -1,16 +1,18 @@
-﻿using OpenTK;
+﻿using Medallion;
+using OpenTK;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Physics;
 using RabbetGameEngine.SubRendering;
 using RabbetGameEngine.VFX;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace RabbetGameEngine
 {
     /*This class will be the abstraction of any environment constructed for the player and entities to exist in.*/
-    public class World
+    public class Planet
     {
         private ModelDrawable groundModel;
         private ModelDrawable wallsModel;
@@ -25,11 +27,12 @@ namespace RabbetGameEngine
         private string wallTextureName = "transparent";
         private string groundTextureName = "wood";
         private string groundWallShaderName = "EntityWorld_F";
-
+        private Random random;
         ModelDrawableInstanced test;
 
-        public World()
+        public Planet(long seed)
         {
+            random = Rand.CreateJavaRandom(seed);
             fogColor = CustomColor.grey.toNormalVec3();
             skyColor = CustomColor.darkGrey.toNormalVec3();
             buildSkyBox();
@@ -252,9 +255,7 @@ namespace RabbetGameEngine
 
         private void doEntityCollisions()
         {
-            Profiler.beginEndProfile(Profiler.entCollisionsName);
             CollisionHandler.collideEntities(entities);
-            Profiler.beginEndProfile(Profiler.entCollisionsName);
         }
 
 
@@ -301,14 +302,7 @@ namespace RabbetGameEngine
 
         public void spawnEntityInWorld(Entity theEntity)
         {
-            theEntity.setCurrentPlanet(this);
-
             entities.Add(entityIDItterator, theEntity);
-
-            /*if(theEntity.getHasCollider())
-            {
-                entityColliders.Add(entityIDItterator, theEntity.getCollider());
-            }*/
 
             entityIDItterator++;
         }
@@ -337,5 +331,7 @@ namespace RabbetGameEngine
         {
             test.delete();
         }
+
+        public Random rand { get => this.random; }
     }
 }

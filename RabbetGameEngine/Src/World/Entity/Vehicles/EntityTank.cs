@@ -13,7 +13,7 @@ namespace RabbetGameEngine
         private float barrelPitch;
         public static readonly float barrelLength = 6.75F;
         private TickTimer fireTimer;
-        public EntityTank() : base()
+        public EntityTank(Planet p) : base(p)
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
@@ -21,7 +21,7 @@ namespace RabbetGameEngine
             this.hasCollider = true;
             fireTimer = new TickTimer(1F / roundsPerSecond);
         }
-        public EntityTank(Vector3 initialPos) : base(initialPos)
+        public EntityTank(Planet p, Vector3 initialPos) : base(p, initialPos)
         {
             this.entityModel = new EntityTankModel(this);
             this.hasModel = true;
@@ -93,7 +93,7 @@ namespace RabbetGameEngine
         public void onDriverAttack()
         {
             Vector3 muzzleLocation = getMuzzleLocation();
-            currentPlanet.spawnEntityInWorld(new EntityTankProjectile(muzzleLocation, getMuzzleFrontVector(), barrelPitch, bodyYaw));
+            currentPlanet.spawnEntityInWorld(new EntityTankProjectile(currentPlanet, muzzleLocation, getMuzzleFrontVector(), barrelPitch, bodyYaw));
             VFXUtil.doSmallSmokePuffEffect(currentPlanet, muzzleLocation, (float)barrelPitch, (float)bodyYaw);
         }
 
