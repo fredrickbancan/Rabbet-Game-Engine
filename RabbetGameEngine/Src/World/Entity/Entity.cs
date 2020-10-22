@@ -131,6 +131,12 @@ namespace RabbetGameEngine
                 isFlying = false;
             }
         }
+
+        public virtual void onCollideWithEntity(Entity ent)
+        {
+            
+        }
+
         public virtual bool getIsPlayer()//returns true if this entityliving is a player
         {
             return isPlayer;

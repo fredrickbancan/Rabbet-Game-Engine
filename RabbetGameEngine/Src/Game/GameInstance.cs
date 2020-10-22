@@ -51,15 +51,15 @@ namespace RabbetGameEngine
             MainGUI.init();
             DebugInfo.init();
             HitboxRenderer.init();
+            currentPlanet = new Planet(0xdeadbeef);
             //create and spawn player in new world
             thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
-            currentPlanet = new Planet(0xdeadbeef);
             for (int i = 0; i <  35; i++)
             {
                 currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(0, 10, 0)));
             }
             currentPlanet.spawnEntityInWorld(thePlayer);
-           // currentPlanet.spawnEntityInWorld(new EntityTank(currentPlanet, new Vector3(5, 10, -5)));
+            currentPlanet.spawnEntityInWorld(new EntityTank(currentPlanet, new Vector3(5, 10, -5)));
 
             //center mouse in preperation for first person 
             Input.centerMouse();
@@ -101,11 +101,14 @@ namespace RabbetGameEngine
         /*Each itteration of game logic is done here*/
         private void onTick()
         {
+            Profiler.beginEndProfile("Loop");
             mouseCenterX = this.X + this.Width / 2;
             mouseCenterY = this.Y + this.Height / 2;
             GUIHandler.onTick();
             MainGUI.onTick();
             currentPlanet.onTick();
+            Profiler.updateAverages();
+            Profiler.beginEndProfile("Loop");
         }
 
         

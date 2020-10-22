@@ -76,7 +76,7 @@ namespace RabbetGameEngine.VFX
         {
             if (vfxModel != null && !removalFlag)
             {
-                //TODO: Inefficient. There needs to be a dynamic model for all point VFX in the world. Each new point vfx vertices are added to it and it can be rendered in one single draw!
+                //TODO: Inefficient. Impliment batching of VFX points and point clouds!
                  vfxModel.drawPoints(viewMatrix, projectionMatrix, prevTickModelMatrix + (modelMatrix - prevTickModelMatrix) * TicksAndFps.getPercentageToNextTick(), fogColor, pointRadius, pointAmbientOcclusion);
             }
             else

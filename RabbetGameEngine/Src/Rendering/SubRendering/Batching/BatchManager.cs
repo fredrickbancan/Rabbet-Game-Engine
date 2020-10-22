@@ -6,19 +6,13 @@ namespace RabbetGameEngine.SubRendering
     {
         triangles,
         trianglesTransparent,
-        quads,
-        quadsTransparent,
         lines,
         lerpTrianglesTransparent,
         lerpTriangles,
-        lerpQuads,
-        lerpQuadsTransparent,
-        lerpVertices,
-        lerpVerticesTransparent,
-        lerpPoints,
-        lerpPointsTransparent,
-        lerpSinglePoints,
-        lerpSinglePointsTransparent,
+        lerpPointCloud,
+        lerpPointCloudTransparent,
+        lerpSinglePoint,
+        lerpSinglePointTransparent,
         lerpLines
     };
 
@@ -28,6 +22,6 @@ namespace RabbetGameEngine.SubRendering
         
         private static List<Batch> batches = new List<Batch>();
 
-        //TODO: impliment
+        //TODO: impliment all required functions
     }
 }

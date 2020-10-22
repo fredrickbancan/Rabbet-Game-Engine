@@ -3,11 +3,11 @@ using OpenTK;
 using OpenTK.Graphics.ES11;
 
 namespace RabbetGameEngine.Models
-{//TODO: impliment (ModelDrawableDynamicInterpolated)
+{//TODO: impliment functionality of ModelDrawableDynamicInterpolated
     /*A ModelDrawableDynamicInterpolated has the functionality of a ModelDrawableDynamic (ability to combine frequently changing models into one draw call)
       While interpolating the transforms of each instance of models within it. Useful for dynamically drawing multiple moving objects with interpolation.
       This differs from ModelDrawableInstanced because it works with many different models instead of just one*/
-    public class ModelDrawableDynamicInterpolated : ModelDrawableDynamic//TODO impliment
+    public class ModelDrawableDynamicInterpolated : ModelDrawableDynamic
     {
         private PrimitiveType drawType;
         private uint maxInstanceCount;

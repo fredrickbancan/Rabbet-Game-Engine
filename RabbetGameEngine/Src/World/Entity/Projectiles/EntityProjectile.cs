@@ -41,6 +41,12 @@ namespace RabbetGameEngine
             Dispose();
         }
 
+        public override void onCollideWithEntity(Entity ent)
+        {
+            base.onCollideWithEntity(ent);
+            onCollide();
+        }
+
         public void Dispose()
         {
             ceaseToExist();

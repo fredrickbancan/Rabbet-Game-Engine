@@ -6,7 +6,7 @@ namespace RabbetGameEngine
     /*Abstraction of a VAO for use with rendering.*/
     public class VertexArrayObject
     {
-        //TODO: impliment
+        //TODO: impliment functionality of VertexArrayObject
         private int id;
         private VertexBufferObject vbo;
         private IndicesBufferObject ibo;
@@ -39,16 +39,12 @@ namespace RabbetGameEngine
         {
             if (hasInitialized) return;
 
-            //TODO: impliment
-
             hasInitialized = true;
         }
 
         private void initializeDynamic(int maxVertices)
         {
             if (hasInitialized) return;
-
-            //TODO: impliment
 
             hasInitialized = true;
         }
@@ -79,7 +75,7 @@ namespace RabbetGameEngine
         private class VertexBufferObject
         {
             private int id;
-            //TODO: impliment
+            //TODO: impliment functionality of VertexBufferObject
 
             public void delete()
             {
@@ -90,7 +86,7 @@ namespace RabbetGameEngine
         /*abstraction of opengl IBO*/
         private class IndicesBufferObject
         {
-            //TODO: impliment
+            //TODO: impliment functionality of IndicesBufferObject
             private int id;
 
             public void delete()

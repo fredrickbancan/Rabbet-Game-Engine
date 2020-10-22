@@ -63,7 +63,7 @@ namespace RabbetGameEngine
             return fogColor;
         }
 
-        /*TODO: INNEFICIENT, loops through each entitiy and draws their model with a seperate call*/
+        /*TODO: INNEFICIENT, Impliment batching of entity models!*/
         public void drawEntities(Matrix4 viewMatrix, Matrix4 projectionMatrix)//obselete, move to batcher pipeline
         {
             foreach (KeyValuePair<int, Entity> ent in entities)
@@ -76,7 +76,7 @@ namespace RabbetGameEngine
             test.draw(viewMatrix, projectionMatrix, fogColor);
         }
 
-        /*TODO: INNEFICIENT, loops through each VFX and draws their model with a seperate call*/
+        /*TODO: INNEFICIENT, Impliment batching of VFX models!*/
         public void drawVFX(Matrix4 viewMatrix, Matrix4 projectionMatrix)
         {
             foreach (VFXBase vfx in vfxList)
@@ -105,8 +105,8 @@ namespace RabbetGameEngine
         private void generateWorld()//creates the playground and world colliders
         {
             float groundHeight = 0;
-            float playgroundLength = 10;//"playground" is the term i am using for the playable area of the world
-            float playgroundWidth = 10;
+            float playgroundLength = 100;//"playground" is the term i am using for the playable area of the world
+            float playgroundWidth = 100;
             float wallHeight = 20;
             Model[] unbatchedGroundQuads = new Model[4101];//all ground and wall quads, walls are divided into 4 quads each.
             Model[] unbatchedWallQuads = new Model[16];
@@ -223,7 +223,15 @@ namespace RabbetGameEngine
                     entAt.preTick();
                     entAt.onTick();
                     entAt.postTick();
-                    CollisionHandler.tryToMoveObject(entAt, worldColliders);
+                    if(entAt.getIsPlayer() && GameSettings.noclip)
+                    {
+                        entAt.getColliderHandle().offset(entAt.getVelocity());
+                        entAt.setPosition(entAt.getPosition() + entAt.getVelocity());
+                    }
+                    else
+                    {
+                        CollisionHandler.tryToMoveObject(entAt, worldColliders);
+                    }
                 }
             }
 

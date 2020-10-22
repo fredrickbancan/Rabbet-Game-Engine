@@ -102,17 +102,14 @@ namespace RabbetGameEngine
         /*render requests will add a new entry to a suitable batch*/
         public static void requestRenderObject(PositionalObject obj, Model viewModel, uint[] indices, BatchType BatchType)
         {
-            //TODO: impliment
         }
 
         public static void requestRenderObject(PositionalObject obj, ModelDrawable viewModel, BatchType BatchType)
         {
-            //TODO: impliment
         }
 
         public static void requestRenderVFX(VFXBase obj, ModelDrawable viewModel, BatchType BatchType)
         {
-            //TODO: impliment
         }
 
         public static int getAndResetTotalDrawCount()

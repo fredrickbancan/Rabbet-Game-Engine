@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using RabbetGameEngine.Debugging;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -21,6 +22,7 @@ namespace RabbetGameEngine.Physics
     /// </summary>
     public static class CollisionHandler
     {
+        private static readonly float pushVel = 0.05F * 0.5F;
         //TODO: impliment some sort of space partitioning (i.e, chunks) to avoid O(n^2 - n) complexity.
         /// <summary>
         /// Does collisions with each entity against all other entities it is touching.
@@ -29,6 +31,7 @@ namespace RabbetGameEngine.Physics
         /// <param name="entities"> All world entities to collide eachother.</param>
         public static void collideEntities(Dictionary<int, Entity> entities)
         {
+            Profiler.beginEndProfile("EntCollisions");
             for(int i = 0; i < entities.Count; ++i)
             { 
                 Entity entAt = entities.Values.ElementAt(i);
@@ -41,7 +44,11 @@ namespace RabbetGameEngine.Physics
                 {
                     continue;
                 }
-                for(int j = i + 1; j < entities.Count; ++j)
+
+                Vector2 entXZ;
+                Vector2 otherEntXZ;
+                Vector2 pushVec;
+                for (int j = i + 1; j < entities.Count; ++j)
                 {
                     Entity otherEntAt = entities.Values.ElementAt(j);
                     if(!otherEntAt.getHasCollider() || otherEntAt.getCollider().getType() != ColliderType.aabb)
@@ -52,20 +59,24 @@ namespace RabbetGameEngine.Physics
                     //if boxes touch
                     if(!AABB.areBoxesNotTouching((AABB)entAt.getCollider(), (AABB)otherEntAt.getCollider()))
                     {
-                        float pushVel = 0.05F;
-                        pushVel *= 0.5F;
-                        Vector2 entXZ;
-                        Vector2 otherEntXZ;
                         if ((otherEntXZ = otherEntAt.getPosition().Xz) != (entXZ = entAt.getPosition().Xz))
                         {
-                            Vector2 pushVec = Vector2.Normalize(otherEntXZ - entXZ) * pushVel;
-                            entAt.addVelocity(new Vector3(-pushVec.X, 0, -pushVec.Y));
-                            otherEntAt.addVelocity(new Vector3(pushVec.X, 0, pushVec.Y));
+                           pushVec = Vector2.Normalize(otherEntXZ - entXZ) * pushVel;
                         }
+                        else
+                        { 
+                            //avoiding divide by zero in normalize func
+                            pushVec = Vector2.Normalize((otherEntXZ - new Vector2(0.0001F, 0.0001F)) - entXZ) * pushVel;
+                        }
+                        entAt.addVelocity(new Vector3(-pushVec.X, 0, -pushVec.Y));
+                        otherEntAt.addVelocity(new Vector3(pushVec.X, 0, pushVec.Y));
+                        entAt.onCollideWithEntity(otherEntAt);
+                        otherEntAt.onCollideWithEntity(entAt);
                     }
                 }
 
             }
+            Profiler.beginEndProfile("EntCollisions");
         }
 
         /// <summary>
@@ -76,11 +87,13 @@ namespace RabbetGameEngine.Physics
         /// <param name="worldAABB"> all world colliders </param>
         public static void tryToMoveObject(PositionalObject obj, List<AABB> worldAABB)
         {
-            if(!obj.getHasCollider())
+            
+            if (!obj.getHasCollider())
             {
                 obj.setPosition(obj.getPosition() + obj.getVelocity());
                 return;
             }
+            Profiler.beginEndProfile("Collisions");
 
             ICollider objCollider = obj.getColliderHandle();
             Vector3 objVel = obj.getVelocity();
@@ -147,7 +160,7 @@ namespace RabbetGameEngine.Physics
 
             //lastly, position obj to center of hitbox offset
             obj.setPosition(objCollider.getCenterVec());
-            
+            Profiler.beginEndProfile("Collisions");
         }
 
         #region AABBvsAABB
@@ -259,7 +272,7 @@ namespace RabbetGameEngine.Physics
             return objVel;
         }
         #endregion
-
+        //TODO: impliment point vs AABB collisions
         #region PointVsAABB
         /// <summary>
         /// Applies collision resolution velocity to the provided object velocity vector. Resulting from a Point vs AABB collision.
@@ -270,7 +283,6 @@ namespace RabbetGameEngine.Physics
         /// <returns>The provided Point collider for the object properly offset during collision resolution</returns>
         private static Vector3 applyCollisionPointVsAABBX(Vector3 objVel, PointCollider objPoint, AABB otherAABB)
         {
-            //TODO: impliment
             return objVel;
         }
 
@@ -283,7 +295,6 @@ namespace RabbetGameEngine.Physics
         /// <returns>The provided Point collider for the object properly offset during collision resolution</returns>
         private static Vector3 applyCollisionPointVsAABBY(Vector3 objVel, PointCollider objPoint, AABB otherAABB)
         {
-            //TODO: impliment
             return objVel;
         }
 
@@ -296,7 +307,6 @@ namespace RabbetGameEngine.Physics
         /// <returns>The provided Point collider for the object properly offset during collision resolution</returns>
         private static Vector3 applyCollisionPointVsAABBZ(Vector3 objVel, PointCollider objPoint, AABB otherAABB)
         {
-            //TODO: impliment
             return objVel;
         }
         #endregion

@@ -88,7 +88,6 @@
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankProjectileModel.cs" />
     <Compile Include="Src\Rendering\Models\ModelDrawableDynamicInterpolated.cs" />
     <Compile Include="Src\Rendering\Models\ModelDrawableInstanced.cs" />
-    <Compile Include="Src\Rendering\Models\ModelDrawableInstancedInterpolated.cs" />
     <Compile Include="Src\Rendering\Models\ModelUtil.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\CubePrefab.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\DefaultDebugModel.cs" />

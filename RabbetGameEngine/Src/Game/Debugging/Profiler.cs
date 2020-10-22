@@ -3,27 +3,70 @@ using System.Collections.Generic;
 
 namespace RabbetGameEngine.Debugging
 {
-    //TODO: REWORK PROFILER.
-    /*INFO: The profiler needs to be able to collect data from a profile being measured
-            multiple times a tick.*/
-    /*This class will be responsable for debugging, measuring and testing performance of the subsystems in this program.*/
+    /// <summary>
+    /// This class will be responsable for debugging, measuring and testing performance of the subsystems in this program.
+    /// </summary>
     public static class Profiler
     {
         private static Dictionary<string, Profile> profiles = new Dictionary<string, Profile>();
 
-        /*Calling this function with a name will either create and begin a profile or end an existing running profile, or run an existing non running profile.
-          Apon ending a profile the time difference between starting and ending will be displayed. This allows us to measure how long different things take.*/
+        /// <summary>
+        /// Calling this function with a name will either create and begin a profile or end an existing running profile, or run an existing non running profile.
+        /// Apon ending a profile the time difference between starting and ending will be displayed. This allows us to measure how long different things take.
+        /// </summary>
+        /// <param name="profileName">Name of profile to begin/end </param>
         public static void beginEndProfile(string profileName)
         {
-          
+            if (!GameSettings.debugScreen)
+            {
+                return;
+            }
 
+            if (profiles.TryGetValue(profileName, out Profile foundProfile))
+            {
+                if (foundProfile.hasEnded)
+                {
+                    foundProfile.begin();
+                }
+                else
+                {
+                    foundProfile.end();
+                }
+            }
+            else
+            {
+                profiles.Add(profileName, new Profile(profileName).begin());
+            }
         }
 
-        /*Returns the average completion time in ms for the requested profile. returns -1 if profile isnt found*/
-        public static float getAveragesForProfile(string profileName)
+        /// <summary>
+        /// Returns the average used time in ms for the requested profile per tick. returns -1 if profile isnt found
+        /// </summary>
+        /// <param name="profileName">Name of profile to get averages for</param>
+        /// <returns></returns>
+        public static float getAverageForProfile(string profileName)
         {
-           
-            return 0;
+            if (!GameSettings.debugScreen)
+            {
+                return 0;
+            }
+            if (profiles.TryGetValue(profileName, out Profile foundProfile))
+            {
+                return foundProfile.getAverageCompletionTimeMS();
+            }
+            return -1;
+        }
+
+        public static void updateAverages()
+        {
+            if (!GameSettings.debugScreen)
+            {
+                return;
+            }
+            foreach (Profile p in profiles.Values)
+            {
+                p.updateAverage();
+            }
         }
 
         
@@ -32,10 +75,11 @@ namespace RabbetGameEngine.Debugging
         {
             private int[] recordedTimes = new int[100];
             private long startTime;
+            private int timeSpentInCurrentTick;
             private string name;
             private int updateIndex;
             private int combinedTimePassed;
-            public bool hasEnded = false;
+            public bool hasEnded = true;
 
             public Profile(string name)
             {
@@ -44,31 +88,39 @@ namespace RabbetGameEngine.Debugging
 
             public Profile begin()
             {
-                startTime = TicksAndFps.getRealTimeMS();
+                startTime = TicksAndFps.nanoTime();
                 hasEnded = false;
                 return this;
             }
             
             public void end()
             {
-                int time = (int)(TicksAndFps.getRealTimeMS() - startTime);
-                combinedTimePassed -= recordedTimes[updateIndex];
-                combinedTimePassed += time;
-                recordedTimes[updateIndex++] = time;
-                updateIndex %= 100;//keep update index within 100
+                timeSpentInCurrentTick += (int)(TicksAndFps.nanoTime() - startTime);
                 hasEnded = true;
             }
 
-            public float getAverageCompletionTime()
+            /// <summary>
+            /// should be called at the end of each tick.
+            /// </summary>
+            public void updateAverage()
             {
-                return (float)combinedTimePassed / 100F;
+                combinedTimePassed -= recordedTimes[updateIndex];
+                combinedTimePassed += timeSpentInCurrentTick;
+                recordedTimes[updateIndex++] = timeSpentInCurrentTick;
+                timeSpentInCurrentTick = 0;
+                updateIndex %= 100;//keep update index within 100
+            }
+
+            public float getAverageCompletionTimeMS()
+            {
+                return ((float)combinedTimePassed / 100F) / 1000000F;
             }
 
             private void printInfo()
             {  
                 Console.BackgroundColor = ConsoleColor.Cyan;
                 Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine("Profile: \"" + name + "\" measured " + (TicksAndFps.getRealTimeMS() - startTime) + " miliseconds from start to finish.");
+                Console.WriteLine("Profile: \"" + name + "\" measured " + (TicksAndFps.getRealTimeMills() - startTime) + " miliseconds from start to finish.");
                 Console.BackgroundColor = ConsoleColor.White;
                 Console.ForegroundColor = ConsoleColor.White;
             }

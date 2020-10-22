@@ -1,4 +1,7 @@
-﻿namespace RabbetGameEngine
+﻿using System;
+using System.Diagnostics;
+
+namespace RabbetGameEngine
 {
     /*This class is responasble for providing game loop timings so that the game runs
       at a consistant rate over multiple fps rates and refresh rates.*/
@@ -19,9 +22,9 @@
         {
             ticksPerSecond = tps;
             msPerTick = 1000D / (double)ticksPerSecond;
-            lastFrameTime = getRealTimeMS();
-            applicationTime = getRealTimeMS();
-            currentFrameTime = getRealTimeMS();
+            lastFrameTime = getRealTimeMills();
+            applicationTime = getRealTimeMills();
+            currentFrameTime = getRealTimeMills();
         }
 
         /*called every frame*/
@@ -29,7 +32,7 @@
         {
             /*updating FPS*/
             lastFrameTime = currentFrameTime;
-            currentFrameTime = getRealTimeMS();
+            currentFrameTime = getRealTimeMills();
             deltaFrameTime = (currentFrameTime - lastFrameTime) / 1000D;
             timer += deltaFrameTime;
 
@@ -42,24 +45,26 @@
             frames++;
             
         }
-
-        /*runs the provided onTick function repeatidly untill application has synced with realtime*/
-        public static void doOnTickUntillRealtimeSync(System.Action onTickFunc)//experimental
+        /// <summary>
+        /// runs the provided onTick function repeatidly untill application has synced with realtime
+        /// </summary>
+        /// <param name="onTickFunc">Reference to the onTick() function to be called</param>
+        public static void doOnTickUntillRealtimeSync(System.Action onTickFunc)
         {
             if(paused)
             {
-                while ((applicationTime + msPerTick) < getRealTimeMS())
+                while ((applicationTime + msPerTick) < getRealTimeMills())
                 {
                     applicationTime += (long)msPerTick;
                 }
                 return;
             }
-            while((applicationTime + msPerTick) < getRealTimeMS())
+            while((applicationTime + msPerTick) < getRealTimeMills())
             {
                 onTickFunc();
                 applicationTime += (long)msPerTick;
             }
-            percentToNextTick = (double)(getRealTimeMS() - applicationTime) / msPerTick;
+            percentToNextTick = (double)(getRealTimeMills() - applicationTime) / msPerTick;
         }
 
         public static void pause()
@@ -82,9 +87,21 @@
             return (float)percentToNextTick;
         }
 
-        public static long getRealTimeMS()
+        public static long getRealTimeMills()
         {
             return System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        }
+
+        /// <summary>
+        /// returns a nano second time stamp for comparing processes
+        /// </summary>
+        /// <returns>A nano second time stamp for comparing processes</returns>
+        public static long nanoTime()
+        {
+            long nano = 10000L * Stopwatch.GetTimestamp();
+            nano /= TimeSpan.TicksPerMillisecond;
+            nano *= 100L;
+            return nano;
         }
 
         /*ticks per second*/

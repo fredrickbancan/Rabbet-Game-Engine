@@ -80,5 +80,18 @@ namespace RabbetGameEngine
 			}
 			base.onTick();//do last
         }
+
+        public override void onCollideWithEntity(Entity ent)
+        {
+			if(ent is EntityTankProjectile)
+            {
+				if(!isGrounded)
+				{
+					GameInstance.onAirShot();
+				}
+				GameInstance.onDirectHit();
+            }
+            base.onCollideWithEntity(ent);
+        }
     }
 }
