@@ -11,6 +11,8 @@ namespace RabbetGameEngine
         public static void loadAllFoundShaderFiles()
         {
             shaders = new Dictionary<string, Shader>();
+            Shader debugShader = new Shader("debug");
+            shaders.Add("debug", debugShader);
             loadAllShadersRecursive(ResourceUtil.getShaderFileDir());
         }
 

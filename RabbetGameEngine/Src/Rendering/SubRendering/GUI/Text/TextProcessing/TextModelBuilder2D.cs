@@ -1,6 +1,6 @@
-﻿using RabbetGameEngine.GUI.Text;
+﻿using OpenTK;
+using RabbetGameEngine.GUI.Text;
 using RabbetGameEngine.Models;
-using OpenTK;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -203,8 +203,7 @@ namespace RabbetGameEngine.SubRendering.GUI.Text
                 }
 
                 //get and combine all vertex arrays and submit them to model
-                Vertex[] combinedVertices;
-                QuadBatcher.combineData(combinedModels, out combinedVertices);
+                Vertex[] combinedVertices = QuadCombiner.combineData(combinedModels);
 
                 if (combinedVertices.Length > maxCharCount * 4)
                 {

@@ -37,12 +37,25 @@ namespace RabbetGameEngine
         private Dictionary<string, int> foundUniforms;
         public Shader(string filePath)
         {
+            if(filePath == "debug")
+            {
+                setDebugShader();
+                return;
+            }
             debugShaderPath = filePath;
             shaderProgramSource source = parseShaderFile(filePath);
             this.id = createShader(source);
             foundUniforms = new Dictionary<string, int>();
         }
 
+        private void setDebugShader()
+        {
+            shaderProgramSource source;
+            source.vertexSource = debugDefaultVertexShader;
+            source.fragmentSource = debugDefaultFragmentShader;
+            this.id = createShader(source);
+            foundUniforms = new Dictionary<string, int>();
+        }
         private shaderProgramSource parseShaderFile(string path)
         {
             shaderType type = shaderType.NONE;

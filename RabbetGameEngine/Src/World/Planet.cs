@@ -99,7 +99,7 @@ namespace RabbetGameEngine
             temp[3] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(0, 0, 0), new Vector3(0, 0, -0.5F));//negZ
             temp[4] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(-90, 0, 0), new Vector3(0, 0.5F, 0));//top
             temp[5] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(90, 0, 0), new Vector3(0, -0.5F, 0));//bottom
-            skyboxModel = QuadBatcher.batchQuadModels(temp, "Skybox", "none");
+            skyboxModel = QuadCombiner.combineQuadModels(temp, "Skybox", "none");
         }
 
         private void generateWorld()//creates the playground and world colliders
@@ -136,7 +136,7 @@ namespace RabbetGameEngine
 
             //posX face
             unbatchedGroundQuads[4100] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(1, 1, 2)).rotateVertices(new Vector3(0, 0, 90)).translateVertices(new Vector3(1f, 0.5F, 0)).setColor(new Vector4(0.65F, 0.65F, 0.65F, 1.0F));
-            groundModel = QuadBatcher.batchQuadModels(unbatchedGroundQuads, groundWallShaderName, groundTextureName);
+            groundModel = QuadCombiner.combineQuadModels(unbatchedGroundQuads, groundWallShaderName, groundTextureName);
 
 
             //build negZ wall
@@ -164,7 +164,7 @@ namespace RabbetGameEngine
             }
 
 
-            wallsModel = QuadBatcher.batchQuadModels(unbatchedWallQuads, groundWallShaderName, wallTextureName);
+            wallsModel = QuadCombiner.combineQuadModels(unbatchedWallQuads, groundWallShaderName, wallTextureName);
 
             //adding world colliders
             this.addWorldAABB(new AABB(new Vector3(-(playgroundWidth * 0.5F), -2, -(playgroundLength * 0.5F)), new Vector3(playgroundWidth * 0.5F, 0, playgroundLength * 0.5F)));//AABB for ground
@@ -207,31 +207,26 @@ namespace RabbetGameEngine
                 {
                     entities.Remove(entities.ElementAt(i).Key);
                     i--;
+                    continue;
                 }
                 else if (entAt.getIsMarkedForRemoval())
                 {
                     entAt.setCurrentPlanet(null);
-                    /* if (entAt.getHasCollider())
-                     {
-                         entityColliders.Remove(entities.ElementAt(i).Key);
-                     }*/
                     entities.Remove(entities.ElementAt(i).Key);
                     i--;
+                    continue;
+                }
+                entAt.preTick();
+                entAt.onTick();
+                entAt.postTick();
+                if (entAt.getIsPlayer() && GameSettings.noclip)
+                {
+                    entAt.getColliderHandle().offset(entAt.getVelocity());
+                    entAt.setPosition(entAt.getPosition() + entAt.getVelocity());
                 }
                 else
                 {
-                    entAt.preTick();
-                    entAt.onTick();
-                    entAt.postTick();
-                    if(entAt.getIsPlayer() && GameSettings.noclip)
-                    {
-                        entAt.getColliderHandle().offset(entAt.getVelocity());
-                        entAt.setPosition(entAt.getPosition() + entAt.getVelocity());
-                    }
-                    else
-                    {
-                        CollisionHandler.tryToMoveObject(entAt, worldColliders);
-                    }
+                    CollisionHandler.tryToMoveObject(entAt, worldColliders);
                 }
             }
 

@@ -5,20 +5,19 @@ namespace RabbetGameEngine.SubRendering
 
     /*This class will take in multiple Models (Made of quads, containing multiple xyz, rgb, uv and indicies arrays) and combine them into one*
      *Drawable Model for one draw call.*/
-    static class QuadBatcher
+    static class QuadCombiner
     {
 
         /*Batches together models made of quads for being rendered in 3D*/
-        public static ModelDrawable batchQuadModels(Model[] quadModels, string shaderName, string textureName)
+        public static ModelDrawable combineQuadModels(Model[] quadModels, string shaderName, string textureName)
         {
-            Vertex[] newVertices;
-            combineData(quadModels, out newVertices);
+            Vertex[] newVertices = combineData(quadModels);
 
             return new ModelDrawable(shaderName, textureName, newVertices, getIndicesForQuadCount(newVertices.Length / 4));
         }
 
         /*Combines all the data in the model array and outputs the combined ordered arrays.*/
-        public static void combineData(Model[] modelsToCombine, out Vertex[] newVertices)
+        public static Vertex[] combineData(Model[] modelsToCombine)
         {
             int totalVertexCount = 0;
             for (int i = 0; i < modelsToCombine.Length; i++)
@@ -37,7 +36,7 @@ namespace RabbetGameEngine.SubRendering
                 Application.warn("QuadBatcher attempting to batch an un-even number of vertices!");
             }
 
-            newVertices = new Vertex[totalVertexCount];//create new arrays based on total vertex count
+            Vertex[] newVertices = new Vertex[totalVertexCount];//create new arrays based on total vertex count
 
             //itterate over each array and combine their data in new array
             int prevModelVertexIndex = 0;
@@ -52,6 +51,8 @@ namespace RabbetGameEngine.SubRendering
                     prevModelVertexIndex += modelsToCombine[i].vertices.Length;
                 }
             }
+
+            return newVertices;
         }
 
         public static uint[] getIndicesForQuadCount(int quadCount)

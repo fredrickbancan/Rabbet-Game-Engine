@@ -8,9 +8,13 @@ namespace RabbetGameEngine.Models
     public class Model
     {
         public Vertex[] vertices = null;
-        public Model(Vertex[] vertices)
+        public uint[] indices = null;
+        public Matrix4 modelMatrix;
+        public Matrix4 prevModelMatrix;
+        public Model(Vertex[] vertices, uint[] indices = null)
         {
             this.vertices = vertices;
+            this.indices = indices;
         }
 
         /*sets all vertex colors to this color*/
@@ -90,6 +94,32 @@ namespace RabbetGameEngine.Models
             Vertex[] verticesCopy = new Vertex[vertices.Length];
             Array.Copy(vertices, verticesCopy, vertices.Length);
             return new Model(verticesCopy);
+        }
+
+        /// <summary>
+        /// Used to set the ID for this set of data for when it will be drawn.
+        /// </summary>
+        /// <param name="f">ID of this object. Will be treated as integer index by shaders.</param>
+        /// <returns>This (builder method)</returns>
+        public Model setObjectID(float f)
+        {
+            for(int i = 0; i < vertices.Length; ++i)
+            {
+                vertices[i].objectID = f;
+            }
+            return this;
+        }
+
+        public Model setModelMatrix(Matrix4 m)
+        {
+            this.modelMatrix = m;
+            return this;
+        }
+
+        public Model setPrevModelMatrix(Matrix4 m)
+        {
+            this.prevModelMatrix = m;
+            return this;
         }
 
     }

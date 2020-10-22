@@ -27,7 +27,7 @@ namespace RabbetGameEngine.Debugging
         /*Builds the prefab model for an AABB, basically a cube made of lines*/
         private static void buildAABBModel()
         {
-            aabbDynamicModel = new ModelDrawableDynamic(linesShaderName, "none", LineBatcher.getIndicesForLineQuadCount(maxAABBRenderCount * 6), maxAABBRenderCount * 48 /*aabb models have 48 vertices*/);//initializing dynamic model for drawing aabb
+            aabbDynamicModel = new ModelDrawableDynamic(linesShaderName, "none", LineCombiner.getIndicesForLineQuadCount(maxAABBRenderCount * 6), maxAABBRenderCount * 48 /*aabb models have 48 vertices*/);//initializing dynamic model for drawing aabb
 
             aabbModelPrefab = CubePrefab.copyModel().setColor(CustomColor.magenta);
         }
@@ -89,8 +89,7 @@ namespace RabbetGameEngine.Debugging
         private static void combineAndSubmitAABBModels()
         {
             Vertex[] fillerVertices = new Vertex[maxAABBRenderCount*48];
-            Vertex[] batchedModelVertices;
-            QuadBatcher.combineData(aabbToBeRendered.ToArray(), out batchedModelVertices);
+            Vertex[] batchedModelVertices = QuadCombiner.combineData(aabbToBeRendered.ToArray());
             Array.Copy(batchedModelVertices, fillerVertices, batchedModelVertices.Length);
             aabbDynamicModel.submitData(fillerVertices);
             aabbToBeRendered.Clear();

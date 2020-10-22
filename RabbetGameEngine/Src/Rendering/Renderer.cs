@@ -45,7 +45,8 @@ namespace RabbetGameEngine
             GL.LineWidth(3);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
             if(useOffScreenBuffer) OffScreen.init();
-
+            Application.debugPrint("\n\n\n_______SYSTEM RENDERING CAPABILITIES_______");
+            RenderAbility.setMaxUniformComponents(GL.GetInteger(GetPName.MaxVertexUniformComponents));
         }
 
         /*Called each time the game window is resized*/
@@ -62,10 +63,16 @@ namespace RabbetGameEngine
             
         }
 
+        public static void onTickStart()
+        {
+            BatchManager.updateAll();
+        }
+
         public static void renderAll()
         {
             preRender();
             renderWorld();
+            BatchManager.drawAll();
             GUIHandler.drawCurrentGUIScreen();
             postRender();
         }
@@ -137,6 +144,7 @@ namespace RabbetGameEngine
         /*deletes all loaded opengl assets*/
         public static void onClosing()
         {
+            BatchManager.deleteAll();
             ShaderUtil.deleteAll();
             TextureUtil.deleteAll();
             ModelUtil.deleteAll();

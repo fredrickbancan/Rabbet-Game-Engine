@@ -3,7 +3,7 @@
 namespace RabbetGameEngine.SubRendering
 {
     /*Class for Taking in  an even amount of vertices and batches them with indices which allow line rendering.*/
-    public static class LineBatcher
+    public static class LineCombiner
     {
 
         /*retuns indices for multiple quads to render them as lined squares*/

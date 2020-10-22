@@ -6,6 +6,7 @@ using RabbetGameEngine.GUI.Text;
 using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Linq.Expressions;
 
 namespace RabbetGameEngine
 {
@@ -64,6 +65,7 @@ namespace RabbetGameEngine
             //center mouse in preperation for first person 
             Input.centerMouse();
             Input.toggleHideMouse();
+            
             base.OnLoad(e);
         }
 
@@ -104,6 +106,7 @@ namespace RabbetGameEngine
             Profiler.beginEndProfile("Loop");
             mouseCenterX = this.X + this.Width / 2;
             mouseCenterY = this.Y + this.Height / 2;
+            Renderer.onTickStart();
             GUIHandler.onTick();
             MainGUI.onTick();
             currentPlanet.onTick();

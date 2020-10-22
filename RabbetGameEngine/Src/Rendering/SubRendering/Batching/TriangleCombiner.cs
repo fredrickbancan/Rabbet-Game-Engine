@@ -1,14 +1,13 @@
 ﻿using RabbetGameEngine.Models;
-using System;
 
 namespace RabbetGameEngine.SubRendering
 {
     /*This class is responsable for batching together multiple modeldrawables, using their indices.
       This allows multiple models with different indices and trinagles to be batched into one draw call.*/
-    public static class TriangleBatcher
+    public static class TriangleCombiner
     {
 
-        public static void combineData(ModelDrawable[] inputModels, out Vertex[] resultVertices, out uint[] resultIndices)
+        public static Model combineData(Model[] inputModels)
         {
             int totalVerticesCount = 0;
             int totalIndicesCount = 0;
@@ -25,8 +24,8 @@ namespace RabbetGameEngine.SubRendering
                 }
             }
 
-            resultVertices = new Vertex[totalVerticesCount];
-            resultIndices = new uint[totalIndicesCount];
+            Vertex[] resultVertices = new Vertex[totalVerticesCount];
+            uint[] resultIndices = new uint[totalIndicesCount];
 
             //fill resultvertices
             int prevModelVerticesIndex = 0;
@@ -57,6 +56,8 @@ namespace RabbetGameEngine.SubRendering
                     prevModelsVertexCount += (uint)inputModels[i].vertices.Length;
                 }
             }
+
+            return new Model(resultVertices, resultIndices);
         }
     }
 }

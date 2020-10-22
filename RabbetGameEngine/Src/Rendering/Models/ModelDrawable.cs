@@ -6,14 +6,11 @@ using System.Collections.Generic;
 
 namespace RabbetGameEngine.Models
 {
-    //TODO: replace modelDrawable with just a model which contains indices as part of the batcher pipeline.
+    //TODO: replace ModelDrawable and all subclasses with batch rendering pipeline.
     /*Base class for models that can be drawn individually with additional draw calls and have
      *individual VAO's.*/
     public class ModelDrawable : Model
     {
-        /*ModelDrawables can have null indices. In which case the vertices will be drawn without the use of indices.
-          In which case, a draw function which does not use indices must be utilized (e.g: drawPoints())*/
-        public uint[] indices;
         protected bool hasInitialized = false;
         protected int indicesBufferObject;
         protected List<int> VBOS = new List<int>();
@@ -287,6 +284,10 @@ namespace RabbetGameEngine.Models
             foreach (int vbo in VBOS)
             {
                 GL.DeleteBuffer(vbo);
+            }
+            if(indices != null)
+            {
+                GL.DeleteBuffer(indicesBufferObject);
             }
         }
     }

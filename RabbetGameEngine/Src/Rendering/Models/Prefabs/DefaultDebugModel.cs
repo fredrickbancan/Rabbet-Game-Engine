@@ -43,7 +43,7 @@ namespace RabbetGameEngine.Models
             new Vertex(0.5F, -0.5F, 0.5F, 0.4F, 0.4F, 0.4F, 1F, 0.5F, 0.5F)//3
         };
 
-        public static readonly uint[] indices = QuadBatcher.getIndicesForQuadCount(6);
+        public static readonly uint[] indices = QuadCombiner.getIndicesForQuadCount(6);
 
         /*generates a new model using copies of this models arrays.*/
         public static Model getNewModel()

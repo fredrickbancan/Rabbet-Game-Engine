@@ -28,8 +28,8 @@ namespace RabbetGameEngine.Models
             boxSides[4].rotateVertices(new Vector3(-90, 0, 0)).translateVertices(new Vector3(0, -0.5F, 0));//negY face
             boxSides[5].rotateVertices(new Vector3(90, 0, 0)).translateVertices(new Vector3(0, 0.5F, 0));//posY face
 
-            QuadBatcher.combineData(boxSides, out cubeVertices);
-            cubeIndices = QuadBatcher.getIndicesForQuadCount(6);
+            cubeVertices = QuadCombiner.combineData(boxSides);
+            cubeIndices = QuadCombiner.getIndicesForQuadCount(6);
         }
 
         /*generates a new model using copies of this models arrays.*/

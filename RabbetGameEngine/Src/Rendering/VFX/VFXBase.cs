@@ -1,15 +1,7 @@
-﻿using RabbetGameEngine.Models;
-using OpenTK;
+﻿using OpenTK;
+using RabbetGameEngine.Models;
+using RabbetGameEngine.SubRendering;
 using System;
-namespace RabbetGameEngine
-{
-    public enum VFXBatchType//used to determine how to batch vfx objects
-    {
-        tirangles,
-        points,
-        lines
-    }
-}
 namespace RabbetGameEngine.VFX
 {
     /*This class is a spawnable sort of entity which can be rendered as a certain provided effect.
@@ -33,8 +25,8 @@ namespace RabbetGameEngine.VFX
         protected bool removalFlag = false;// true if this entity should be removed in the next tick
         protected bool shouldDeleteModel = false;// true if this vfx is using a model loaded from file. If so, it should NOT be deleted!
 
-        protected VFXBatchType BatchType;
-        public VFXBase(Vector3 pos, float initialScale, string shaderDir, string textureDir, string modelDir, float maxExistingSeconds = 1, VFXBatchType BatchType = VFXBatchType.tirangles) : base(pos)
+        protected BatchType batchType;
+        public VFXBase(Vector3 pos, float initialScale, string shaderDir, string textureDir, string modelDir, float maxExistingSeconds = 1, BatchType batchType = BatchType.triangles) : base(pos)
         {
             this.scale = initialScale;
             this.vfxModel = ModelUtil.createModelDrawable(shaderDir, textureDir, modelDir);
@@ -42,7 +34,7 @@ namespace RabbetGameEngine.VFX
             updateVFXModel();
             updateVFXModel();
 
-            this.BatchType = BatchType;
+            this.batchType = batchType;
         }
 
         /*called every tick*/
@@ -137,9 +129,9 @@ namespace RabbetGameEngine.VFX
             return !removalFlag;
         }
 
-        public VFXBatchType getBatchType()
+        public BatchType getBatchType()
         {
-            return BatchType;
+            return batchType;
         }
     }
 }

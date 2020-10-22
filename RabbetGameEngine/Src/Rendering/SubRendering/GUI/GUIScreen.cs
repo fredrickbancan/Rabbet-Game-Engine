@@ -27,7 +27,7 @@ namespace RabbetGameEngine.SubRendering.GUI
             }
             this.screenName = screenName;
             this.maxCharCount = maxCharCount;
-            screenTextModel = new ModelDrawableDynamic(TextUtil.textShaderName, TextUtil.getTextureNameForScreenFont(screenFont), QuadBatcher.getIndicesForQuadCount((int)maxCharCount), (int)maxCharCount * 4);
+            screenTextModel = new ModelDrawableDynamic(TextUtil.textShaderName, TextUtil.getTextureNameForScreenFont(screenFont), QuadCombiner.getIndicesForQuadCount((int)maxCharCount), (int)maxCharCount * 4);
         }
 
         public void buildScreenTextModel()

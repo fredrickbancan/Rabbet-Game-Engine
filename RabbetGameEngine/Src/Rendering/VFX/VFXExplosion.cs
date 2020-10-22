@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using RabbetGameEngine.SubRendering;
 using System;
 namespace RabbetGameEngine.VFX
 {
@@ -10,7 +11,7 @@ namespace RabbetGameEngine.VFX
         private static Random rand = new Random();
 
         [Obsolete("This vfx was used for explosions before the addition of point particle vfx")]
-        public VFXExplosion(Vector3 pos) : base(pos, 1.0F, shaderName, textureName, modelname, 0.5F, VFXBatchType.tirangles)
+        public VFXExplosion(Vector3 pos) : base(pos, 1.0F, shaderName, textureName, modelname, 0.5F, BatchType.triangles)
         {
             scale = 3.0F;
             setPitch((float)(rand.NextDouble() * 180D));

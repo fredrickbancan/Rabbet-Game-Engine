@@ -1,12 +1,13 @@
 ﻿using OpenTK;
 using RabbetGameEngine.Models;
+using RabbetGameEngine.SubRendering;
 
 namespace RabbetGameEngine.VFX
 {
     /*Base class for any VFX using point particles*/
-    public class VFXPointParticles : VFXBase
+    public class VFXPointCloud : VFXBase
     {
-        private static string defaultShaderName = "PParticle_FT";
+        private static string defaultShaderName = "PParticleCloud_FT";
         protected CustomColor pointColor;
         protected float randomPointPositionSpread;//the maximum distance between points when randomizing a point cloud (e.g, a puff of smoke)
         protected float pointRadius;
@@ -17,7 +18,7 @@ namespace RabbetGameEngine.VFX
        
 
         /*this constructor is for creating a point particle based VFX which does not create a random point cloud. maybe you will want to construct the points in a specific manner with colors or use a model.*/
-        public VFXPointParticles(Vector3 pos, CustomColor color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderName, "none", "none", maxExistingSeconds, VFXBatchType.points)
+        public VFXPointCloud(Vector3 pos, CustomColor color, float radius, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderName, "none", "none", maxExistingSeconds, BatchType.lerpPointCloud)
         {
             colorAlpha = alpha;
             pointColor = color;
@@ -27,7 +28,7 @@ namespace RabbetGameEngine.VFX
         }
 
         /*this constructor is for creating a randomized particle cloud at the position using the provided parameters*/
-        public VFXPointParticles(Vector3 pos, CustomColor color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderName, "none", "none", maxExistingSeconds, VFXBatchType.points)
+        public VFXPointCloud(Vector3 pos, CustomColor color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, defaultShaderName, "none", "none", maxExistingSeconds, BatchType.lerpPointCloud)
         {
             colorAlpha = alpha;
             this.randomBrightness = randomBrightness;
