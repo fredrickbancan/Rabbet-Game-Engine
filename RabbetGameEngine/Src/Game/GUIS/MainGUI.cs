@@ -22,24 +22,24 @@ namespace RabbetGameEngine
         /*Initialize this gui*/
         public static void init()
         {
-            GUIHandler.addNewGUIScreen(mainGUIName, "Arial_Shadow");
-            GUIHandler.addTextPanelToGUI(mainGUIName, "flying", new GUITextPanel(new TextFormat().setAlign(TextAlign.RIGHT).setLine("Flying: OFF").setPanelColor(CustomColor.darkRed)));
-            GUIHandler.addTextPanelToGUI(mainGUIName, "noclip", new GUITextPanel(new TextFormat(0, 0.03F).setAlign(TextAlign.RIGHT).setLine("Noclip: OFF").setPanelColor(CustomColor.darkRed)));
-            GUIHandler.addTextPanelToGUI(mainGUIName, "label", new GUITextPanel(new TextFormat(0, 0.97F).setLine("Rabbet Game Engine Version " + Application.version).setPanelColor(CustomColor.black)));
-            GUIHandler.addTextPanelToGUI(mainGUIName, "help", new GUITextPanel(new TextFormat(0.5F, 0).setAlign(TextAlign.CENTER).setLines(new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'V' to toggle flying. Tap 'E' to release mouse.", "Walk up to tank and press F to drive, Left click to fire.", "Press 'ESC' to close game.", "Press F3 to show/hide debug menu.", "press F4 to enable/disable drawing hitboxes.", "press F5 to enable/disable noclip.", "press F12 to enable fullscreen." }).setFontSize(0.015F).setPanelColor(CustomColor.lightGrey)));
-            GUIHandler.addGUIComponentToGUI(mainGUIName, "crossHair", new GUICrosshair());
+            GUIManager.addNewGUIScreen(mainGUIName, "Arial_Shadow");
+            GUIManager.addTextPanelToGUI(mainGUIName, "flying", new GUITextPanel(new TextFormat().setAlign(TextAlign.RIGHT).setLine("Flying: OFF").setPanelColor(CustomColor.darkRed)));
+            GUIManager.addTextPanelToGUI(mainGUIName, "noclip", new GUITextPanel(new TextFormat(0, 0.03F).setAlign(TextAlign.RIGHT).setLine("Noclip: OFF").setPanelColor(CustomColor.darkRed)));
+            GUIManager.addTextPanelToGUI(mainGUIName, "label", new GUITextPanel(new TextFormat(0, 0.97F).setLine("Rabbet Game Engine Version " + Application.version).setPanelColor(CustomColor.black)));
+            GUIManager.addTextPanelToGUI(mainGUIName, "help", new GUITextPanel(new TextFormat(0.5F, 0).setAlign(TextAlign.CENTER).setLines(new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'V' to toggle flying. Tap 'E' to release mouse.", "Walk up to tank and press F to drive, Left click to fire.", "Press 'ESC' to close game.", "Press F3 to show/hide debug menu.", "press F4 to enable/disable drawing hitboxes.", "press F5 to enable/disable noclip.", "press F12 to enable fullscreen." }).setFontSize(0.015F).setPanelColor(CustomColor.lightGrey)));
+            GUIManager.addGUIComponentToGUI(mainGUIName, "crossHair", new GUICrosshair());
 
             /*TEMPORARY, just for arcade stuff*/
-            GUIHandler.addTextPanelToGUI(mainGUIName, "directHit", new GUITextPanel(new TextFormat(0.5F, 0.64F).setAlign(TextAlign.CENTER).setLine("Direct Hit!").setPanelColor(CustomColor.flame)));
-            GUIHandler.hideTextPanelInGUI(mainGUIName, "directHit");
+            GUIManager.addTextPanelToGUI(mainGUIName, "directHit", new GUITextPanel(new TextFormat(0.5F, 0.64F).setAlign(TextAlign.CENTER).setLine("Direct Hit!").setPanelColor(CustomColor.flame)));
+            GUIManager.hideTextPanelInGUI(mainGUIName, "directHit");
 
-            GUIHandler.addTextPanelToGUI(mainGUIName, "airShot", new GUITextPanel(new TextFormat(0.5F, 0.67F).setAlign(TextAlign.CENTER).setLine("AIR SHOT!").setPanelColor(CustomColor.red)));
-            GUIHandler.hideTextPanelInGUI(mainGUIName, "airShot");
+            GUIManager.addTextPanelToGUI(mainGUIName, "airShot", new GUITextPanel(new TextFormat(0.5F, 0.67F).setAlign(TextAlign.CENTER).setLine("AIR SHOT!").setPanelColor(CustomColor.red)));
+            GUIManager.hideTextPanelInGUI(mainGUIName, "airShot");
 
-            GUIHandler.addTextPanelToGUI(mainGUIName, "directHitCount", new GUITextPanel(new TextFormat(0.1F, 0.15F).setAlign(TextAlign.RIGHT).setLine("Direct Hits: " + 0).setPanelColor(CustomColor.flame)));
-            GUIHandler.addTextPanelToGUI(mainGUIName, "airShotCount", new GUITextPanel(new TextFormat(0.1F, 0.18F).setAlign(TextAlign.RIGHT).setLine("Air Shots: " + 0).setPanelColor(CustomColor.red)));
+            GUIManager.addTextPanelToGUI(mainGUIName, "directHitCount", new GUITextPanel(new TextFormat(0.1F, 0.15F).setAlign(TextAlign.RIGHT).setLine("Direct Hits: " + 0).setPanelColor(CustomColor.flame)));
+            GUIManager.addTextPanelToGUI(mainGUIName, "airShotCount", new GUITextPanel(new TextFormat(0.1F, 0.18F).setAlign(TextAlign.RIGHT).setLine("Air Shots: " + 0).setPanelColor(CustomColor.red)));
 
-            GUIHandler.addTextPanelToGUI(MainGUI.mainGUIName, fpsPanelName, new GUITextPanel(new TextFormat().setLine("0")));
+            GUIManager.addTextPanelToGUI(MainGUI.mainGUIName, fpsPanelName, new GUITextPanel(new TextFormat().setLine("0")));
 
             /*Temp arcade stuff*/
             maxPopupTicks = (int)TicksAndFps.getNumOfTicksForSeconds(1.5F);
@@ -71,44 +71,44 @@ namespace RabbetGameEngine
             }
             if (GameInstance.get.thePlayer.getIsFlying())
             {
-                GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "flying").setPanelColor(CustomColor.green).setLine("Flying: ON");
+                GUIManager.getTextPanelFormatFromGUI(mainGUIName, "flying").setPanelColor(CustomColor.green).setLine("Flying: ON");
             }
             else
             {
-                GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "flying").setPanelColor(CustomColor.darkRed).setLine("Flying: OFF");
+                GUIManager.getTextPanelFormatFromGUI(mainGUIName, "flying").setPanelColor(CustomColor.darkRed).setLine("Flying: OFF");
             }
 
             if (GameSettings.noclip)
             {
-                GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "noclip").setPanelColor(CustomColor.green).setLine("Noclip: ON");
+                GUIManager.getTextPanelFormatFromGUI(mainGUIName, "noclip").setPanelColor(CustomColor.green).setLine("Noclip: ON");
             }
             else
             {
-                GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "noclip").setPanelColor(CustomColor.darkRed).setLine("Noclip: OFF");
+                GUIManager.getTextPanelFormatFromGUI(mainGUIName, "noclip").setPanelColor(CustomColor.darkRed).setLine("Noclip: OFF");
             }
 
-            GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "directHitCount").setLine("Direct Hits: " + directHitCounter);
-            GUIHandler.getTextPanelFormatFromGUI(mainGUIName, "airShotCount").setLine("AirShots: " + airShotCounter);
+            GUIManager.getTextPanelFormatFromGUI(mainGUIName, "directHitCount").setLine("Direct Hits: " + directHitCounter);
+            GUIManager.getTextPanelFormatFromGUI(mainGUIName, "airShotCount").setLine("AirShots: " + airShotCounter);
 
             if (showingDirectHitPopup)
             {
-                GUIHandler.unHideTextPanelInGUI(mainGUIName, "directHit");
+                GUIManager.unHideTextPanelInGUI(mainGUIName, "directHit");
             }
             else
             {
-                GUIHandler.hideTextPanelInGUI(mainGUIName, "directHit");
+                GUIManager.hideTextPanelInGUI(mainGUIName, "directHit");
             }
             if (showingAirShotPopup)
             {
-                GUIHandler.unHideTextPanelInGUI(mainGUIName, "airShot");
+                GUIManager.unHideTextPanelInGUI(mainGUIName, "airShot");
             }
             else
             {
-                GUIHandler.hideTextPanelInGUI(mainGUIName, "airShot");
+                GUIManager.hideTextPanelInGUI(mainGUIName, "airShot");
             }
 
             DebugInfo.displayOrClearDebugInfo();
-            GUIHandler.rebuildTextInGUI(mainGUIName);//do last, applies any changes to the text on screen.
+            GUIManager.rebuildTextInGUIAndRequestDraw(mainGUIName);//do last, applies any changes to the text on screen.
         }
 
         /*Called when player lands direct hit on a cactus, TEMPORARY!*/
@@ -132,24 +132,24 @@ namespace RabbetGameEngine
         {
             if (GameSettings.displayFps)
             {
-                GUIHandler.unHideTextPanelInGUI(mainGUIName, fpsPanelName);
+                GUIManager.unHideTextPanelInGUI(mainGUIName, fpsPanelName);
                 string fpsstring = TicksAndFps.fps.ToString();
                 if (TicksAndFps.fps < 75)
                 {
-                    GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsstring).setPanelColor(CustomColor.red);
+                    GUIManager.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsstring).setPanelColor(CustomColor.red);
                 }
                 else if (TicksAndFps.fps < 120)
                 {
-                    GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsstring).setPanelColor(CustomColor.yellow);
+                    GUIManager.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsstring).setPanelColor(CustomColor.yellow);
                 }
                 else
                 {
-                    GUIHandler.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsstring).setPanelColor(CustomColor.green);
+                    GUIManager.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsstring).setPanelColor(CustomColor.green);
                 }
             }
             else
             {
-                GUIHandler.hideTextPanelInGUI(mainGUIName, fpsPanelName);
+                GUIManager.hideTextPanelInGUI(mainGUIName, fpsPanelName);
             }
         }
     }

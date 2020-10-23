@@ -1,5 +1,6 @@
 ﻿using RabbetGameEngine.GUI;
 using RabbetGameEngine.GUI.Text;
+using RabbetGameEngine.SubRendering;
 
 namespace RabbetGameEngine.Debugging
 {
@@ -10,7 +11,7 @@ namespace RabbetGameEngine.Debugging
         /*Initialize the text panel for the debug info, can only be done if the mainGUI panel is created first*/
         public static void init()
         {
-            GUIHandler.addTextPanelToGUI(MainGUI.mainGUIName, debugInfoTextPanelName, new GUITextPanel(new TextFormat(0.0F, 0.05F)
+            GUIManager.addTextPanelToGUI(MainGUI.mainGUIName, debugInfoTextPanelName, new GUITextPanel(new TextFormat(0.0F, 0.05F)
                 .setLines(new string[]
                         {
                         ("press F3 to hide debug screen.")
@@ -26,9 +27,10 @@ namespace RabbetGameEngine.Debugging
                 float entColAverage = Profiler.getAverageForProfile("EntCollisions");
                 float colAverage = Profiler.getAverageForProfile("Collisions");
                 float batchAverage = Profiler.getAverageForProfile("batching");
+                float textBuildAverage = Profiler.getAverageForProfile("textBuild");
                 float gameLoopAverage = Profiler.getAverageForProfile("Loop");
-                GUIHandler.unHideTextPanelInGUI(MainGUI.mainGUIName, debugInfoTextPanelName);
-                GUIHandler.getTextPanelFormatFromGUI(MainGUI.mainGUIName, debugInfoTextPanelName).setLines(
+                GUIManager.unHideTextPanelInGUI(MainGUI.mainGUIName, debugInfoTextPanelName);
+                GUIManager.getTextPanelFormatFromGUI(MainGUI.mainGUIName, debugInfoTextPanelName).setLines(
                        new string[]
                        {
                         ("Player Name: " + GameInstance.get.thePlayer.getName()),
@@ -46,17 +48,19 @@ namespace RabbetGameEngine.Debugging
                        ("   {" ),
                        ("       Entity Collisions: " + entColAverage.ToString("0.00") + "ms." ),
                        ("       World Collisions: " + colAverage.ToString("0.00") + "ms." ),
+                       ("       Text building: " + textBuildAverage.ToString("0.00") + "ms." ),
                        ("       Batching: " + batchAverage.ToString("0.00") + "ms." ),
-                       ("   }Residual: " + (gameLoopAverage - (entColAverage + colAverage + batchAverage)).ToString("0.00") + "ms." ),
+                       ("   }Residual: " + (gameLoopAverage - (entColAverage + colAverage + textBuildAverage + batchAverage)).ToString("0.00") + "ms." ),
                        ("}" ),
                         ("Entities: " + GameInstance.get.currentPlanet.getEntityCount()),
                         ("VFX's: " + GameInstance.get.currentPlanet.getVFXCount()),
-                        ("Draw Calls: " + Renderer.getAndResetTotalDrawCount()),
+                        ("Batches: " + BatchManager.batchCount),
+                        ("Draw Calls: " + Renderer.totalDraws),
                        }); 
             }
             else
             {
-                GUIHandler.hideTextPanelInGUI(MainGUI.mainGUIName, debugInfoTextPanelName);
+                GUIManager.hideTextPanelInGUI(MainGUI.mainGUIName, debugInfoTextPanelName);
             }
         }
     }

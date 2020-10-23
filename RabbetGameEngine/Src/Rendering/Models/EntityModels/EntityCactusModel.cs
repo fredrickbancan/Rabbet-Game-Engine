@@ -2,11 +2,10 @@
 {
     public class EntityCactusModel : EntityModel
     {
-        private static string shaderName = "EntityWorld_F";
         private static string textureName = "EntityCactus";
-        private static string modelName = "Cactus.obj";
+        private static string modelName = "Cactus";
 
-        public EntityCactusModel(Entity parent) : base(parent, shaderName, textureName, modelName)
+        public EntityCactusModel(Entity parent) : base(parent, textureName, ModelUtil.getModel(modelName))
         {
 
         }

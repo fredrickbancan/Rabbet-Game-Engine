@@ -50,7 +50,6 @@ namespace RabbetGameEngine
             TicksAndFps.init(30);
             MainGUI.init();
             DebugInfo.init();
-            HitboxRenderer.init();
             currentPlanet = new Planet(0xdeadbeef);
             //create and spawn player in new world
             thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
@@ -106,7 +105,7 @@ namespace RabbetGameEngine
             mouseCenterX = this.X + this.Width / 2;
             mouseCenterY = this.Y + this.Height / 2;
             Renderer.onTickStart();
-            GUIHandler.onTick();
+            GUIManager.onTick();
             MainGUI.onTick();
             currentPlanet.onTick();
             Profiler.updateAverages();
@@ -136,7 +135,7 @@ namespace RabbetGameEngine
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            currentPlanet.onLeavingWorld();
+            currentPlanet.onLeavingPlanet();
             Renderer.onClosing();
             base.OnClosing(e);
         }

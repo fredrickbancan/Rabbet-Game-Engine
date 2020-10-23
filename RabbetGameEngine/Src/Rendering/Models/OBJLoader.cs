@@ -10,7 +10,6 @@ namespace RabbetGameEngine.Models
     /*This class will be responsable for loading models and converting them to vertex arrays for use with rendering.*/
     public static class OBJLoader
     {
-        private static readonly string defaultShaderName = "EntityWorld_F";
         private static string currentLine = "empty";
         private static StreamReader reader;
         private static bool successfullyLoaded = false;
@@ -20,42 +19,8 @@ namespace RabbetGameEngine.Models
         private static Vector2[] orderedUVs; 
         private static List<uint> indices;
 
-        /*Takes in a shader,texture and obj file and returns a modeldrawable. If processing fails, will return a default debug model*/
-        public static ModelDrawable loadModelDrawableFromObjFile(string shaderDir, string textureDir, string objFilePath, bool useIndices = true)
-        {
-            if (objFilePath == "none")
-            {
-                return null;
-            }
-
-            try
-            {
-                reader = new StreamReader(objFilePath);
-            }
-            catch (Exception e)
-            {
-                Application.error("Could not load OBJ File!\nFile Path: " + objFilePath + "\nException: " + e.Message);
-                return DefaultDebugModel.getNewModelDrawable();//returns model by defualt or failing
-            }
-            successfullyLoaded = false;
-            vertexResult = new List<Vertex>();
-            positions = new List<Vector3>();
-            unorderedUVs = new List<Vector2>();
-            indices = new List<uint>();
-
-            processAllLines();
-
-            if (!successfullyLoaded)
-            {
-                return DefaultDebugModel.getNewModelDrawable();//returns model by defualt or failing
-            }
-            reader.Close();
-            return new ModelDrawable(shaderDir, textureDir, vertexResult.ToArray(), useIndices ? indices.ToArray() : null);
-
-        }
-
         /*Takes in a obj file and returns a model. indices will be assigned the read indices. If processing fails, will return a default debug model*/
-        public static ModelDrawable loadModelDrawableFromObjFile(string objFilePath)
+        public static Model loadModelFromObjFile(string objFilePath)
         {
             if (objFilePath == "none")
             {
@@ -69,7 +34,7 @@ namespace RabbetGameEngine.Models
             catch (Exception e)
             {
                 Application.error("Could not load OBJ File!\nFile Path: " + objFilePath + "\nException: " + e.Message);
-                return DefaultDebugModel.getNewModelDrawable();//returns model by defualt or failing
+                return DefaultDebugModel.getModelCopy();//returns model by defualt or failing
             }
             successfullyLoaded = false;
             vertexResult = new List<Vertex>();
@@ -81,10 +46,10 @@ namespace RabbetGameEngine.Models
 
             if (!successfullyLoaded)
             {
-                return DefaultDebugModel.getNewModelDrawable();//returns model by defualt or failing
+                return DefaultDebugModel.getModelCopy();//returns model by defualt or failing
             }
             reader.Close();
-            return new ModelDrawable(defaultShaderName, "debug", vertexResult.ToArray(), indices.ToArray());
+            return new Model(vertexResult.ToArray(), indices.ToArray());
 
         }
 

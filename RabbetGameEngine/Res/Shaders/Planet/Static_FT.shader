@@ -1,10 +1,11 @@
-﻿//base shader for rendering world terrain and entities with fog and transparency
+﻿//base shader for rendering objects statically with fog and transparency
 #shader vertex
 #version 330 core
 
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 texCoord;
+layout(location = 3) in float objectID;
 
 uniform float fogDensity = 0.0075;
 uniform float fogGradient = 2.5;
@@ -13,18 +14,15 @@ out vec2 vTexCoord;
 out vec4 vColor;
 out float visibility;//for fog
 
-//matrix for projection transformations.
+uniform float percentageToNextTick;
+uniform int frame;
+
 uniform mat4 projectionMatrix;
-//matrix for camera transformations.
 uniform mat4 viewMatrix;
-//matrix for model transformations. All transformations in this matrix are relative to the model origin.
-uniform mat4 modelMatrix;
 
 void main()
 {
-	vec4 worldPosition = modelMatrix * position;
-
-	vec4 positionRelativeToCam = viewMatrix * worldPosition;
+	vec4 positionRelativeToCam = viewMatrix * position;
 
 	gl_Position = projectionMatrix * positionRelativeToCam;
 
@@ -54,6 +52,8 @@ void main()
 	vec4 textureColor = texture(uTexture, vTexCoord) * vColor;
 
 	fragColor = mix(vec4(fogColor, textureColor.a), textureColor, visibility);
+
+	//this avoids alpha sorting issues with fully transparent surfaces
 	if (fragColor.a < 0.01)
 	{
 		discard;

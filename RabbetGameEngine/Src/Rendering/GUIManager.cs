@@ -1,12 +1,11 @@
 ﻿using RabbetGameEngine.GUI.Text;
 using RabbetGameEngine.SubRendering.GUI;
-using System;
 using System.Collections.Generic;
 
 namespace RabbetGameEngine.GUI
 {
     /*This file will handle all gui related logic and requests*/
-    public static class GUIHandler
+    public static class GUIManager
     {
         private static Dictionary<string, GUIScreen> allGUIs = new Dictionary<string, GUIScreen>();
         private static GUIScreen currentDisplayedScreen;
@@ -62,13 +61,13 @@ namespace RabbetGameEngine.GUI
                 }
                 else
                 {
-                    Application.error("GUIHandler.getTextPanelToFormatFromGui() could not get the text panel from name provided: " + panelName + ", returning default textformat.");
+                    Application.error("GUIManager.getTextPanelToFormatFromGui() could not get the text panel from name provided: " + panelName + ", returning default textformat.");
                     return new TextFormat();
                 }
             }
             else
             {
-                Application.error("GUIHandler.getTextPanelToFormatFromGui() could not get the GUIScren from name provided: " + GUIName + ", returning default textformat.");
+                Application.error("GUIManager.getTextPanelToFormatFromGui() could not get the GUIScren from name provided: " + GUIName + ", returning default textformat.");
                 return new TextFormat();
             }
         }
@@ -84,13 +83,13 @@ namespace RabbetGameEngine.GUI
                 }
                 else
                 {
-                    Application.error("GUIHandler.getTextPanelToFormatFromCurrentGui() could not get the text panel from name provided: " + panelName + ", returning default textformat.");
+                    Application.error("GUIManager.getTextPanelToFormatFromCurrentGui() could not get the text panel from name provided: " + panelName + ", returning default textformat.");
                     return new TextFormat();
                 }
             }
             else
             {
-                Application.error("GUIHandler.getTextPanelToFormatFromCurrentGui() was called but the current gui screen is null, returning default textformat.");
+                Application.error("GUIManager.getTextPanelToFormatFromCurrentGui() was called but the current gui screen is null, returning default textformat.");
                 return new TextFormat();
             }
         }
@@ -105,12 +104,12 @@ namespace RabbetGameEngine.GUI
                 }
                 else
                 {
-                    Application.error("GUIHandler.unHideTextPanelInGUI() could not get the text panel from name provided: " + panelName);
+                    Application.error("GUIManager.unHideTextPanelInGUI() could not get the text panel from name provided: " + panelName);
                 }
             }
             else
             {
-                Application.error("GUIHandler.unHideTextPanelInGUI() could not get the GUIScren from name provided: " + GUIName);
+                Application.error("GUIManager.unHideTextPanelInGUI() could not get the GUIScren from name provided: " + GUIName);
             }
         }
         public static void hideTextPanelInGUI(string GUIName, string panelName)
@@ -123,12 +122,12 @@ namespace RabbetGameEngine.GUI
                 }
                 else
                 {
-                    Application.error("GUIHandler.hideTextPanelInGUI() could not get the text panel from name provided: " + panelName);
+                    Application.error("GUIManager.hideTextPanelInGUI() could not get the text panel from name provided: " + panelName);
                 }
             }
             else
             {
-                Application.error("GUIHandler.hideTextPanelInGUI() could not get the GUIScren from name provided: " + GUIName);
+                Application.error("GUIManager.hideTextPanelInGUI() could not get the GUIScren from name provided: " + GUIName);
             }
         }
 
@@ -142,14 +141,15 @@ namespace RabbetGameEngine.GUI
                 }
                 else
                 {
-                    Application.error("GUIHandler.unHideTextPanelInCurrentGUI() could not get the text panel from name provided: " + panelName );
+                    Application.error("GUIManager.unHideTextPanelInCurrentGUI() could not get the text panel from name provided: " + panelName );
                 }
             }
             else
             {
-                Application.error("GUIHandler.unHideTextPanelInCurrentGUI() was called but the current gui screen is null.");
+                Application.error("GUIManager.unHideTextPanelInCurrentGUI() was called but the current gui screen is null.");
             }
         }
+
         public static void hideTextPanelInCurrentGUI(string panelName)
         {
             if (currentDisplayedScreen != null)
@@ -160,24 +160,24 @@ namespace RabbetGameEngine.GUI
                 }
                 else
                 {
-                    Application.error("GUIHandler.hideTextPanelInCurrentGUI() could not get the text panel from name provided: " + panelName);
+                    Application.error("GUIManager.hideTextPanelInCurrentGUI() could not get the text panel from name provided: " + panelName);
                 }
             }
             else
             {
-                Application.error("GUIHandler.hideTextPanelInCurrentGUI() was called but the current gui screen is null.");
+                Application.error("GUIManager.hideTextPanelInCurrentGUI() was called but the current gui screen is null.");
             }
         }
 
-        public static void rebuildTextInGUI(string guiName)
+        public static void rebuildTextInGUIAndRequestDraw(string guiName)
         {
             if (allGUIs.TryGetValue(guiName, out GUIScreen screen))
             {
-                screen.buildScreenTextModel();
+                screen.buildAndRequestTextRender();
             }
             else
             {
-                Application.error("GUIHandler.rebuildTextInGUI() could not get the GUIScren from name provided: " + guiName);
+                Application.error("GUIManager.rebuildTextInGUI() could not get the GUIScren from name provided: " + guiName);
             }
         }
 
@@ -185,7 +185,7 @@ namespace RabbetGameEngine.GUI
         {
             if(currentDisplayedScreen != null)
             {
-                currentDisplayedScreen.buildScreenTextModel();
+                currentDisplayedScreen.buildAndRequestTextRender();
             }
         }
 
@@ -200,7 +200,7 @@ namespace RabbetGameEngine.GUI
             }
             else
             {
-                Application.error("GUIHandler could not show requested GUIScreen named: " + name);
+                Application.error("GUIManager could not show requested GUIScreen named: " + name);
             }
         }
 
@@ -218,7 +218,7 @@ namespace RabbetGameEngine.GUI
             GUIScreen screenToAdd = new GUIScreen(name, font, maxCharCount);
             if(screenToAdd.isFontNull())
             {
-                Application.error("GUIHandler could not add requested GUIScreen, font name could not be successfully loaded.");
+                Application.error("GUIManager could not add requested GUIScreen, font name could not be successfully loaded.");
             }
             else
             {
@@ -228,14 +228,6 @@ namespace RabbetGameEngine.GUI
                 {
                     currentDisplayedScreen = screenToAdd;
                 }
-            }
-        }
-
-        public static void drawCurrentGUIScreen()
-        {
-            if(currentDisplayedScreen != null)
-            {
-                currentDisplayedScreen.drawAll();
             }
         }
 

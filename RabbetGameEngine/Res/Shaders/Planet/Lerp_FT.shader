@@ -1,4 +1,4 @@
-﻿//base shader for rendering world terrain and entities with fog.
+﻿//base shader for dynamically rendering world objects with fog, transparency and linear interpolation.
 #shader vertex
 #version 330 core
 layout(location = 0) in vec4 position;
@@ -13,16 +13,20 @@ out vec2 vTexCoord;
 out vec4 vColor;
 out float visibility;//for fog
 
-//matrix for projection transformations.
 uniform mat4 projectionMatrix;
-//matrix for camera transformations.
 uniform mat4 viewMatrix;
+
+uniform mat4[] prevTickModelMatrices;
+uniform mat4[] modelMatrices;
+
+uniform float percentageToNextTick;
+uniform int frame;
 
 void main()
 {
-	vec4 worldPosition = position;
+	mat4 lerpMatrix = prevTickModelMatrices[int(objectID)] + (modelMatrices[int(objectID)] - prevTickModelMatrices[int(objectID)]) * percentageToNextTick;
 
-	vec4 positionRelativeToCam = viewMatrix * worldPosition;
+	vec4 positionRelativeToCam = viewMatrix * lerpMatrix * position;
 
 	gl_Position = projectionMatrix * positionRelativeToCam;
 
@@ -50,10 +54,12 @@ uniform vec3 fogColor;
 void main()
 {
 	vec4 textureColor = texture(uTexture, vTexCoord) * vColor;
-	if (textureColor.a < 0.01F)
+
+	fragColor = mix(vec4(fogColor, textureColor.a), textureColor, visibility);
+	
+	//this avoids alpha sorting issues with fully transparent surfaces
+	if (fragColor.a < 0.01)
 	{
-		discard;//cutout
+		discard;
 	}
-	fragColor.rgb = mix(fogColor, textureColor.rgb, visibility);
-	fragColor.a = 1;
 }

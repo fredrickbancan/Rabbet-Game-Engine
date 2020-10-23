@@ -1,6 +1,6 @@
-﻿
+﻿using OpenTK;
 using RabbetGameEngine.Models;
-using OpenTK;
+
 namespace RabbetGameEngine.SubRendering.GUI
 {
     public class GUIScreenComponent
@@ -8,11 +8,9 @@ namespace RabbetGameEngine.SubRendering.GUI
         private float widthPixels, heightPixels;
         protected Vector2 screenPosAbsolute;
         protected bool hidden = false;
-        private bool hasModel = false;
+        private Model componentQuadModel = null;
         private Matrix4 translationAndScale = Matrix4.Identity;
         private Matrix4 orthographicMatrix = Matrix4.Identity;
-        private ModelDrawable componentQuadModel = null;
-
         public GUIScreenComponent(Vector2 screenPos/*position where 0 is top left and 1 is bottom right*/)
         {
             screenPos.X -= 0.5F;
@@ -28,16 +26,14 @@ namespace RabbetGameEngine.SubRendering.GUI
             heightPixels = height;
         }
 
-        /*Set the renderable model for this component. Should be a 1x1 quad. The modeldrawable will contain the shader and texture.*/
-        public virtual void setModel(ModelDrawable model)
-        {
-            this.componentQuadModel = model;
-            hasModel = componentQuadModel != null;
-        }
-
         public virtual void onTick()
         {
 
+        }
+
+        public virtual void setModel(Model mod)
+        {
+            this.componentQuadModel = mod;
         }
 
         public virtual void onWindowResize()
@@ -51,31 +47,9 @@ namespace RabbetGameEngine.SubRendering.GUI
             translationAndScale = Matrix4.CreateScale(widthPixels, heightPixels, 1) *  Matrix4.CreateTranslation(GameInstance.gameWindowWidth * screenPosAbsolute.X, GameInstance.gameWindowHeight * screenPosAbsolute.Y, -0.01F);
         }
 
-        public virtual void draw()
-        {
-            if (!hidden)
-            {
-                if (hasModel && componentQuadModel != null)
-                {
-                    componentQuadModel.draw(orthographicMatrix, translationAndScale);
-                }
-                else
-                {
-                    Application.warn("An attempt was made to render a null gui screen component model");
-                }
-            }
-        }
-
         public virtual void setHide(bool flag)
         {
             hidden = flag;
-        }
-
-        public virtual void deleteComponent()
-        {
-            componentQuadModel.delete();
-            hasModel = false;
-            componentQuadModel = null;
         }
 
         public virtual Vector2 getScreenPos()

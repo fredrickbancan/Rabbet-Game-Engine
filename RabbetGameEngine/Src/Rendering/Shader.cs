@@ -130,7 +130,7 @@ namespace RabbetGameEngine
             string infoLog = GL.GetShaderInfoLog(id);
             if (infoLog != System.String.Empty)
             {
-                Application.error("Error when compiling shader!\ntype: " + (type == OpenTK.Graphics.OpenGL.ShaderType.VertexShader ? "vertex shader" : "fragment shader") + "\nmessage log: " + infoLog + "\nShader File Path: " + debugShaderPath);
+                Application.error("\n\nError when compiling shader!\ntype: " + (type == OpenTK.Graphics.OpenGL.ShaderType.VertexShader ? "vertex shader" : "fragment shader") + "\nmessage log: " + infoLog + "\nShader File Path: " + debugShaderPath);
                 return 0;
             }
 

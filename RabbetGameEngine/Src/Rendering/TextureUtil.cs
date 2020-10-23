@@ -66,6 +66,12 @@ namespace RabbetGameEngine
             return success;
         }
 
+        public static Texture getTexture(string name)
+        {
+            Texture result = null;
+            tryGetTexture(name, out result);
+            return result;
+        }
         public static int getTextureCount()
         {
             return textures.Count;

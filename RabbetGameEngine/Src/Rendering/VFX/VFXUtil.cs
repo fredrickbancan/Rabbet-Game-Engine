@@ -9,13 +9,13 @@ namespace RabbetGameEngine.VFX
     {
         public static void doExplosionEffect(Planet planet, Vector3 location, float radius, float pitch = 0, float yaw = -90, float roll = 0)
         {
-            VFXBase smoke = new VFXPointCloud(location, CustomColor.darkGrey, (25 - (int)radius / 2) + (int)(radius / 2 * radius / 2), radius / 15, 0.15F, true, false, 2F, 0.8F);
+            VFXBase smoke = new VFXPointCloud(location, CustomColor.darkGrey, (25 - (int)radius / 2) + (int)(radius / 2 * radius / 2), radius / 15, 0.15F, true, true, true, 2F, 0.8F);
 
-            VFXBase sparks = new VFXPointCloud(location, CustomColor.orange, (12 - (int)radius / 4) + (int)(radius / 4 * radius / 4), radius / 15, 0.05F, true, false, 0.75F);
+            VFXBase sparks = new VFXPointCloud(location, CustomColor.orange, (12 - (int)radius / 4) + (int)(radius / 4 * radius / 4), radius / 15, 0.05F, true, true, false, 0.75F);
 
-            VFXBase explosion1 = new VFXPointCloud(location, CustomColor.flame, (128 - (int)radius/2) + (int)(radius/2*radius/2), radius / 15, 0.125F, false, true, 0.2F);
+            VFXBase explosion1 = new VFXPointCloud(location, CustomColor.flame, (128 - (int)radius/2) + (int)(radius/2*radius/2), radius / 15, 0.125F, false, false, true, 0.2F);
 
-            VFXBase explosion2 = new VFXPointCloud(location, CustomColor.ember, (128 - (int)radius/2) + (int)(radius/2*radius/2), radius / 20, 0.125F, true, true, 0.15F);
+            VFXBase explosion2 = new VFXPointCloud(location, CustomColor.ember, (128 - (int)radius/2) + (int)(radius/2*radius/2), radius / 20, 0.125F, true, false, true, 0.15F);
 
             smoke.setYAccel(0.003572F);
             smoke.setExpansionResistance(0.2F);
@@ -38,7 +38,7 @@ namespace RabbetGameEngine.VFX
 
         public static void doSmallSmokePuffEffect(Planet planet, Vector3 location, float pitch = 0, float yaw = -90, float roll = 0)
         {
-            VFXBase smoke = new VFXPointCloud(location, CustomColor.darkGrey, 7, 0.05F, 0.05F, true, false, .5F, 0.8F);
+            VFXBase smoke = new VFXPointCloud(location, CustomColor.darkGrey, 7, 0.05F, 0.05F, true, true, false, .5F, 0.8F);
 
             smoke.setPitch(pitch);
             smoke.setYaw(yaw);
@@ -54,7 +54,7 @@ namespace RabbetGameEngine.VFX
 
         public static void doDebugSmokeEffect(Planet planet)
         {
-            VFXBase smoke = new VFXPointCloud(new Vector3(0, 2F, 0), new CustomColor(Color.DarkGray), 5, 0.5F, 0.5F, true, false, 2F, 0.5F);
+            VFXBase smoke = new VFXPointCloud(new Vector3(0, 2F, 0), new CustomColor(Color.DarkGray), 5, 0.5F, 0.5F, true, true, false, 2F, 0.5F);
             smoke.setExpansionResistance(0.05F);
             smoke.setExpansionVelocity(0.5F);
             planet.spawnVFXInWorld(smoke);

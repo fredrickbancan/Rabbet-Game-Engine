@@ -3,7 +3,6 @@ using OpenTK;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Physics;
-using RabbetGameEngine.SubRendering;
 using RabbetGameEngine.VFX;
 using System;
 using System.Collections.Generic;
@@ -14,92 +13,27 @@ namespace RabbetGameEngine
     /*This class will be the abstraction of any environment constructed for the player and entities to exist in.*/
     public class Planet
     {
-        private ModelDrawable groundModel;
-        private ModelDrawable wallsModel;
-        private ModelDrawable skyboxModel;
-        private Vector3 skyColor;
         private Vector3 fogColor;
         private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
         public Dictionary<int, Entity> entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
-                                                                                // public Dictionary<int, ICollider> entityColliders = new Dictionary<int, ICollider>();// the int is the given ID for the parent entity
         public List<AABB> worldColliders = new List<AABB>();//list of colliders with no parent, ie, walls.
         public List<VFXBase> vfxList = new List<VFXBase>();
+        private Skybox planetSkybox;
         private string wallTextureName = "transparent";
         private string groundTextureName = "wood";
-        private string groundWallShaderName = "EntityWorld_F";
         private Random random;
-        ModelDrawableInstanced test;
 
         public Planet(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
             fogColor = CustomColor.grey.toNormalVec3();
-            skyColor = CustomColor.darkGrey.toNormalVec3();
-            buildSkyBox();
+            planetSkybox = new Skybox(CustomColor.darkGrey.toNormalVec3(), this);
+            SkyboxRenderer.setSkyboxToDraw(planetSkybox);
             generateWorld();
-            Texture tex;
-            TextureUtil.tryGetTexture("transparent", out tex);
-            test = new ModelDrawableInstanced(CubePrefab.copyModelDrawable(), 8138).setTexture(tex);
-            for (int i = 0; i < 8138; i++)
-            {
-                test.addRenderAt(Matrix4.CreateTranslation(i % 16 + 1.5F, i / (16 * 16) + 0.5F, (i / 16) % 16 + 1.5F));
-            }
         }
-
-        public void setSkyColor(Vector3 skyColor)
-        {
-            this.skyColor = skyColor;
-        }
-        public void setFogColor(Vector3 skyColor)
-        {
-            this.fogColor = skyColor;
-        }
-
-        public Vector3 getSkyColor()
-        {
-            return skyColor;
-        } public Vector3 getFogColor()
+        public Vector3 getFogColor()
         {
             return fogColor;
-        }
-
-        /*TODO: INNEFICIENT, Impliment batching of entity models!*/
-        public void drawEntities(Matrix4 viewMatrix, Matrix4 projectionMatrix)//obselete, move to batcher pipeline
-        {
-            foreach (KeyValuePair<int, Entity> ent in entities)
-            {
-                if (ent.Value.getHasModel())
-                {
-                    ent.Value.getEntityModel().draw(viewMatrix, projectionMatrix, fogColor);
-                }
-            }
-            test.draw(viewMatrix, projectionMatrix, fogColor);
-        }
-
-        /*TODO: INNEFICIENT, Impliment batching of VFX models!*/
-        public void drawVFX(Matrix4 viewMatrix, Matrix4 projectionMatrix)
-        {
-            foreach (VFXBase vfx in vfxList)
-            {
-                if (vfx.exists())
-                {
-                    vfx.draw(viewMatrix, projectionMatrix, fogColor);
-                }
-            }
-        }
-
-
-        /*creates simple inverted cube at 0,0,0*/
-        private void buildSkyBox()
-        {
-            Model[] temp = new Model[6];
-            temp[0] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(0, 180, 0), new Vector3(0, 0, 0.5F));//posZ
-            temp[1] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(0, -90, 0), new Vector3(-0.5F, 0, 0));//negX
-            temp[2] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(0, 90, 0), new Vector3(0.5F, 0, 0));//posX
-            temp[3] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(0, 0, 0), new Vector3(0, 0, -0.5F));//negZ
-            temp[4] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(-90, 0, 0), new Vector3(0, 0.5F, 0));//top
-            temp[5] = QuadPrefab.getNewModel().transformVertices(new Vector3(1, 1, 1), new Vector3(90, 0, 0), new Vector3(0, -0.5F, 0));//bottom
-            skyboxModel = QuadCombiner.combineQuadModels(temp, "Skybox", "none");
         }
 
         private void generateWorld()//creates the playground and world colliders
@@ -136,8 +70,6 @@ namespace RabbetGameEngine
 
             //posX face
             unbatchedGroundQuads[4100] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(1, 1, 2)).rotateVertices(new Vector3(0, 0, 90)).translateVertices(new Vector3(1f, 0.5F, 0)).setColor(new Vector4(0.65F, 0.65F, 0.65F, 1.0F));
-            groundModel = QuadCombiner.combineQuadModels(unbatchedGroundQuads, groundWallShaderName, groundTextureName);
-
 
             //build negZ wall
             for (int i = 0; i < 4; i++)
@@ -164,7 +96,6 @@ namespace RabbetGameEngine
             }
 
 
-            wallsModel = QuadCombiner.combineQuadModels(unbatchedWallQuads, groundWallShaderName, wallTextureName);
 
             //adding world colliders
             this.addWorldAABB(new AABB(new Vector3(-(playgroundWidth * 0.5F), -2, -(playgroundLength * 0.5F)), new Vector3(playgroundWidth * 0.5F, 0, playgroundLength * 0.5F)));//AABB for ground
@@ -177,6 +108,8 @@ namespace RabbetGameEngine
 
         public void onTick()
         {
+            planetSkybox.onTick();
+
             tickVFX();
 
             doEntityCollisions();
@@ -289,20 +222,6 @@ namespace RabbetGameEngine
             }
         }
 
-        public ModelDrawable getSkyboxModel()
-        {
-            return skyboxModel;
-        }
-
-        public ModelDrawable getGroundModel()
-        {
-            return groundModel;
-        }
-        public ModelDrawable getWallsModel()
-        {
-            return wallsModel;
-        }
-
         public void spawnEntityInWorld(Entity theEntity)
         {
             entities.Add(entityIDItterator, theEntity);
@@ -330,9 +249,9 @@ namespace RabbetGameEngine
             return vfxList.Count;
         }
 
-        public void onLeavingWorld()
+        public void onLeavingPlanet()
         {
-            test.delete();
+
         }
 
         public Random rand { get => this.random; }

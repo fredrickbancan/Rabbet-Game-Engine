@@ -41,14 +41,6 @@ namespace RabbetGameEngine.Models
             Array.Copy(cubeVertices, verticesCopy, cubeVertices.Length);
             return new Model(verticesCopy, indicesCopy);
         }
-        public static ModelDrawable copyModelDrawable()
-        {
-            Vertex[] verticesCopy = new Vertex[cubeVertices.Length];
-            uint[] indicesCopy = new uint[cubeIndices.Length];
-            Array.Copy(cubeVertices, verticesCopy, cubeVertices.Length);
-            Array.Copy(cubeIndices, indicesCopy, cubeIndices.Length);
-            return new ModelDrawable(shaderName, textureName, verticesCopy, indicesCopy);
-        }
 
     }
 }

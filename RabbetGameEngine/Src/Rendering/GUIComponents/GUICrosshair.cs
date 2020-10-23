@@ -12,26 +12,22 @@ namespace RabbetGameEngine.GUI
       crosshair texture will be gotten.*/
     public class GUICrosshair : GUIScreenComponent
     {
-        private Shader crosshairShader;
         private Texture crosshairTexture;
         private float texutrePixelWidth = 0F;
         private float texutrePixelHeight = 0F;
         private CustomColor crosshairColor = CustomColor.black;
-        public static readonly string shaderName = "GuiCutout";
 
-        public GUICrosshair(CustomColor color,float crosshairSize = 2.0F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0.5F, 0.5F))
+        public GUICrosshair(CustomColor color, float crosshairSize = 2.0F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0.5F, 0.5F))
         {
-            ShaderUtil.tryGetShader(shaderName, out crosshairShader);
             crosshairColor = color;
             setCrosshairTextureAndSize(crosshairType, crosshairSize);
-            setModel(new ModelDrawable(crosshairShader, crosshairTexture, QuadPrefab.getNewModel().setColor(crosshairColor).vertices, QuadPrefab.quadIndices));
+            setModel(QuadPrefab.getNewModel().setColor(crosshairColor));
         }
 
         public GUICrosshair(float crosshairSize = 2.0F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0.5F, 0.5F))
         {
-            ShaderUtil.tryGetShader(shaderName, out crosshairShader);
             setCrosshairTextureAndSize(crosshairType, crosshairSize);
-            setModel(new ModelDrawable(crosshairShader, crosshairTexture, QuadPrefab.getNewModel().setColor(crosshairColor).vertices, QuadPrefab.quadIndices));
+            setModel(QuadPrefab.getNewModel().setColor(crosshairColor));
         }
 
         protected virtual void setCrosshairTextureAndSize(CrosshairType type, float crosshairSize)

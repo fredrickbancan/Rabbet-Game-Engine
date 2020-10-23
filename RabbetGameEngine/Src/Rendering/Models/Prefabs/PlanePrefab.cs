@@ -4,7 +4,6 @@ namespace RabbetGameEngine.Models
 {
     public static class PlanePrefab
     {
-        public static readonly string shaderName = "EntityWorld_F";
         public static readonly string textureName = "Explosion";
 
         public static readonly Vertex[] quadVertices = new Vertex[]
@@ -25,16 +24,10 @@ namespace RabbetGameEngine.Models
         public static Model copyModel()
         {
             Vertex[] verticesCopy = new Vertex[quadVertices.Length];
-            Array.Copy(quadVertices, verticesCopy, quadVertices.Length);
-            return new Model(verticesCopy);
-        }
-        public static ModelDrawable copyModelDrawable()
-        {
-            Vertex[] verticesCopy = new Vertex[quadVertices.Length];
             uint[] indicesCopy = new uint[quadIndices.Length];
             Array.Copy(quadVertices, verticesCopy, quadVertices.Length);
             Array.Copy(quadIndices, indicesCopy, quadIndices.Length);
-            return new ModelDrawable(shaderName, textureName, verticesCopy, indicesCopy);
+            return new Model(verticesCopy, indicesCopy);
         }
     }
 }

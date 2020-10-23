@@ -8,6 +8,7 @@ namespace RabbetGameEngine.SubRendering
     public enum BatchType//do not change order
     {
         none,
+        guiCutout,
         text2D,
         text3D,
         triangles,
@@ -165,5 +166,7 @@ namespace RabbetGameEngine.SubRendering
                 b.delete();
             }
         }
+
+        public static int batchCount { get => batches.Count; }
     }
 }

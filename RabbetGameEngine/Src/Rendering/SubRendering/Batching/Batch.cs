@@ -10,8 +10,8 @@ namespace RabbetGameEngine.SubRendering
     public class Batch
     {
         public static readonly int maxBufferSizeBytes = 2500000;
+        public static readonly int maxIndiciesCount = maxBufferSizeBytes / sizeof(uint);
         public int maxVertexCount = maxBufferSizeBytes / Vertex.vertexByteSize;
-        public int maxIndiciesCount = maxBufferSizeBytes / sizeof(uint);
         public int maxPointCount = maxBufferSizeBytes / PointParticle.pParticleByteSize;
         private VertexArrayObject VAO;
         private Model batchedModel = null;
@@ -77,46 +77,44 @@ namespace RabbetGameEngine.SubRendering
                 case BatchType.none:
                     ShaderUtil.tryGetShader("debug", out batchShader);
                     break;
+                case BatchType.guiCutout:
+                    ShaderUtil.tryGetShader(ShaderUtil.guiCutoutName, out batchShader);
+                    break;
 
                 case BatchType.text2D:
-                    ShaderUtil.tryGetShader("GuiText", out batchShader);
+                    ShaderUtil.tryGetShader(ShaderUtil.text2DName, out batchShader);
                     break;
 
                 case BatchType.text3D:
-                    Application.warn("Unimplimented shader for batch type text3D!, using debug shader instead.");
-                    ShaderUtil.tryGetShader("debug", out batchShader);
+                    ShaderUtil.tryGetShader(ShaderUtil.text3DName, out batchShader);
                     break;
 
                 case BatchType.triangles:
-                    ShaderUtil.tryGetShader("EntityWorld_FNEW", out batchShader);
+                    ShaderUtil.tryGetShader(ShaderUtil.trianglesName, out batchShader);
                     break;
 
                 case BatchType.trianglesTransparent:
-                    ShaderUtil.tryGetShader("EntityWorld_FT", out batchShader);
+                    ShaderUtil.tryGetShader(ShaderUtil.trianglesTransparentName, out batchShader);
                     break;
 
                 case BatchType.lines:
-                    Application.warn("Unimplimented shader for batch type lines!, using debug shader instead.");
-                    ShaderUtil.tryGetShader("debug", out batchShader);
+                    ShaderUtil.tryGetShader(ShaderUtil.linesName, out batchShader);
                     break;
 
                 case BatchType.lerpTriangles:
-                    Application.warn("Unimplimented shader for batch type lerpTriangles!, using debug shader instead.");
-                    ShaderUtil.tryGetShader("debug", out batchShader);
+                    ShaderUtil.tryGetShader(ShaderUtil.lerpTrianglesName, out batchShader);
                     prevTickModelMatrices = new Matrix4[RenderAbility.maxUniformMat4];
                     modelMatrices = new Matrix4[RenderAbility.maxUniformMat4];
                     break;
 
                 case BatchType.lerpTrianglesTransparent:
-                    Application.warn("Unimplimented shader for batch type lerpTrianglesTransparent!, using debug shader instead.");
-                    ShaderUtil.tryGetShader("debug", out batchShader);
+                    ShaderUtil.tryGetShader(ShaderUtil.lerpTrianglesTransparentName, out batchShader);
                     prevTickModelMatrices = new Matrix4[RenderAbility.maxUniformMat4];
                     modelMatrices = new Matrix4[RenderAbility.maxUniformMat4];
                     break;
 
                 case BatchType.lerpLines:
-                    Application.warn("Unimplimented shader for batch type lerpLines!, using debug shader instead.");
-                    ShaderUtil.tryGetShader("debug", out batchShader);
+                    ShaderUtil.tryGetShader(ShaderUtil.lerpLinesName, out batchShader);
                     prevTickModelMatrices = new Matrix4[RenderAbility.maxUniformMat4];
                     modelMatrices = new Matrix4[RenderAbility.maxUniformMat4];
                     break;
@@ -220,10 +218,9 @@ namespace RabbetGameEngine.SubRendering
             }
             else
             {
-                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, maxBufferSizeBytes, batchedModel.vertices);
-
-                VAO.bindIBO();
-                GL.BufferSubData(BufferTarget.ElementArrayBuffer, IntPtr.Zero, maxBufferSizeBytes, batchedModel.indices);
+                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, requestedVerticesCount * Vertex.vertexByteSize, batchedModel.vertices);
+                //TODO: FIX! Buffer sub data of indices extremely slow!
+                GL.BufferSubData(BufferTarget.ElementArrayBuffer, IntPtr.Zero, requestedIndicesCount * sizeof(uint), batchedModel.indices);
             }
         }
 
@@ -256,7 +253,7 @@ namespace RabbetGameEngine.SubRendering
                 batchShader.setUniformMat4FArray("prevTickModelMatrices", prevTickModelMatrices);
             }
 
-            GL.DrawElements(PrimitiveType.Triangles, batchedModel.indices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.Triangles, requestedIndicesCount, DrawElementsType.UnsignedInt, 0);
             return;
         }
 

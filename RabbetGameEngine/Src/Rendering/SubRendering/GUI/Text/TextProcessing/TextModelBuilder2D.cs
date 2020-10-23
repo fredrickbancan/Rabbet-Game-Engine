@@ -20,7 +20,7 @@ namespace RabbetGameEngine.SubRendering.GUI.Text
             Model[] result = new Model[thestrings.Length];
             for(uint i = 0; i < thestrings.Length; i++)
             {
-                result[i] = new Model(convertstringToVertexArray(thestrings[i], font, color, topLeftPixelOrigin, fontSize, screenEdgePadding, alignment, i));
+                result[i] = new Model(convertstringToVertexArray(thestrings[i], font, color, topLeftPixelOrigin, fontSize, screenEdgePadding, alignment, i), QuadCombiner.getIndicesForQuadCount(thestrings[i].Length));
             }
             return result;
         }
@@ -160,67 +160,6 @@ namespace RabbetGameEngine.SubRendering.GUI.Text
             modelVertices[3] = new Vertex(x, yMax, 0, color.X, color.Y, color.Z, color.W, u, vMax);//top left vertex2
 
             return modelVertices;
-        }
-
-
-        /*Combines all the vertex data of all of the text panels, and sends the information to the dynamic model.*/
-        public static void batchAndSubmitTextToDynamicModel(ModelDrawableDynamic dynamicModel, Dictionary<string, GUITextPanel> textPanels, uint maxCharCount)
-        {
-            Vertex[] fillerVertexArray = new Vertex[maxCharCount * 4];//creating array big enough to fill max char count
-            if (textPanels.Count > 0)
-            {
-                //combine all models
-                Model[] combinedModels = null;
-
-                //count total models in all panels excluding hidden panels
-                int totalModelCount = 0;
-                foreach (GUITextPanel panel in textPanels.Values)
-                {
-                    if (!panel.hidden)
-                    {
-                        totalModelCount += panel.models.Length;
-                    }
-                }
-
-                combinedModels = new Model[totalModelCount];
-
-                //combine all models from all panels excluding hidden panels
-                int modelIndex = 0;
-                foreach (GUITextPanel panel in textPanels.Values)
-                {
-                    for (int i = 0; i < panel.models.Length; i++)
-                    {
-                        if (!panel.hidden)
-                        {
-                            combinedModels[modelIndex + i] = panel.models[i];
-                        }
-                    }
-
-                    if (!panel.hidden)
-                    {
-                        modelIndex += panel.models.Length;
-                    }
-                }
-
-                //get and combine all vertex arrays and submit them to model
-                Vertex[] combinedVertices = QuadCombiner.combineData(combinedModels);
-
-                if (combinedVertices.Length > maxCharCount * 4)
-                {
-                    Application.error("TextRenderer2D has gone over its provided limit of characters!");
-                }
-                else
-                {
-                    //fill combined vertices with Zero values untill it reaches the defined maximum character limit * 4
-                    //This must be done to override the old data in the vertex buffer
-                    Array.Copy(combinedVertices, fillerVertexArray, combinedVertices.Length);
-                }
-                dynamicModel.submitData(fillerVertexArray);
-            }
-            else
-            {
-                dynamicModel.submitData(fillerVertexArray);//just fill buffer with empties to clear screen of text
-            }
         }
     }
 }

@@ -2,11 +2,10 @@
 {
     public class EntityTankProjectileModel : EntityModel
     {
-        private static string shaderName = "EntityWorld_F";
         private static string textureName = "Camo";
-        private static string modelName = @"Tank\TankProjectile.obj";
+        private static string modelName = "TankProjectile";
 
-        public EntityTankProjectileModel(Entity parent) : base (parent, shaderName, textureName, modelName)
+        public EntityTankProjectileModel(Entity parent) : base (parent, textureName, ModelUtil.getModel(modelName))
         {
         }
     }

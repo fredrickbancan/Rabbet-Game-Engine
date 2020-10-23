@@ -32,6 +32,30 @@ namespace RabbetGameEngine
             initializeStatic(vertices, indices);
         }
 
+        private VertexArrayObject(PointParticle[] points)
+        {
+            this.primType = PrimitiveType.Points;
+            usesIndices = false;
+            this.batchType = BatchType.none;
+            dynamic = false;
+
+            vbo = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+            GL.BufferData(BufferTarget.ArrayBuffer, points.Length * PointParticle.pParticleByteSize, points, BufferUsageHint.StaticDraw);
+            
+            GL.EnableVertexAttribArray(0);
+            GL.VertexAttribPointer(0, PointParticle.positionLength, VertexAttribPointerType.Float, false, PointParticle.pParticleByteSize, PointParticle.positionOffset);
+
+            GL.EnableVertexAttribArray(1);
+            GL.VertexAttribPointer(1, PointParticle.colorLength, VertexAttribPointerType.Float, false, PointParticle.pParticleByteSize, PointParticle.colorOffset);
+
+            GL.EnableVertexAttribArray(2);
+            GL.VertexAttribPointer(2, PointParticle.radiusLength, VertexAttribPointerType.Float, false, PointParticle.pParticleByteSize, PointParticle.radiusOffset);
+
+            GL.EnableVertexAttribArray(4);
+            GL.VertexAttribPointer(4, PointParticle.aocLength, VertexAttribPointerType.Float, false, PointParticle.pParticleByteSize, PointParticle.aocOffset);
+        }
+
         /// <summary>
         /// This constructor is for use when creating a vertex array object for DYNAMIC render objects
         /// </summary>
@@ -123,9 +147,9 @@ namespace RabbetGameEngine
         /// <param name="vertices">The static vertices</param>
         /// <param name="indices">The static indices</param>
         /// <returns>a VAO object for use with static drawing of Points provided</returns>
-        public static VertexArrayObject createStaticPoints(Vertex[] vertices)
+        public static VertexArrayObject createStaticPoints(PointParticle[] points)
         {
-            return new VertexArrayObject(PrimitiveType.Points, vertices, null);
+            return new VertexArrayObject(points);
         }
 
         /// <summary>
@@ -157,6 +181,9 @@ namespace RabbetGameEngine
 
             GL.EnableVertexAttribArray(2);
             GL.VertexAttribPointer(2, Vertex.uvLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.uvOffset);
+           
+            GL.EnableVertexAttribArray(4);
+            GL.VertexAttribPointer(4, Vertex.objectIDLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.objectIDOffset);
             hasInitialized = true;
         }
 

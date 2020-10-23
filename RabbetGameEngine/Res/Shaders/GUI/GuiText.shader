@@ -1,8 +1,9 @@
 ﻿#shader vertex
 #version 330 core
 layout(location = 0) in vec4 position;
-layout(location = 1) in vec4 Color;
+layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 texCoord;
+layout(location = 3) in float objectID;
 
 out vec4 vColor;
 out vec2 fTexCoord;
@@ -10,7 +11,7 @@ out vec2 fTexCoord;
 void main()
 {
 	gl_Position = position;
-	vColor = Color;
+	vColor = vertexColor;
 	fTexCoord = texCoord;
 }
 

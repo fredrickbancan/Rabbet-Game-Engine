@@ -2,25 +2,26 @@
 #shader vertex
 #version 330 core
 layout(location = 0) in vec4 position;
+layout(location = 1) in vec4 vertexColor;
+layout(location = 2) in vec2 texCoord;
+layout(location = 3) in float objectID;
 
 //matrix for projection transformations.
 uniform mat4 projectionMatrix;
 //matrix for camera transformations.
 uniform mat4 viewMatrix;
-//matrix for model transformations. All transformations in this matrix are relative to the model origin.
-uniform mat4 modelMatrix;
 
 out vec4 worldSpacePos;
 
 void main()
 {
-	worldSpacePos = modelMatrix * position;
+	worldSpacePos = position;
 
 	mat4 viewMatrixNoTranslation = viewMatrix;//removing translation values from view matrix, to make skybox follow player camera
 	viewMatrixNoTranslation[3][0] = 0.0F;
 	viewMatrixNoTranslation[3][1] = 0.0F;
 	viewMatrixNoTranslation[3][2] = 0.0F;
-	gl_Position = projectionMatrix * viewMatrixNoTranslation * modelMatrix * position;
+	gl_Position = projectionMatrix * viewMatrixNoTranslation * position;
 }
 
 /*#############################################################################################################################################################################################*/

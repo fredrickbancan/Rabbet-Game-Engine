@@ -1,12 +1,13 @@
 ﻿using OpenTK;
 using RabbetGameEngine.Models;
-using System;
+using RabbetGameEngine.SubRendering;
+
 namespace RabbetGameEngine.VFX
 {
     /*This class is a spawnable sort of entity which can be rendered as a certain provided effect.
       Can be a particle, sprite, ect. This class will just hold the position, velocity and tick update code.
       VFX objects are treated as disposable and should not last more than a few seconds.*/
-    public class VFXBase : PositionalObject, IDisposable
+    public class VFXBase : PositionalObject
     {
         protected bool disposed = false;
         protected float scale = 1;//scale of the VFX
@@ -18,19 +19,21 @@ namespace RabbetGameEngine.VFX
         protected float scaleZModifyer = 1;
         protected float maxExistingTicks;
         protected int ticksExisted;
-        protected ModelDrawable vfxModel;
-        protected Matrix4 prevTickModelMatrix;
-        protected Matrix4 modelMatrix;
+        protected Model vfxModel;
         protected bool removalFlag = false;// true if this entity should be removed in the next tick
         protected bool shouldDeleteModel = false;// true if this vfx is using a model loaded from file. If so, it should NOT be deleted!
-
-        public VFXBase(Vector3 pos, float initialScale, string shaderDir, string textureDir, string modelDir, float maxExistingSeconds = 1) : base(pos)
+        protected BatchType batchType;
+        public VFXBase(Vector3 pos, float initialScale,  string textureName, Model baseModel, float maxExistingSeconds = 1, BatchType type = BatchType.triangles) : base(pos)
         {
+            this.batchType = type;
             this.scale = initialScale;
-            this.vfxModel = ModelUtil.createModelDrawable(shaderDir, textureDir, modelDir);
             maxExistingTicks = TicksAndFps.getNumOfTicksForSeconds(maxExistingSeconds);
-            updateVFXModel();
-            updateVFXModel();
+            this.vfxModel = baseModel;
+            if (vfxModel != null)
+            {
+                updateVFXModel();
+                updateVFXModel();
+            }
         }
 
         /*called every tick*/
@@ -48,22 +51,12 @@ namespace RabbetGameEngine.VFX
         /*Called every tick can be overridden*/
         protected virtual void updateVFXModel()
         {
-            prevTickModelMatrix = modelMatrix;
-            scaleVelocity += scaleAcceleration - scaleResistance * scaleVelocity; //decrease expansion rate
-            scale += scaleVelocity;
-            modelMatrix = Matrix4.CreateScale(new Vector3(scale * scaleXModifyer, scale * scaleYModifyer, scale * scaleZModifyer)) * MathUtil.createRotation(new Vector3((float)pitch, -(float)yaw, (float)roll)) * Matrix4.CreateTranslation(pos);
-        }
-
-        /*draws this vfx, can be overridden*/
-        public virtual void draw(Matrix4 viewMatrix, Matrix4 projectionMatrix, Vector3 fogColor)
-        {
-            if (vfxModel != null && !removalFlag)
+            if (vfxModel != null)
             {
-                vfxModel.draw(viewMatrix, projectionMatrix, prevTickModelMatrix + (modelMatrix - prevTickModelMatrix) * TicksAndFps.getPercentageToNextTick(), fogColor);
-            }
-            else
-            {
-                Application.warn("An attempt was made to render a null or disposed Base VFX.");
+                vfxModel.prevModelMatrix = vfxModel.modelMatrix;
+                scaleVelocity += scaleAcceleration - scaleResistance * scaleVelocity; //decrease expansion rate
+                scale += scaleVelocity;
+                vfxModel.modelMatrix = Matrix4.CreateScale(new Vector3(scale * scaleXModifyer, scale * scaleYModifyer, scale * scaleZModifyer)) * MathUtil.createRotation(new Vector3((float)pitch, -(float)yaw, (float)roll)) * Matrix4.CreateTranslation(pos);
             }
         }
 
@@ -94,32 +87,12 @@ namespace RabbetGameEngine.VFX
         {
             scaleZModifyer = modifyer;
         }
+
         public virtual void ceaseToExist()
         {
-            Dispose();
+            removalFlag = true;
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!removalFlag)
-            {
-                removalFlag = true;
-                if(shouldDeleteModel)
-                {
-                    vfxModel.delete();
-                }
-            }
-        }
-        protected virtual void setShouldDeleteModelOnDeath(bool flag)
-        {
-            shouldDeleteModel = flag;
-        }
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-        
         public virtual bool exists()
         {
             return !removalFlag;

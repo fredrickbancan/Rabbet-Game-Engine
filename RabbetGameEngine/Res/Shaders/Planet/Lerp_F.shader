@@ -1,9 +1,10 @@
-﻿//base shader for rendering world terrain and entities with fog.
+﻿//base shader for dynamically rendering world objects with fog and linear interpolation.
 #shader vertex
 #version 330 core
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 texCoord;
+layout(location = 3) in float objectID;
 
 uniform float fogDensity = 0.0075;
 uniform float fogGradient = 2.5;
@@ -12,18 +13,20 @@ out vec2 vTexCoord;
 out vec4 vColor;
 out float visibility;//for fog
 
-//matrix for projection transformations.
 uniform mat4 projectionMatrix;
-//matrix for camera transformations.
 uniform mat4 viewMatrix;
-//matrix for model transformations. All transformations in this matrix are relative to the model origin.
-uniform mat4 modelMatrix;
+
+uniform mat4[] prevTickModelMatrices;
+uniform mat4[] modelMatrices;
+
+uniform float percentageToNextTick;
+uniform int frame;
 
 void main()
 {
-	vec4 worldPosition = modelMatrix * position;
-
-	vec4 positionRelativeToCam = viewMatrix * worldPosition;
+	mat4 lerpMatrix = prevTickModelMatrices[int(objectID)] + (modelMatrices[int(objectID)] - prevTickModelMatrices[int(objectID)]) * percentageToNextTick;
+	
+	vec4 positionRelativeToCam = viewMatrix * lerpMatrix * position;
 
 	gl_Position = projectionMatrix * positionRelativeToCam;
 

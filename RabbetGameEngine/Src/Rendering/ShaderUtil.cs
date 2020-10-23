@@ -7,6 +7,20 @@ namespace RabbetGameEngine
       throughout the game without having to be re-loaded and re-allocated.*/
     public static class ShaderUtil
     {
+        public static readonly string guiCutoutName = "GuiCutout";
+        public static readonly string text2DName = "GuiText";
+        public static readonly string text3DName = "";
+        public static readonly string trianglesName = "Static_F";
+        public static readonly string linesName = "Static_F";
+        public static readonly string pointsName = "StaticPParticles_F";
+        public static readonly string pointsTransparentName = "StaticPParticles_FT";
+        public static readonly string lerpPointsName = "LerpPParticles_F";
+        public static readonly string lerpTrianglesName = "Lerp_F";
+        public static readonly string lerpLinesName = "Lerp_F";
+        public static readonly string lerpPointsTransparentName = "LerpPParticles_FT";
+        public static readonly string lerpTrianglesTransparentName = "Lerp_FT";
+        public static readonly string trianglesTransparentName = "Static_FT";
+
         private static Dictionary<string, Shader> shaders = null;
         public static void loadAllFoundShaderFiles()
         {
@@ -50,6 +64,13 @@ namespace RabbetGameEngine
                 Application.error("ShaderUtil could not find shader named: " + name + " in global list, assigning debug shader.");
             }
             return success;
+        }
+
+        public static Shader getShader(string name)
+        {
+            Shader result = null;
+            tryGetShader(name, out result);
+            return result;
         }
 
         public static int getShaderCount()

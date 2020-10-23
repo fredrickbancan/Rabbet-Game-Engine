@@ -4,13 +4,11 @@ using RabbetGameEngine.Debugging;
 using RabbetGameEngine.GUI;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.SubRendering;
-using RabbetGameEngine.VFX;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace RabbetGameEngine
 {
-    //TODO: REWORK SHADERS FOR NEWLY IMPLIMENTED BATCHING PIPELINE
-
     /*This class will be responsable for most of the games rendering requests. It will then send the requests to the suitable sub renderers.
       e.g, when the game requests text to be rendered on the screen, the renderer will send a request to the TextRenderer2D.
       e.g, when the game requests entity models to be rendered in the world, the renderer will send a request to the model draw function.
@@ -22,7 +20,12 @@ namespace RabbetGameEngine
         public static readonly bool useOffScreenBuffer = false;
         private static int renderFrame;//used to animate textures (noise texture for now)
         private static Rectangle preFullScreenSize;//used to store the window dimentions before going into full screen
-
+       
+        /// <summary>
+        /// A list of all requested
+        /// </summary>
+        private static Dictionary<string, StaticRenderObject> staticDraws;
+        
         /*Called before any rendering is done*/
         public static void init()
         {
@@ -35,7 +38,6 @@ namespace RabbetGameEngine
             Application.debugPrint("Loaded " + ShaderUtil.getShaderCount() + " shaders.");
             Application.debugPrint("Loaded " + TextureUtil.getTextureCount() + " textures.");
             Application.debugPrint("Loaded " + ModelUtil.getModelCount() + " models.");
-
             GL.Viewport(preFullScreenSize = GameInstance.get.ClientRectangle);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
@@ -45,7 +47,9 @@ namespace RabbetGameEngine
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.LineWidth(3);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
+            staticDraws = new Dictionary<string, StaticRenderObject>();
             if(useOffScreenBuffer) OffScreen.init();
+            SkyboxRenderer.init();
             Application.debugPrint("\n\n\n_______SYSTEM RENDERING CAPABILITIES_______");
             RenderAbility.setMaxUniformComponents(GL.GetInteger(GetPName.MaxVertexUniformComponents));
         }
@@ -55,7 +59,7 @@ namespace RabbetGameEngine
         {
             GL.Viewport(GameInstance.get.ClientRectangle);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
-            GUIHandler.onWindowResize();
+            GUIManager.onWindowResize();
         }
 
         /*called once per frame*/
@@ -73,19 +77,15 @@ namespace RabbetGameEngine
 
         public static void onTickStart()
         {
+            Profiler.beginEndProfile("batching");
             BatchManager.updateAll();
+            Profiler.beginEndProfile("batching");
         }
         public static void onTickEnd()
         {
+            Profiler.beginEndProfile("batching");
             BatchManager.prepareAll();
-        }
-        public static void renderAll()
-        {
-            preRender();
-            renderWorld();
-            BatchManager.drawAll(projectionMatrix, GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
-            GUIHandler.drawCurrentGUIScreen();
-            postRender();
+            Profiler.beginEndProfile("batching");
         }
 
         /*Called before all draw calls*/
@@ -93,21 +93,18 @@ namespace RabbetGameEngine
         {
             if (useOffScreenBuffer) OffScreen.prepareToRenderToOffScreenTexture();
             GL.Clear(ClearBufferMask.DepthBufferBit);
+            privateTotalDrawCallCount = 0;
+        }
+
+        public static void renderAll()
+        {
+            preRender();
+            SkyboxRenderer.drawSkybox(projectionMatrix, GameInstance.get.thePlayer.getViewMatrix());
+            drawAllStaticRenderObjects();
+            BatchManager.drawAll(projectionMatrix, GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
+            postRender();
         }
         
-        private static void renderWorld()//TODO: obselete,  impliment batcher pipeline
-        {
-            privateTotalDrawCallCount = 0;
-            GameInstance.get.currentPlanet.getSkyboxModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getSkyColor(), GameInstance.get.currentPlanet.getFogColor());
-            if(GameSettings.drawHitboxes)HitboxRenderer.renderAll(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
-            GameInstance.get.currentPlanet.getGroundModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());
-            GameInstance.get.currentPlanet.getWallsModel().draw(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix, GameInstance.get.currentPlanet.getFogColor());
-            GameInstance.get.currentPlanet.drawEntities(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
-            GameInstance.get.currentPlanet.drawVFX(GameInstance.get.thePlayer.getViewMatrix(), projectionMatrix);
-        }
-
-
-
         /*Called after all draw calls*/
         private static void postRender()
         {
@@ -117,24 +114,82 @@ namespace RabbetGameEngine
             renderFrame %= 4096;
         }
 
-        /*render requests will add a new entry to a suitable batch*/
-        public static void requestRenderObject(PositionalObject obj, Model viewModel, uint[] indices, BatchType BatchType)
+        public static void addStaticDrawTriangles(string name, string textureName, string shaderName, Model data)
         {
+            if (staticDraws.TryGetValue(name, out StaticRenderObject s))
+            {
+                s.delete();
+                staticDraws.Remove(name);
+            }
+            staticDraws.Add(name, StaticRenderObject.createSROTriangles(textureName, shaderName, data));
         }
 
-        public static void requestRenderObject(PositionalObject obj, ModelDrawable viewModel, BatchType BatchType)
+        public static void addStaticDrawTriangles(string name, string textureName, Model data)
         {
+            if (staticDraws.TryGetValue(name, out StaticRenderObject s))
+            {
+                s.delete();
+                staticDraws.Remove(name);
+            }
+            staticDraws.Add(name, StaticRenderObject.createSROTriangles(textureName, ShaderUtil.trianglesName, data));
         }
 
-        public static void requestRenderVFX(VFXBase obj, ModelDrawable viewModel, BatchType BatchType)
+        public static void addStaticDrawLines(string name, string textureName, string shaderName, Model data)
         {
+            if (staticDraws.TryGetValue(name, out StaticRenderObject s))
+            {
+                s.delete();
+                staticDraws.Remove(name);
+            }
+            staticDraws.Add(name, StaticRenderObject.createSROLines(textureName, shaderName, data));
         }
 
-        public static int getAndResetTotalDrawCount()
+        public static void addStaticDrawLines(string name, string textureName, Model data)
         {
-            int result = privateTotalDrawCallCount;
-            privateTotalDrawCallCount = 0;
-            return result;
+            if (staticDraws.TryGetValue(name, out StaticRenderObject s))
+            {
+                s.delete();
+                staticDraws.Remove(name);
+            }
+            staticDraws.Add(name, StaticRenderObject.createSROLines(textureName, ShaderUtil.linesName, data));
+        }
+
+        public static void addStaticDrawPoints(string name, string shaderName, PointCloudModel data)
+        {
+            if (staticDraws.TryGetValue(name, out StaticRenderObject s))
+            {
+                s.delete();
+                staticDraws.Remove(name);
+            }
+            staticDraws.Add(name, StaticRenderObject.createSROPoints(shaderName, data));
+        }
+
+        public static void addStaticDrawPoints(string name, PointCloudModel data)
+        {
+            if (staticDraws.TryGetValue(name, out StaticRenderObject s))
+            {
+                s.delete();
+                staticDraws.Remove(name);
+            }
+            staticDraws.Add(name, StaticRenderObject.createSROPoints(ShaderUtil.lerpPointsName, data));
+        }
+
+        public static void removeStaticDraw(string name)
+        {
+            if (staticDraws.TryGetValue(name, out StaticRenderObject s))
+            {
+                s.delete();
+                staticDraws.Remove(name);
+            }
+        }
+
+        private static void drawAllStaticRenderObjects()
+        {
+            foreach(StaticRenderObject s in staticDraws.Values)
+            {
+                s.draw(projectionMatrix, GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
+                totalDraws++;
+            }
         }
 
         public static void onToggleFullscreen()
@@ -155,10 +210,13 @@ namespace RabbetGameEngine
         /*deletes all loaded opengl assets*/
         public static void onClosing()
         {
+            foreach (StaticRenderObject s in staticDraws.Values)
+            {
+                s.delete();
+            }
             BatchManager.deleteAll();
             ShaderUtil.deleteAll();
             TextureUtil.deleteAll();
-            ModelUtil.deleteAll();
             OffScreen.onClose();
         }
 

@@ -46,21 +46,14 @@ namespace RabbetGameEngine.Models
         public static readonly uint[] indices = QuadCombiner.getIndicesForQuadCount(6);
 
         /*generates a new model using copies of this models arrays.*/
-        public static Model getNewModel()
-        {
-            Vertex[] verticesCopy = new Vertex[vertices.Length];
-            Array.Copy(vertices, verticesCopy, vertices.Length);
-            return new Model(verticesCopy).translateVertices(new Vector3(0, 0.5F, 0));
-        }
-        public static ModelDrawable getNewModelDrawable()
+        public static Model getModelCopy()
         {
             Vertex[] verticesCopy = new Vertex[vertices.Length];
             uint[] indicesCopy = new uint[indices.Length];
             Array.Copy(vertices, verticesCopy, vertices.Length);
             Array.Copy(indices, indicesCopy, indices.Length);
-            return (ModelDrawable)new ModelDrawable(shaderName, "debug", verticesCopy, indicesCopy).translateVertices(new Vector3(0, 0.5F, 0));
+            return new Model(verticesCopy, indicesCopy).translateVertices(new Vector3(0, 0.5F, 0));
         }
-
 
     }
 }

@@ -1,65 +1,55 @@
-﻿//Shader for rendering point particles with transparency
+﻿//shader for rendering point particles with transparency
 #shader vertex
-#version 330 
-
+#version 330
 layout(location = 0) in vec4 position;
-layout(location = 1) in vec4 vertexColor;
-layout(location = 2) in vec2 texCoord;
+layout(location = 1) in vec4 pointColor;
+layout(location = 2) in float radius;
+layout(location = 3) in float aoc;
+
 
 uniform float fogDensity = 0.0075;
 const float fogGradient = 2.5;
 
 out vec4 vColor;
-out float visibility;//for fog
+out float visibility;
 
-//matrix for projection transformations.
 uniform mat4 projectionMatrix;
-//matrix for camera transformations.
 uniform mat4 viewMatrix;
-//matrix for model transformations. All transformations in this matrix are relative to the model origin.
-uniform mat4 modelMatrix;
 //vector of viewport dimensions
 uniform vec2 viewPortSize;
-
-uniform float pointRadius = 0.1;
-float positionResolution = 256.0;
+uniform float percentageToNextTick;
+uniform int frame;
+out float fAoc;
 void main()
 {
-    vec4 worldPosition = modelMatrix * position;
-    vec4 positionRelativeToCam = viewMatrix * worldPosition;
+    vec4 positionRelativeToCam = viewMatrix * position;
     gl_Position = projectionMatrix * positionRelativeToCam;
 
     //keeps the point size consistent with distance AND resolution.
-    gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * pointRadius / gl_Position.w;//TODO: this does not take into account aspect ratio and can cause points to be elipsical in shape.
-
-    //position jitter for retro feel
-   // float aspectRatio = viewPortSize.X / viewPortSize.Y;
-   // gl_Position.X = floor(gl_Position.X * (positionResolution / gl_Position.w)) / (positionResolution / gl_Position.w);
-  //  gl_Position.Y = floor(gl_Position.Y * (positionResolution / (gl_Position.w * aspectRatio))) / (positionResolution / (gl_Position.w  * aspectRatio));
+    gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * radius / gl_Position.w;//TODO: this does not take into account aspect ratio and can cause points to be elipsical in shape.
 
     float distanceFromCam = length(positionRelativeToCam.xyz);
     visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));
     visibility = clamp(visibility, 0.0, 1.0);
 
-    vColor = vertexColor;
+    vColor = pointColor;
+    fAoc = aoc;
 }
 
 
 /*#############################################################################################################################################################################################*/
-
 #shader fragment
 #version 330
 
-layout(location = 0) out vec4 color;
+layout(location = 0) out vec4 fragColor;
 in float visibility;
 in vec4 vColor;
+in float fAoc;
 
-uniform int renderPass = 0;
 uniform vec3 fogColor;
-uniform bool aoc = false;
-uniform vec2 viewPortSize;
-uniform int frame = 0;
-float ambientOcclusion;
+
+
+float ambientOcclusion;//variable for applying a shadowing effect towards the edges of the point to give the illusion of a sphereical shape
 
 void makeCircle()
 {
@@ -73,7 +63,7 @@ void makeCircle()
     }
 
     //calc ambient occlusion for circle
-    if(aoc)
+    if(bool(fAoc))
     ambientOcclusion = sqrt(1.0 - coordLength);
 }
 
@@ -83,7 +73,7 @@ void main()
     makeCircle();
 
     vec4 colorModified = vColor;
-    if (aoc)
+    if (bool(fAoc))
     {
         //add ambient occlusion shading
         colorModified.r *= ambientOcclusion;
@@ -91,8 +81,8 @@ void main()
         colorModified.b *= ambientOcclusion;
     }
 
-    color = mix(vec4(fogColor, colorModified.a), colorModified, visibility);
-    if (color.a < 0.01)
+    fragColor = mix(vec4(fogColor, colorModified.a), colorModified, visibility);
+    if (fragColor.a < 0.01)
     {
         discard;
     }

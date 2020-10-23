@@ -8,12 +8,11 @@ namespace RabbetGameEngine.Models
       re-load them each time they are used.*/
     public static class ModelUtil
     {
-
-        private static Dictionary<string, ModelDrawable> models = null;
+        private static Dictionary<string, Model> models = null;
         public static void loadAllFoundModelFiles()
         {
-            models = new Dictionary<string, ModelDrawable>();
-            models.Add("debug", DefaultDebugModel.getNewModelDrawable());
+            models = new Dictionary<string, Model>();
+            models.Add("debug", DefaultDebugModel.getModelCopy());
             loadAllModelsRecursive(ResourceUtil.getOBJFileDir());
         }
 
@@ -37,13 +36,13 @@ namespace RabbetGameEngine.Models
 
         private static void tryAddNewModel(string modelDir)
         {
-            string shaderName = modelDir.Replace(ResourceUtil.getOBJFileDir(), "");//removes directory
-            ModelDrawable addingModel = OBJLoader.loadModelDrawableFromObjFile(modelDir);
+            string shaderName = Path.GetFileName(modelDir).Replace(".obj", "");//removes directory//removes directory
+            Model addingModel = OBJLoader.loadModelFromObjFile(modelDir);
             models.Add(shaderName, addingModel);
         }
 
         /*Returns true if the requested Model was found in the global list*/
-        public static bool tryGetModel(string name, out ModelDrawable model)
+        public static bool tryGetModel(string name, out Model model)
         {
             bool success = models.TryGetValue(name, out model);
             if (!success)
@@ -54,24 +53,11 @@ namespace RabbetGameEngine.Models
             return success;
         }
 
-        /*attempts to create a modeldrawable from the provided names*/
-        public static ModelDrawable createModelDrawable(string shaderName, string textureName, string modelName)
+        
+        public static Model getModel(string modelName)
         {
-            if(modelName == "none")
-            {
-                return null;
-            }
-            ModelDrawable result;
-            if(tryGetModel(modelName, out result))
-            {
-                Shader shader;
-                ShaderUtil.tryGetShader(shaderName, out shader);
-                result.setShader(shader);
-
-                Texture tex;
-                TextureUtil.tryGetTexture(textureName, out tex);
-                result.setTexture(tex);
-            }
+            Model result;
+            tryGetModel(modelName, out result);
             return result;
         }
 
@@ -79,14 +65,6 @@ namespace RabbetGameEngine.Models
         public static int getModelCount()
         {
             return models.Count;
-        }
-
-        public static void deleteAll()
-        {
-            foreach(ModelDrawable model in models.Values)
-            {
-                model.delete();
-            }
         }
     }
 }

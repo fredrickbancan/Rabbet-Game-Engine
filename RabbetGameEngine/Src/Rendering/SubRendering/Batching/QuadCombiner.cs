@@ -8,14 +8,6 @@ namespace RabbetGameEngine.SubRendering
     static class QuadCombiner
     {
 
-        /*Batches together models made of quads for being rendered in 3D*/
-        public static ModelDrawable combineQuadModels(Model[] quadModels, string shaderName, string textureName)
-        {
-            Vertex[] newVertices = combineData(quadModels);
-
-            return new ModelDrawable(shaderName, textureName, newVertices, getIndicesForQuadCount(newVertices.Length / 4));
-        }
-
         /*Combines all the data in the model array and outputs the combined ordered arrays.*/
         public static Vertex[] combineData(Model[] modelsToCombine)
         {

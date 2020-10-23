@@ -28,10 +28,6 @@ namespace RabbetGameEngine
 
         public override void onFrame()
         {
-            if (hasModel && entityModel.exists())
-            {
-                entityModel.onFrame();
-            }
             base.onFrame();
         }
 
@@ -43,16 +39,10 @@ namespace RabbetGameEngine
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             if (isFlying) { setYAccel(0); } else { setYAccel(-gravity); }
             if (velocity.Y != 0) isGrounded = false;//simple detection of being on the ground. Very basic.
+            
             if (hasModel)
             {
-                if (entityModel.exists())
-                {
-                    updateModel();
-                }
-                else
-                {
-                    hasModel = false;
-                }
+                updateModel();
             }
             
         }
@@ -103,7 +93,7 @@ namespace RabbetGameEngine
         }
         public virtual bool getHasModel()
         {
-            return hasModel && entityModel != null && entityModel.exists();
+            return hasModel && entityModel != null;
         }
 
         public virtual EntityModel getEntityModel()

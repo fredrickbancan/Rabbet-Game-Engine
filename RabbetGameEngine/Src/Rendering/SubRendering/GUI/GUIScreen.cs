@@ -1,4 +1,5 @@
-﻿using RabbetGameEngine.GUI.Text;
+﻿using RabbetGameEngine.Debugging;
+using RabbetGameEngine.GUI.Text;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.SubRendering.GUI.Text;
 using System.Collections.Generic;
@@ -11,10 +12,10 @@ namespace RabbetGameEngine.SubRendering.GUI
     {
         private Dictionary<string, GUIScreenComponent> components = new Dictionary<string, GUIScreenComponent>();//all of the gui related components in this screen, such as crosshairs, health bars, menus ect. Each component can be individually hidden, changed or removed.
         private Dictionary<string, GUITextPanel> screenTextPanels = new Dictionary<string, GUITextPanel>();
-        private ModelDrawableDynamic screenTextModel;
         private int preHideWindowWidth;
         private int preHideWindowHeight;
         private FontFace screenFont;
+        private Texture fontTexture;
         private bool wholeScreenHidden = false;
         private uint maxCharCount;
         public string screenName = "";
@@ -25,18 +26,28 @@ namespace RabbetGameEngine.SubRendering.GUI
             {
                 Application.error("GUIScreen " + screenName + " could not load its provided font: " + textFont + ", it will have a null font!");
             }
+            if(!TextureUtil.tryGetTexture(textFont, out fontTexture))
+            {
+                Application.error("GUIScreen " + screenName + " could not a texture for its provided font: " + textFont + ", it will have a null font texture!");
+            }
             this.screenName = screenName;
             this.maxCharCount = maxCharCount;
-            screenTextModel = new ModelDrawableDynamic(TextUtil.textShaderName, TextUtil.getTextureNameForScreenFont(screenFont), QuadCombiner.getIndicesForQuadCount((int)maxCharCount), (int)maxCharCount * 4);
         }
 
-        public void buildScreenTextModel()
+        public void buildAndRequestTextRender()
         {
+            Profiler.beginEndProfile("textBuild");
             foreach(GUITextPanel panel in screenTextPanels.Values)
             {
-                panel.buildOrRebuild();
+                panel.build();
+
+                if(!panel.hidden)
+                foreach(Model mod in panel.models)
+                {
+                    Renderer.requestRender(BatchType.text2D, fontTexture, mod);
+                }
             }
-            TextModelBuilder2D.batchAndSubmitTextToDynamicModel(screenTextModel, screenTextPanels, maxCharCount);
+            Profiler.beginEndProfile("textBuild");
         }
 
         /*Add new or change already existing gui component*/
@@ -44,7 +55,6 @@ namespace RabbetGameEngine.SubRendering.GUI
         {
             if(components.TryGetValue(name, out GUIScreenComponent comp))
             {
-                comp.deleteComponent();
                 components.Remove(name);
             }
 
@@ -61,9 +71,9 @@ namespace RabbetGameEngine.SubRendering.GUI
             else
             {
                 textPanel.setFont(this.screenFont);
-                textPanel.buildOrRebuild();
+                textPanel.build();
                 screenTextPanels.Add(name, textPanel);
-                buildScreenTextModel();
+                buildAndRequestTextRender();
             }
         }
 
@@ -116,7 +126,6 @@ namespace RabbetGameEngine.SubRendering.GUI
         {
             if (components.TryGetValue(name, out GUIScreenComponent comp))
             {
-                comp.deleteComponent();
                 components.Remove(name);
             }
         }
@@ -125,7 +134,7 @@ namespace RabbetGameEngine.SubRendering.GUI
             if (screenTextPanels.TryGetValue(name, out GUITextPanel panel))
             {
                 screenTextPanels.Remove(name);
-                buildScreenTextModel();
+                buildAndRequestTextRender();
             }
             else
             {
@@ -141,18 +150,6 @@ namespace RabbetGameEngine.SubRendering.GUI
             }
         }
 
-        public void drawAll()
-        {
-            if (!wholeScreenHidden)
-            {
-                foreach (GUIScreenComponent component in components.Values)//temp, inefficient (no batches)
-                {
-                    component.draw();
-                }
-                screenTextModel.draw();
-            }
-        }
-
         public void onWindowResize()
         {
             if (!wholeScreenHidden)
@@ -161,7 +158,7 @@ namespace RabbetGameEngine.SubRendering.GUI
                 {
                     component.onWindowResize();
                 }
-                buildScreenTextModel();
+                buildAndRequestTextRender();
             }
         }
 

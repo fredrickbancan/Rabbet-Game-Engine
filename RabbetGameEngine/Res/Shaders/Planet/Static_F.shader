@@ -1,30 +1,28 @@
-﻿//base shader for rendering objects with vertex color and fog
+﻿//base shader for rendering objects statically with fog
 #shader vertex
 #version 330 core
 
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 texCoord;
-
-out vec4 vColor;
+layout(location = 3) in float objectID;
 
 uniform float fogDensity = 0.0075;
 uniform float fogGradient = 2.5;
+
+out vec2 vTexCoord;
+out vec4 vColor;
 out float visibility;//for fog
 
-//matrix for projection transformations.
+uniform float percentageToNextTick;
+uniform int frame;
+
 uniform mat4 projectionMatrix;
-//matrix for camera transformations.
 uniform mat4 viewMatrix;
-//matrix for model transformations. All transformations in this matrix are relative to the model origin.
-uniform mat4 modelMatrix;
 
 void main()
 {
-
-	vec4 worldPosition = modelMatrix * position;
-
-	vec4 positionRelativeToCam = viewMatrix * worldPosition;
+	vec4 positionRelativeToCam = viewMatrix * position;
 
 	gl_Position = projectionMatrix * positionRelativeToCam;
 
@@ -32,21 +30,30 @@ void main()
 	visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));
 	visibility = clamp(visibility, 0.0, 1.0);
 
+	vTexCoord = texCoord;
 	vColor = vertexColor;
 }
 
 /*#############################################################################################################################################################################################*/
-//Out variables from vertex shader are passed into the fragment shaders in variables, part of glsl language.
 #shader fragment
 #version 330 core
+in vec2 vTexCoord;
 in vec4 vColor;
-out vec4 color;
 in float visibility;
+out vec4 fragColor;
 
+uniform sampler2D uTexture;
 uniform int frame = 0;
 uniform vec3 fogColor;
+
+
 void main()
 {
-	color.rgb = mix(fogColor, vColor.rgb, visibility);
-	color.a = 1;
+	vec4 textureColor = texture(uTexture, vTexCoord) * vColor;
+	if (textureColor.a < 0.01F)
+	{
+		discard;//cutout
+	}
+	fragColor.rgb = mix(fogColor, textureColor.rgb, visibility);
+	fragColor.a = 1;
 }

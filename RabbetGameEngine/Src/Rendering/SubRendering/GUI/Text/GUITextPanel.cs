@@ -73,7 +73,7 @@ namespace RabbetGameEngine.GUI.Text
             this.format = format;
         }
 
-        public void buildOrRebuild()
+        public void build()
         {
             format.panelPixelPos.X = format.panelPos.X * GameInstance.gameWindowWidth;
             format.panelPixelPos.Y = format.panelPos.Y * GameInstance.gameWindowHeight;

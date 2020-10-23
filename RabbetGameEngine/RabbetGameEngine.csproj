@@ -69,11 +69,14 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Res\Shaders\Color.shader" />
-    <None Include="Res\Shaders\Color_F.shader" />
+    <Compile Include="Src\Rendering\SkyboxRenderer.cs" />
+    <Compile Include="Src\World\Skybox.cs" />
     <None Include="Res\Shaders\FrameBuffer.shader" />
-    <None Include="Res\Shaders\VFX\PParticleCloud_FT.shader" />
-    <None Include="Res\Shaders\VFX\PParticleCloud_F.shader" />
+    <None Include="Res\Shaders\Planet\Static_F.shader" />
+    <None Include="Res\Shaders\VFX\StaticPParticles_FT.shader" />
+    <None Include="Res\Shaders\VFX\StaticPParticles_F.shader" />
+    <None Include="Res\Shaders\VFX\LerpPParticles_FT.shader" />
+    <None Include="Res\Shaders\VFX\LerpPParticles_F.shader" />
     <Compile Include="Src\Game\CustomColor.cs" />
     <Compile Include="Src\Game\Debugging\HitboxRenderer.cs" />
     <Compile Include="Src\Game\GUIS\MainGUI.cs" />
@@ -82,18 +85,17 @@
     <Compile Include="Src\Physics\AxisAlignedRay.cs" />
     <Compile Include="Src\Physics\Ray.cs" />
     <Compile Include="Src\Rendering\GUIComponents\GUICrosshair.cs" />
-    <Compile Include="Src\Rendering\GUIHandler.cs" />
+    <Compile Include="Src\Rendering\GUIManager.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\EntityCactusModel.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankModel.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankProjectileModel.cs" />
     <Compile Include="Src\Rendering\Models\PointCloudModel.cs" />
-    <Compile Include="Src\Rendering\Models\ModelDrawableDynamicInterpolated.cs" />
-    <Compile Include="Src\Rendering\Models\ModelDrawableInstanced.cs" />
     <Compile Include="Src\Rendering\Models\ModelUtil.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\CubePrefab.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\DefaultDebugModel.cs" />
     <Compile Include="Src\Rendering\Models\OBJLoader.cs" />
     <Compile Include="Src\Rendering\ShaderUtil.cs" />
+    <Compile Include="Src\Rendering\StaticRenderObject.cs" />
     <Compile Include="Src\Rendering\SubRendering\Batching\Batch.cs" />
     <Compile Include="Src\Rendering\SubRendering\Batching\BatchManager.cs" />
     <Compile Include="Src\Rendering\SubRendering\Batching\LineCombiner.cs" />
@@ -135,8 +137,6 @@
     <Compile Include="Src\World\Planet.cs" />
     <Compile Include="Src\Rendering\Camera.cs" />
     <Compile Include="Src\Rendering\Models\Model.cs" />
-    <Compile Include="Src\Rendering\Models\ModelDrawable.cs" />
-    <Compile Include="Src\Rendering\Models\ModelDrawableDynamic.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\PlanePrefab.cs" />
     <Compile Include="Src\Rendering\SubRendering\Batching\QuadCombiner.cs" />
     <Compile Include="Src\Rendering\SubRendering\GUI\Text\GUITextPanel.cs" />
@@ -151,11 +151,9 @@
     <Compile Include="Src\Rendering\Vertex.cs" />
     <Compile Include="Src\Rendering\VFX\VFXBase.cs" />
     <Compile Include="Src\Physics\PositionalObject.cs" />
-    <None Include="Res\Shaders\World\EntityWorld_FNEW.shader" />
-    <None Include="Res\Shaders\World\EntityWorld_FI.shader" />
-    <None Include="Res\Shaders\World\EntityWorld_FTI.shader" />
-    <None Include="Res\Shaders\World\EntityWorld_FT.shader" />
-    <None Include="Res\Shaders\World\EntityWorld_F.shader" />
+    <None Include="Res\Shaders\Planet\Lerp_F.shader" />
+    <None Include="Res\Shaders\Planet\Static_FT.shader" />
+    <None Include="Res\Shaders\Planet\Lerp_FT.shader" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -174,7 +172,7 @@
     <None Include="Res\OBJ\Tank\TankWheels.obj" />
     <None Include="Res\Shaders\GUI\GuiCutout.shader" />
     <None Include="Res\Shaders\GUI\GuiText.shader" />
-    <None Include="Res\Shaders\World\Skybox.shader" />
+    <None Include="Res\Shaders\Planet\Skybox.shader" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">

@@ -52,7 +52,7 @@ namespace RabbetGameEngine.Debugging
             }
             if (profiles.TryGetValue(profileName, out Profile foundProfile))
             {
-                return foundProfile.getAverageCompletionTimeMS();
+                return foundProfile.getAverageTimeSpentPerTick();
             }
             return -1;
         }
@@ -111,7 +111,7 @@ namespace RabbetGameEngine.Debugging
                 updateIndex %= 100;//keep update index within 100
             }
 
-            public float getAverageCompletionTimeMS()
+            public float getAverageTimeSpentPerTick()
             {
                 return ((float)combinedTimePassed / 100F) / 1000000F;
             }

@@ -3,15 +3,16 @@ using System;
 
 namespace RabbetGameEngine.Models
 {
-    /*Model base class. This class is intended to hold the vertex, color, uv etc data for a model to be
-      rendered. This has to be a class not a struct because we need to null check it*/
+    /// <summary>
+    /// a collection of model data (vertices, indices, model matrix and previous model matix.)
+    /// </summary>
     public class Model
     {
         public Vertex[] vertices = null;
         public uint[] indices = null;
         public Matrix4 modelMatrix = Matrix4.Identity;
         public Matrix4 prevModelMatrix = Matrix4.Identity;
-        public Model(Vertex[] vertices, uint[] indices = null)
+        public Model(Vertex[] vertices, uint[] indices)
         {
             this.vertices = vertices;
             this.indices = indices;
@@ -108,8 +109,10 @@ namespace RabbetGameEngine.Models
         public Model copyModel()
         {
             Vertex[] verticesCopy = new Vertex[vertices.Length];
+            uint[] indicesCopy = new uint[indices.Length];
+            Array.Copy(indices, indicesCopy, indices.Length);
             Array.Copy(vertices, verticesCopy, vertices.Length);
-            return new Model(verticesCopy);
+            return new Model(verticesCopy, indicesCopy);
         }
 
         /// <summary>
