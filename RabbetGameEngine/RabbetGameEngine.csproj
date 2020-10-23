@@ -86,6 +86,7 @@
     <Compile Include="Src\Rendering\Models\EntityModels\EntityCactusModel.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankModel.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankProjectileModel.cs" />
+    <Compile Include="Src\Rendering\Models\PointCloudModel.cs" />
     <Compile Include="Src\Rendering\Models\ModelDrawableDynamicInterpolated.cs" />
     <Compile Include="Src\Rendering\Models\ModelDrawableInstanced.cs" />
     <Compile Include="Src\Rendering\Models\ModelUtil.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="Src\Rendering\SubRendering\OffScreen.cs" />
     <Compile Include="Src\Rendering\SubRendering\RenderAbility.cs" />
     <Compile Include="Src\Rendering\TextureUtil.cs" />
+    <Compile Include="Src\Rendering\PointParticle.cs" />
     <Compile Include="Src\Rendering\VertexArrayObject.cs" />
     <Compile Include="Src\Rendering\VFX\VFXExplosion.cs" />
     <Compile Include="Src\Rendering\VFX\VFXPointCloud.cs" />
@@ -149,6 +151,7 @@
     <Compile Include="Src\Rendering\Vertex.cs" />
     <Compile Include="Src\Rendering\VFX\VFXBase.cs" />
     <Compile Include="Src\Physics\PositionalObject.cs" />
+    <None Include="Res\Shaders\World\EntityWorld_FNEW.shader" />
     <None Include="Res\Shaders\World\EntityWorld_FI.shader" />
     <None Include="Res\Shaders\World\EntityWorld_FTI.shader" />
     <None Include="Res\Shaders\World\EntityWorld_FT.shader" />

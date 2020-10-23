@@ -73,12 +73,12 @@ namespace RabbetGameEngine.Debugging
         /*private class for profiles.*/
         private class Profile
         {
-            private int[] recordedTimes = new int[100];
+            private long[] recordedTimes = new long[100];
             private long startTime;
-            private int timeSpentInCurrentTick;
+            private long timeSpentInCurrentTick;
             private string name;
             private int updateIndex;
-            private int combinedTimePassed;
+            private long combinedTimePassed;
             public bool hasEnded = true;
 
             public Profile(string name)
@@ -95,7 +95,7 @@ namespace RabbetGameEngine.Debugging
             
             public void end()
             {
-                timeSpentInCurrentTick += (int)(TicksAndFps.nanoTime() - startTime);
+                timeSpentInCurrentTick += TicksAndFps.nanoTime() - startTime;
                 hasEnded = true;
             }
 

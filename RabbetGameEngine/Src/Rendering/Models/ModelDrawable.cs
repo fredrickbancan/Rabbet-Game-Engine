@@ -20,17 +20,15 @@ namespace RabbetGameEngine.Models
         private bool drawErrorPrinted = false;
 
         /*takes in the shader and texture for this model, indices can be null if they wont be used*/
-        public ModelDrawable(string shader, string texture, Vertex[] vertices, uint[] indices = null) : base(vertices)
+        public ModelDrawable(string shader, string texture, Vertex[] vertices, uint[] indices = null) : base(vertices, indices)
         {
             ShaderUtil.tryGetShader(shader, out this.shader);
             TextureUtil.tryGetTexture(texture, out this.texture);
-            this.indices = indices;
         }
-        public ModelDrawable(Shader shader, Texture texture, Vertex[] vertices, uint[] indices = null) : base(vertices)
+        public ModelDrawable(Shader shader, Texture texture, Vertex[] vertices, uint[] indices = null) : base(vertices, indices)
         {
             this.shader = shader;
             this.texture = texture;
-            this.indices = indices;
         }
 
         public virtual void setIndices(uint[] newind)

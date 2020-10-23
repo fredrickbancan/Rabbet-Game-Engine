@@ -1,6 +1,5 @@
 ﻿using OpenTK;
 using RabbetGameEngine.Models;
-using RabbetGameEngine.SubRendering;
 using System;
 namespace RabbetGameEngine.VFX
 {
@@ -25,16 +24,13 @@ namespace RabbetGameEngine.VFX
         protected bool removalFlag = false;// true if this entity should be removed in the next tick
         protected bool shouldDeleteModel = false;// true if this vfx is using a model loaded from file. If so, it should NOT be deleted!
 
-        protected BatchType batchType;
-        public VFXBase(Vector3 pos, float initialScale, string shaderDir, string textureDir, string modelDir, float maxExistingSeconds = 1, BatchType batchType = BatchType.triangles) : base(pos)
+        public VFXBase(Vector3 pos, float initialScale, string shaderDir, string textureDir, string modelDir, float maxExistingSeconds = 1) : base(pos)
         {
             this.scale = initialScale;
             this.vfxModel = ModelUtil.createModelDrawable(shaderDir, textureDir, modelDir);
             maxExistingTicks = TicksAndFps.getNumOfTicksForSeconds(maxExistingSeconds);
             updateVFXModel();
             updateVFXModel();
-
-            this.batchType = batchType;
         }
 
         /*called every tick*/
@@ -127,11 +123,6 @@ namespace RabbetGameEngine.VFX
         public virtual bool exists()
         {
             return !removalFlag;
-        }
-
-        public BatchType getBatchType()
-        {
-            return batchType;
         }
     }
 }

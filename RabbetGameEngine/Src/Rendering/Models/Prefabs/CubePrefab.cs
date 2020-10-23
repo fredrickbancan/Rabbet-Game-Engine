@@ -36,8 +36,10 @@ namespace RabbetGameEngine.Models
         public static Model copyModel()
         {
             Vertex[] verticesCopy = new Vertex[cubeVertices.Length];
+            uint[] indicesCopy = new uint[cubeIndices.Length];
+            Array.Copy(cubeIndices, indicesCopy, cubeIndices.Length);
             Array.Copy(cubeVertices, verticesCopy, cubeVertices.Length);
-            return new Model(verticesCopy);
+            return new Model(verticesCopy, indicesCopy);
         }
         public static ModelDrawable copyModelDrawable()
         {

@@ -1,10 +1,42 @@
-﻿using System;
+﻿using RabbetGameEngine.Models;
 
 namespace RabbetGameEngine.SubRendering
 {
     /*Class for Taking in  an even amount of vertices and batches them with indices which allow line rendering.*/
     public static class LineCombiner
     {
+        public static Model combineData(Model inputModel, Model newModel)
+        {
+            int totalVertices = inputModel.vertices.Length + newModel.vertices.Length;
+            int totalIndices = inputModel.indices.Length + newModel.indices.Length;
+
+            Vertex[] resultVertices = new Vertex[totalVertices];
+            uint[] resultIndices = new uint[totalIndices];
+
+            //fill resultvertices
+            for (int i = 0; i < inputModel.vertices.Length; i++)
+            {
+                resultVertices[i] = inputModel.vertices[i];
+            }
+            for (int i = inputModel.vertices.Length; i < totalVertices; i++)
+            {
+                resultVertices[inputModel.vertices.Length + i] = newModel.vertices[i];
+            }
+
+            //fill resultIndices
+            for (int i = 0; i < inputModel.indices.Length; i++)
+            {
+                resultIndices[i] = inputModel.indices[i];
+            }
+            for (int i = inputModel.indices.Length; i < totalIndices; i++)
+            {
+                resultIndices[inputModel.indices.Length + i] = (uint)(newModel.indices[i] + inputModel.vertices.Length);
+            }
+
+            inputModel.vertices = resultVertices;
+            inputModel.indices = resultIndices;
+            return inputModel;
+        }
 
         /*retuns indices for multiple quads to render them as lined squares*/
         public static uint[] getIndicesForLineQuadCount(int count)

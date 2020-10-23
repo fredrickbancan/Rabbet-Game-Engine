@@ -25,8 +25,10 @@ namespace RabbetGameEngine.Models
         public static Model getNewModel()
         {
             Vertex[] verticesCopy = new Vertex[quadVertices.Length];
+            uint[] indicesCopy = new uint[quadIndices.Length];
+            Array.Copy(quadIndices, indicesCopy, quadIndices.Length);
             Array.Copy(quadVertices, verticesCopy, quadVertices.Length);
-            return new Model(verticesCopy);
+            return new Model(verticesCopy, indicesCopy);
         }
         public static ModelDrawable getNewModelDrawable()
         {

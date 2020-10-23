@@ -6,7 +6,6 @@ using RabbetGameEngine.GUI.Text;
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq.Expressions;
 
 namespace RabbetGameEngine
 {
@@ -111,6 +110,7 @@ namespace RabbetGameEngine
             MainGUI.onTick();
             currentPlanet.onTick();
             Profiler.updateAverages();
+            Renderer.onTickEnd();
             Profiler.beginEndProfile("Loop");
         }
 

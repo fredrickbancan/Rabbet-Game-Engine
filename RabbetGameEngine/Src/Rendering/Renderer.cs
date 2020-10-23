@@ -9,6 +9,7 @@ using System.Drawing;
 
 namespace RabbetGameEngine
 {
+    //TODO: REWORK SHADERS FOR NEWLY IMPLIMENTED BATCHING PIPELINE
 
     /*This class will be responsable for most of the games rendering requests. It will then send the requests to the suitable sub renderers.
       e.g, when the game requests text to be rendered on the screen, the renderer will send a request to the TextRenderer2D.
@@ -63,16 +64,26 @@ namespace RabbetGameEngine
             
         }
 
+        public static void requestRender(BatchType type, Texture tex, Model mod)
+        {
+            Profiler.beginEndProfile("batching");
+            BatchManager.requestRender(type, tex, mod);
+            Profiler.beginEndProfile("batching");
+        }
+
         public static void onTickStart()
         {
             BatchManager.updateAll();
         }
-
+        public static void onTickEnd()
+        {
+            BatchManager.prepareAll();
+        }
         public static void renderAll()
         {
             preRender();
             renderWorld();
-            BatchManager.drawAll();
+            BatchManager.drawAll(projectionMatrix, GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
             GUIHandler.drawCurrentGUIScreen();
             postRender();
         }

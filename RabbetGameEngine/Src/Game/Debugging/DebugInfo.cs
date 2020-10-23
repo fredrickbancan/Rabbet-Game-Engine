@@ -25,6 +25,7 @@ namespace RabbetGameEngine.Debugging
             {
                 float entColAverage = Profiler.getAverageForProfile("EntCollisions");
                 float colAverage = Profiler.getAverageForProfile("Collisions");
+                float batchAverage = Profiler.getAverageForProfile("batching");
                 float gameLoopAverage = Profiler.getAverageForProfile("Loop");
                 GUIHandler.unHideTextPanelInGUI(MainGUI.mainGUIName, debugInfoTextPanelName);
                 GUIHandler.getTextPanelFormatFromGUI(MainGUI.mainGUIName, debugInfoTextPanelName).setLines(
@@ -45,7 +46,8 @@ namespace RabbetGameEngine.Debugging
                        ("   {" ),
                        ("       Entity Collisions: " + entColAverage.ToString("0.00") + "ms." ),
                        ("       World Collisions: " + colAverage.ToString("0.00") + "ms." ),
-                       ("   }Residual: " + (gameLoopAverage - (entColAverage + colAverage)).ToString("0.00") + "ms." ),
+                       ("       Batching: " + batchAverage.ToString("0.00") + "ms." ),
+                       ("   }Residual: " + (gameLoopAverage - (entColAverage + colAverage + batchAverage)).ToString("0.00") + "ms." ),
                        ("}" ),
                         ("Entities: " + GameInstance.get.currentPlanet.getEntityCount()),
                         ("VFX's: " + GameInstance.get.currentPlanet.getVFXCount()),

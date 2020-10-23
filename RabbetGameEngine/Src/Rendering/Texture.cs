@@ -130,7 +130,10 @@ namespace RabbetGameEngine
                 disposed = true;
             }
         }
-
+        public bool getIsNone()
+        {
+            return isNone;
+        }
         public void Dispose()
         {
             Dispose(true);

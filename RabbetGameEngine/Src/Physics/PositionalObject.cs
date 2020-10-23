@@ -11,7 +11,7 @@ namespace RabbetGameEngine
         protected Vector3 velocity;
         protected Vector3 acceleration;
 
-        public static readonly float defaultAirResistance = 0.03572F;
+        public static readonly float defaultAirResistance = 0.00272F;
         public static readonly float defaultGroundResistance = 0.3572F;
         public static readonly float defaultGravity = 0.03572F;
         protected float airResistance = defaultAirResistance;

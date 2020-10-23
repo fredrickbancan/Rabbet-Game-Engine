@@ -9,8 +9,8 @@ namespace RabbetGameEngine.Models
     {
         public Vertex[] vertices = null;
         public uint[] indices = null;
-        public Matrix4 modelMatrix;
-        public Matrix4 prevModelMatrix;
+        public Matrix4 modelMatrix = Matrix4.Identity;
+        public Matrix4 prevModelMatrix = Matrix4.Identity;
         public Model(Vertex[] vertices, uint[] indices = null)
         {
             this.vertices = vertices;
@@ -31,6 +31,22 @@ namespace RabbetGameEngine.Models
             return this;
         }
         
+        /// <summary>
+        /// transforms the vertices of this model by the provided model matrix.
+        /// This must be used for models which will be drawn without sending the model matrix to the shader.
+        /// I.E: Non-lerp batch types.
+        /// </summary>
+        /// <param name="modelMatrix">The transformation matrix</param>
+        /// <returns>this (builder method)</returns>
+        public Model transformVertices(Matrix4 modelMatrix)
+        {
+            for(int i = 0; i < vertices.Length; ++i)
+            {
+                vertices[i].pos = Vector3.TransformPerspective(vertices[i].pos, modelMatrix);
+            }
+            return this;
+        }
+
         /*Changes the vertices in the float arrays before rendering. Usefull for copying an already layed out model
           and batch rendering it in multiple different locations with different transformations.*/
         public Model transformVertices(Vector3 scale, Vector3 rotate, Vector3 translate)
@@ -98,6 +114,8 @@ namespace RabbetGameEngine.Models
 
         /// <summary>
         /// Used to set the ID for this set of data for when it will be drawn.
+        /// This must be used as an identifier for each vertex of the individual objects
+        /// in a batch so the shader can determine which model matrices to use to transform it.
         /// </summary>
         /// <param name="f">ID of this object. Will be treated as integer index by shaders.</param>
         /// <returns>This (builder method)</returns>
