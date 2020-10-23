@@ -204,6 +204,7 @@ namespace RabbetGameEngine.SubRendering
         public void onTickStart()
         {
             requestedVerticesCount = 0;
+            requestedIndicesCount = 0;
             matricesItterator = 0;
             hasBeenUpdated = false;
         }
@@ -214,13 +215,12 @@ namespace RabbetGameEngine.SubRendering
             //do buffer submissions here.
             if(pointBased)
             {
-                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (requestedVerticesCount * 2) *  PointParticle.pParticleByteSize, PointCombiner.addPointsToArray(batchedPoints, prevTickBatchedPoints));
+                GL.BufferData(BufferTarget.ArrayBuffer, (requestedVerticesCount * 2) *  PointParticle.pParticleByteSize, PointCombiner.addPointsToArray(batchedPoints, prevTickBatchedPoints), BufferUsageHint.DynamicDraw);
             }
             else
             {
-                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, requestedVerticesCount * Vertex.vertexByteSize, batchedModel.vertices);
-                //TODO: FIX! Buffer sub data of indices extremely slow!
-                GL.BufferSubData(BufferTarget.ElementArrayBuffer, IntPtr.Zero, requestedIndicesCount * sizeof(uint), batchedModel.indices);
+                GL.BufferData(BufferTarget.ArrayBuffer,  requestedVerticesCount * Vertex.vertexByteSize, batchedModel.vertices, BufferUsageHint.DynamicDraw);
+                GL.BufferData(BufferTarget.ElementArrayBuffer, requestedIndicesCount * sizeof(uint), batchedModel.indices, BufferUsageHint.DynamicDraw);
             }
         }
 
@@ -253,7 +253,7 @@ namespace RabbetGameEngine.SubRendering
                 batchShader.setUniformMat4FArray("prevTickModelMatrices", prevTickModelMatrices);
             }
 
-            GL.DrawElements(PrimitiveType.Triangles, requestedIndicesCount, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(VAO.getPrimType(), requestedIndicesCount, DrawElementsType.UnsignedInt, 0);
             return;
         }
 

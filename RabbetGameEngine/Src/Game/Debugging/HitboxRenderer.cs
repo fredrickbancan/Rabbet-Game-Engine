@@ -1,5 +1,4 @@
-﻿using OpenTK;
-using RabbetGameEngine.Models;
+﻿using RabbetGameEngine.Models;
 using RabbetGameEngine.Physics;
 using RabbetGameEngine.SubRendering;
 using System.Collections.Generic;
@@ -16,17 +15,18 @@ namespace RabbetGameEngine.Debugging
         {
             if(firstTime)
             {
-                aabbModelPrefab = new Model(CubePrefab.cubeVertices, LineCombiner.getIndicesForLineQuadCount(Batch.maxIndiciesCount / 8));
+                aabbModelPrefab = new Model(CubePrefab.cubeVertices, LineCombiner.getIndicesForLineQuadCount(6)).setColor(CustomColor.magenta);
                 firstTime = false;
             }
-            foreach(AABB hitBox in worldColliders)
+            addBoxToBeRendered(worldColliders[0]);
+            foreach (AABB hitBox in worldColliders)
             {
-                addBoxToBeRendered(hitBox);
+             //   addBoxToBeRendered(hitBox);
             }
 
             foreach(Entity ent in entities.Values)
             {
-                addHitboxToBeRendered(ent.getCollider());
+               // addHitboxToBeRendered(ent.getCollider());
             }
         }
 
@@ -52,7 +52,7 @@ namespace RabbetGameEngine.Debugging
         public static void addBoxToBeRendered(AABB box)
         {
             //add a copy of the aabb line model transformed to aabb collider specs
-            Renderer.requestRender(BatchType.lines, null, aabbModelPrefab.copyModel().transformVertices(new Vector3((float)box.extentX * 2, (float)box.extentY * 2, (float)box.extentZ * 2), Vector3.Zero, box.centerVec));
+            Renderer.requestRender(BatchType.lines, null, aabbModelPrefab/*.copyModel().transformVertices(new Vector3((float)box.extentX * 2, (float)box.extentY * 2, (float)box.extentZ * 2), Vector3.Zero, box.centerVec)*/);
           
         }
 

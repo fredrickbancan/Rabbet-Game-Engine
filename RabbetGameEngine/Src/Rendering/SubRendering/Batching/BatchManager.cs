@@ -76,8 +76,15 @@ namespace RabbetGameEngine.SubRendering
                 }
                 return;
             }
-            
-            for(int i = 0; i < batches.Count; ++i)
+
+            if (batches.Count < 1)
+            {
+                batches.Add(new Batch(type, tex));
+                batches.ElementAt(0).addToBatch(theModel);
+                return;
+            }
+
+            for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
                 if(batchAt.getBatchType() == type && batchAt.getBatchtexture() == tex &&  batchAt.addToBatch(theModel))
@@ -102,11 +109,7 @@ namespace RabbetGameEngine.SubRendering
                     return;
                 }
             }
-            if (batches.Count < 1)
-            {
-                batches.Add(new Batch(type, tex));
-                batches.ElementAt(0).addToBatch(theModel);
-            }
+            
         }
 
 

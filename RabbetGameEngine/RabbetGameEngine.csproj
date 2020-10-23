@@ -72,6 +72,7 @@
     <Compile Include="Src\Rendering\SkyboxRenderer.cs" />
     <Compile Include="Src\World\Skybox.cs" />
     <None Include="Res\Shaders\FrameBuffer.shader" />
+    <None Include="Res\Shaders\Planet\StaticLines.shader" />
     <None Include="Res\Shaders\Planet\Static_F.shader" />
     <None Include="Res\Shaders\VFX\StaticPParticles_FT.shader" />
     <None Include="Res\Shaders\VFX\StaticPParticles_F.shader" />
