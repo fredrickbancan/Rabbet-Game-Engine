@@ -13,7 +13,6 @@ namespace RabbetGameEngine
     /*This class is the main game class. It contains all the execution code for rendering, logic loops and loading.*/
     public class GameInstance : GameWindow
     {
-        
         public static int temp = 0;
         private static GameInstance instance;
         private static Random privateRand;
@@ -47,6 +46,9 @@ namespace RabbetGameEngine
             TextUtil.loadAllFoundTextFiles();
             setDPIScale();
             Renderer.init();
+
+            this.Icon = new Icon(ResourceUtil.getIconFileDir("icon.ico"));
+
             TicksAndFps.init(30);
             MainGUI.init();
             DebugInfo.init();

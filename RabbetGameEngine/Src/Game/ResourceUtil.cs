@@ -3,6 +3,10 @@
     /*A class containing functions to gelp find resources. This class will make it much easier to change resource directories.*/
     public static class ResourceUtil
     {
+        public static string getIconFileDir(string fileName = "")
+        {
+            return @"..\..\Res\Icon\" + fileName;
+        }
         public static string getTextureFileDir(string fileName = "")
         {
             return @"..\..\Res\Texture\" + fileName;

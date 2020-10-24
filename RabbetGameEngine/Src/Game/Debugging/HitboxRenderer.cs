@@ -15,7 +15,7 @@ namespace RabbetGameEngine.Debugging
         {
             if(firstTime)
             {
-                aabbModelPrefab = new Model(CubePrefab.cubeVertices, LineCombiner.getIndicesForLineQuadCount(6)).setColor(CustomColor.magenta);
+                aabbModelPrefab = new Model(CubePrefab.cubeVertices, LineCombiner.getIndicesForLineQuadCount(1)).setColor(CustomColor.magenta);
                 firstTime = false;
             }
             addBoxToBeRendered(worldColliders[0]);

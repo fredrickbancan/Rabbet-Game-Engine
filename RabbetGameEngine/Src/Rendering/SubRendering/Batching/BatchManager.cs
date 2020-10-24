@@ -67,16 +67,6 @@ namespace RabbetGameEngine.SubRendering
         /// <param name="indices">The indices of this render data, can be left blank if this does not need indices (i.e points)</param>
         public static void requestRender(BatchType type, Texture tex, Model theModel)
         {
-            //if the type is a point rendering type
-            if (type == BatchType.lerpPoints || type == BatchType.lerpPointsTransparent)
-            {
-                if (theModel.indices != null)
-                {
-                    Application.error("A render of point particles was requested to a batch, but no point cloud model was provided.");
-                }
-                return;
-            }
-
             if (batches.Count < 1)
             {
                 batches.Add(new Batch(type, tex));

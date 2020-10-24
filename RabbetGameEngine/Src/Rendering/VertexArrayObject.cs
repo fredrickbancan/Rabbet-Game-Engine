@@ -7,9 +7,9 @@ namespace RabbetGameEngine
     /*Abstraction of a VAO for use with rendering.*/
     public class VertexArrayObject
     {
-        private int id;
-        private int vbo;
-        private int ibo;
+        private int vaoID;
+        private int vboID;
+        private int iboID;
         private bool dynamic = false;
         private bool usesIndices = true;
         private int bufferByteSize = 0;
@@ -39,8 +39,8 @@ namespace RabbetGameEngine
             this.batchType = BatchType.none;
             dynamic = false;
 
-            vbo = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+            vboID = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vboID);
             GL.BufferData(BufferTarget.ArrayBuffer, points.Length * PointParticle.pParticleByteSize, points, BufferUsageHint.StaticDraw);
             
             GL.EnableVertexAttribArray(0);
@@ -158,18 +158,18 @@ namespace RabbetGameEngine
         private void initializeStatic(Vertex[] vertices, uint[] indices)
         {
             if (hasInitialized) return;
-            id = GL.GenVertexArray();
-            GL.BindVertexArray(id);
+            vaoID = GL.GenVertexArray();
+            GL.BindVertexArray(vaoID);
 
             //do initialization of buffers here
             if (usesIndices)
             {
-                ibo = GL.GenBuffer();
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo);
+                iboID = GL.GenBuffer();
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, iboID);
                 GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
             }
-            vbo = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+            vboID = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vboID);
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * Vertex.vertexByteSize, vertices, BufferUsageHint.StaticDraw);
             /*Stride: the size in bytes between the start of one vertex to the start of another.
               Offset: the size in byts between the start of the vertex to the first bit of information for this specific attribute.*/
@@ -194,22 +194,22 @@ namespace RabbetGameEngine
         private void initializeDynamic()
         {
             if (hasInitialized) return;
-            id = GL.GenVertexArray();
-            GL.BindVertexArray(id);
+            vaoID = GL.GenVertexArray();
+            GL.BindVertexArray(vaoID);
 
             //do initialization of buffers here
             if (usesIndices)
             {
-                ibo = GL.GenBuffer();
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo);
+                iboID = GL.GenBuffer();
+                GL.BindBuffer(BufferTarget.ElementArrayBuffer, iboID);
                 GL.BufferData(BufferTarget.ElementArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
             }
 
             //These types require the standard VBO layout.
             if (batchType != BatchType.lerpPoints && batchType != BatchType.lerpPointsTransparent)
             {
-                vbo = GL.GenBuffer();
-                GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+                vboID = GL.GenBuffer();
+                GL.BindBuffer(BufferTarget.ArrayBuffer, vboID);
                 GL.BufferData(BufferTarget.ArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
 
                 GL.EnableVertexAttribArray(0);
@@ -229,8 +229,8 @@ namespace RabbetGameEngine
             //the two point arrays will be in the same VBO, non interlaced. The previous tick points will come after the current.
             else
             {
-                vbo = GL.GenBuffer();
-                GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+                vboID = GL.GenBuffer();
+                GL.BindBuffer(BufferTarget.ArrayBuffer, vboID);
                 GL.BufferData(BufferTarget.ArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
 
                 GL.EnableVertexAttribArray(0);
@@ -268,17 +268,17 @@ namespace RabbetGameEngine
         /// </summary>
         public void bind()
         {
-            GL.BindVertexArray(id);
+            GL.BindVertexArray(vaoID);
         }
 
         public void bindVBO()
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vboID);
         }
 
         public void bindIBO()
         {
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ibo);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, iboID);
         }
 
 
@@ -306,10 +306,10 @@ namespace RabbetGameEngine
             }
             if (usesIndices)
             {
-                GL.DeleteBuffer(ibo);
+                GL.DeleteBuffer(iboID);
             }
-            GL.DeleteBuffer(vbo);
-            GL.DeleteVertexArray(id);
+            GL.DeleteBuffer(vboID);
+            GL.DeleteVertexArray(vaoID);
         }
     }
 }

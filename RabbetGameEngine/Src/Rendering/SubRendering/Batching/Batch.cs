@@ -131,7 +131,7 @@ namespace RabbetGameEngine.SubRendering
         /// <returns>true if the provided model can be added</returns>
         public bool addToBatch(Model theModel)
         {
-            //if this batch cant fit the new models vertices
+            //if this batch cant fit the new models vertices or indices
             if (requestedVerticesCount + theModel.vertices.Length >= maxVertexCount || requestedIndicesCount + theModel.indices.Length >= maxIndiciesCount)
             {
                 return false;
