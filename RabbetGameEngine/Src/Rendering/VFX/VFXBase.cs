@@ -20,6 +20,7 @@ namespace RabbetGameEngine.VFX
         protected float maxExistingTicks;
         protected int ticksExisted;
         protected Model vfxModel;
+        protected Texture vfxTexture;
         protected bool removalFlag = false;// true if this entity should be removed in the next tick
         protected bool shouldDeleteModel = false;// true if this vfx is using a model loaded from file. If so, it should NOT be deleted!
         protected BatchType batchType;
@@ -27,6 +28,7 @@ namespace RabbetGameEngine.VFX
         {
             this.batchType = type;
             this.scale = initialScale;
+            TextureUtil.tryGetTexture(textureName, out vfxTexture);
             maxExistingTicks = TicksAndFps.getNumOfTicksForSeconds(maxExistingSeconds);
             this.vfxModel = baseModel;
             if (vfxModel != null)
@@ -86,6 +88,12 @@ namespace RabbetGameEngine.VFX
         public virtual void setExpansionZModifyer(float modifyer)
         {
             scaleZModifyer = modifyer;
+        }
+
+        public virtual void sendRenderRequest()
+        {
+            if(vfxModel != null)
+            Renderer.requestRender(this.batchType, vfxTexture, vfxModel);
         }
 
         public virtual void ceaseToExist()

@@ -196,6 +196,8 @@ namespace RabbetGameEngine
                     vfx.postTick();
                     CollisionHandler.tryToMoveObject(vfx, worldColliders);
                 }
+
+                vfx.sendRenderRequest();
             }
         }
 

@@ -87,7 +87,6 @@ namespace RabbetGameEngine.Physics
         /// <param name="worldAABB"> all world colliders </param>
         public static void tryToMoveObject(PositionalObject obj, List<AABB> worldAABB)
         {
-            
             if (!obj.getHasCollider())
             {
                 obj.setPosition(obj.getPosition() + obj.getVelocity());

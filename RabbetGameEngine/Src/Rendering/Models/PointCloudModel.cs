@@ -7,7 +7,7 @@ namespace RabbetGameEngine.Models
     {
         public PointParticle[] points = null;
         public PointParticle[] prevPoints = null;
-
+        bool hasChangedSinceLastUpdate = false;
         public PointCloudModel(PointParticle[] points)
         {
             this.points = points;
@@ -15,14 +15,22 @@ namespace RabbetGameEngine.Models
             preTick();
         }
 
+        public PointCloudModel(PointParticle[] points, PointParticle[] prevPoints)
+        {
+            this.points = points;
+            this.prevPoints = prevPoints;
+        }
+
         /*sets all point colors to this color*/
         public PointCloudModel setColor(CustomColor color)
         {
+            hasChangedSinceLastUpdate = true;
             return this.setColor(color.toNormalVec4());
         }
         public PointCloudModel setColor(Vector4 color)
         {
-            for(int i = 0; i < points.Length; i++)
+            hasChangedSinceLastUpdate = true;
+            for (int i = 0; i < points.Length; i++)
             {
                 points[i].color = color;
             }
@@ -36,10 +44,12 @@ namespace RabbetGameEngine.Models
         /// </summary>
         public void preTick()
         {
+            if(hasChangedSinceLastUpdate)
             for(int i = 0; i < points.Length; i++)
             {
                 prevPoints[i] = points[i];
             }
+            hasChangedSinceLastUpdate = false;
         }
 
         /// <summary>
@@ -51,7 +61,8 @@ namespace RabbetGameEngine.Models
         /// <returns>this (builder method)</returns>
         public PointCloudModel transformPoints(Matrix4 modelMatrix)
         {
-            for(int i = 0; i < points.Length; ++i)
+            hasChangedSinceLastUpdate = true;
+            for (int i = 0; i < points.Length; ++i)
             {
                 points[i].pos = Vector3.TransformPerspective(points[i].pos, modelMatrix);
             }
@@ -62,7 +73,8 @@ namespace RabbetGameEngine.Models
           and batch rendering it in multiple different locations with different transformations.*/
         public PointCloudModel transformPoints(Vector3 scale, Vector3 rotate, Vector3 translate)
         {
-            for(int i = 0; i < points.Length; i ++)
+            hasChangedSinceLastUpdate = true;
+            for (int i = 0; i < points.Length; i ++)
             {
                 MathUtil.scaleXYZFloats(scale, points[i].pos.X, points[i].pos.Y, points[i].pos.Z, out points[i].pos.X, out points[i].pos.Y, out points[i].pos.Z);
                 MathUtil.rotateXYZFloats(rotate, points[i].pos.X, points[i].pos.Y, points[i].pos.Z, out points[i].pos.X, out points[i].pos.Y, out points[i].pos.Z);
@@ -72,6 +84,7 @@ namespace RabbetGameEngine.Models
         }
         public PointCloudModel scalePoints(Vector3 scale)
         {
+            hasChangedSinceLastUpdate = true;
             for (int i = 0; i < points.Length; i ++)
             {
                 MathUtil.scaleXYZFloats(scale, points[i].pos.X, points[i].pos.Y, points[i].pos.Z, out points[i].pos.X, out points[i].pos.Y, out points[i].pos.Z);
@@ -80,6 +93,7 @@ namespace RabbetGameEngine.Models
         }
         public PointCloudModel rotatePoints(Vector3 rotate)
         {
+            hasChangedSinceLastUpdate = true;
             for (int i = 0; i < points.Length; i++)
             {
                 MathUtil.rotateXYZFloats(rotate, points[i].pos.X, points[i].pos.Y, points[i].pos.Z, out points[i].pos.X, out points[i].pos.Y, out points[i].pos.Z);
@@ -89,6 +103,7 @@ namespace RabbetGameEngine.Models
 
         public PointCloudModel translatePoints(Vector3 translate)
         {
+            hasChangedSinceLastUpdate = true;
             for (int i = 0; i < points.Length; i++)
             {
                 MathUtil.translateXYZFloats(translate, points[i].pos.X, points[i].pos.Y, points[i].pos.Z, out points[i].pos.X, out points[i].pos.Y, out points[i].pos.Z);
@@ -98,6 +113,7 @@ namespace RabbetGameEngine.Models
 
         public PointCloudModel scaleRadii(float scale)
         {
+            hasChangedSinceLastUpdate = true;
             for (int i = 0; i < points.Length; i++)
             {
                 points[i].radius *= scale;
@@ -106,6 +122,7 @@ namespace RabbetGameEngine.Models
         }
         public PointCloudModel setRadii(float rad)
         {
+            hasChangedSinceLastUpdate = true;
             for (int i = 0; i < points.Length; i++)
             {
                 points[i].radius = rad;
@@ -119,6 +136,29 @@ namespace RabbetGameEngine.Models
             PointParticle[] pointsCopy = new PointParticle[points.Length];
             Array.Copy(points, pointsCopy, points.Length);
             return new PointCloudModel(pointsCopy);
+        }
+
+        public PointCloudModel createTransformedCopy(Matrix4 modelMatrix, Matrix4 prevTickModelMatrix)
+        {
+            PointCloudModel result;
+
+            PointParticle[] resultPoints = new PointParticle[this.points.Length];
+            PointParticle[] resultPrevPoints = new PointParticle[this.prevPoints.Length];
+            Array.Copy(points,resultPoints, points.Length);
+            Array.Copy(prevPoints,resultPrevPoints, prevPoints.Length);
+
+            for (int i = 0; i < resultPoints.Length; ++i)
+            {
+                resultPoints[i].pos = Vector3.TransformPerspective(resultPoints[i].pos, modelMatrix);
+            }
+
+            for (int i = 0; i < resultPrevPoints.Length; ++i)
+            {
+                resultPrevPoints[i].pos = Vector3.TransformPerspective(resultPrevPoints[i].pos, prevTickModelMatrix);
+            }
+
+            result = new PointCloudModel(resultPoints, resultPrevPoints);
+            return result;
         }
 
     }

@@ -15,6 +15,9 @@ namespace RabbetGameEngine.VFX
         protected bool pointAmbientOcclusion = false;//if ambient occlusion is true, the point will be rendered with a spherical ambient occlusion giving the illusion of a sphere instead of a 2d circular point
         protected int particleCount;
         protected float colorAlpha;
+        protected Matrix4 modelMatrix = Matrix4.Identity;
+        protected Matrix4 prevTickModelMatrix = Matrix4.Identity;
+        protected bool transparency = false;
 
         /*this constructor is for creating a point particle based VFX which does not create a random point cloud. maybe you will want to construct the points in a specific manner with colors or use a model.*/
         public VFXPointCloud(Vector3 pos, CustomColor color, float radius, bool transparency, bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, "none", null, maxExistingSeconds, transparency? BatchType.lerpPointsTransparent : BatchType.lerpPoints)
@@ -23,11 +26,13 @@ namespace RabbetGameEngine.VFX
             pointColor = color;
             pointRadius = radius;
             pointAmbientOcclusion = ambientOcclusion;
+            this.transparency = transparency;
         }
 
         /*this constructor is for creating a randomized particle cloud at the position using the provided parameters*/
         public VFXPointCloud(Vector3 pos, CustomColor color, int particleCount, float randomPointPositionSpread, float radius, bool randomBrightness, bool transparency,  bool ambientOcclusion, float maxExistingSeconds = 2F, float alpha = 1) : base(pos, 1.0F, "none", null, maxExistingSeconds, transparency ? BatchType.lerpPointsTransparent : BatchType.lerpPoints)
         {
+            this.transparency = transparency;
             colorAlpha = alpha;
             this.randomBrightness = randomBrightness;
             this.particleCount = particleCount;
@@ -36,6 +41,8 @@ namespace RabbetGameEngine.VFX
             pointRadius = radius;
             pointAmbientOcclusion = ambientOcclusion;
             constructPointCloudModel();
+            this.modelMatrix = Matrix4.CreateScale(new Vector3(scale * scaleXModifyer, scale * scaleYModifyer, scale * scaleZModifyer)) * MathUtil.createRotation(new Vector3(pitch, -yaw - 90, roll)) * Matrix4.CreateTranslation(pos);
+            this.prevTickModelMatrix = this.modelMatrix;
         }
 
         /*Builds the vertices for the point cloud to be rendered. By default this method will build a randomized point cloud
@@ -68,6 +75,28 @@ namespace RabbetGameEngine.VFX
             Vector4 nonRandBrightColor = pointColor.toNormalVec4();
             nonRandBrightColor.W = colorAlpha;
             return nonRandBrightColor;
+        }
+
+        public override void preTick()
+        {
+            pointVfxModel.preTick();
+            base.preTick();
+        }
+
+        protected override void updateVFXModel()
+        {
+            this.prevTickModelMatrix = this.modelMatrix;
+            scaleVelocity += scaleAcceleration - scaleResistance * scaleVelocity; //decrease expansion rate
+            scale += scaleVelocity;
+            this.modelMatrix = Matrix4.CreateScale(new Vector3(scale * scaleXModifyer, scale * scaleYModifyer, scale * scaleZModifyer)) * MathUtil.createRotation(new Vector3(pitch, -yaw - 90,roll)) * Matrix4.CreateTranslation(pos);
+            pointColor.setAlphaPercent(1 - (float)GameInstance.rand.NextDouble() * 0.052F );
+            pointVfxModel.setColor(pointColor);
+            pointVfxModel.scaleRadii(1.01F);
+        }
+
+        public override void sendRenderRequest()
+        {
+            Renderer.requestRender(pointVfxModel.createTransformedCopy(modelMatrix, prevTickModelMatrix), this.transparency);
         }
     }
 }

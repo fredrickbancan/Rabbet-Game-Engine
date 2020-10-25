@@ -58,7 +58,6 @@ namespace RabbetGameEngine
         {
             velocity += acceleration;
             velocity *= (1 - airResistance);
-            pos += velocity;
 
             //do last
             if (!hasDoneFirstUpdate)

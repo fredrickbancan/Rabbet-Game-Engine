@@ -8,7 +8,7 @@ namespace RabbetGameEngine
     public class EntityTank : EntityVehicle
     {
         public static readonly float projectileHopupAngle = 7.2F;
-        public static readonly float roundsPerSecond = 3F;//fire rate of tank
+        public static readonly float roundsPerSecond = 6F;//fire rate of tank
         private float bodyYaw;
         private float barrelPitch;
         public static readonly float barrelLength = 6.75F;

@@ -15,7 +15,6 @@ namespace RabbetGameEngine
       This class also contains the projection matrix.*/
     public static class Renderer
     {
-        //TODO: AFTER COMPLETING NEW BATCHING OF LERP OBJECTS: Re-code shaders to impliment support for the new lerp draw calls.
         private static int privateTotalDrawCallCount;
         private static Matrix4 projectionMatrix;
         public static readonly bool useOffScreenBuffer = false;
@@ -71,6 +70,13 @@ namespace RabbetGameEngine
         {
             Profiler.beginEndProfile("batching");
             BatchManager.requestRender(type, tex, mod);
+            Profiler.beginEndProfile("batching");
+        }
+
+        public static void requestRender(PointCloudModel mod, bool transparency)
+        {
+            Profiler.beginEndProfile("batching");
+            BatchManager.requestRender(mod, transparency);
             Profiler.beginEndProfile("batching");
         }
 

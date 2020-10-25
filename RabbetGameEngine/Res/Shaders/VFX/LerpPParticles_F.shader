@@ -27,7 +27,7 @@ out float fAoc;
 void main()
 {
     //lerping position
-    vec4 worldPosition = prevPosition + (position - prevPosition) * percentageToNextTick;
+    vec4 worldPosition =  prevPosition + (position - prevPosition) * percentageToNextTick;
     vec4 positionRelativeToCam = viewMatrix * worldPosition;
     gl_Position = projectionMatrix * positionRelativeToCam;
 
@@ -54,7 +54,6 @@ in vec4 vColor;
 in float fAoc;
 
 uniform vec3 fogColor;
-
 
 float ambientOcclusion;//variable for applying a shadowing effect towards the edges of the point to give the illusion of a sphereical shape
 

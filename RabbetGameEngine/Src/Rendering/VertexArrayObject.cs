@@ -229,13 +229,6 @@ namespace RabbetGameEngine
             //These types require the standard VBO layout.
             if (batchType != BatchType.lerpPoints && batchType != BatchType.lerpPointsTransparent)
             {
-                if(usesIndirect)
-                {
-                    indirectBufferID = GL.GenBuffer();
-                    GL.BindBuffer(BufferTarget.DrawIndirectBuffer, indirectBufferID);
-                    GL.BufferData(BufferTarget.DrawIndirectBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
-                }
-
                 vboID = GL.GenBuffer();
                 GL.BindBuffer(BufferTarget.ArrayBuffer, vboID);
                 GL.BufferData(BufferTarget.ArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
@@ -293,6 +286,12 @@ namespace RabbetGameEngine
                     GL.VertexAttribPointer(11, 4, VertexAttribPointerType.Float, false, sizeOfMatrix, sizeOfMatrix + 48);
                     GL.VertexAttribDivisor(11, 1);
                 }
+                if (usesIndirect)
+                {
+                    indirectBufferID = GL.GenBuffer();
+                    GL.BindBuffer(BufferTarget.DrawIndirectBuffer, indirectBufferID);
+                    GL.BufferData(BufferTarget.DrawIndirectBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
+                }
             }
 
             //point types require two point arrays, points and previous tick points.
@@ -303,31 +302,32 @@ namespace RabbetGameEngine
                 GL.BindBuffer(BufferTarget.ArrayBuffer, vboID);
                 GL.BufferData(BufferTarget.ArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
 
+                int stride = PointParticle.pParticleByteSize * 2;
                 //current point data
                 GL.EnableVertexAttribArray(0);
-                GL.VertexAttribPointer(0, PointParticle.positionLength, VertexAttribPointerType.Float, false, PointParticle.pParticleByteSize, PointParticle.positionOffset);
+                GL.VertexAttribPointer(0, PointParticle.positionLength, VertexAttribPointerType.Float, false, stride, PointParticle.positionOffset);
 
                 GL.EnableVertexAttribArray(1);
-                GL.VertexAttribPointer(1, PointParticle.colorLength, VertexAttribPointerType.Float, false, PointParticle.pParticleByteSize, PointParticle.colorOffset);
+                GL.VertexAttribPointer(1, PointParticle.colorLength, VertexAttribPointerType.Float, false, stride, PointParticle.colorOffset);
 
                 GL.EnableVertexAttribArray(2);
-                GL.VertexAttribPointer(2, PointParticle.radiusLength, VertexAttribPointerType.Float, false, PointParticle.pParticleByteSize, PointParticle.radiusOffset);
+                GL.VertexAttribPointer(2, PointParticle.radiusLength, VertexAttribPointerType.Float, false, stride, PointParticle.radiusOffset);
                 
                 GL.EnableVertexAttribArray(3);
-                GL.VertexAttribPointer(3, PointParticle.aocLength, VertexAttribPointerType.Float, false, PointParticle.pParticleByteSize, PointParticle.aocOffset);
-               
+                GL.VertexAttribPointer(3, PointParticle.aocLength, VertexAttribPointerType.Float, false, stride, PointParticle.aocOffset);
+
                 //previous tick point data
                 GL.EnableVertexAttribArray(4);
-                GL.VertexAttribPointer(4, PointParticle.positionLength, VertexAttribPointerType.Float, false, PointParticle.pParticleByteSize, PointParticle.pParticleByteSize + PointParticle.positionOffset);
+                GL.VertexAttribPointer(4, PointParticle.positionLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.positionOffset);
 
                 GL.EnableVertexAttribArray(5);
-                GL.VertexAttribPointer(5, PointParticle.colorLength, VertexAttribPointerType.Float, false, PointParticle.pParticleByteSize, PointParticle.pParticleByteSize + PointParticle.colorOffset);
+                GL.VertexAttribPointer(5, PointParticle.colorLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.colorOffset);
 
                 GL.EnableVertexAttribArray(6);
-                GL.VertexAttribPointer(6, PointParticle.radiusLength, VertexAttribPointerType.Float, false, PointParticle.pParticleByteSize, PointParticle.pParticleByteSize + PointParticle.radiusOffset);
+                GL.VertexAttribPointer(6, PointParticle.radiusLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.radiusOffset);
 
                 GL.EnableVertexAttribArray(7);
-                GL.VertexAttribPointer(7, PointParticle.aocLength, VertexAttribPointerType.Float, false, PointParticle.pParticleByteSize, PointParticle.pParticleByteSize + PointParticle.aocOffset);
+                GL.VertexAttribPointer(7, PointParticle.aocLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.aocOffset);
             }
 
             hasInitialized = true;

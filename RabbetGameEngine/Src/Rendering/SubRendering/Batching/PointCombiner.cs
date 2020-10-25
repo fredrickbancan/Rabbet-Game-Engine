@@ -12,9 +12,10 @@ namespace RabbetGameEngine.SubRendering
             PointParticle[] result = new PointParticle[combinedLength];
 
             //interlace
-            for (int i = 0; i < combinedLength; ++i)
+            for (int i = 0; i < combinedLength; i += 2)
             {
-                result[i] = (i % 2 == 0) ? arrayA[i] : arrayB[i];
+                result[i] = arrayA[i / 2];
+                result[i + 1] = arrayB[i / 2];
             }
 
             return result;
@@ -27,9 +28,10 @@ namespace RabbetGameEngine.SubRendering
             PointParticle[] result = new PointParticle[combinedLength];
 
             //interlace
-            for(int i = 0; i < combinedLength; ++i)
+            for (int i = 0; i < combinedLength; i += 2)
             {
-                result[i] = (i % 2 == 0) ? arrayA[i] : arrayB[i];
+                result[i] = arrayA[i / 2];
+                result[i + 1] = arrayB[i / 2];
             }
 
             return result;
