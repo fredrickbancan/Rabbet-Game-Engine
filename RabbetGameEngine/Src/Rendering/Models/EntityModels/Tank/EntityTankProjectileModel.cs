@@ -5,7 +5,7 @@
         private static string textureName = "Camo";
         private static string modelName = "TankProjectile";
 
-        public EntityTankProjectileModel(Entity parent) : base (parent, textureName, ModelUtil.getModel(modelName))
+        public EntityTankProjectileModel(Entity parent) : base (parent, textureName, MeshUtil.getMeshForModel(modelName))
         {
         }
     }

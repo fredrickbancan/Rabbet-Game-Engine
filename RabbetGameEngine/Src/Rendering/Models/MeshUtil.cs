@@ -6,7 +6,7 @@ namespace RabbetGameEngine.Models
 {
     /*This class is for loading and providing model data to be used throughout the game, without having to 
       re-load them each time they are used.*/
-    public static class ModelUtil
+    public static class MeshUtil
     {
         private static Dictionary<string, Model> models = null;
         public static void loadAllFoundModelFiles()
@@ -54,7 +54,7 @@ namespace RabbetGameEngine.Models
         }
 
         
-        public static Model getModel(string modelName)
+        public static Model getMeshForModel(string modelName)
         {
             Model result;
             tryGetModel(modelName, out result);

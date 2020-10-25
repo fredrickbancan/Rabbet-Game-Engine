@@ -39,12 +39,6 @@ namespace RabbetGameEngine
             //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             if (isFlying) { setYAccel(0); } else { setYAccel(-gravity); }
             if (velocity.Y != 0) isGrounded = false;//simple detection of being on the ground. Very basic.
-            
-            if (hasModel)
-            {
-                updateModel();
-            }
-            
         }
 
         /*Do this after manipulating any movement of this object*/
@@ -62,7 +56,6 @@ namespace RabbetGameEngine
                 velocity.Y *= (1 - airResistance);
                 velocity.Z *= (1 - groundResistance);
             }
-
             //do last
             if (!hasDoneFirstUpdate)
             {

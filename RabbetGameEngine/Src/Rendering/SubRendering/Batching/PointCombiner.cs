@@ -4,7 +4,38 @@ namespace RabbetGameEngine.SubRendering
 {
     public static class PointCombiner
     {
-        public static PointParticle[] addPointsToArray(PointParticle[] points, PointParticle[] newPoints)
+
+        public static PointParticle[] interlacePointArraysByCount(PointParticle[] arrayA, PointParticle[] arrayB, int count)
+        {
+            int combinedLength = count*2;
+
+            PointParticle[] result = new PointParticle[combinedLength];
+
+            //interlace
+            for (int i = 0; i < combinedLength; ++i)
+            {
+                result[i] = (i % 2 == 0) ? arrayA[i] : arrayB[i];
+            }
+
+            return result;
+        }
+
+        public static PointParticle[] interlacePointArraysOfSameLength(PointParticle[] arrayA, PointParticle[] arrayB)
+        {
+            int combinedLength = arrayA.Length + arrayB.Length;
+
+            PointParticle[] result = new PointParticle[combinedLength];
+
+            //interlace
+            for(int i = 0; i < combinedLength; ++i)
+            {
+                result[i] = (i % 2 == 0) ? arrayA[i] : arrayB[i];
+            }
+
+            return result;
+        }
+
+        public static PointParticle[] concatPoints(PointParticle[] points, PointParticle[] newPoints)
         {
             int l = points.Length + newPoints.Length;
             PointParticle[] result = new PointParticle[l];
@@ -19,7 +50,7 @@ namespace RabbetGameEngine.SubRendering
             return result;
         }
 
-        public static PointParticle[] addPointToArray(PointParticle[] points, PointParticle newPoint)
+        public static PointParticle[] concatPoint(PointParticle[] points, PointParticle newPoint)
         {
             PointParticle[] result = new PointParticle[points.Length + 1];
             for (int i = 0; i < points.Length; ++i)
@@ -30,7 +61,7 @@ namespace RabbetGameEngine.SubRendering
             return result;
         }
 
-        public static PointCloudModel combineData(PointCloudModel inputPointCloud, PointCloudModel newPointCloud)
+        public static PointCloudModel concatData(PointCloudModel inputPointCloud, PointCloudModel newPointCloud)
         {
             int totalPoints = inputPointCloud.points.Length + newPointCloud.points.Length;
 

@@ -29,7 +29,7 @@ namespace RabbetGameEngine.SubRendering
         /// <summary>
         /// Should be called before any rendering requests. For instance, begining of each tick loop.
         /// </summary>
-        public static void updateAll()
+        public static void onTickStart()
         {
             for (int i = 0; i < batches.Count; ++i)
             {
@@ -40,7 +40,7 @@ namespace RabbetGameEngine.SubRendering
         /// <summary>
         /// Should be called before rendering any batches. For instance, begining end of each tick loop.
         /// </summary>
-        public static void prepareAll()
+        public static void onTickEnd()
         {
             for (int i = 0; i < batches.Count; ++i)
             {
@@ -85,7 +85,7 @@ namespace RabbetGameEngine.SubRendering
                 if(i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
                     //ensure that all opaque batches come before transparent ones in the list.
-                    if (type == BatchType.lerpTrianglesTransparent)
+                    if (type == BatchType.lerpTrianglesTransparent || type == BatchType.trianglesTransparent)
                     {
                         batches.Add(new Batch(type, tex));
                         batches.ElementAt(i + 1).addToBatch(theModel);

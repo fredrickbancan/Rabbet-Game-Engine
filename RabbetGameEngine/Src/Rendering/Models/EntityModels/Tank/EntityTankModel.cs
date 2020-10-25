@@ -11,11 +11,12 @@ namespace RabbetGameEngine.Models
         private string wheelModelName = "TankWheels";
         private string bodyModelName = "TankBody";
         private string barrelModelName = "TankBarrel";
+
         public EntityTankModel(EntityTank parent) : base(parent, textureName, null)
         {
-            tankWheelModel = ModelUtil.getModel(wheelModelName);
-            tankBodyModel = ModelUtil.getModel(bodyModelName);
-            tankBarrelModel = ModelUtil.getModel(barrelModelName);
+            tankWheelModel = MeshUtil.getMeshForModel(wheelModelName);
+            tankBodyModel = MeshUtil.getMeshForModel(bodyModelName);
+            tankBarrelModel = MeshUtil.getMeshForModel(barrelModelName);
             onTick();
             onTick();
         }

@@ -3,6 +3,7 @@ using OpenTK;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Physics;
+using RabbetGameEngine.SubRendering;
 using RabbetGameEngine.VFX;
 using System;
 using System.Collections.Generic;
@@ -95,7 +96,11 @@ namespace RabbetGameEngine
                 unbatchedWallQuads[12 + i] = QuadPrefab.getNewModel().scaleVertices(new Vector3(playgroundLength / 4, wallHeight, 1)).scaleUV(new Vector2(playgroundLength / (wallHeight * 4), 1)).rotateVertices(new Vector3(0, 90, 0)).translateVertices(new Vector3(playgroundWidth / 2, groundHeight + wallHeight / 2, (playgroundLength / 2) - ((playgroundLength / 4) / 2) - ((playgroundLength / 4) * i))).setColor(new Vector4(0.9F, 0.9F, 0.9F, 1.0F));
             }
 
+            Model batchedGround = TriangleCombiner.combineData(unbatchedGroundQuads);
+            Model batchedWalls = TriangleCombiner.combineData(unbatchedWallQuads);
 
+            Renderer.addStaticDrawTriangles("ground", groundTextureName, batchedGround);
+            Renderer.addStaticDrawTriangles("walls", wallTextureName, batchedWalls);
 
             //adding world colliders
             this.addWorldAABB(new AABB(new Vector3(-(playgroundWidth * 0.5F), -2, -(playgroundLength * 0.5F)), new Vector3(playgroundWidth * 0.5F, 0, playgroundLength * 0.5F)));//AABB for ground
@@ -160,6 +165,11 @@ namespace RabbetGameEngine
                 else
                 {
                     CollisionHandler.tryToMoveObject(entAt, worldColliders);
+                }
+                if(entAt.getHasModel())
+                {
+                    entAt.getEntityModel().onTick();
+                    entAt.getEntityModel().sendRenderRequest();
                 }
             }
 

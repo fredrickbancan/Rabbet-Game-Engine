@@ -5,6 +5,8 @@ layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 texCoord;
 layout(location = 3) in float objectID;
+layout(location = 4) in mat4 modelMatrix;
+layout(location = 8) in mat4 prevTickModelMatrix;
 
 uniform float fogDensity = 0.0075;
 uniform float fogGradient = 2.5;
@@ -15,16 +17,13 @@ out float visibility;//for fog
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
-
-uniform mat4[] prevTickModelMatrices;
-uniform mat4[] modelMatrices;
-
 uniform float percentageToNextTick;
 uniform int frame;
 
 void main()
 {
-	mat4 lerpMatrix = prevTickModelMatrices[int(objectID)] + (modelMatrices[int(objectID)] - prevTickModelMatrices[int(objectID)]) * percentageToNextTick;
+	//lerp matrix between ticks
+	mat4 lerpMatrix = prevTickModelMatrix + (modelMatrix - prevTickModelMatrix) * percentageToNextTick;
 	
 	vec4 positionRelativeToCam = viewMatrix * lerpMatrix * position;
 
@@ -34,8 +33,8 @@ void main()
 	visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));
 	visibility = clamp(visibility, 0.0, 1.0);
 
-	vTexCoord = texCoord;
 	vColor = vertexColor;
+	vTexCoord = texCoord;
 }
 
 /*#############################################################################################################################################################################################*/

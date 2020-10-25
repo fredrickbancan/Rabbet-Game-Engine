@@ -39,7 +39,7 @@ namespace RabbetGameEngine
             {
                 return;
             }
-            VAO.bind();
+            VAO.bindVaoVboIbo();
             skyboxShader.use();
             skyboxShader.setUniformMat4F("projectionMatrix", projectionMatrix);
             skyboxShader.setUniformMat4F("viewMatrix", viewMatrix);

@@ -11,15 +11,24 @@ namespace RabbetGameEngine.SubRendering
     {
         public static readonly int maxBufferSizeBytes = 2500000;
         public static readonly int maxIndiciesCount = maxBufferSizeBytes / sizeof(uint);
-        public int maxVertexCount = maxBufferSizeBytes / Vertex.vertexByteSize;
+        public static readonly int maxVertexCount = maxBufferSizeBytes / Vertex.vertexByteSize;
         public int maxPointCount = maxBufferSizeBytes / PointParticle.pParticleByteSize;
+        public int maxMatrixCount = maxBufferSizeBytes / (sizeof(float) * 16);
+        public int maxDrawCommandCount = maxBufferSizeBytes / DrawCommand.sizeInBytes;
         private VertexArrayObject VAO;
         private Model batchedModel = null;
+
+        /*points are stored in a single VBO interlaced. all the batchedPoints come first, and then the prevTickBatchedPoints are packed after them.*/
         private PointParticle[] batchedPoints = null;
         private PointParticle[] prevTickBatchedPoints = null;
+
+        /*Matrices are stored in a single VBO interlaced. all the modelMatrices come first, and then the prevTickModelMatrices are packed after them.*/
         private Matrix4[] prevTickModelMatrices = null;
         private Matrix4[] modelMatrices = null;
-        private bool usingMatricesUniforms = false;
+
+        private DrawCommand[] drawCommands = null;
+
+        private bool usesLerping = false;
         private bool pointBased = false;
         private int matricesItterator = 0;
 
@@ -103,20 +112,29 @@ namespace RabbetGameEngine.SubRendering
 
                 case BatchType.lerpTriangles:
                     ShaderUtil.tryGetShader(ShaderUtil.lerpTrianglesName, out batchShader);
-                    prevTickModelMatrices = new Matrix4[RenderAbility.maxUniformMat4];
-                    modelMatrices = new Matrix4[RenderAbility.maxUniformMat4];
+                    maxMatrixCount /= 2;
+                    prevTickModelMatrices = new Matrix4[maxMatrixCount];
+                    modelMatrices = new Matrix4[maxMatrixCount];
+                    drawCommands = new DrawCommand[maxDrawCommandCount];
+                    usesLerping = true;
                     break;
 
                 case BatchType.lerpTrianglesTransparent:
                     ShaderUtil.tryGetShader(ShaderUtil.lerpTrianglesTransparentName, out batchShader);
-                    prevTickModelMatrices = new Matrix4[RenderAbility.maxUniformMat4];
-                    modelMatrices = new Matrix4[RenderAbility.maxUniformMat4];
+                    maxMatrixCount /= 2;
+                    prevTickModelMatrices = new Matrix4[maxMatrixCount];
+                    modelMatrices = new Matrix4[maxMatrixCount];
+                    drawCommands = new DrawCommand[maxDrawCommandCount];
+                    usesLerping = true;
                     break;
 
                 case BatchType.lerpLines:
                     ShaderUtil.tryGetShader(ShaderUtil.lerpLinesName, out batchShader);
-                    prevTickModelMatrices = new Matrix4[RenderAbility.maxUniformMat4];
-                    modelMatrices = new Matrix4[RenderAbility.maxUniformMat4];
+                    maxMatrixCount /= 2;
+                    prevTickModelMatrices = new Matrix4[maxMatrixCount];
+                    modelMatrices = new Matrix4[maxMatrixCount];
+                    drawCommands = new DrawCommand[maxDrawCommandCount];
+                    usesLerping = true;
                     break;
             }
         }
@@ -137,26 +155,29 @@ namespace RabbetGameEngine.SubRendering
                 return false;
             }
            
-            if (usingMatricesUniforms)
+            if (usesLerping)
             { 
-                //if this batch uses matrices unforms for linear interpolation and cant fit the new matrix
-                if (matricesItterator + 1 >= RenderAbility.maxUniformMat4) return false;
+                //if this batch cant fit the matrices or draw commands then return false
+                if (matricesItterator + 1 >= maxMatrixCount) return false;
+                if (requestedObjectItterator + 1 >= maxDrawCommandCount) return false;
                 modelMatrices[matricesItterator] = theModel.modelMatrix;
                 prevTickModelMatrices[matricesItterator] = theModel.prevModelMatrix;
+                configureDrawCommandsForCurrentObject(theModel.vertices.Length);
                 ++matricesItterator;
             }
 
-            theModel.setObjectID(requestedObjectItterator++);
-
-            Array.Copy(theModel.vertices, 0, batchedModel.vertices, requestedVerticesCount, theModel.vertices.Length);
+            theModel.setObjectID(requestedObjectItterator);
             
-            for(int i = 0; i < theModel.indices.Length; ++i)
+            Array.Copy(theModel.vertices, 0, batchedModel.vertices, requestedVerticesCount, theModel.vertices.Length);
+
+            for (int i = 0; i < theModel.indices.Length; ++i)
             {
                 batchedModel.indices[requestedIndicesCount + i] = (uint)(theModel.indices[i] + requestedVerticesCount);
             }
 
             requestedVerticesCount += theModel.vertices.Length;
             requestedIndicesCount += theModel.indices.Length;
+            requestedObjectItterator++;
             hasBeenUpdated = true;
             return true;
         }
@@ -201,39 +222,62 @@ namespace RabbetGameEngine.SubRendering
             return true;
         }
 
+        /// <summary>
+        /// Sets up and configures vertexattribptrs and vertexattribdivisors for the current requested object.
+        /// This is required for LERP type batches for selecting the correct matrices.
+        /// </summary>
+        private void configureDrawCommandsForCurrentObject(int objVertCount)
+        {
+            drawCommands[requestedObjectItterator] = new DrawCommand((uint)objVertCount, 1, 0, (uint)requestedVerticesCount, (uint)requestedObjectItterator);
+        }
+
         public void onTickStart()
         {
             requestedVerticesCount = 0;
             requestedIndicesCount = 0;
+            requestedObjectItterator = 0;
             matricesItterator = 0;
             hasBeenUpdated = false;
         }
 
+        /// <summary>
+        /// After each tick, all the batches must submit their updated render data to the GPU to prepare for all draw calls.
+        /// </summary>
         public void onTickEnd()
         {
-            VAO.bindVBO();
-            //do buffer submissions here.
-            if(pointBased)
+            //decrement these so they are the values of the actual current amounts
+            matricesItterator--;
+            requestedObjectItterator--;
+            if (usesLerping)
             {
-                GL.BufferData(BufferTarget.ArrayBuffer, (requestedVerticesCount * 2) *  PointParticle.pParticleByteSize, PointCombiner.addPointsToArray(batchedPoints, prevTickBatchedPoints), BufferUsageHint.DynamicDraw);
+                VAO.bindMatricesVBO();
+                //interlacing both arrays into one to submit to gpu
+                //using matricesItterator to only interlace and submit the necessary amount of data.
+                Matrix4[] b;
+                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (matricesItterator * 2) * (sizeof(float) * 16), b = MatrixCombiner.interlaceMatrixArraysByCount(modelMatrices, prevTickModelMatrices, matricesItterator));
+                //TODO: THIS IS FUCKED SOMEHOWW
+                VAO.bindIndirectBufferObject();
+                GL.BufferSubData(BufferTarget.DrawIndirectBuffer, IntPtr.Zero, requestedObjectItterator * DrawCommand.sizeInBytes, drawCommands);
+            }
+
+            VAO.bindVBO();
+            VAO.bindIBO();
+
+            if(!pointBased)
+            {
+                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, requestedVerticesCount * Vertex.vertexByteSize, batchedModel.vertices);
+                GL.BufferSubData(BufferTarget.ElementArrayBuffer, IntPtr.Zero, requestedIndicesCount * sizeof(uint), batchedModel.indices);
             }
             else
             {
-                GL.BufferData(BufferTarget.ArrayBuffer,  requestedVerticesCount * Vertex.vertexByteSize, batchedModel.vertices, BufferUsageHint.DynamicDraw);
-                GL.BufferData(BufferTarget.ElementArrayBuffer, requestedIndicesCount * sizeof(uint), batchedModel.indices, BufferUsageHint.DynamicDraw);
+                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (requestedVerticesCount * 2) *  PointParticle.pParticleByteSize, PointCombiner.interlacePointArraysByCount(batchedPoints, prevTickBatchedPoints, requestedVerticesCount));
             }
         }
-
-
         
         public void draw(Matrix4 projectionMatrix, Matrix4 viewMatrix, Vector3 fogColor)
         {
-            VAO.bind();
+            VAO.bindVaoVboIbo();
             batchShader.use();
-            if (batchTex != null && !batchTex.getIsNone())
-            {
-                batchTex.use();
-            }
             batchShader.setUniformMat4F("projectionMatrix", projectionMatrix);
             batchShader.setUniformMat4F("viewMatrix", viewMatrix);
             batchShader.setUniformVec3F("fogColor", fogColor);
@@ -247,12 +291,19 @@ namespace RabbetGameEngine.SubRendering
                 return;
             }
 
-            if (usingMatricesUniforms)
+            if (batchTex != null && !batchTex.getIsNone())
             {
-                batchShader.setUniformMat4FArray("modelMatrices", modelMatrices);
-                batchShader.setUniformMat4FArray("prevTickModelMatrices", prevTickModelMatrices);
+                batchTex.use();
             }
 
+            if (usesLerping)
+            {
+                VAO.bindMatricesVBO();
+                VAO.bindIndirectBufferObject();
+                GL.MultiDrawElementsIndirect(VAO.getPrimType(), DrawElementsType.UnsignedInt, IntPtr.Zero, requestedObjectItterator, 0);
+                return;
+            }
+            
             GL.DrawElements(VAO.getPrimType(), requestedIndicesCount, DrawElementsType.UnsignedInt, 0);
             return;
         }

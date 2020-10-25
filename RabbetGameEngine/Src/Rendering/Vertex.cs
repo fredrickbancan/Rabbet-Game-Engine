@@ -7,6 +7,8 @@ namespace RabbetGameEngine
         public Vector3 pos;
         public Vector4 color;
         public Vector2 uv;
+
+        //NOTE: This is an obselete member of Vertex, only left here incase of future use cases.
         public float objectID;
 
         /*these are only in bytes to save memory. They shouldnt ever get even close to 256*/

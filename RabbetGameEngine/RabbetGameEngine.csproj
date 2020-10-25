@@ -73,6 +73,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Src\Rendering\SkyboxRenderer.cs" />
+    <Compile Include="Src\Rendering\SubRendering\Batching\DrawCommand.cs" />
+    <Compile Include="Src\Rendering\SubRendering\Batching\MatrixCombiner.cs" />
     <Compile Include="Src\World\Skybox.cs" />
     <None Include="Res\Shaders\FrameBuffer.shader" />
     <None Include="Res\Shaders\Planet\StaticLines.shader" />
@@ -94,7 +96,7 @@
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankModel.cs" />
     <Compile Include="Src\Rendering\Models\EntityModels\Tank\EntityTankProjectileModel.cs" />
     <Compile Include="Src\Rendering\Models\PointCloudModel.cs" />
-    <Compile Include="Src\Rendering\Models\ModelUtil.cs" />
+    <Compile Include="Src\Rendering\Models\MeshUtil.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\CubePrefab.cs" />
     <Compile Include="Src\Rendering\Models\Prefabs\DefaultDebugModel.cs" />
     <Compile Include="Src\Rendering\Models\OBJLoader.cs" />
@@ -108,7 +110,6 @@
     <Compile Include="Src\Rendering\SubRendering\GUI\GUIScreenComponent.cs" />
     <Compile Include="Src\Rendering\SubRendering\Batching\TriangleCombiner.cs" />
     <Compile Include="Src\Rendering\SubRendering\OffScreen.cs" />
-    <Compile Include="Src\Rendering\SubRendering\RenderAbility.cs" />
     <Compile Include="Src\Rendering\TextureUtil.cs" />
     <Compile Include="Src\Rendering\PointParticle.cs" />
     <Compile Include="Src\Rendering\VertexArrayObject.cs" />

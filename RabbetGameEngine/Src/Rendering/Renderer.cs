@@ -15,6 +15,7 @@ namespace RabbetGameEngine
       This class also contains the projection matrix.*/
     public static class Renderer
     {
+        //TODO: AFTER COMPLETING NEW BATCHING OF LERP OBJECTS: Re-code shaders to impliment support for the new lerp draw calls.
         private static int privateTotalDrawCallCount;
         private static Matrix4 projectionMatrix;
         public static readonly bool useOffScreenBuffer = false;
@@ -31,13 +32,13 @@ namespace RabbetGameEngine
         {
             ShaderUtil.loadAllFoundShaderFiles();
             TextureUtil.loadAllFoundTextureFiles();
-            ModelUtil.loadAllFoundModelFiles();
+            MeshUtil.loadAllFoundModelFiles();
             Application.infoPrint("OpenGL Version: " + GL.GetString(StringName.Version));
             Application.infoPrint("OpenGL Vendor: " + GL.GetString(StringName.Vendor));
             Application.infoPrint("Shading Language Version: " + GL.GetString(StringName.ShadingLanguageVersion));
             Application.debugPrint("Loaded " + ShaderUtil.getShaderCount() + " shaders.");
             Application.debugPrint("Loaded " + TextureUtil.getTextureCount() + " textures.");
-            Application.debugPrint("Loaded " + ModelUtil.getModelCount() + " models.");
+            Application.debugPrint("Loaded " + MeshUtil.getModelCount() + " models.");
             GL.Viewport(preFullScreenSize = GameInstance.get.ClientRectangle);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
@@ -50,8 +51,6 @@ namespace RabbetGameEngine
             staticDraws = new Dictionary<string, StaticRenderObject>();
             if(useOffScreenBuffer) OffScreen.init();
             SkyboxRenderer.init();
-            Application.debugPrint("\n\n\n_______SYSTEM RENDERING CAPABILITIES_______");
-            RenderAbility.setMaxUniformComponents(GL.GetInteger(GetPName.MaxVertexUniformComponents));
         }
 
         /*Called each time the game window is resized*/
@@ -78,13 +77,13 @@ namespace RabbetGameEngine
         public static void onTickStart()
         {
             Profiler.beginEndProfile("batching");
-            BatchManager.updateAll();
+            BatchManager.onTickStart();
             Profiler.beginEndProfile("batching");
         }
         public static void onTickEnd()
         {
             Profiler.beginEndProfile("batching");
-            BatchManager.prepareAll();
+            BatchManager.onTickEnd();
             Profiler.beginEndProfile("batching");
         }
 

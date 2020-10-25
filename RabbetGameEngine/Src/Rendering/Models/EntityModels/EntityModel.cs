@@ -16,7 +16,7 @@ namespace RabbetGameEngine.Models
         protected Texture tex;
         protected BatchType batchType;
 
-        public EntityModel(Entity parent, string textureName, Model baseModel, BatchType type = BatchType.triangles)
+        public EntityModel(Entity parent, string textureName, Model baseModel, BatchType type = BatchType.lerpTriangles)
         {
             this.batchType = type;
             this.parent = parent;
@@ -40,6 +40,7 @@ namespace RabbetGameEngine.Models
             this.theModel.prevModelMatrix = this.theModel.modelMatrix;
             this.theModel.modelMatrix = MathUtil.createRotation(new Vector3((float)parent.getPitch(), -(float)parent.getYaw() - 90, (float)parent.getRoll())) *  Matrix4.CreateTranslation(parent.getPosition()) ;
         }
+        
 
         /// <summary>
         /// Should be called in each tick to send the updated mesh data to the renderer and batcher

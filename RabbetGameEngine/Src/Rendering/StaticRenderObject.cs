@@ -58,7 +58,7 @@ namespace RabbetGameEngine
 
         public void draw(Matrix4 projectionMatrix, Matrix4 viewMatrix, Vector3 fogColor)
         {
-            VAO.bind();
+            VAO.bindVaoVboIbo();
             shader.use();
             if (tex != null)
             {

@@ -41,7 +41,7 @@ namespace RabbetGameEngine.SubRendering
         /*retuns indices for multiple quads to render them as lined squares*/
         public static uint[] getIndicesForLineQuadCount(int count)
         {
-            int indexCount = count * 8; //lines require two vertices per line, each quad will need 4 lines, thus 8 vertices.
+            int indexCount = count * 8; //lines require two verts per line, each quad will need 4 lines, thus 8 indices.
             uint offset = 0;
             uint[] result = new uint[indexCount];
             //Building indicies array, will work with any number of quads under the max amount.
