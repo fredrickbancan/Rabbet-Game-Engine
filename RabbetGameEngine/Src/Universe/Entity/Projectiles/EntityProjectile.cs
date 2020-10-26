@@ -11,7 +11,7 @@ namespace RabbetGameEngine
         {
             airResistance = 0.001F;
             velocity += direction * initialVelocity;
-            this.maxExistedTicks = TicksAndFps.getNumOfTicksForSeconds(maxLivingSeconds);
+            this.maxExistedTicks = TicksAndFrames.getNumOfTicksForSeconds(maxLivingSeconds);
             this.collider = new AABB(new Vector3(-0.125F, -0.125F, -0.125F), new Vector3(0.125F, 0.125F, 0.125F), this);
             this.hasCollider = true;
         }

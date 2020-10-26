@@ -47,6 +47,7 @@ namespace RabbetGameEngine.Models
         /// </summary>
         public virtual void sendRenderRequest()
         {
+            if(!parent.getIsMarkedForRemoval())
             Renderer.requestRender(batchType, tex, theModel);
         }
     }

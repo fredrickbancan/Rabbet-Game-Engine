@@ -34,6 +34,7 @@ namespace RabbetGameEngine
             this.batchType = BatchType.none;
             dynamic = false;
             initializeStatic(vertices, indices);
+            hasInitialized = true;
         }
         /// <summary>
         /// This constructor is for use when creating a vertex array object for a STATIC (non-dynamic) render object using points
@@ -61,6 +62,7 @@ namespace RabbetGameEngine
 
             GL.EnableVertexAttribArray(4);
             GL.VertexAttribPointer(4, PointParticle.aocLength, VertexAttribPointerType.Float, false, PointParticle.pParticleByteSize, PointParticle.aocOffset);
+            hasInitialized = true;
         }
 
         /// <summary>
@@ -116,6 +118,7 @@ namespace RabbetGameEngine
                     break;
             }
             initializeDynamic();
+            hasInitialized = true;
         }
 
         /// <summary>
@@ -417,7 +420,7 @@ namespace RabbetGameEngine
             {
                 return;
             }
-
+            unbindAll();
             if (usesIndices)
             {
                 GL.DeleteBuffer(iboID);

@@ -50,7 +50,7 @@ namespace RabbetGameEngine.SubRendering
                 if (!batchAt.hasBeenUsedInCurrentTick())
                 {
                     batchAt.delete();
-                    batches.RemoveAt(i);
+                    batches.Remove(batchAt);
                     --i;
                     continue;
                 }
@@ -101,15 +101,6 @@ namespace RabbetGameEngine.SubRendering
             }
             
         }
-
-
-        /// <summary>
-        /// Can be called to request that the provided data be added to the appropriate existing batch
-        /// or, if said batch does not exist or is full, creates and adds a new batch.
-        /// </summary>
-        /// <param name="type">The category of batch this data applies to</param>
-        /// <param name="vertices">The vertices of this render data</param>
-        /// <param name="indices">The indices of this render data, can be left blank if this does not need indices (i.e points)</param>
         public static void requestRender(PointCloudModel pParticleModel, bool transparency)
         {
             BatchType type = transparency ? BatchType.lerpPointsTransparent : BatchType.lerpPoints;
@@ -133,6 +124,66 @@ namespace RabbetGameEngine.SubRendering
                     {
                         batches.Insert(0, new Batch(transparency));
                         batches.ElementAt(0).addToBatch(pParticleModel);
+                    }
+
+                    return;
+                }
+            }
+        }
+
+        public static void requestRender(PointParticle pParticleModel, bool transparency)
+        {
+            BatchType type = transparency ? BatchType.lerpPointsTransparent : BatchType.lerpPoints;
+            for (int i = 0; i < batches.Count; ++i)
+            {
+                Batch batchAt = batches.ElementAt(i);
+                if (batchAt.getBatchType() == type && batchAt.addToBatch(pParticleModel, pParticleModel))
+                {
+                    return;//successfull batch adding
+                }
+
+                if (i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
+                {
+                    //ensure that all opaque batches come before transparent ones in the list.
+                    if (transparency)
+                    {
+                        batches.Add(new Batch(transparency));
+                        batches.ElementAt(i + 1).addToBatch(pParticleModel, pParticleModel);
+                    }
+                    else
+                    {
+                        batches.Insert(0, new Batch(transparency));
+                        batches.ElementAt(0).addToBatch(pParticleModel, pParticleModel);
+                    }
+
+                    return;
+                }
+            }
+        }
+
+        public static void requestRender(PointParticle pParticle, PointParticle prevTickPParticle, bool transparency)
+        {
+            BatchType type = transparency ? BatchType.lerpPointsTransparent : BatchType.lerpPoints;
+            for (int i = 0; i < batches.Count; ++i)
+            {
+                Batch batchAt = batches.ElementAt(i);
+                if (batchAt.getBatchType() == type && batchAt.addToBatch(pParticle, prevTickPParticle))
+                {
+                    return;//successfull batch adding
+                }
+
+                if (i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
+                {
+                    //ensure that all opaque batches come before transparent ones in the list.
+                    if (transparency)
+                    {
+                        batches.Add(new Batch(transparency));
+                        batches.ElementAt(i + 1).addToBatch(pParticle, prevTickPParticle);
+                    }
+                    else
+                    {
+                        batches.Insert(0, new Batch(transparency));
+                        batches.ElementAt(0).addToBatch(pParticle, prevTickPParticle);
                     }
 
                     return;

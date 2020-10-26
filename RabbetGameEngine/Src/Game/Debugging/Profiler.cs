@@ -88,14 +88,14 @@ namespace RabbetGameEngine.Debugging
 
             public Profile begin()
             {
-                startTime = TicksAndFps.nanoTime();
+                startTime = TicksAndFrames.nanoTime();
                 hasEnded = false;
                 return this;
             }
             
             public void end()
             {
-                timeSpentInCurrentTick += TicksAndFps.nanoTime() - startTime;
+                timeSpentInCurrentTick += TicksAndFrames.nanoTime() - startTime;
                 hasEnded = true;
             }
 
@@ -120,7 +120,7 @@ namespace RabbetGameEngine.Debugging
             {  
                 Console.BackgroundColor = ConsoleColor.Cyan;
                 Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine("Profile: \"" + name + "\" measured " + (TicksAndFps.getRealTimeMills() - startTime) + " miliseconds from start to finish.");
+                Console.WriteLine("Profile: \"" + name + "\" measured " + (TicksAndFrames.getRealTimeMills() - startTime) + " miliseconds from start to finish.");
                 Console.BackgroundColor = ConsoleColor.White;
                 Console.ForegroundColor = ConsoleColor.White;
             }

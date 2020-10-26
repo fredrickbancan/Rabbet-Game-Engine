@@ -12,7 +12,7 @@
 
         public TickTimer(float seconds, bool startTriggered = false, bool startPaused = false)
         {
-            activationTicks = (int)TicksAndFps.getNumOfTicksForSeconds(seconds);
+            activationTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(seconds);
             currentTicks = startTriggered ? activationTicks : 0;
             running = !startPaused;
         }

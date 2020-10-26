@@ -36,9 +36,9 @@ namespace RabbetGameEngine.Models
 
         private static void tryAddNewModel(string modelDir)
         {
-            string shaderName = Path.GetFileName(modelDir).Replace(".obj", "");//removes directory//removes directory
+            string modName = Path.GetFileName(modelDir).Replace(".obj", "");//removes directory//removes directory
             Model addingModel = OBJLoader.loadModelFromObjFile(modelDir);
-            models.Add(shaderName, addingModel);
+            models.Add(modName, addingModel);
         }
 
         /*Returns true if the requested Model was found in the global list*/

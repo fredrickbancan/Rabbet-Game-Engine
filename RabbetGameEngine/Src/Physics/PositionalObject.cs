@@ -207,7 +207,7 @@ namespace RabbetGameEngine
         {
             if (hasDoneFirstUpdate)
             {
-                return previousTickPos + (pos - previousTickPos) * TicksAndFps.getPercentageToNextTick();
+                return previousTickPos + (pos - previousTickPos) * TicksAndFrames.getPercentageToNextTick();
             }
             return pos;
         }
@@ -215,7 +215,7 @@ namespace RabbetGameEngine
         {
             if (hasDoneFirstUpdate)
             {
-                return prevTickPitch + (pitch - prevTickPitch) * TicksAndFps.getPercentageToNextTick();
+                return prevTickPitch + (pitch - prevTickPitch) * TicksAndFrames.getPercentageToNextTick();
             }
             return pitch;
         }
@@ -223,7 +223,7 @@ namespace RabbetGameEngine
         {
             if (hasDoneFirstUpdate)
             {
-                return prevTickYaw + (yaw - prevTickYaw) * TicksAndFps.getPercentageToNextTick();
+                return prevTickYaw + (yaw - prevTickYaw) * TicksAndFrames.getPercentageToNextTick();
             }
             return yaw;
         }
@@ -231,7 +231,7 @@ namespace RabbetGameEngine
         {
             if (hasDoneFirstUpdate)
             {
-                return prevTickRoll + (roll - prevTickRoll) * TicksAndFps.getPercentageToNextTick();
+                return prevTickRoll + (roll - prevTickRoll) * TicksAndFrames.getPercentageToNextTick();
             }
             return roll;
         }

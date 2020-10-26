@@ -29,7 +29,7 @@ namespace RabbetGameEngine.VFX
             this.batchType = type;
             this.scale = initialScale;
             TextureUtil.tryGetTexture(textureName, out vfxTexture);
-            maxExistingTicks = TicksAndFps.getNumOfTicksForSeconds(maxExistingSeconds);
+            maxExistingTicks = TicksAndFrames.getNumOfTicksForSeconds(maxExistingSeconds);
             this.vfxModel = baseModel;
             if (vfxModel != null)
             {
@@ -58,7 +58,7 @@ namespace RabbetGameEngine.VFX
                 vfxModel.prevModelMatrix = vfxModel.modelMatrix;
                 scaleVelocity += scaleAcceleration - scaleResistance * scaleVelocity; //decrease expansion rate
                 scale += scaleVelocity;
-                vfxModel.modelMatrix = Matrix4.CreateScale(new Vector3(scale * scaleXModifyer, scale * scaleYModifyer, scale * scaleZModifyer)) * MathUtil.createRotation(new Vector3((float)pitch, -(float)yaw, (float)roll)) * Matrix4.CreateTranslation(pos);
+                vfxModel.modelMatrix = Matrix4.CreateScale(new Vector3(scale * scaleXModifyer, scale * scaleYModifyer, scale * scaleZModifyer)) * MathUtil.createRotation(new Vector3(pitch, -yaw - 90, roll)) * Matrix4.CreateTranslation(pos);
             }
         }
 

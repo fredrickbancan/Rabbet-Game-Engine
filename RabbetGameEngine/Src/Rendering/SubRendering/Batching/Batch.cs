@@ -50,7 +50,6 @@ namespace RabbetGameEngine.SubRendering
         private BatchType batchType;
         private Texture batchTex;
         private Shader batchShader;
-        private bool hasBeenUpdated = false;
 
         public Batch(BatchType type, Texture tex)
         {
@@ -168,7 +167,7 @@ namespace RabbetGameEngine.SubRendering
                 if (requestedObjectItterator + 1 >= maxDrawCommandCount) return false;
                 modelMatrices[requestedObjectItterator] = theModel.modelMatrix;
                 prevTickModelMatrices[requestedObjectItterator] = theModel.prevModelMatrix;
-                configureDrawCommandsForCurrentObject(theModel.vertices.Length);
+                configureDrawCommandsForCurrentObject(theModel.indices.Length, theModel.vertices.Length);
             }
 
             theModel.setObjectID(requestedObjectItterator);
@@ -183,7 +182,6 @@ namespace RabbetGameEngine.SubRendering
             requestedVerticesCount += theModel.vertices.Length;
             requestedIndicesCount += theModel.indices.Length;
             requestedObjectItterator++;
-            hasBeenUpdated = true;
             return true;
         }
 
@@ -203,7 +201,6 @@ namespace RabbetGameEngine.SubRendering
             batchedPoints[requestedVerticesCount] = singlePoint;
             prevTickBatchedPoints[requestedVerticesCount] = prevTickSinglePoint;
             ++requestedVerticesCount;
-            hasBeenUpdated = true;
             return true;
         }
 
@@ -223,7 +220,6 @@ namespace RabbetGameEngine.SubRendering
             Array.Copy(theModel.points, 0, batchedPoints, requestedVerticesCount, theModel.points.Length);
             Array.Copy(theModel.prevPoints, 0, prevTickBatchedPoints, requestedVerticesCount, theModel.prevPoints.Length);
             requestedVerticesCount += theModel.points.Length;
-            hasBeenUpdated = true;
             return true;
         }
 
@@ -231,9 +227,10 @@ namespace RabbetGameEngine.SubRendering
         /// Sets up and configures vertexattribptrs and vertexattribdivisors for the current requested object.
         /// This is required for LERP type batches for selecting the correct matrices.
         /// </summary>
-        private void configureDrawCommandsForCurrentObject(int objVertCount)
+        private void configureDrawCommandsForCurrentObject(int objIndCount, int vertCount)
         {
-            drawCommands[requestedObjectItterator] = new DrawCommand((uint)objVertCount, 1, 0, (uint)requestedVerticesCount, (uint)requestedObjectItterator * 2);
+            //TODO: Fix problems with indices when submitting triangle based models
+            drawCommands[requestedObjectItterator] = new DrawCommand((uint)(objIndCount), (uint)(1), (uint)(0), (uint)(requestedVerticesCount), (uint)(requestedObjectItterator * 2));
         }
 
         public void onTickStart()
@@ -241,7 +238,6 @@ namespace RabbetGameEngine.SubRendering
             requestedVerticesCount = 0;
             requestedIndicesCount = 0;
             requestedObjectItterator = 0;
-            hasBeenUpdated = false;
         }
 
         /// <summary>
@@ -270,8 +266,7 @@ namespace RabbetGameEngine.SubRendering
             }
             else
             {
-                PointParticle[] p;
-                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, requestedVerticesCount * 2 * PointParticle.pParticleByteSize, p = PointCombiner.interlacePointArraysByCount(batchedPoints, prevTickBatchedPoints, requestedVerticesCount * 2));
+                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, requestedVerticesCount * 2 * PointParticle.pParticleByteSize, PointCombiner.interlacePointArraysByCount(batchedPoints, prevTickBatchedPoints, requestedVerticesCount * 2));
             }
         }
         
@@ -282,7 +277,7 @@ namespace RabbetGameEngine.SubRendering
             batchShader.setUniformMat4F("projectionMatrix", projectionMatrix);
             batchShader.setUniformMat4F("viewMatrix", viewMatrix);
             batchShader.setUniformVec3F("fogColor", fogColor);
-            batchShader.setUniform1F("percentageToNextTick", TicksAndFps.getPercentageToNextTick());
+            batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             batchShader.setUniform1I("frame", Renderer.frame);
             batchShader.setUniformVec2F("viewPortSize", Renderer.useOffScreenBuffer ? new Vector2(OffScreen.getWidth, OffScreen.getHeight) : new Vector2(GameInstance.get.Width, GameInstance.get.Height));
 
@@ -322,7 +317,7 @@ namespace RabbetGameEngine.SubRendering
 
         public bool hasBeenUsedInCurrentTick()
         {
-            return hasBeenUpdated;
+            return requestedVerticesCount > 0;
         }
         public void delete()
         {

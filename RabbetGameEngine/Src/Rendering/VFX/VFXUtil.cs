@@ -9,26 +9,30 @@ namespace RabbetGameEngine.VFX
     {
         public static void doExplosionEffect(Planet planet, Vector3 location, float radius, float pitch = 0, float yaw = -90, float roll = 0)
         {
-            VFXBase smoke = new VFXPointCloud(location, CustomColor.darkGrey, (25 - (int)radius / 2) + (int)(radius / 2 * radius / 2), radius / 15, 0.15F, true, true, false, 2F, 4.8F);
+            VFXPointCloud smoke = new VFXPointCloud(location, CustomColor.darkGrey, true, false, 4F, 0.15F, 0.8F);
 
-            VFXBase sparks = new VFXPointCloud(location, CustomColor.orange, (12 - (int)radius / 4) + (int)(radius / 4 * radius / 4), radius / 15, 0.05F, true, true, false, 0.75F);
+            VFXPointCloud sparks = new VFXPointCloud(location, CustomColor.orange,  false, false, 0.75F, 0.05F, 1);
 
-            VFXBase explosion1 = new VFXPointCloud(location, CustomColor.flame, (128 - (int)radius/2) + (int)(radius/2*radius/2), radius / 15, 0.125F, false, false, true, 0.2F);
+            VFXPointCloud explosion1 = new VFXPointCloud(location, CustomColor.flame, false, false, 0.2F, 0.125F, 1);
 
-            VFXBase explosion2 = new VFXPointCloud(location, CustomColor.ember, (128 - (int)radius/2) + (int)(radius/2*radius/2), radius / 20, 0.125F, true, false, true, 0.15F);
+            VFXPointCloud explosion2 = new VFXPointCloud(location, CustomColor.ember,  false, true, 0.125F, 0.15F, 1);
 
-            smoke.setYAccel(0.003572F);
-            smoke.setExpansionResistance(0.2F);
+            smoke.constructRandomPointCloudModel((32 - (int)radius / 2) + (int)(radius / 2 * radius / 2), radius / 16, true);
+            sparks.constructRandomPointCloudModel((16 - (int)radius / 4) + (int)(radius / 4 * radius / 4), radius / 16, true);
+            explosion1.constructRandomPointCloudModel((256 - (int)radius / 2) + (int)(radius / 2 * radius / 2), radius / 16, false);
+            explosion2.constructRandomPointCloudModel((256 - (int)radius / 2) + (int)(radius / 2 * radius / 2), radius / 32, true);
+            smoke.setYAccel(0.002572F);
+            smoke.setExpansionResistance(0.15F);
             smoke.setExpansionVelocity(2.5F);
             sparks.setYAccel(-sparks.gravity);
             sparks.setExpansionResistance(0.1F);
             sparks.setExpansionVelocity(5.5F);
             explosion1.setExpansionResistance(0.3F);
             explosion1.setExpansionVelocity(3F);
-            explosion1.setYAccel(0.003572F);
+            explosion1.setYAccel(0.004572F);
             explosion2.setExpansionResistance(0.3F);
             explosion2.setExpansionVelocity(3F);
-            explosion2.setYAccel(0.003472F);
+            explosion2.setYAccel(0.005472F);
 
             planet.spawnVFXInWorld(smoke);
             planet.spawnVFXInWorld(sparks);
@@ -38,23 +42,21 @@ namespace RabbetGameEngine.VFX
 
         public static void doSmallSmokePuffEffect(Planet planet, Vector3 location, float pitch = 0, float yaw = -90, float roll = 0)
         {
-            VFXBase smoke = new VFXPointCloud(location, CustomColor.darkGrey, 7, 0.05F, 0.05F, true, true, false, .5F, 0.8F);
-
+            VFXPointCloud smoke = new VFXPointCloud(location, CustomColor.darkGrey, true, false, 4F, 0.05F, 0.7F);
+            smoke.constructRandomPointCloudModel(7, 0.05F, true);
             smoke.setPitch(pitch);
             smoke.setYaw(yaw);
             smoke.setRoll(roll);
-
-            smoke.setExpansionZModifyer(0.0F);
-
-            smoke.setYAccel(0.003572F);
-            smoke.setExpansionResistance(0.3572F);
+            smoke.setYAccel(0.001572F);
+            smoke.setExpansionResistance(0.2572F);
             smoke.setExpansionVelocity(2.5F);
             planet.spawnVFXInWorld(smoke);
         }
 
         public static void doDebugSmokeEffect(Planet planet)
         {
-            VFXBase smoke = new VFXPointCloud(new Vector3(0, 2F, 0), new CustomColor(Color.DarkGray), 5, 0.5F, 0.5F, true, true, false, 200F, 0.5F);
+            VFXPointCloud smoke = new VFXPointCloud(new Vector3(0, 2F, 0), new CustomColor(Color.DarkGray), true, false, 4F, 0.5F, 0.7F);
+            smoke.constructRandomPointCloudModel(15, 0.5F, true);
             smoke.setExpansionResistance(0.05F);
             smoke.setExpansionVelocity(0.5F);
             planet.spawnVFXInWorld(smoke);

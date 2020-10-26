@@ -42,7 +42,7 @@ namespace RabbetGameEngine
             GUIManager.addTextPanelToGUI(MainGUI.mainGUIName, fpsPanelName, new GUITextPanel(new TextFormat().setLine("0")));
 
             /*Temp arcade stuff*/
-            maxPopupTicks = (int)TicksAndFps.getNumOfTicksForSeconds(1.5F);
+            maxPopupTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(1.5F);
         }
 
         /*Called every tick*/
@@ -133,12 +133,12 @@ namespace RabbetGameEngine
             if (GameSettings.displayFps)
             {
                 GUIManager.unHideTextPanelInGUI(mainGUIName, fpsPanelName);
-                string fpsstring = TicksAndFps.fps.ToString();
-                if (TicksAndFps.fps < 75)
+                string fpsstring = TicksAndFrames.fps.ToString();
+                if (TicksAndFrames.fps < 75)
                 {
                     GUIManager.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsstring).setPanelColor(CustomColor.red);
                 }
-                else if (TicksAndFps.fps < 120)
+                else if (TicksAndFrames.fps < 120)
                 {
                     GUIManager.getTextPanelFormatFromGUI(mainGUIName, fpsPanelName).setLine(fpsstring).setPanelColor(CustomColor.yellow);
                 }

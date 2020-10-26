@@ -134,7 +134,7 @@
     <Compile Include="Src\Game\PlayerController.cs" />
     <Compile Include="Src\Game\Debugging\Profiler.cs" />
     <Compile Include="Src\Game\ResourceUtil.cs" />
-    <Compile Include="Src\Game\TicksAndFps.cs" />
+    <Compile Include="Src\Game\TicksAndFrames.cs" />
     <Compile Include="Src\Universe\Entity\Projectiles\EntityProjectile.cs" />
     <Compile Include="Src\Universe\Entity\Projectiles\EntityTankProjectile.cs" />
     <Compile Include="Src\Universe\Entity\Vehicles\EntityTank.cs" />

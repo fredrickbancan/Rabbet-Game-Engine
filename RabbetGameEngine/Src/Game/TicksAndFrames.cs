@@ -5,7 +5,7 @@ namespace RabbetGameEngine
 {
     /*This class is responasble for providing game loop timings so that the game runs
       at a consistant rate over multiple fps rates and refresh rates.*/
-    public static class TicksAndFps
+    public static class TicksAndFrames
     {
         private static long currentFrameTime = 0;
         private static long lastFrameTime = 0;

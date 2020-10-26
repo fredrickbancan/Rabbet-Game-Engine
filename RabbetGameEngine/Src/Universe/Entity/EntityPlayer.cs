@@ -67,12 +67,12 @@ namespace RabbetGameEngine
             if(!paused)
             {
                 paused = true;
-                TicksAndFps.pause();
+                TicksAndFrames.pause();
             }
             else
             {
                 paused = false;
-                TicksAndFps.unPause();
+                TicksAndFrames.unPause();
             }
         }
         public Matrix4 getViewMatrix()

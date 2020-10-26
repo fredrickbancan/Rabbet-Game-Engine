@@ -170,10 +170,17 @@ namespace RabbetGameEngine
             return this;
         }
 
-        /*changes the brightness of this color by the provided percentage (1.0F is 100%)*/
         public CustomColor setAlphaPercent(float percentage)
         {
+            percentage = MathUtil.clamp(percentage, 0, 1);
             systemColor = Color.FromArgb((int)(systemColor.A * percentage),systemColor.R , systemColor.G , systemColor.B );
+            return this;
+        }
+        
+        public CustomColor setAlphaF(float a)
+        {
+            a = MathUtil.clamp(a, 0, 1);
+            systemColor = Color.FromArgb((int)(255 * a), systemColor.R, systemColor.G, systemColor.B);
             return this;
         }
 

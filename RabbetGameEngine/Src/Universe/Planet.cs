@@ -236,9 +236,7 @@ namespace RabbetGameEngine
 
         public void spawnEntityInWorld(Entity theEntity)
         {
-            entities.Add(entityIDItterator, theEntity);
-
-            entityIDItterator++;
+            entities.Add(entityIDItterator++, theEntity);
         }
 
         public void spawnEntityInWorldAtPosition(Entity theEntity, Vector3 atPosition)

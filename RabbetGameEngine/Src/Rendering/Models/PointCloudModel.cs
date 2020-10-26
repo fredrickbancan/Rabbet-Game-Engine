@@ -27,6 +27,17 @@ namespace RabbetGameEngine.Models
             hasChangedSinceLastUpdate = true;
             return this.setColor(color.toNormalVec4());
         }
+
+        public PointCloudModel setAlpha(float a)
+        {
+            a = MathUtil.clamp(a, 0, 1);
+            hasChangedSinceLastUpdate = true;
+            for (int i = 0; i < points.Length; i++)
+            {
+                points[i].color.W = a;
+            }
+            return this;
+        }
         public PointCloudModel setColor(Vector4 color)
         {
             hasChangedSinceLastUpdate = true;

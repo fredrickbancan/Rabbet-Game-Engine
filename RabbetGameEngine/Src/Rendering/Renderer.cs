@@ -80,6 +80,19 @@ namespace RabbetGameEngine
             Profiler.beginEndProfile("batching");
         }
 
+        public static void requestRender(PointParticle point, bool transparency)
+        {
+            Profiler.beginEndProfile("batching");
+            BatchManager.requestRender(point, transparency);
+            Profiler.beginEndProfile("batching");
+        }
+
+        public static void requestRender(PointParticle point, PointParticle prevTickPoint, bool transparency)
+        {
+            Profiler.beginEndProfile("batching");
+            BatchManager.requestRender(point, prevTickPoint, transparency);
+            Profiler.beginEndProfile("batching");
+        }
         public static void onTickStart()
         {
             Profiler.beginEndProfile("batching");

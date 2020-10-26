@@ -57,7 +57,30 @@ namespace RabbetGameEngine.Debugging
 
         public static void addPointToBeRendered(PointCollider point)
         {
-            //TODO: impliment rendering of point colliders as points possibly with lines to show x,y,z units
+            PointParticle pParticle = new PointParticle(point.pos, CustomColor.facility.toNormalVec4(), 0.05F, true);
+            Renderer.requestRender(pParticle, false);
+
+            Vector4 redColor = CustomColor.red.toNormalVec4();
+            Vector4 greenColor = CustomColor.green.toNormalVec4();
+            Vector4 blueColor = CustomColor.blue.toNormalVec4();
+
+            Vertex[] lineVerts = new Vertex[]
+            {
+                new Vertex(point.pos, redColor, Vector2.Zero),//normal x line start
+                new Vertex(point.pos + new Vector3(0.5F,0,0), redColor, Vector2.Zero),//normal x line end
+                 new Vertex(point.pos, greenColor, Vector2.Zero),//normal y line start
+                new Vertex(point.pos+ new Vector3(0,0.5F,0), greenColor, Vector2.Zero),//normal y line end
+                 new Vertex(point.pos, blueColor, Vector2.Zero),//normal z line start
+                new Vertex(point.pos+ new Vector3(0,0,0.5F), blueColor, Vector2.Zero)//normal z line end
+            };
+
+            uint[] lineIndices = new uint[]
+            {
+                0,1,
+                2,3,
+                4,5
+            };
+            Renderer.requestRender(BatchType.lines, null, new Model(lineVerts, lineIndices));
         }
     }
 }

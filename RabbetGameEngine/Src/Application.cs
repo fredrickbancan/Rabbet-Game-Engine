@@ -16,7 +16,7 @@ namespace RabbetGameEngine
             game.Run(); //Will start the OpenTk Game instance running. Eeach frame will call OnUpdateFrame and OnRenderFrame. I am using my own tickrate class to controll ticks (TicksAndFps.cs)  
             game.Dispose();
         }
-        public static readonly string version = "0.0.7_id";
+        public static readonly string version = "0.0.7_indev";
 
         #region Print functions
         public static void infoPrint(object s)

@@ -36,14 +36,14 @@ namespace RabbetGameEngine.Models
 
         public override void sendRenderRequest()
         {
-            Renderer.requestRender(batchType, tex, tankWheelModel);
-            Renderer.requestRender(batchType, tex, tankBodyModel);
             Renderer.requestRender(batchType, tex, tankBarrelModel);
+            Renderer.requestRender(batchType, tex, tankBodyModel);
+            Renderer.requestRender(batchType, tex, tankWheelModel);
         }
 
         public Matrix4 getBarrelModelMatrix()
         {
-            return tankBodyModel.modelMatrix;
+            return tankBarrelModel.modelMatrix;
         }
     }
 }
