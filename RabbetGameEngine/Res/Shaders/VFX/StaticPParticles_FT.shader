@@ -12,6 +12,8 @@ const float fogGradient = 2.5;
 
 out vec4 vColor;
 out float visibility;
+out float rad;
+out vec4 worldPos;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
@@ -22,6 +24,8 @@ uniform int frame;
 out float fAoc;
 void main()
 {
+    worldPos = position;
+    rad = radius;
     vec4 positionRelativeToCam = viewMatrix * position;
     gl_Position = projectionMatrix * positionRelativeToCam;
 
@@ -45,32 +49,43 @@ layout(location = 0) out vec4 fragColor;
 in float visibility;
 in vec4 vColor;
 in float fAoc;
-
+in vec4 worldPos;
+in float rad;
 uniform vec3 fogColor;
 
 
 float ambientOcclusion;//variable for applying a shadowing effect towards the edges of the point to give the illusion of a sphereical shape
 
-void makeCircle()
+void makeSphere()
 {
     //clamps fragments to circle shape. 
-    vec2 centerVec = gl_PointCoord - vec2(0.5F);//get a vector from center of square to coord
-    float coordLength = length(centerVec);
+    vec2 mapping = gl_PointCoord * 2.0F - 1.0F;
+    float d = dot(mapping, mapping);
 
-    if (coordLength >= 0.5F)
+    if (d >= 1.0F)
     {//discard if the vectors length is more than 0.5
         discard;
     }
+    float z = sqrt(1.0F - d);
+    vec3 normal = vec3(mapping, z);
+    normal = mat3(transpose(viewMatrix)) * normal;
+    vec3 cameraPos = vec3(worldPos) + rad * normal;
+
+
+    ////Set the depth based on the new cameraPos.
+    vec4 clipPos = projectionMatrix * viewMatrix * vec4(cameraPos, 1.0);
+    float ndcDepth = clipPos.z / clipPos.w;
+    gl_FragDepth = ((gl_DepthRange.diff * ndcDepth) + gl_DepthRange.near + gl_DepthRange.far) / 2.0;
 
     //calc ambient occlusion for circle
-    if(bool(fAoc))
-    ambientOcclusion = sqrt(1.0 - coordLength);
+    if (bool(fAoc))
+        ambientOcclusion = sqrt(1.0F - d * 0.5F);
 }
 
 
 void main()
 {
-    makeCircle();
+    makeSphere();
 
     vec4 colorModified = vColor;
     if (bool(fAoc))

@@ -67,42 +67,27 @@ float ambientOcclusion;//variable for applying a shadowing effect towards the ed
 void makeSphere()
 {
     //clamps fragments to circle shape. 
-    vec2 centerVec = gl_PointCoord - vec2(0.5F);//get a vector from center of square to coord
-    float coordLength = length(centerVec);
+    vec2 mapping = gl_PointCoord * 2.0F - 1.0F;
+    float d = dot(mapping, mapping);
 
-    if (coordLength >= 0.5F)
+    if (d >= 1.0F)
     {//discard if the vectors length is more than 0.5
         discard;
     }
-    vec2 mapping = gl_PointCoord * 2.0F - 1.0F;
-    vec3 cameraSpherePos = vec3(viewMatrix * worldPos);
-    vec3 cameraPlanePos = vec3(mapping * rad, 0.0F) + cameraSpherePos;
-    vec3 rayDirection = normalize(cameraPlanePos);
+    float z = sqrt(1.0F - d);
+    vec3 normal = vec3(mapping, z);
+    normal = mat3(transpose(viewMatrix)) * normal;
+    vec3 cameraPos = vec3(worldPos) + rad * normal;
 
-    float B = 2.0 * dot(rayDirection, -cameraSpherePos);
-    float C = dot(cameraSpherePos, cameraSpherePos) - (rad * rad);
 
-    float det = (B * B) - (4 * C);
-    if (det < 0.0)
-        discard;
-
-    float sqrtDet = sqrt(det);
-    float posT = (-B + sqrtDet) / 2;
-    float negT = (-B - sqrtDet) / 2;
-
-    float intersectT = min(posT, negT);
-
-    vec3 cameraPos = rayDirection * intersectT;
-    vec3 cameraNormal = normalize(cameraPos - cameraSpherePos);
-
-    //Set the depth based on the new cameraPos.
-    vec4 clipPos = projectionMatrix * vec4(cameraPos, 1.0);
+    ////Set the depth based on the new cameraPos.
+    vec4 clipPos = projectionMatrix * viewMatrix * vec4(cameraPos, 1.0);
     float ndcDepth = clipPos.z / clipPos.w;
     gl_FragDepth = ((gl_DepthRange.diff * ndcDepth) + gl_DepthRange.near + gl_DepthRange.far) / 2.0;
 
     //calc ambient occlusion for circle
-    if(bool(fAoc))
-    ambientOcclusion = sqrt(1.0 - coordLength);
+    if (bool(fAoc))
+        ambientOcclusion = sqrt(1.0F - d / 2);
 }
 
 
