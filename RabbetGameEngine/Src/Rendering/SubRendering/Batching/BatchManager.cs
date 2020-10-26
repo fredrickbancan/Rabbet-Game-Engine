@@ -5,7 +5,8 @@ using System.Linq;
 
 namespace RabbetGameEngine.SubRendering
 {
-    public enum BatchType//do not change order
+    //TODO: add and impliment types for static points and static transparent points. Faster than lerp points.
+    public enum BatchType
     {
         none,
         guiCutout,
