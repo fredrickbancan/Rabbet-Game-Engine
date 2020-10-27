@@ -144,7 +144,6 @@ void main()
         colorModified.b *= ambientOcclusion;
     }
 
-
     //add fog effect to frag
     fragColor = mix(vec4(fogColor, vColor.a), colorModified, visibility);
 }

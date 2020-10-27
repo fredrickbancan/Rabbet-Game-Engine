@@ -57,9 +57,9 @@ namespace RabbetGameEngine
             //create and spawn player in new world
             thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
             currentPlanet.spawnEntityInWorld(new EntityTank(currentPlanet, new Vector3(5, 10, -5)));
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 128; i++)
             {
-             //   currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(0, 10, 0)));
+                currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(0, 10, 0)));
             }
             currentPlanet.spawnEntityInWorld(thePlayer);
 

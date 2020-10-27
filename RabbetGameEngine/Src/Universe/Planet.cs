@@ -27,8 +27,8 @@ namespace RabbetGameEngine
         public Planet(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
-            fogColor = CustomColor.grey.toNormalVec3();
-            planetSkybox = new Skybox(CustomColor.darkGrey.toNormalVec3(), this);
+            fogColor = CustomColor.lightGrey.toNormalVec3();
+            planetSkybox = new Skybox(CustomColor.lightSkyBlue.toNormalVec3(), this);
             SkyboxRenderer.setSkyboxToDraw(planetSkybox);
             generateWorld();
         }

@@ -65,18 +65,22 @@ namespace RabbetGameEngine.VFX
 
         public static void doDebugVoxels(Planet planet)
         {
-            VFXPointCloud voxels = new VFXPointCloud(new Vector3(-32, .5F, -32), CustomColor.grey, false, true, 1000, 0.5F, 1.0F);
-            PointParticle[] points = new PointParticle[64 * 64];
-            float rad = (float)Math.Sqrt(2) / 2;
-            for(int i = 0; i < 64 * 64; i++)
+            //TODO: Convert to non lerp points and test performance.
+            float diam = ((float)Math.Sqrt(2))/4;
+            for (int i = 0; i < 1; i++)//layers
             {
-                points[i].pos = new Vector3(i / 64, 0.0F, i % 64);
-                points[i].radius = rad;
-                points[i].color = CustomColor.darkGrey.toNormalVec4() * (1.0F - (float)GameInstance.rand.NextDouble() * 0.2F);
-                points[i].aoc = 0.0F;
+                VFXPointCloud voxels = new VFXPointCloud(new Vector3(-32 * diam, (float)i * diam/2, -32 * diam), CustomColor.grey, false, true, 1000, 0.5F, 1.0F);
+                PointParticle[] points = new PointParticle[64 * 64];
+                for (int j = 0; j < 64 * 64; j++)
+                {
+                    points[j].pos = new Vector3(j / 64 * diam/2, 0.0F, j % 64 * diam/2);
+                    points[j].radius = diam / 2;
+                    points[j].color = CustomColor.darkGrey.toNormalVec4() * (1.0F - (float)GameInstance.rand.NextDouble() * 0.2F);
+                    points[j].aoc = 0.0F;
+                }
+                voxels.setPointCloudModel(new PointCloudModel(points));
+                planet.spawnVFXInWorld(voxels);
             }
-            voxels.setPointCloudModel(new PointCloudModel(points));
-            planet.spawnVFXInWorld(voxels);
         }
 
         public static void doDebugSnowEffect(Planet planet)

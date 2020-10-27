@@ -9,7 +9,7 @@ namespace RabbetGameEngine.SubRendering
       different types of rendering and/or if a previous batch is too full.*/
     public class Batch
     {
-        public static readonly int maxBufferSizeBytes = 2500000;
+        public static readonly int maxBufferSizeBytes = 1250000;
         public static readonly int maxIndiciesCount = maxBufferSizeBytes / sizeof(uint);
         public static readonly int maxVertexCount = maxBufferSizeBytes / Vertex.vertexByteSize;
         public int maxPointCount = maxBufferSizeBytes / PointParticle.pParticleByteSize;
@@ -266,7 +266,7 @@ namespace RabbetGameEngine.SubRendering
             }
             else
             {
-                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, requestedVerticesCount * 2 * PointParticle.pParticleByteSize, PointCombiner.interlacePointArraysByCount(batchedPoints, prevTickBatchedPoints, requestedVerticesCount * 2));
+                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, requestedVerticesCount * 2 * PointParticle.pParticleByteSize, PointCombiner.interlacePointArraysByCount(batchedPoints, prevTickBatchedPoints, requestedVerticesCount));
             }
         }
         
