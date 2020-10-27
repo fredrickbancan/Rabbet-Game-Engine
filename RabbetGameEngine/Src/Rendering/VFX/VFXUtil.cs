@@ -65,14 +65,14 @@ namespace RabbetGameEngine.VFX
 
         public static void doDebugVoxels(Planet planet)
         {
-            VFXPointCloud voxels = new VFXPointCloud(new Vector3(-32, 0.5F, -32), CustomColor.grey, false, true, 1000, 0.5F, 1.0F);
+            VFXPointCloud voxels = new VFXPointCloud(new Vector3(-32, .5F, -32), CustomColor.grey, false, true, 1000, 0.5F, 1.0F);
             PointParticle[] points = new PointParticle[64 * 64];
             float rad = (float)Math.Sqrt(2) / 2;
             for(int i = 0; i < 64 * 64; i++)
             {
                 points[i].pos = new Vector3(i / 64, 0.0F, i % 64);
                 points[i].radius = rad;
-                points[i].color = CustomColor.grey.toNormalVec4() * (1.0F - (float)GameInstance.rand.NextDouble() * 0.2F);
+                points[i].color = CustomColor.darkGrey.toNormalVec4() * (1.0F - (float)GameInstance.rand.NextDouble() * 0.2F);
                 points[i].aoc = 0.0F;
             }
             voxels.setPointCloudModel(new PointCloudModel(points));

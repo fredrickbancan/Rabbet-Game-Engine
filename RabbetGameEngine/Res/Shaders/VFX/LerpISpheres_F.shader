@@ -29,9 +29,8 @@ uniform float percentageToNextTick;
 uniform int frame;
 out float fAoc;
 
-mat4 rotationMatrix(vec3 axis, float angle) 
+mat4 rotationMatrix(vec3 axis, float angle)
 {
-    angle = -radians(angle);
     float s = sin(angle);
     float c = cos(angle);
     float oc = 1.0 - c;
@@ -43,30 +42,33 @@ mat4 rotationMatrix(vec3 axis, float angle)
 }
 
 
-mat4 lookAtCamRotation(vec4 spritePos)
+vec4 lookAtCamRotation(vec4 spritePos, float rad)
 {
-    //billboard vectors
     vec3 rightVec = vec3(1, 0, 0);
     vec3 upVec = vec3(0, 1, 0);
     vec3 lookAt = vec3(0, 0, 1);
-    vec3 spriteToCam = cameraPos - spritePos.xyz;
+    vec4 endPos = vec4(corner.x * rad * 2, corner.y * rad * 2, 0, 0);
+    vec3 spriteToCamX = cameraPos - spritePos.xyz;
 
-    spriteToCam.y = 0;//trying cylinder billboard first
+    spriteToCamX.y = 0;
 
-    spriteToCam = normalize(spriteToCam);
+    spriteToCamX = normalize(spriteToCamX);
+    vec3 upAux = normalize(cross(lookAt, spriteToCamX));
 
-    vec3 upAux = normalize(cross(lookAt, spriteToCam));
+    float angleCosine = dot(lookAt, spriteToCamX);
+    float angleY = acos(angleCosine) * 180 / 3.141;
+    mat4 rotX = rotationMatrix(upAux, -radians(angleY));
+  
+    vec3 spriteToCamY = cameraPos - spritePos.xyz;
 
-    float angleCosine = dot(lookAt, spriteToCam);
+    spriteToCamY = normalize(spriteToCamY);
 
-    
-    if (angleCosine < 0.9999 && angleCosine > -0.9999)
-    {
-        float angle = acos(angleCosine) * 180 / 3.141;
-        return rotationMatrix(upAux, angle);
-    }
-    return mat4(1.0F);
+    angleCosine = dot(spriteToCamX, spriteToCamY);
+    float angleX = acos(angleCosine) * 180 / 3.141;
+    float f = spriteToCamY.y < 0.0F ? 1.0F : -1.0F;
+    return rotX * rotationMatrix(vec3(f, 0.0, 0.0), -radians(angleX)) * endPos + spritePos;
 }
+
 void main()
 {
     coords = corner * 2.0;
@@ -76,8 +78,7 @@ void main()
     //lerping pos
     worldPos = (prevPosition + (position - prevPosition) * percentageToNextTick);
 
-    vec4 cornerPos = vec4(worldPos.xy + corner * rad * 2, worldPos.z, 1);
-    vec4 positionRelativeToCam = viewMatrix * lookAtCamRotation(worldPos) * cornerPos;
+    vec4 positionRelativeToCam = viewMatrix * lookAtCamRotation(worldPos, rad);
     gl_Position = projectionMatrix * positionRelativeToCam;
 
     float distanceFromCam = length(positionRelativeToCam.xyz);
@@ -92,8 +93,6 @@ void main()
 /*#############################################################################################################################################################################################*/
 #shader fragment
 #version 330
-#extension GL_ARB_conservative_depth : enable
-layout(depth_less) out float gl_FragDepth;
 layout(location = 0) out vec4 fragColor;
 in float visibility;
 in vec4 vColor;
@@ -114,7 +113,7 @@ void makeSphere()
 
     if (d >= 1.0F)
     {//discard if the vectors length is more than 0.5
-      //  discard;
+        discard;
     }
     float z = sqrt(1.0F - d);
     vec3 normal = vec3(coords, z);
@@ -125,7 +124,7 @@ void makeSphere()
     ////Set the depth based on the new cameraPos.
     vec4 clipPos = projectionMatrix * viewMatrix * vec4(cameraPos, 1.0);
     float ndcDepth = clipPos.z / clipPos.w;
-  //  gl_FragDepth = ((gl_DepthRange.diff * ndcDepth) + gl_DepthRange.near + gl_DepthRange.far) / 2.0;
+    gl_FragDepth = ((gl_DepthRange.diff * ndcDepth) + gl_DepthRange.near + gl_DepthRange.far) / 2.0;
 
     //calc ambient occlusion for circle
     if (bool(fAoc))
