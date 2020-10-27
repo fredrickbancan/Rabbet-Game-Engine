@@ -4,8 +4,6 @@ namespace RabbetGameEngine.Models
 {
     public static class QuadPrefab
     {
-        public static readonly string shaderName = "EntityWorld_F";
-        public static readonly string textureName = "Explosion";
 
         public static readonly Vertex[] quadVertices = new Vertex[]
         {
@@ -22,7 +20,7 @@ namespace RabbetGameEngine.Models
         };
 
         /*generates a new model using copies of this models arrays.*/
-        public static Model getNewModel()
+        public static Model copyModel()
         {
             Vertex[] verticesCopy = new Vertex[quadVertices.Length];
             uint[] indicesCopy = new uint[quadIndices.Length];

@@ -7,7 +7,7 @@ namespace RabbetGameEngine.Models
     {
         public PointParticle[] points = null;
         public PointParticle[] prevPoints = null;
-        bool hasChangedSinceLastUpdate = false;
+        bool hasChangedSinceLastUpdate = true;
         public PointCloudModel(PointParticle[] points)
         {
             this.points = points;

@@ -5,9 +5,6 @@ namespace RabbetGameEngine.Models
 {
     public static class CubePrefab
     {
-        public static readonly string shaderName = "EntityWorld_F";
-        public static readonly string textureName = "Explosion";
-
         public static readonly Vertex[] cubeVertices;
 
         public static readonly uint[] cubeIndices;
@@ -18,7 +15,7 @@ namespace RabbetGameEngine.Models
 
             for (int i = 0; i < boxSides.Length; i++)
             {
-                boxSides[i] = QuadPrefab.getNewModel();
+                boxSides[i] = QuadPrefab.copyModel();
             }
 
             boxSides[0].rotateVertices(new Vector3(0, 180, 0)).translateVertices(new Vector3(0, 0, -0.5F));//negZ face

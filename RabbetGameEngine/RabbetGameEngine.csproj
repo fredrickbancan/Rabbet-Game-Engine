@@ -79,10 +79,10 @@
     <None Include="Res\Shaders\FrameBuffer.shader" />
     <None Include="Res\Shaders\Planet\StaticLines.shader" />
     <None Include="Res\Shaders\Planet\Static_F.shader" />
-    <None Include="Res\Shaders\VFX\StaticPParticles_FT.shader" />
-    <None Include="Res\Shaders\VFX\StaticPParticles_F.shader" />
-    <None Include="Res\Shaders\VFX\LerpPParticles_FT.shader" />
-    <None Include="Res\Shaders\VFX\LerpPParticles_F.shader" />
+    <None Include="Res\Shaders\VFX\StaticISpheres_FT.shader" />
+    <None Include="Res\Shaders\VFX\StaticISpheres_F.shader" />
+    <None Include="Res\Shaders\VFX\LerpISpheres_FT.shader" />
+    <None Include="Res\Shaders\VFX\LerpISpheres_F.shader" />
     <Compile Include="Src\Game\CustomColor.cs" />
     <Compile Include="Src\Game\Debugging\HitboxRenderer.cs" />
     <Compile Include="Src\Game\GUIS\MainGUI.cs" />

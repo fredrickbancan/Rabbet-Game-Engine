@@ -12,12 +12,12 @@ namespace RabbetGameEngine
         public static readonly string text3DName = "";
         public static readonly string trianglesName = "Static_F";
         public static readonly string linesName = "StaticLines";
-        public static readonly string pointsName = "StaticPParticles_F";
-        public static readonly string pointsTransparentName = "StaticPParticles_FT";
-        public static readonly string lerpPointsName = "LerpPParticles_F";
+        public static readonly string iSpheresName = "StaticISpheres_F";
+        public static readonly string iSpheresTransparentName = "StaticISpheres_FT";
+        public static readonly string lerpISpheresName = "LerpISpheres_F";
         public static readonly string lerpTrianglesName = "Lerp_F";
         public static readonly string lerpLinesName = "Lerp_F";
-        public static readonly string lerpPointsTransparentName = "LerpPParticles_FT";
+        public static readonly string lerpISpheresTransparentName = "LerpISpheres_FT";
         public static readonly string lerpTrianglesTransparentName = "Lerp_FT";
         public static readonly string trianglesTransparentName = "Static_FT";
 

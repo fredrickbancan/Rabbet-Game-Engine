@@ -91,7 +91,7 @@ namespace RabbetGameEngine.SubRendering
             screenShader.setUniform1I("frameTexture5", 5);
             screenShader.setUniform1I("frameTexture6", 6);
             screenShader.setUniform1I("frameTexture7", 7);
-            screenQuad = QuadPrefab.getNewModel().scaleVertices(new Vector3(2.0F, 2.0F, 1.0F));//scale quad to fit screen
+            screenQuad = QuadPrefab.copyModel().scaleVertices(new Vector3(2.0F, 2.0F, 1.0F));//scale quad to fit screen
             screenQuadIndices = QuadCombiner.getIndicesForQuadCount(1);
 
             //VAO

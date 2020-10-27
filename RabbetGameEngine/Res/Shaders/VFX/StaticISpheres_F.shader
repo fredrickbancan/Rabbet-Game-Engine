@@ -1,14 +1,10 @@
-﻿//Shader for rendering point particles Dynamically with transparency
+﻿//Shader for rendering static point particles
 #shader vertex
 #version 330
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 pointColor;
 layout(location = 2) in float radius;
 layout(location = 3) in float aoc;
-layout(location = 4) in vec4 prevPosition;
-layout(location = 5) in vec4 prevPointColor;
-layout(location = 6) in float prevRadius;
-layout(location = 7) in float prevAoc;
 
 
 uniform float fogDensity = 0.0075;
@@ -18,6 +14,7 @@ out vec4 vColor;
 out float visibility;
 out vec4 worldPos;
 out float rad;
+
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 //vector of viewport dimensions
@@ -27,23 +24,19 @@ uniform int frame;
 out float fAoc;
 void main()
 {
-    //lerping radius
-    rad = (prevRadius + (radius - prevRadius) * percentageToNextTick);
-
-    //lerping position
-    worldPos = prevPosition + (position - prevPosition) * percentageToNextTick;
-
-    vec4 positionRelativeToCam = viewMatrix * worldPos;
+    worldPos = position;
+    rad = radius;
+    vec4 positionRelativeToCam = viewMatrix * position;
     gl_Position = projectionMatrix * positionRelativeToCam;
-    //keeps the point size consistent with distance AND resolution. Lerp radius.
-    gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * rad / gl_Position.w;//TODO: this does not take into account aspect ratio and can cause points to be elipsical in shape.
+
+    //keeps the point size consistent with distance AND resolution.
+    gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * radius / gl_Position.w;
 
     float distanceFromCam = length(positionRelativeToCam.xyz);
     visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));
     visibility = clamp(visibility, 0.0, 1.0);
 
-    //lerping color
-    vColor = mix(prevPointColor, pointColor, percentageToNextTick);
+    vColor = pointColor;
     fAoc = aoc;
 }
 
@@ -59,11 +52,11 @@ in vec4 vColor;
 in float fAoc;
 in vec4 worldPos;
 in float rad;
+uniform vec3 fogColor;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
-uniform vec3 fogColor;
-
 float ambientOcclusion;//variable for applying a shadowing effect towards the edges of the point to give the illusion of a sphereical shape
+
 
 void makeSphere()
 {
@@ -96,7 +89,7 @@ void main()
 {
     makeSphere();
 
-    vec4 colorModified = vColor;
+    vec3 colorModified = vColor.rgb;
     if (bool(fAoc))
     {
         //add ambient occlusion shading
@@ -105,9 +98,7 @@ void main()
         colorModified.b *= ambientOcclusion;
     }
 
-    fragColor = mix(vec4(fogColor, colorModified.a), colorModified, visibility);
-    if (fragColor.a < 0.01)
-    {
-        discard;
-    }
+    //add fog effect to frag
+    fragColor.rgb = mix(fogColor, colorModified, visibility);
+    fragColor.a = 1;
 }

@@ -10,7 +10,6 @@ namespace RabbetGameEngine.SubRendering.GUI
         protected bool hidden = false;
         private Model componentQuadModel = null;
         private Matrix4 translationAndScale = Matrix4.Identity;
-        private Matrix4 orthographicMatrix = Matrix4.Identity;
         public GUIScreenComponent(Vector2 screenPos/*position where 0 is top left and 1 is bottom right*/)
         {
             screenPos.X -= 0.5F;
@@ -43,7 +42,6 @@ namespace RabbetGameEngine.SubRendering.GUI
 
         protected virtual void scaleAndTranslate()
         {
-            orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0, 1);
             translationAndScale = Matrix4.CreateScale(widthPixels, heightPixels, 1) *  Matrix4.CreateTranslation(GameInstance.gameWindowWidth * screenPosAbsolute.X, GameInstance.gameWindowHeight * screenPosAbsolute.Y, -0.01F);
         }
 

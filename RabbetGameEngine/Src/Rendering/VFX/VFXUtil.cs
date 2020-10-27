@@ -1,5 +1,6 @@
 ﻿using OpenTK;
-using System.Drawing;
+using RabbetGameEngine.Models;
+using System;
 
 namespace RabbetGameEngine.VFX
 {
@@ -55,16 +56,32 @@ namespace RabbetGameEngine.VFX
 
         public static void doDebugSmokeEffect(Planet planet)
         {
-            VFXPointCloud smoke = new VFXPointCloud(new Vector3(0, 2F, 0), new CustomColor(Color.DarkGray), true, false, 4F, 0.5F, 0.7F);
+            VFXPointCloud smoke = new VFXPointCloud(new Vector3(0, 2F, 0), CustomColor.darkGrey, true, false, 4F, 0.5F, 0.7F);
             smoke.constructRandomPointCloudModel(15, 0.5F, true);
             smoke.setExpansionResistance(0.05F);
             smoke.setExpansionVelocity(0.5F);
             planet.spawnVFXInWorld(smoke);
         }
 
+        public static void doDebugVoxels(Planet planet)
+        {
+            VFXPointCloud voxels = new VFXPointCloud(new Vector3(-32, 0.5F, -32), CustomColor.grey, false, true, 1000, 0.5F, 1.0F);
+            PointParticle[] points = new PointParticle[64 * 64];
+            float rad = (float)Math.Sqrt(2) / 2;
+            for(int i = 0; i < 64 * 64; i++)
+            {
+                points[i].pos = new Vector3(i / 64, 0.0F, i % 64);
+                points[i].radius = rad;
+                points[i].color = CustomColor.grey.toNormalVec4() * (1.0F - (float)GameInstance.rand.NextDouble() * 0.2F);
+                points[i].aoc = 0.0F;
+            }
+            voxels.setPointCloudModel(new PointCloudModel(points));
+            planet.spawnVFXInWorld(voxels);
+        }
+
         public static void doDebugSnowEffect(Planet planet)
         {
-          
+
         }
     }
 }

@@ -9,6 +9,7 @@ layout(location = 4) in vec4 prevPosition;
 layout(location = 5) in vec4 prevPointColor;
 layout(location = 6) in float prevRadius;
 layout(location = 7) in float prevAoc;
+layout(location = 8) in vec2 corner;//instanced quad corner
 
 
 uniform float fogDensity = 0.0075;
@@ -18,25 +19,66 @@ out vec4 vColor;
 out float visibility;
 out vec4 worldPos;
 out float rad;
+out vec2 coords;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
+uniform vec3 cameraPos;
 //vector of viewport dimensions
 uniform vec2 viewPortSize;
 uniform float percentageToNextTick;
 uniform int frame;
 out float fAoc;
+
+mat4 rotationMatrix(vec3 axis, float angle) 
+{
+    angle = -radians(angle);
+    float s = sin(angle);
+    float c = cos(angle);
+    float oc = 1.0 - c;
+
+    return mat4(oc * axis.x * axis.x + c, oc * axis.x * axis.y - axis.z * s, oc * axis.z * axis.x + axis.y * s, 0.0,
+        oc * axis.x * axis.y + axis.z * s, oc * axis.y * axis.y + c, oc * axis.y * axis.z - axis.x * s, 0.0,
+        oc * axis.z * axis.x - axis.y * s, oc * axis.y * axis.z + axis.x * s, oc * axis.z * axis.z + c, 0.0,
+        0.0, 0.0, 0.0, 1.0);
+}
+
+
+mat4 lookAtCamRotation(vec4 spritePos)
+{
+    //billboard vectors
+    vec3 rightVec = vec3(1, 0, 0);
+    vec3 upVec = vec3(0, 1, 0);
+    vec3 lookAt = vec3(0, 0, 1);
+    vec3 spriteToCam = cameraPos - spritePos.xyz;
+
+    spriteToCam.y = 0;//trying cylinder billboard first
+
+    spriteToCam = normalize(spriteToCam);
+
+    vec3 upAux = normalize(cross(lookAt, spriteToCam));
+
+    float angleCosine = dot(lookAt, spriteToCam);
+
+    
+    if (angleCosine < 0.9999 && angleCosine > -0.9999)
+    {
+        float angle = acos(angleCosine) * 180 / 3.141;
+        return rotationMatrix(upAux, angle);
+    }
+    return mat4(1.0F);
+}
 void main()
 {
+    coords = corner * 2.0;
     //lerping radius
     rad = (prevRadius + (radius - prevRadius) * percentageToNextTick);
 
-    //lerping position
-    worldPos = prevPosition + (position - prevPosition) * percentageToNextTick;
+    //lerping pos
+    worldPos = (prevPosition + (position - prevPosition) * percentageToNextTick);
 
-    vec4 positionRelativeToCam = viewMatrix * worldPos;
+    vec4 cornerPos = vec4(worldPos.xy + corner * rad * 2, worldPos.z, 1);
+    vec4 positionRelativeToCam = viewMatrix * lookAtCamRotation(worldPos) * cornerPos;
     gl_Position = projectionMatrix * positionRelativeToCam;
-    //keeps the point size consistent with distance AND resolution. Lerp radius.
-    gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * rad / gl_Position.w;//TODO: this does not take into account aspect ratio and can cause points to be elipsical in shape.
 
     float distanceFromCam = length(positionRelativeToCam.xyz);
     visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));
@@ -47,17 +89,18 @@ void main()
     fAoc = aoc;
 }
 
-
 /*#############################################################################################################################################################################################*/
 #shader fragment
 #version 330
-
+#extension GL_ARB_conservative_depth : enable
+layout(depth_less) out float gl_FragDepth;
 layout(location = 0) out vec4 fragColor;
 in float visibility;
 in vec4 vColor;
 in float fAoc;
 in vec4 worldPos;
 in float rad;
+in vec2 coords;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform vec3 fogColor;
@@ -67,15 +110,14 @@ float ambientOcclusion;//variable for applying a shadowing effect towards the ed
 void makeSphere()
 {
     //clamps fragments to circle shape. 
-    vec2 mapping = gl_PointCoord * 2.0F - 1.0F;
-    float d = dot(mapping, mapping);
+    float d = dot(coords, coords);
 
     if (d >= 1.0F)
     {//discard if the vectors length is more than 0.5
-        discard;
+      //  discard;
     }
     float z = sqrt(1.0F - d);
-    vec3 normal = vec3(mapping, z);
+    vec3 normal = vec3(coords, z);
     normal = mat3(transpose(viewMatrix)) * normal;
     vec3 cameraPos = vec3(worldPos) + rad * normal;
 
@@ -83,7 +125,7 @@ void makeSphere()
     ////Set the depth based on the new cameraPos.
     vec4 clipPos = projectionMatrix * viewMatrix * vec4(cameraPos, 1.0);
     float ndcDepth = clipPos.z / clipPos.w;
-    gl_FragDepth = ((gl_DepthRange.diff * ndcDepth) + gl_DepthRange.near + gl_DepthRange.far) / 2.0;
+  //  gl_FragDepth = ((gl_DepthRange.diff * ndcDepth) + gl_DepthRange.near + gl_DepthRange.far) / 2.0;
 
     //calc ambient occlusion for circle
     if (bool(fAoc))

@@ -21,13 +21,13 @@ namespace RabbetGameEngine.GUI
         {
             crosshairColor = color;
             setCrosshairTextureAndSize(crosshairType, crosshairSize);
-            setModel(QuadPrefab.getNewModel().setColor(crosshairColor));
+            setModel(QuadPrefab.copyModel().setColor(crosshairColor));
         }
 
         public GUICrosshair(float crosshairSize = 2.0F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0.5F, 0.5F))
         {
             setCrosshairTextureAndSize(crosshairType, crosshairSize);
-            setModel(QuadPrefab.getNewModel().setColor(crosshairColor));
+            setModel(QuadPrefab.copyModel().setColor(crosshairColor));
         }
 
         protected virtual void setCrosshairTextureAndSize(CrosshairType type, float crosshairSize)

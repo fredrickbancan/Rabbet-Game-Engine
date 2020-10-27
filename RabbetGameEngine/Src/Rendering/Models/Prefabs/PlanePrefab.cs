@@ -4,8 +4,6 @@ namespace RabbetGameEngine.Models
 {
     public static class PlanePrefab
     {
-        public static readonly string textureName = "Explosion";
-
         public static readonly Vertex[] quadVertices = new Vertex[]
         {
             new Vertex(-0.5F, 0, 0.5F, 1.0F, 1.0F, 1.0F, 1.0F, 0.0F, 0.0F),//0

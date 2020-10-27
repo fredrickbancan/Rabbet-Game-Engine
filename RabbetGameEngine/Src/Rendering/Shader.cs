@@ -12,11 +12,13 @@ namespace RabbetGameEngine
         {
             NONE,
             VERTEX,
+            GEOMETRY,
             FRAGMENT
         };
         private struct shaderProgramSource // simple struct for reading both shaders from one file
         {
             public string vertexSource;
+            public string geometrySource;
             public string fragmentSource;
         };
 
@@ -52,6 +54,7 @@ namespace RabbetGameEngine
         {
             shaderProgramSource source;
             source.vertexSource = debugDefaultVertexShader;
+            source.geometrySource = "";
             source.fragmentSource = debugDefaultFragmentShader;
             this.id = createShader(source);
             foundUniforms = new Dictionary<string, int>();
@@ -61,6 +64,7 @@ namespace RabbetGameEngine
             shaderType type = shaderType.NONE;
             string currentLine = "";
             string vertexSource = "";
+            string geometrySource = "";
             string fragmentSource = "";
             StreamReader reader;
             try
@@ -79,6 +83,10 @@ namespace RabbetGameEngine
                         {
                             type = shaderType.FRAGMENT;
                         }
+                        else if (currentLine.Contains("geometry"))
+                        {
+                            type = shaderType.GEOMETRY;
+                        }
                     }
                     else if (type == shaderType.VERTEX)
                     {
@@ -88,6 +96,10 @@ namespace RabbetGameEngine
                     {
                         fragmentSource += (currentLine + "\n");
                     }
+                    else if (type == shaderType.GEOMETRY)
+                    {
+                        geometrySource += (currentLine + "\n");
+                    }
                 }
                 reader.Close();
                 
@@ -96,10 +108,12 @@ namespace RabbetGameEngine
             {
                 Application.error("Shader failed to load!\nException: " + e.Message + "\nShader path: " + path);
                 vertexSource = debugDefaultVertexShader;
+                vertexSource = "";
                 fragmentSource = debugDefaultFragmentShader;
             }
             shaderProgramSource result;
             result.vertexSource = vertexSource;
+            result.geometrySource = geometrySource;
             result.fragmentSource = fragmentSource;
             return result;
         }
@@ -109,12 +123,21 @@ namespace RabbetGameEngine
             int program = GL.CreateProgram();
             int vsh = compileShader(OpenTK.Graphics.OpenGL.ShaderType.VertexShader, source.vertexSource);
             int fsh = compileShader(OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, source.fragmentSource);
-
+            int gsh = 0;
+            if (source.geometrySource != "")
+            {
+                gsh = compileShader(OpenTK.Graphics.OpenGL.ShaderType.GeometryShader, source.geometrySource);
+                GL.AttachShader(program, gsh);
+            }
             GL.AttachShader(program, vsh);
             GL.AttachShader(program, fsh);
             GL.LinkProgram(program);
             GL.ValidateProgram(program);
             GL.DeleteShader(vsh);
+            if (gsh != 0)
+            {
+                GL.DeleteShader(gsh);
+            }
             GL.DeleteShader(fsh);
 
             return program;
@@ -130,7 +153,7 @@ namespace RabbetGameEngine
             string infoLog = GL.GetShaderInfoLog(id);
             if (infoLog != System.String.Empty)
             {
-                Application.error("\n\nError when compiling shader!\ntype: " + (type == OpenTK.Graphics.OpenGL.ShaderType.VertexShader ? "vertex shader" : "fragment shader") + "\nmessage log: " + infoLog + "\nShader File Path: " + debugShaderPath);
+                Application.error("\n\nError when compiling shader!\ntype: " + (type == OpenTK.Graphics.OpenGL.ShaderType.VertexShader ? "vertex shader" : type == OpenTK.Graphics.OpenGL.ShaderType.GeometryShader ? "geometry shader" : "fragment shader") + "\nmessage log: " + infoLog + "\nShader File Path: " + debugShaderPath);
                 return 0;
             }
 

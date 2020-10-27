@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace RabbetGameEngine.SubRendering
 {
-    //TODO: add and impliment types for static points and static transparent points. Faster than lerp points.
+    //TODO: add and impliment types for static iSpheres and static transparent iSpheres. Faster than lerp ISpheres. For terrain.
     public enum BatchType
     {
         none,
@@ -14,10 +14,10 @@ namespace RabbetGameEngine.SubRendering
         text3D,
         triangles,
         lines,
-        lerpPoints,
+        lerpISpheres,
         lerpTriangles,
         lerpLines,
-        lerpPointsTransparent,
+        lerpISpheresTransparent,
         lerpTrianglesTransparent,
         trianglesTransparent
     }
@@ -104,7 +104,7 @@ namespace RabbetGameEngine.SubRendering
         }
         public static void requestRender(PointCloudModel pParticleModel, bool transparency)
         {
-            BatchType type = transparency ? BatchType.lerpPointsTransparent : BatchType.lerpPoints;
+            BatchType type = transparency ? BatchType.lerpISpheresTransparent : BatchType.lerpISpheres;
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
@@ -134,7 +134,7 @@ namespace RabbetGameEngine.SubRendering
 
         public static void requestRender(PointParticle pParticleModel, bool transparency)
         {
-            BatchType type = transparency ? BatchType.lerpPointsTransparent : BatchType.lerpPoints;
+            BatchType type = transparency ? BatchType.lerpISpheresTransparent : BatchType.lerpISpheres;
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
@@ -164,7 +164,7 @@ namespace RabbetGameEngine.SubRendering
 
         public static void requestRender(PointParticle pParticle, PointParticle prevTickPParticle, bool transparency)
         {
-            BatchType type = transparency ? BatchType.lerpPointsTransparent : BatchType.lerpPoints;
+            BatchType type = transparency ? BatchType.lerpISpheresTransparent : BatchType.lerpISpheres;
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
@@ -192,11 +192,11 @@ namespace RabbetGameEngine.SubRendering
             }
         }
 
-        public static void drawAll(Matrix4 projectionMatrix, Matrix4 viewMatrix, Vector3 fogColor)
+        public static void drawAll(Matrix4 viewMatrix, Vector3 fogColor)
         {
             foreach(Batch b in batches)
             {
-                b.draw(projectionMatrix, viewMatrix, fogColor);
+                b.draw(viewMatrix, fogColor);
                 Renderer.totalDraws++;
             }
         }

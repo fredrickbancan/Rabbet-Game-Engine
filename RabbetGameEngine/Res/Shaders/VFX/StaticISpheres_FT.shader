@@ -30,7 +30,7 @@ void main()
     gl_Position = projectionMatrix * positionRelativeToCam;
 
     //keeps the point size consistent with distance AND resolution.
-    gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * radius / gl_Position.w;//TODO: this does not take into account aspect ratio and can cause points to be elipsical in shape.
+    gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * radius / gl_Position.w;
 
     float distanceFromCam = length(positionRelativeToCam.xyz);
     visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));
@@ -44,7 +44,8 @@ void main()
 /*#############################################################################################################################################################################################*/
 #shader fragment
 #version 330
-
+#extension GL_ARB_conservative_depth : enable
+layout(depth_less) out float gl_FragDepth;
 layout(location = 0) out vec4 fragColor;
 in float visibility;
 in vec4 vColor;
@@ -52,7 +53,8 @@ in float fAoc;
 in vec4 worldPos;
 in float rad;
 uniform vec3 fogColor;
-
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
 
 float ambientOcclusion;//variable for applying a shadowing effect towards the edges of the point to give the illusion of a sphereical shape
 

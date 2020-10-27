@@ -1,10 +1,14 @@
-﻿//Shader for rendering static point particles
+﻿//Shader for rendering point particles Dynamically with transparency
 #shader vertex
 #version 330
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 pointColor;
 layout(location = 2) in float radius;
 layout(location = 3) in float aoc;
+layout(location = 4) in vec4 prevPosition;
+layout(location = 5) in vec4 prevPointColor;
+layout(location = 6) in float prevRadius;
+layout(location = 7) in float prevAoc;
 
 
 uniform float fogDensity = 0.0075;
@@ -12,9 +16,8 @@ const float fogGradient = 2.5;
 
 out vec4 vColor;
 out float visibility;
-out vec4 worldPos
+out vec4 worldPos;
 out float rad;
-
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 //vector of viewport dimensions
@@ -24,19 +27,23 @@ uniform int frame;
 out float fAoc;
 void main()
 {
-    worldPos = position;
-    rad = radius;
-    vec4 positionRelativeToCam = viewMatrix * position;
-    gl_Position = projectionMatrix * positionRelativeToCam;
+    //lerping radius
+    rad = (prevRadius + (radius - prevRadius) * percentageToNextTick);
 
-    //keeps the point size consistent with distance AND resolution.
-    gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * radius / gl_Position.w;//TODO: this does not take into account aspect ratio and can cause points to be elipsical in shape.
+    //lerping position
+    worldPos = prevPosition + (position - prevPosition) * percentageToNextTick;
+
+    vec4 positionRelativeToCam = viewMatrix * worldPos;
+    gl_Position = projectionMatrix * positionRelativeToCam;
+    //keeps the point size consistent with distance AND resolution. Lerp radius.
+    gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * rad / gl_Position.w;
 
     float distanceFromCam = length(positionRelativeToCam.xyz);
     visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));
     visibility = clamp(visibility, 0.0, 1.0);
 
-    vColor = pointColor;
+    //lerping color
+    vColor = mix(prevPointColor, pointColor, percentageToNextTick);
     fAoc = aoc;
 }
 
@@ -44,17 +51,19 @@ void main()
 /*#############################################################################################################################################################################################*/
 #shader fragment
 #version 330
-
+#extension GL_ARB_conservative_depth : enable
+layout(depth_less) out float gl_FragDepth;
 layout(location = 0) out vec4 fragColor;
 in float visibility;
 in vec4 vColor;
 in float fAoc;
 in vec4 worldPos;
 in float rad;
+uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
 uniform vec3 fogColor;
 
 float ambientOcclusion;//variable for applying a shadowing effect towards the edges of the point to give the illusion of a sphereical shape
-
 
 void makeSphere()
 {
@@ -87,7 +96,7 @@ void main()
 {
     makeSphere();
 
-    vec3 colorModified = vColor.rgb;
+    vec4 colorModified = vColor;
     if (bool(fAoc))
     {
         //add ambient occlusion shading
@@ -96,7 +105,9 @@ void main()
         colorModified.b *= ambientOcclusion;
     }
 
-    //add fog effect to frag
-    fragColor.rgb = mix(fogColor, colorModified, visibility);
-    fragColor.a = 1;
+    fragColor = mix(vec4(fogColor, colorModified.a), colorModified, visibility);
+    if (fragColor.a < 0.01)
+    {
+        discard;
+    }
 }

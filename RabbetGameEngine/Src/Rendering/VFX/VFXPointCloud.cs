@@ -16,7 +16,7 @@ namespace RabbetGameEngine.VFX
         protected Matrix4 prevTickModelMatrix = Matrix4.Identity;
         protected bool transparency = false;
 
-        public VFXPointCloud(Vector3 pos, CustomColor color, bool transparency, bool ambientOcclusion, float maxExistingSeconds, float radius, float alpha) : base(pos, 1.0F, "none", null, maxExistingSeconds, transparency ? BatchType.lerpPointsTransparent : BatchType.lerpPoints)
+        public VFXPointCloud(Vector3 pos, CustomColor color, bool transparency, bool ambientOcclusion, float maxExistingSeconds, float radius, float alpha) : base(pos, 1.0F, "none", null, maxExistingSeconds, transparency ? BatchType.lerpISpheresTransparent : BatchType.lerpISpheres)
         {
             this.transparency = transparency;
             if(!transparency)
@@ -95,10 +95,8 @@ namespace RabbetGameEngine.VFX
                     ceaseToExist();
                 }
                 cloudModel.setAlpha(colorAlpha);
-
+                cloudModel.scaleRadii(0.99F);
             }
-            //temp, sandboxing.
-            cloudModel.scaleRadii(0.99F);
         }
 
         public override void sendRenderRequest()

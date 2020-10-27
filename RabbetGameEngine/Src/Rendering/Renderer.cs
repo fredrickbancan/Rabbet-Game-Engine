@@ -1,5 +1,5 @@
 ﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics.OpenGL4;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.GUI;
 using RabbetGameEngine.Models;
@@ -17,6 +17,7 @@ namespace RabbetGameEngine
     {
         private static int privateTotalDrawCallCount;
         private static Matrix4 projectionMatrix;
+        private static Matrix4 orthographicMatrix;
         public static readonly bool useOffScreenBuffer = false;
         private static int renderFrame;//used to animate textures (noise texture for now)
         private static Rectangle preFullScreenSize;//used to store the window dimentions before going into full screen
@@ -41,12 +42,11 @@ namespace RabbetGameEngine
             GL.Viewport(preFullScreenSize = GameInstance.get.ClientRectangle);
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
-            GL.Enable(EnableCap.VertexProgramPointSize);//allows shaders for GL_POINTS to change size of points.
-            GL.Enable(EnableCap.PointSprite);           //allows shaders for GL_POINTS to change point fragments (opentk exclusive)
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.LineWidth(3);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
+            orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1000.0F);
             staticDraws = new Dictionary<string, StaticRenderObject>();
             if(useOffScreenBuffer) OffScreen.init();
             SkyboxRenderer.init();
@@ -57,6 +57,7 @@ namespace RabbetGameEngine
         {
             GL.Viewport(GameInstance.get.ClientRectangle);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
+            orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1000.0F);
             GUIManager.onWindowResize();
         }
 
@@ -119,7 +120,7 @@ namespace RabbetGameEngine
             preRender();
             SkyboxRenderer.drawSkybox(projectionMatrix, GameInstance.get.thePlayer.getViewMatrix());
             drawAllStaticRenderObjects();
-            BatchManager.drawAll(projectionMatrix, GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
+            BatchManager.drawAll(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
             postRender();
         }
         
@@ -189,7 +190,7 @@ namespace RabbetGameEngine
                 s.delete();
                 staticDraws.Remove(name);
             }
-            staticDraws.Add(name, StaticRenderObject.createSROPoints(ShaderUtil.lerpPointsName, data));
+            staticDraws.Add(name, StaticRenderObject.createSROPoints(ShaderUtil.lerpISpheresName, data));
         }
 
         public static void removeStaticDraw(string name)
@@ -242,6 +243,9 @@ namespace RabbetGameEngine
         public static int frame { get => renderFrame; }
         public static int totalDraws { get { return privateTotalDrawCallCount; } set { privateTotalDrawCallCount = value; } }
 
+        public static Matrix4 orthoMatrix { get => orthographicMatrix; }
+
+        public static Vector3 camPos { get => GameInstance.get.thePlayer.getLerpEyePos(); }
     }
 }
  

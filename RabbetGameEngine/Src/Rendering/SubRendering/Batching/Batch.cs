@@ -53,7 +53,7 @@ namespace RabbetGameEngine.SubRendering
 
         public Batch(BatchType type, Texture tex)
         {
-            if(type == BatchType.lerpPoints || type == BatchType.lerpPointsTransparent)
+            if(type == BatchType.lerpISpheres || type == BatchType.lerpISpheresTransparent)
             {
                 Application.error("Wrong batch constructor being used for batch of type points!!!");
                 return;
@@ -69,15 +69,15 @@ namespace RabbetGameEngine.SubRendering
         {
             if(pointTransparency)
             {
-                batchType = BatchType.lerpPointsTransparent;
-                ShaderUtil.tryGetShader(ShaderUtil.lerpPointsTransparentName, out batchShader);
+                batchType = BatchType.lerpISpheresTransparent;
+                ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresTransparentName, out batchShader);
             }
             else
             {
-                batchType = BatchType.lerpPoints;
-                ShaderUtil.tryGetShader(ShaderUtil.lerpPointsName, out batchShader);
+                batchType = BatchType.lerpISpheres;
+                ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresName, out batchShader);
             }
-            VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
+            VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes, QuadPrefab.copyModel());
             maxPointCount /= 2; //single points require a copy of each vertex, meaning we can only accept half the number of vertices.
             prevTickBatchedPoints = new PointParticle[maxPointCount];
             batchedPoints = new PointParticle[maxPointCount];
@@ -270,12 +270,14 @@ namespace RabbetGameEngine.SubRendering
             }
         }
         
-        public void draw(Matrix4 projectionMatrix, Matrix4 viewMatrix, Vector3 fogColor)
+        public void draw( Matrix4 viewMatrix, Vector3 fogColor)
         {
             VAO.bindVaoVboIbo();
             batchShader.use();
-            batchShader.setUniformMat4F("projectionMatrix", projectionMatrix);
+            batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             batchShader.setUniformMat4F("viewMatrix", viewMatrix);
+            batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
+            batchShader.setUniformVec3F("cameraPos", Renderer.camPos);
             batchShader.setUniformVec3F("fogColor", fogColor);
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             batchShader.setUniform1I("frame", Renderer.frame);
@@ -283,7 +285,8 @@ namespace RabbetGameEngine.SubRendering
 
             if(pointBased)
             {
-                GL.DrawArrays(PrimitiveType.Points, 0, requestedVerticesCount);
+                VAO.bindInstVBO();
+                GL.DrawArraysInstanced(VAO.getPrimType(), 0, 4, requestedVerticesCount);
                 return;
             }
 

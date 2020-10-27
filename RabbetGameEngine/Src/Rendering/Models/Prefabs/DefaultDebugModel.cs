@@ -8,7 +8,6 @@ namespace RabbetGameEngine.Models
     //just an ugly cube for when a model fails to load
     public static class DefaultDebugModel
     {
-        public static string shaderName = "EntityWorld_F";
         public static readonly Vertex[] vertices = new Vertex[]
         {   
             //zPos
