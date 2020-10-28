@@ -28,6 +28,8 @@ void main()
 //Out variables from vertex shader are passed into the fragment shaders in variables, part of glsl language.
 #shader fragment
 #version 330 core
+#extension GL_ARB_conservative_depth : enable
+layout(depth_greater) out float gl_FragDepth;
 out vec4 color;
 in vec4 worldSpacePos;
 
@@ -36,7 +38,7 @@ uniform vec3 skyHorizon;
 
 void main()
 {
-	gl_FragDepth = 0.9999F;//force fragdepth to be in background at all times
+	gl_FragDepth = 0.9999999F;//force fragdepth to be in background at all times
 	vec3 pointOnSphere = normalize(worldSpacePos.xyz);//normalizing the position of the frag to form a spherical depth from the camera, leaving out the w coordinate
 
 	color.rgb = mix(skyHorizon, skyTop, clamp(pointOnSphere.y, 0, 1));

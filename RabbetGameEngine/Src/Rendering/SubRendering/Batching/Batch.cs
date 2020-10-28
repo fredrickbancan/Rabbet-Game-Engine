@@ -9,12 +9,23 @@ namespace RabbetGameEngine.SubRendering
       different types of rendering and/or if a previous batch is too full.*/
     public class Batch
     {
-        public static readonly int maxBufferSizeBytes = 1250000;
-        public static readonly int maxIndiciesCount = maxBufferSizeBytes / sizeof(uint);
-        public static readonly int maxVertexCount = maxBufferSizeBytes / Vertex.vertexByteSize;
+        public static int maxBufferSizeBytes = 16777216;
+        public static int maxIndiciesCount = maxBufferSizeBytes / sizeof(uint);
+        public static int maxVertexCount = maxBufferSizeBytes / Vertex.vertexByteSize;
         public int maxPointCount = maxBufferSizeBytes / PointParticle.pParticleByteSize;
         public int maxMatrixCount = maxBufferSizeBytes / (sizeof(float) * 16);
         public int maxDrawCommandCount = maxBufferSizeBytes / DrawCommand.sizeInBytes;
+        private bool usingLerpPoints = false;
+
+        /// <summary>
+        /// true if this batch requires transparency sorting
+        /// </summary>
+        public bool requiresSorting = false;
+
+        /// <summary>
+        /// true if this batch should be rendered last.
+        /// </summary>
+        public bool transparentGUI = false;
         private VertexArrayObject VAO;
         private Model batchedModel = null;
 
@@ -65,23 +76,56 @@ namespace RabbetGameEngine.SubRendering
             initializeBatchFormat();
         }
 
-        public Batch(bool pointTransparency)
+        public Batch(bool pointTransparency, bool lerp)
         {
+            pointBased = true;
             if(pointTransparency)
             {
-                batchType = BatchType.lerpISpheresTransparent;
-                ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresTransparentName, out batchShader);
+                if(!lerp)
+                {
+                    batchType = BatchType.iSpheresTransparent;
+                    ShaderUtil.tryGetShader(ShaderUtil.iSpheresTransparentName, out batchShader);
+                    requiresSorting = true;
+                    VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
+                    batchedPoints = new PointParticle[maxPointCount];
+                    return;
+                }
+                else
+                {
+                    batchType = BatchType.lerpISpheresTransparent;
+                    ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresTransparentName, out batchShader);
+                    VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
+                    requiresSorting = true;
+                    usingLerpPoints = true;
+                    maxPointCount /= 2; //single points require a copy of each vertex, meaning we can only accept half the number of vertices.
+                    prevTickBatchedPoints = new PointParticle[maxPointCount];
+                    batchedPoints = new PointParticle[maxPointCount];
+                    return;
+                }
             }
             else
             {
-                batchType = BatchType.lerpISpheres;
-                ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresName, out batchShader);
+                if (!lerp)
+                {
+                    batchType = BatchType.iSpheres;
+                    ShaderUtil.tryGetShader(ShaderUtil.iSpheresName, out batchShader);
+                    VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
+                    batchedPoints = new PointParticle[maxPointCount];
+                    return;
+                }
+                else
+                {
+                    batchType = BatchType.lerpISpheres;
+                    ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresName, out batchShader);
+                    usingLerpPoints = true;
+                    VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
+                    maxPointCount /= 2; //single points require a copy of each vertex, meaning we can only accept half the number of vertices.
+                    prevTickBatchedPoints = new PointParticle[maxPointCount];
+                    batchedPoints = new PointParticle[maxPointCount];
+                    return;
+                }
             }
-            VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes, QuadPrefab.copyModel());
-            maxPointCount /= 2; //single points require a copy of each vertex, meaning we can only accept half the number of vertices.
-            prevTickBatchedPoints = new PointParticle[maxPointCount];
-            batchedPoints = new PointParticle[maxPointCount];
-            pointBased = true;
+           
         }
 
         private void initializeBatchFormat()
@@ -95,8 +139,9 @@ namespace RabbetGameEngine.SubRendering
                     ShaderUtil.tryGetShader(ShaderUtil.guiCutoutName, out batchShader);
                     break;
 
-                case BatchType.text2D:
+                case BatchType.guiText:
                     ShaderUtil.tryGetShader(ShaderUtil.text2DName, out batchShader);
+                    transparentGUI = true;
                     break;
 
                 case BatchType.text3D:
@@ -109,6 +154,7 @@ namespace RabbetGameEngine.SubRendering
 
                 case BatchType.trianglesTransparent:
                     ShaderUtil.tryGetShader(ShaderUtil.trianglesTransparentName, out batchShader);
+                    requiresSorting = true;
                     break;
 
                 case BatchType.lines:
@@ -131,6 +177,7 @@ namespace RabbetGameEngine.SubRendering
                     modelMatrices = new Matrix4[maxMatrixCount];
                     drawCommands = new DrawCommand[maxDrawCommandCount];
                     usesMultiDrawLerp = true;
+                    requiresSorting = true;
                     break;
 
                 case BatchType.lerpLines:
@@ -168,16 +215,21 @@ namespace RabbetGameEngine.SubRendering
                 modelMatrices[requestedObjectItterator] = theModel.modelMatrix;
                 prevTickModelMatrices[requestedObjectItterator] = theModel.prevModelMatrix;
                 configureDrawCommandsForCurrentObject(theModel.indices.Length, theModel.vertices.Length);
+                Array.Copy(theModel.indices, 0, batchedModel.indices, requestedIndicesCount, theModel.indices.Length);
+            }
+            else
+            {
+                for (int i = 0; i < theModel.indices.Length; ++i)
+                {
+                    batchedModel.indices[requestedIndicesCount + i] = (uint)(theModel.indices[i] + requestedVerticesCount);
+                }
+
             }
 
-            theModel.setObjectID(requestedObjectItterator);
+            //not being used currently
+           // theModel.setObjectID(requestedObjectItterator);
             
             Array.Copy(theModel.vertices, 0, batchedModel.vertices, requestedVerticesCount, theModel.vertices.Length);
-
-            for (int i = 0; i < theModel.indices.Length; ++i)
-            {
-                batchedModel.indices[requestedIndicesCount + i] = (uint)(theModel.indices[i] + requestedVerticesCount);
-            }
 
             requestedVerticesCount += theModel.vertices.Length;
             requestedIndicesCount += theModel.indices.Length;
@@ -204,6 +256,17 @@ namespace RabbetGameEngine.SubRendering
             return true;
         }
 
+        public bool addToBatch(PointParticle singlePoint)
+        {
+            if (requestedVerticesCount + 1 >= maxPointCount)
+            {
+                return false;
+            }
+            batchedPoints[requestedVerticesCount] = singlePoint;
+            ++requestedVerticesCount;
+            return true;
+        }
+
         /// <summary>
         /// attempts to add the provided single point to the batch. This method only works for 
         /// batches with have a batch type of single points!
@@ -218,6 +281,7 @@ namespace RabbetGameEngine.SubRendering
                 return false;
             }
             Array.Copy(theModel.points, 0, batchedPoints, requestedVerticesCount, theModel.points.Length);
+            if(usingLerpPoints)
             Array.Copy(theModel.prevPoints, 0, prevTickBatchedPoints, requestedVerticesCount, theModel.prevPoints.Length);
             requestedVerticesCount += theModel.points.Length;
             return true;
@@ -229,8 +293,7 @@ namespace RabbetGameEngine.SubRendering
         /// </summary>
         private void configureDrawCommandsForCurrentObject(int objIndCount, int vertCount)
         {
-            //TODO: Fix problems with indices when submitting triangle based models
-            drawCommands[requestedObjectItterator] = new DrawCommand((uint)(objIndCount), (uint)(1), (uint)(0), (uint)(requestedVerticesCount), (uint)(requestedObjectItterator * 2));
+            drawCommands[requestedObjectItterator] = new DrawCommand((uint)(objIndCount), (uint)(1), (uint)(requestedIndicesCount), (uint)(requestedVerticesCount), (uint)(requestedObjectItterator));
         }
 
         public void onTickStart()
@@ -264,9 +327,13 @@ namespace RabbetGameEngine.SubRendering
                 GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, requestedVerticesCount * Vertex.vertexByteSize, batchedModel.vertices);
                 GL.BufferSubData(BufferTarget.ElementArrayBuffer, IntPtr.Zero, requestedIndicesCount * sizeof(uint), batchedModel.indices);
             }
-            else
+            else if(usingLerpPoints)
             {
                 GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, requestedVerticesCount * 2 * PointParticle.pParticleByteSize, PointCombiner.interlacePointArraysByCount(batchedPoints, prevTickBatchedPoints, requestedVerticesCount));
+            }
+            else
+            {
+                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, requestedVerticesCount * PointParticle.pParticleByteSize, batchedPoints);
             }
         }
         

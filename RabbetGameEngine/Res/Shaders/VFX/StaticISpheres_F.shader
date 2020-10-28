@@ -5,7 +5,7 @@ layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 pointColor;
 layout(location = 2) in float radius;
 layout(location = 3) in float aoc;
-layout(location = 8) in vec2 corner;//instanced quad corner
+layout(location = 4) in vec2 corner;//instanced quad corner
 
 uniform float fogDensity = 0.0075;
 const float fogGradient = 2.5;
@@ -115,7 +115,10 @@ void makeSphere()
     vec4 clipPos = projectionMatrix * viewMatrix * vec4(cameraPos, 1.0);
     float ndcDepth = clipPos.z / clipPos.w;
     gl_FragDepth = ((gl_DepthRange.diff * ndcDepth) + gl_DepthRange.near + gl_DepthRange.far) / 2.0;
-
+    if (gl_FragDepth < 0.0000001)
+    {
+        discard;
+    }
     //calc ambient occlusion for circle
     if (bool(fAoc))
         ambientOcclusion = sqrt(1.0F - d / 2);

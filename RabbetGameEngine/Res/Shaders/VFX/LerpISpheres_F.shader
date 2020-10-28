@@ -124,8 +124,11 @@ void makeSphere()
     ////Set the depth based on the new cameraPos.
     vec4 clipPos = projectionMatrix * viewMatrix * vec4(cameraPos, 1.0);
     float ndcDepth = clipPos.z / clipPos.w;
-    gl_FragDepth = ((gl_DepthRange.diff * ndcDepth) + gl_DepthRange.near + gl_DepthRange.far) / 2.0;
-
+    /*gl_FragDepth = ((gl_DepthRange.diff * ndcDepth) + gl_DepthRange.near + gl_DepthRange.far) / 2.0;
+    if (gl_FragDepth < 0.0000001)
+    {
+        discard;
+    }*/
     //calc ambient occlusion for circle
     if (bool(fAoc))
         ambientOcclusion = sqrt(1.0F - d / 2);

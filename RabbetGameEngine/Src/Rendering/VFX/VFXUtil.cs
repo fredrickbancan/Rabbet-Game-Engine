@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using RabbetGameEngine.Models;
 using System;
+using System.Collections.Generic;
 
 namespace RabbetGameEngine.VFX
 {
@@ -8,6 +9,8 @@ namespace RabbetGameEngine.VFX
       change certain VFX*/
     public static class VFXUtil
     {
+        //temp
+        private static List<PointCloudModel > debugPointClouds = new List<PointCloudModel>();
         public static void doExplosionEffect(Planet planet, Vector3 location, float radius, float pitch = 0, float yaw = -90, float roll = 0)
         {
             VFXPointCloud smoke = new VFXPointCloud(location, CustomColor.darkGrey, true, false, 4F, 0.15F, 0.8F);
@@ -62,24 +65,28 @@ namespace RabbetGameEngine.VFX
             smoke.setExpansionVelocity(0.5F);
             planet.spawnVFXInWorld(smoke);
         }
-
-        public static void doDebugVoxels(Planet planet)
+        public static void createDebugVoxels()
         {
-            //TODO: Convert to non lerp points and test performance.
-            float diam = ((float)Math.Sqrt(2))/4;
-            for (int i = 0; i < 1; i++)//layers
+            float diam = ((float)Math.Sqrt(2)) / 4;
+            for (int i = 0; i < 256; i++)//layers
             {
-                VFXPointCloud voxels = new VFXPointCloud(new Vector3(-32 * diam, (float)i * diam/2, -32 * diam), CustomColor.grey, false, true, 1000, 0.5F, 1.0F);
+                VFXPointCloud voxels = new VFXPointCloud(new Vector3(-32 * diam, (float)i * diam / 2, -32 * diam), CustomColor.grey, false, true, 1000, 0.5F, 1.0F);
                 PointParticle[] points = new PointParticle[64 * 64];
                 for (int j = 0; j < 64 * 64; j++)
                 {
-                    points[j].pos = new Vector3(j / 64 * diam/2, 0.0F, j % 64 * diam/2);
+                    points[j].pos = new Vector3(j / 64 * diam / 2, (float)i * diam / 2, j % 64 * diam / 2);
                     points[j].radius = diam / 2;
                     points[j].color = CustomColor.darkGrey.toNormalVec4() * (1.0F - (float)GameInstance.rand.NextDouble() * 0.2F);
                     points[j].aoc = 0.0F;
                 }
-                voxels.setPointCloudModel(new PointCloudModel(points));
-                planet.spawnVFXInWorld(voxels);
+                debugPointClouds.Add(new PointCloudModel(points, null));
+            }
+        }
+        public static void doDebugVoxels()
+        {
+            foreach(PointCloudModel p in debugPointClouds)
+            { 
+                Renderer.requestRender(p, false, false);
             }
         }
 

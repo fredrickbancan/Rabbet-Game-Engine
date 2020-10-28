@@ -84,7 +84,7 @@
     <None Include="Res\Shaders\VFX\LerpISpheres_FT.shader" />
     <None Include="Res\Shaders\VFX\LerpISpheres_F.shader" />
     <Compile Include="Src\Game\CustomColor.cs" />
-    <Compile Include="Src\Game\Debugging\HitboxRenderer.cs" />
+    <Compile Include="Src\Rendering\SubRendering\HitboxRenderer.cs" />
     <Compile Include="Src\Game\GUIS\MainGUI.cs" />
     <Compile Include="Src\Game\MathUtil.cs" />
     <Compile Include="Src\Game\TickTimer.cs" />

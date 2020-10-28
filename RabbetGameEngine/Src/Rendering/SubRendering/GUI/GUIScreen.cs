@@ -44,7 +44,7 @@ namespace RabbetGameEngine.SubRendering.GUI
                 if(!panel.hidden)
                 foreach(Model mod in panel.models)
                 {
-                    Renderer.requestRender(BatchType.text2D, fontTexture, mod);
+                    Renderer.requestRender(BatchType.guiText, fontTexture, mod);
                 }
             }
             Profiler.beginEndProfile("textBuild");

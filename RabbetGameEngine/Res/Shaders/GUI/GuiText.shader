@@ -17,6 +17,8 @@ void main()
 
 #shader fragment
 #version 330 core
+#extension GL_ARB_conservative_depth : enable
+layout(depth_less) out float gl_FragDepth;
 out vec4 color;
 in vec4 vColor;
 in vec2 fTexCoord;
@@ -25,7 +27,7 @@ uniform sampler2D uTexture;
 
 void main()
 {
-	gl_FragDepth = -1;//render on top
+	gl_FragDepth = 0;//render on top
 	color = texture(uTexture, fTexCoord) * vColor;
 	if (color.a < 0.01)
 	{

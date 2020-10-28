@@ -102,7 +102,7 @@ namespace RabbetGameEngine.VFX
         public override void sendRenderRequest()
         {
             if(!removalFlag)
-            Renderer.requestRender(cloudModel.createTransformedCopy(modelMatrix, prevTickModelMatrix), this.transparency);
+            Renderer.requestRender(cloudModel.createTransformedCopy(modelMatrix, prevTickModelMatrix), this.transparency, true);
         }
     }
 }

@@ -63,7 +63,7 @@ namespace RabbetGameEngine
             }
             currentPlanet.spawnEntityInWorld(thePlayer);
 
-            VFXUtil.doDebugVoxels(currentPlanet);
+            VFXUtil.createDebugVoxels();
             //center mouse in preperation for first person 
             Input.centerMouse();
             Input.toggleHideMouse();
@@ -110,10 +110,9 @@ namespace RabbetGameEngine
             Renderer.onTickStart();
             GUIManager.onTick();
             MainGUI.onTick();
-           // VFXUtil.doDebugSmokeEffect(currentPlanet);
+            //VFXUtil.doDebugSmokeEffect(currentPlanet);
+            VFXUtil.doDebugVoxels();
             currentPlanet.onTick();
-            //testing point collider drawing
-            HitboxRenderer.addPointToBeRendered(new Physics.PointCollider(new Vector3(0,2,15)));
             Profiler.updateAverages();
             Renderer.onTickEnd();
             Profiler.beginEndProfile("Loop");

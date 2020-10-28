@@ -6,6 +6,7 @@ using RabbetGameEngine.Models;
 using RabbetGameEngine.SubRendering;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 
 namespace RabbetGameEngine
 {
@@ -74,17 +75,17 @@ namespace RabbetGameEngine
             Profiler.beginEndProfile("batching");
         }
 
-        public static void requestRender(PointCloudModel mod, bool transparency)
+        public static void requestRender(PointCloudModel mod, bool transparency, bool lerp)
         {
             Profiler.beginEndProfile("batching");
-            BatchManager.requestRender(mod, transparency);
+            BatchManager.requestRender(mod, transparency, lerp);
             Profiler.beginEndProfile("batching");
         }
 
-        public static void requestRender(PointParticle point, bool transparency)
+        public static void requestRender(PointParticle point, bool transparency, bool lerp)
         {
             Profiler.beginEndProfile("batching");
-            BatchManager.requestRender(point, transparency);
+            BatchManager.requestRender(point, transparency, lerp);
             Profiler.beginEndProfile("batching");
         }
 
@@ -173,26 +174,15 @@ namespace RabbetGameEngine
             staticDraws.Add(name, StaticRenderObject.createSROLines(textureName, ShaderUtil.linesName, data));
         }
 
-        public static void addStaticDrawPoints(string name, string shaderName, PointCloudModel data)
+        public static void addStaticDrawPoints(string name, PointParticle[] data, bool transparency)
         {
             if (staticDraws.TryGetValue(name, out StaticRenderObject s))
             {
                 s.delete();
                 staticDraws.Remove(name);
             }
-            staticDraws.Add(name, StaticRenderObject.createSROPoints(shaderName, data));
+            staticDraws.Add(name, StaticRenderObject.createSROPoints(data, transparency));
         }
-
-        public static void addStaticDrawPoints(string name, PointCloudModel data)
-        {
-            if (staticDraws.TryGetValue(name, out StaticRenderObject s))
-            {
-                s.delete();
-                staticDraws.Remove(name);
-            }
-            staticDraws.Add(name, StaticRenderObject.createSROPoints(ShaderUtil.lerpISpheresName, data));
-        }
-
         public static void removeStaticDraw(string name)
         {
             if (staticDraws.TryGetValue(name, out StaticRenderObject s))
@@ -204,9 +194,9 @@ namespace RabbetGameEngine
 
         private static void drawAllStaticRenderObjects()
         {
-            foreach(StaticRenderObject s in staticDraws.Values)
-            {
-                s.draw(projectionMatrix, GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
+            for(int i = 0; i < staticDraws.Count; ++i)
+            { 
+                staticDraws.ElementAt(i).Value.draw(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
                 totalDraws++;
             }
         }

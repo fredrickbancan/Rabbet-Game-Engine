@@ -1,9 +1,8 @@
 ﻿using OpenTK;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Physics;
-using RabbetGameEngine.SubRendering;
 using System.Collections.Generic;
-namespace RabbetGameEngine.Debugging
+namespace RabbetGameEngine.SubRendering
 {
     /*This class handles the rendering of hitboxes for debugging purposes.*/
     public static class HitboxRenderer
@@ -58,7 +57,7 @@ namespace RabbetGameEngine.Debugging
         public static void addPointToBeRendered(PointCollider point)
         {
             PointParticle pParticle = new PointParticle(point.pos, CustomColor.facility.toNormalVec4(), 0.05F, true);
-            Renderer.requestRender(pParticle, false);
+            Renderer.requestRender(pParticle, false, false);
 
             Vector4 redColor = CustomColor.red.toNormalVec4();
             Vector4 greenColor = CustomColor.green.toNormalVec4();

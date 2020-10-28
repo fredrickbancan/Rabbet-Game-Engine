@@ -19,10 +19,10 @@ namespace RabbetGameEngine
         private bool usesIndices = true;
         private bool usesMatrices = false;
         private bool usesIndirect = false;
-        private bool usesInstancing = false;
+        private bool particleBased = false;
+        private bool lerpParticles = false;
         private int bufferByteSize = 0;
         private bool hasInitialized = false;
-        private Model instanceData = null;//If this VAO is to be used with instancing, then this will be the model to instance. Point sprites and ISpheres convert this model to a Vector2[] of screen space vertex positions (spriteinstancedata).
         private Vector2[] spriteInstanceData = null;
         private BatchType batchType = BatchType.triangles;
         private PrimitiveType primType = PrimitiveType.Triangles;
@@ -48,24 +48,52 @@ namespace RabbetGameEngine
         /// <param name="points">The points for this object</param>
         private VertexArrayObject(PointParticle[] points)
         {
-            this.primType = PrimitiveType.Points;
+            this.primType = PrimitiveType.TriangleStrip;
             usesIndices = false;
             this.batchType = BatchType.none;
             dynamic = false;
-            //TODO: Impliment static rendering of impostor spheres
+            particleBased = true;
+            vaoID = GL.GenVertexArray();
+            GL.BindVertexArray(vaoID);
+
+            vboID = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vboID);
+            GL.BufferData(BufferTarget.ArrayBuffer, points.Length * PointParticle.pParticleByteSize, points, BufferUsageHint.StaticDraw);
+
+            int stride = PointParticle.pParticleByteSize;
+            GL.EnableVertexAttribArray(0);
+            GL.VertexAttribPointer(0, PointParticle.positionLength, VertexAttribPointerType.Float, false, stride, PointParticle.positionOffset);
+            GL.VertexAttribDivisor(0, 1);
+
+            GL.EnableVertexAttribArray(1);
+            GL.VertexAttribPointer(1, PointParticle.colorLength, VertexAttribPointerType.Float, false, stride, PointParticle.colorOffset);
+            GL.VertexAttribDivisor(1, 1);
+
+            GL.EnableVertexAttribArray(2);
+            GL.VertexAttribPointer(2, PointParticle.radiusLength, VertexAttribPointerType.Float, false, stride, PointParticle.radiusOffset);
+            GL.VertexAttribDivisor(2, 1);
+
+            GL.EnableVertexAttribArray(3);
+            GL.VertexAttribPointer(3, PointParticle.aocLength, VertexAttribPointerType.Float, false, stride, PointParticle.aocOffset);
+            GL.VertexAttribDivisor(3, 1);
+
+            spriteInstanceData = new Vector2[QuadPrefab.quadVertices.Length];
+            for (int i = 0; i < QuadPrefab.quadVertices.Length; i++)
+            {
+                spriteInstanceData[i] = new Vector2(QuadPrefab.quadVertices[i].pos.X, QuadPrefab.quadVertices[i].pos.Y);
+            }
+
+            instVboID = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, instVboID);
+            GL.BufferData(BufferTarget.ArrayBuffer, spriteInstanceData.Length * sizeof(float) * 2, spriteInstanceData, BufferUsageHint.StaticDraw);
+            //quad vertex positions (vector 2 F)
+            GL.EnableVertexAttribArray(4);
+            GL.VertexAttribPointer(4, 2, VertexAttribPointerType.Float, false, sizeof(float) * 2, 0);
             hasInitialized = true;
         }
 
-        /// <summary>
-        /// This constructor is for use when creating a vertex array object for DYNAMIC render objects
-        /// </summary>
-        /// <param name="type">The type to batch this object into</param>
-        /// <param name="
-        /// 
-        /// 
-        /// 
-        /// ">Maximum number of vertices this VAO can hold.</param>
-        private VertexArrayObject(BatchType type, int bufferSize, Model instanceData)//for dynamic
+      
+        private VertexArrayObject(BatchType type, int bufferSize)//for dynamic
         {
             this.batchType = type;
             this.bufferByteSize = bufferSize;
@@ -99,19 +127,32 @@ namespace RabbetGameEngine
                     usesIndirect = true;
                     break;
 
+                case BatchType.iSpheres:
+                case BatchType.iSpheresTransparent:
+                    primType = PrimitiveType.TriangleStrip;
+                    this.spriteInstanceData = new Vector2[QuadPrefab.quadVertices.Length];
+                    for (int i = 0; i < QuadPrefab.quadVertices.Length; ++i)
+                    {
+                        spriteInstanceData[i] = new Vector2(QuadPrefab.quadVertices[i].pos.X, QuadPrefab.quadVertices[i].pos.Y);
+                    }
+
+                    usesIndices = false;
+                    particleBased = true;
+                    lerpParticles = false;
+                    break;
+
                 case BatchType.lerpISpheres:
                 case BatchType.lerpISpheresTransparent:
                     primType = PrimitiveType.TriangleStrip;
-                    if (instanceData != null)
+                    this.spriteInstanceData = new Vector2[QuadPrefab.quadVertices.Length];
+                    for (int i = 0; i < QuadPrefab.quadVertices.Length; ++i)
                     {
-                        this.spriteInstanceData = new Vector2[instanceData.vertices.Length];
-                        for (int i = 0; i < instanceData.vertices.Length; ++i)
-                        {
-                            spriteInstanceData[i] = new Vector2(instanceData.vertices[i].pos.X, instanceData.vertices[i].pos.Y);
-                        }
-                        usesInstancing = true;
+                        spriteInstanceData[i] = new Vector2(QuadPrefab.quadVertices[i].pos.X, QuadPrefab.quadVertices[i].pos.Y);
                     }
+
                     usesIndices = false;
+                    particleBased = true;
+                    lerpParticles = true;
                     break;
                      
                 default:
@@ -127,9 +168,9 @@ namespace RabbetGameEngine
         /// /// <param name="type">The type of batch this VAO applies to</param>
         /// <param name="bufferSize">The maximum bytes this dynamic VAO can hold</param>
         /// <returns>a VAO object for use with dynamically updating and drawing the provided batch type</returns>
-        public static VertexArrayObject createDynamic(BatchType type, int bufferSize, Model instanceData = null)
+        public static VertexArrayObject createDynamic(BatchType type, int bufferSize)
         {
-            return new VertexArrayObject(type, bufferSize, instanceData);
+            return new VertexArrayObject(type, bufferSize);
         }
 
         /// <summary>
@@ -230,7 +271,7 @@ namespace RabbetGameEngine
             }
 
             //These types require the standard VBO layout.
-            if (batchType != BatchType.lerpISpheres && batchType != BatchType.lerpISpheresTransparent)
+            if (!particleBased)
             {
                 vboID = GL.GenBuffer();
                 GL.BindBuffer(BufferTarget.ArrayBuffer, vboID);
@@ -254,39 +295,40 @@ namespace RabbetGameEngine
                     GL.BindBuffer(BufferTarget.ArrayBuffer, matricesVboID);
                     GL.BufferData(BufferTarget.ArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
 
+                    int stride = 16 * sizeof(float) * 2;
                     int sizeOfMatrix = 16 * sizeof(float);
                     //modelMatrixRow0
                     GL.EnableVertexAttribArray(4);
-                    GL.VertexAttribPointer(4, 4, VertexAttribPointerType.Float, false, sizeOfMatrix, 0);
+                    GL.VertexAttribPointer(4, 4, VertexAttribPointerType.Float, false, stride, 0);
                     GL.VertexAttribDivisor(4, 1);
                     //modelMatrixRow1
                     GL.EnableVertexAttribArray(5);
-                    GL.VertexAttribPointer(5, 4, VertexAttribPointerType.Float, false, sizeOfMatrix, 16);
+                    GL.VertexAttribPointer(5, 4, VertexAttribPointerType.Float, false, stride, 16);
                     GL.VertexAttribDivisor(5, 1);
                     //modelMatrixRow2
                     GL.EnableVertexAttribArray(6);
-                    GL.VertexAttribPointer(6, 4, VertexAttribPointerType.Float, false, sizeOfMatrix, 32);
+                    GL.VertexAttribPointer(6, 4, VertexAttribPointerType.Float, false, stride, 32);
                     GL.VertexAttribDivisor(6, 1);
                     //modelMatrixRow3
                     GL.EnableVertexAttribArray(7);
-                    GL.VertexAttribPointer(7, 4, VertexAttribPointerType.Float, false, sizeOfMatrix, 48);
+                    GL.VertexAttribPointer(7, 4, VertexAttribPointerType.Float, false, stride, 48);
                     GL.VertexAttribDivisor(7, 1);
 
                     //prevTickModelMatrixRow0
                     GL.EnableVertexAttribArray(8);
-                    GL.VertexAttribPointer(8, 4, VertexAttribPointerType.Float, false, sizeOfMatrix, sizeOfMatrix +  0);
+                    GL.VertexAttribPointer(8, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix +  0);
                     GL.VertexAttribDivisor(8, 1);
                     //prevTickModelMatrixRow1
                     GL.EnableVertexAttribArray(9);
-                    GL.VertexAttribPointer(9, 4, VertexAttribPointerType.Float, false, sizeOfMatrix, sizeOfMatrix + 16);
+                    GL.VertexAttribPointer(9, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 16);
                     GL.VertexAttribDivisor(9, 1);
                     //prevTickModelMatrixRow2
                     GL.EnableVertexAttribArray(10);
-                    GL.VertexAttribPointer(10, 4, VertexAttribPointerType.Float, false, sizeOfMatrix, sizeOfMatrix + 32);
+                    GL.VertexAttribPointer(10, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 32);
                     GL.VertexAttribDivisor(10, 1);
                     //prevTickModelMatrixRow3
                     GL.EnableVertexAttribArray(11);
-                    GL.VertexAttribPointer(11, 4, VertexAttribPointerType.Float, false, sizeOfMatrix, sizeOfMatrix + 48);
+                    GL.VertexAttribPointer(11, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 48);
                     GL.VertexAttribDivisor(11, 1);
                 }
                 if (usesIndirect)
@@ -296,17 +338,14 @@ namespace RabbetGameEngine
                     GL.BufferData(BufferTarget.DrawIndirectBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
                 }
             }
-
-            //point types require two point arrays, points and previous tick points.
-            //the two point arrays will be in the same VBO, interlaced. The previous tick points will come after the current.
             else
             {
                 
                 vboID = GL.GenBuffer();
                 GL.BindBuffer(BufferTarget.ArrayBuffer, vboID);
                 GL.BufferData(BufferTarget.ArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
-
-                int stride = PointParticle.pParticleByteSize * 2;
+                
+                int stride = lerpParticles ? PointParticle.pParticleByteSize * 2 : PointParticle.pParticleByteSize;
                 //current point data
                 GL.EnableVertexAttribArray(0);
                 GL.VertexAttribPointer(0, PointParticle.positionLength, VertexAttribPointerType.Float, false, stride, PointParticle.positionOffset);
@@ -324,25 +363,24 @@ namespace RabbetGameEngine
                 GL.VertexAttribPointer(3, PointParticle.aocLength, VertexAttribPointerType.Float, false, stride, PointParticle.aocOffset);
                 GL.VertexAttribDivisor(3, 1);
 
-                //previous tick point data
-                GL.EnableVertexAttribArray(4);
-                GL.VertexAttribPointer(4, PointParticle.positionLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.positionOffset);
-                GL.VertexAttribDivisor(4, 1);
-
-                GL.EnableVertexAttribArray(5);
-                GL.VertexAttribPointer(5, PointParticle.colorLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.colorOffset);
-                GL.VertexAttribDivisor(5, 1);
-
-                GL.EnableVertexAttribArray(6);
-                GL.VertexAttribPointer(6, PointParticle.radiusLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.radiusOffset);
-                GL.VertexAttribDivisor(6, 1);
-
-                GL.EnableVertexAttribArray(7);
-                GL.VertexAttribPointer(7, PointParticle.aocLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.aocOffset);
-                GL.VertexAttribDivisor(7, 1);
-
-                if (usesInstancing)
+                if (lerpParticles)
                 {
+                    //previous tick point data
+                    GL.EnableVertexAttribArray(4);
+                    GL.VertexAttribPointer(4, PointParticle.positionLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.positionOffset);
+                    GL.VertexAttribDivisor(4, 1);
+
+                    GL.EnableVertexAttribArray(5);
+                    GL.VertexAttribPointer(5, PointParticle.colorLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.colorOffset);
+                    GL.VertexAttribDivisor(5, 1);
+
+                    GL.EnableVertexAttribArray(6);
+                    GL.VertexAttribPointer(6, PointParticle.radiusLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.radiusOffset);
+                    GL.VertexAttribDivisor(6, 1);
+
+                    GL.EnableVertexAttribArray(7);
+                    GL.VertexAttribPointer(7, PointParticle.aocLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.aocOffset);
+                    GL.VertexAttribDivisor(7, 1);
                     instVboID = GL.GenBuffer();
                     GL.BindBuffer(BufferTarget.ArrayBuffer, instVboID);
                     GL.BufferData(BufferTarget.ArrayBuffer, spriteInstanceData.Length * sizeof(float) * 2, spriteInstanceData, BufferUsageHint.StaticDraw);
@@ -350,6 +388,16 @@ namespace RabbetGameEngine
                     GL.EnableVertexAttribArray(8);
                     GL.VertexAttribPointer(8, 2, VertexAttribPointerType.Float, false, sizeof(float) * 2, 0);
                 }
+                else
+                {
+                    instVboID = GL.GenBuffer();
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, instVboID);
+                    GL.BufferData(BufferTarget.ArrayBuffer, spriteInstanceData.Length * sizeof(float) * 2, spriteInstanceData, BufferUsageHint.StaticDraw);
+                    //quad vertex positions (vector 2 F)
+                    GL.EnableVertexAttribArray(4);
+                    GL.VertexAttribPointer(4, 2, VertexAttribPointerType.Float, false, sizeof(float) * 2, 0);
+                }
+
             }
 
             hasInitialized = true;
@@ -374,6 +422,7 @@ namespace RabbetGameEngine
             GL.BindVertexArray(vaoID);
             bindVBO();
             bindIBO();
+
         }
 
         public void bindVBO()
@@ -389,7 +438,7 @@ namespace RabbetGameEngine
 
         public void bindInstVBO()
         {
-            if (usesInstancing)
+            if (particleBased)
                 GL.BindBuffer(BufferTarget.ArrayBuffer, instVboID);
         }
 
@@ -462,7 +511,7 @@ namespace RabbetGameEngine
                 GL.DeleteBuffer(indirectBufferID);
             }
 
-            if(usesInstancing)
+            if(particleBased)
             {
                 GL.DeleteBuffer(instVboID);
             }
