@@ -1,12 +1,11 @@
-﻿using OpenTK;
-using OpenTK.Graphics;
+﻿using OpenTK.Mathematics;
+using OpenTK.Windowing.Desktop;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.GUI;
 using RabbetGameEngine.GUI.Text;
 using RabbetGameEngine.Sound;
 using System;
 using System.ComponentModel;
-using System.Drawing;
 
 namespace RabbetGameEngine
 {
@@ -21,17 +20,15 @@ namespace RabbetGameEngine
         private static int windowHeight;
         private static int screenWidth;
         private static int screenHeight;
-        private static int mouseCenterX;//the x position of the center of the game window
-        private static int mouseCenterY;//the y position of the center of the game window
+        private static float mouseCenterX;//the x position of the center of the game window
+        private static float mouseCenterY;//the y position of the center of the game window
         private static float dpiY;
         public EntityPlayer thePlayer;
         public Planet currentPlanet;
 
-        public GameInstance(int screenWidth, int screenHeight, int initialWindowWidth, int initialWindowHeight, string title) : base(initialWindowWidth, initialWindowHeight, GraphicsMode.Default, title)
+        public GameInstance(GameWindowSettings gameWindowSettings, NativeWindowSettings windowSettings) : base(gameWindowSettings, windowSettings)
         {
-            Application.debugPrint("Game window width: " + initialWindowWidth);
-            Application.debugPrint("Game window height: " + initialWindowHeight);
-            GameInstance.windowWidth = initialWindowWidth;
+            GameInstance.windowWidth = this.Bounds.;
             GameInstance.windowHeight = initialWindowHeight;
             GameInstance.screenHeight = screenHeight;
             GameInstance.screenWidth = screenWidth;
@@ -41,8 +38,8 @@ namespace RabbetGameEngine
         {
             GameInstance.instance = this;
             GameInstance.privateRand = new Random();
-            GameInstance.mouseCenterX = this.X + this.Width / 2;
-            GameInstance.mouseCenterY = this.Y + this.Height / 2;
+            GameInstance.mouseCenterX = this.Bounds.Center.X;
+            GameInstance.mouseCenterY = this.Bounds.Center.Y;
             GameSettings.loadSettings();
             TextUtil.loadAllFoundTextFiles();
             SoundManager.init();

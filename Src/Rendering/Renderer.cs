@@ -1,5 +1,5 @@
-﻿using OpenTK;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.GUI;
 using RabbetGameEngine.Models;
@@ -56,7 +56,7 @@ namespace RabbetGameEngine
         /*Called each time the game window is resized*/
         public static void onResize()
         {
-            GL.Viewport(GameInstance.get.ClientRectangle);
+            GL.Viewport((int)GameInstance.get.Bounds.Center.X, (int)GameInstance.get.Bounds.Center.Y, GameInstance.get.Size.X, GameInstance.get.Size.Y);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
             orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1.0F);
             GUIManager.onWindowResize();
