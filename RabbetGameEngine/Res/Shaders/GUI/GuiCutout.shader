@@ -9,12 +9,11 @@ layout(location = 3) in float objectID;
 out vec4 vColor;
 out vec2 fTexCoord;
 
-uniform mat4 modelMatrix;
-uniform mat4 projectionMatrix;
+uniform mat4 orthoMatrix;
 
 void main()
 {
-	gl_Position = projectionMatrix * modelMatrix * position;
+	gl_Position = orthoMatrix * position;
 	vColor = Color;
 	fTexCoord = texCoord;
 }
@@ -29,6 +28,7 @@ uniform sampler2D uTexture;
 
 void main()
 {
+	//gl_FragDepth = 0;
 	vec4 textureColor = texture(uTexture, fTexCoord);
 	if (textureColor.a < 1.0)
 		discard;

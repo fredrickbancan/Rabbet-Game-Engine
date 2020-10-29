@@ -8,12 +8,13 @@ namespace RabbetGameEngine.SubRendering.GUI
         private float widthPixels, heightPixels;
         protected Vector2 screenPosAbsolute;
         protected bool hidden = false;
-        private Model componentQuadModel = null;
-        private Matrix4 translationAndScale = Matrix4.Identity;
+        protected string name = "";
+        protected Texture componentTexture = null;
+        protected Model componentQuadModel = null;
+        protected Matrix4 translationAndScale = Matrix4.Identity;
+
         public GUIScreenComponent(Vector2 screenPos/*position where 0 is top left and 1 is bottom right*/)
         {
-            screenPos.X -= 0.5F;
-            screenPos.Y += 0.5F;//compensating for the strange OpenTK ortho projection 
             screenPos.Y = 1F - screenPos.Y;//flips y to make it start from top left.
             this.screenPosAbsolute = screenPos;
         }
@@ -30,6 +31,11 @@ namespace RabbetGameEngine.SubRendering.GUI
 
         }
 
+        public virtual void setName(string name)
+        {
+            this.name = name;
+        }
+
         public virtual void setModel(Model mod)
         {
             this.componentQuadModel = mod;
@@ -42,7 +48,7 @@ namespace RabbetGameEngine.SubRendering.GUI
 
         protected virtual void scaleAndTranslate()
         {
-            translationAndScale = Matrix4.CreateScale(widthPixels, heightPixels, 1) *  Matrix4.CreateTranslation(GameInstance.gameWindowWidth * screenPosAbsolute.X, GameInstance.gameWindowHeight * screenPosAbsolute.Y, -0.01F);
+            translationAndScale = Matrix4.CreateScale((GameInstance.dpiScale * widthPixels) * 0.07F, (GameInstance.dpiScale * heightPixels) * 0.07F, 1) *  Matrix4.CreateTranslation(screenPosAbsolute.X,  screenPosAbsolute.Y, -0.1F);
         }
 
         public virtual void setHide(bool flag)
@@ -53,6 +59,11 @@ namespace RabbetGameEngine.SubRendering.GUI
         public virtual Vector2 getScreenPos()
         {
             return screenPosAbsolute;
+        }
+
+        public virtual void requestRender()
+        {
+           
         }
     }
 }

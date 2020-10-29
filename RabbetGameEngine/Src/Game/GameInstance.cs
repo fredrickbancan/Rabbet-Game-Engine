@@ -3,7 +3,7 @@ using OpenTK.Graphics;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.GUI;
 using RabbetGameEngine.GUI.Text;
-using RabbetGameEngine.VFX;
+using RabbetGameEngine.Sound;
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -45,6 +45,7 @@ namespace RabbetGameEngine
             GameInstance.mouseCenterY = this.Y + this.Height / 2;
             GameSettings.loadSettings();
             TextUtil.loadAllFoundTextFiles();
+            SoundManager.init();
             setDPIScale();
             Renderer.init();
 
@@ -56,14 +57,14 @@ namespace RabbetGameEngine
             currentPlanet = new Planet(0xdeadbeef);
             //create and spawn player in new world
             thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
+            SoundManager.setListener(thePlayer);
+            SoundManager.playSoundAux("Explosion_1");
             currentPlanet.spawnEntityInWorld(new EntityTank(currentPlanet, new Vector3(5, 10, -5)));
             for (int i = 0; i < 128; i++)
             {
                 currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(0, 10, 0)));
             }
             currentPlanet.spawnEntityInWorld(thePlayer);
-
-            VFXUtil.createDebugVoxels();
             //center mouse in preperation for first person 
             Input.centerMouse();
             Input.toggleHideMouse();
@@ -78,6 +79,7 @@ namespace RabbetGameEngine
             Input.updateInput();
             TicksAndFrames.doOnTickUntillRealtimeSync(onTick);
             TicksAndFrames.updateFPS();
+            SoundManager.onFrame();
             thePlayer.onCameraUpdate();//do this before calling on tick to prepare camera variables
             currentPlanet.onFrame();//should be called before rendering world since this may prepare certain elements for a frame perfect render
             Renderer.onFrame();
@@ -110,8 +112,6 @@ namespace RabbetGameEngine
             Renderer.onTickStart();
             GUIManager.onTick();
             MainGUI.onTick();
-            //VFXUtil.doDebugSmokeEffect(currentPlanet);
-            VFXUtil.doDebugVoxels();
             currentPlanet.onTick();
             Profiler.updateAverages();
             Renderer.onTickEnd();
@@ -142,6 +142,7 @@ namespace RabbetGameEngine
         {
             currentPlanet.onLeavingPlanet();
             Renderer.onClosing();
+            SoundManager.onClosing();
             base.OnClosing(e);
         }
         private void setDPIScale()

@@ -1,5 +1,4 @@
-﻿using RabbetGameEngine.Debugging;
-using RabbetGameEngine.GUI.Text;
+﻿using RabbetGameEngine.GUI.Text;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.SubRendering.GUI.Text;
 using System.Collections.Generic;
@@ -33,21 +32,32 @@ namespace RabbetGameEngine.SubRendering.GUI
             this.screenName = screenName;
             this.maxCharCount = maxCharCount;
         }
-
-        public void buildAndRequestTextRender()
+        public void requestGUIRender()
         {
-            Profiler.beginEndProfile("textBuild");
-            foreach(GUITextPanel panel in screenTextPanels.Values)
+            foreach(GUIScreenComponent comp in components.Values)
+            {
+                comp.requestRender();
+            }
+        }
+
+        public void requestTextRender()
+        {
+            foreach (GUITextPanel panel in screenTextPanels.Values)
+            {
+                if (!panel.hidden)
+                    foreach (Model mod in panel.models)
+                    {
+                        Renderer.requestRender(BatchType.guiText, fontTexture, mod);
+                    }
+            }
+        }
+
+        public void buildText()
+        {
+            foreach (GUITextPanel panel in screenTextPanels.Values)
             {
                 panel.build();
-
-                if(!panel.hidden)
-                foreach(Model mod in panel.models)
-                {
-                    Renderer.requestRender(BatchType.guiText, fontTexture, mod);
-                }
             }
-            Profiler.beginEndProfile("textBuild");
         }
 
         /*Add new or change already existing gui component*/
@@ -59,6 +69,7 @@ namespace RabbetGameEngine.SubRendering.GUI
             }
 
             components.Add(name, component);
+            component.setName(name);
         }
 
         /*Add new text panel, or override existing one, Do not use this to update existing panels, use updateTextPanel() instead*/
@@ -73,7 +84,6 @@ namespace RabbetGameEngine.SubRendering.GUI
                 textPanel.setFont(this.screenFont);
                 textPanel.build();
                 screenTextPanels.Add(name, textPanel);
-                buildAndRequestTextRender();
             }
         }
 
@@ -134,7 +144,7 @@ namespace RabbetGameEngine.SubRendering.GUI
             if (screenTextPanels.TryGetValue(name, out GUITextPanel panel))
             {
                 screenTextPanels.Remove(name);
-                buildAndRequestTextRender();
+                buildText();
             }
             else
             {
@@ -148,6 +158,8 @@ namespace RabbetGameEngine.SubRendering.GUI
             {
                 component.onTick();
             }
+            requestTextRender();
+            requestGUIRender();
         }
 
         public void onWindowResize()
@@ -158,7 +170,7 @@ namespace RabbetGameEngine.SubRendering.GUI
                 {
                     component.onWindowResize();
                 }
-                buildAndRequestTextRender();
+                buildText();
             }
         }
 

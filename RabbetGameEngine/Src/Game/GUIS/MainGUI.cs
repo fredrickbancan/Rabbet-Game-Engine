@@ -25,7 +25,7 @@ namespace RabbetGameEngine
             GUIManager.addNewGUIScreen(mainGUIName, "Arial_Shadow");
             GUIManager.addTextPanelToGUI(mainGUIName, "flying", new GUITextPanel(new TextFormat().setAlign(TextAlign.RIGHT).setLine("Flying: OFF").setPanelColor(CustomColor.darkRed)));
             GUIManager.addTextPanelToGUI(mainGUIName, "noclip", new GUITextPanel(new TextFormat(0, 0.03F).setAlign(TextAlign.RIGHT).setLine("Noclip: OFF").setPanelColor(CustomColor.darkRed)));
-            GUIManager.addTextPanelToGUI(mainGUIName, "label", new GUITextPanel(new TextFormat(0, 0.97F).setLine("Rabbet Game Engine Version " + Application.version).setPanelColor(CustomColor.black)));
+            GUIManager.addTextPanelToGUI(mainGUIName, "label", new GUITextPanel(new TextFormat(0, 0.97F).setLine(Application.applicationName).setPanelColor(CustomColor.black)));
             GUIManager.addTextPanelToGUI(mainGUIName, "help", new GUITextPanel(new TextFormat(0.5F, 0).setAlign(TextAlign.CENTER).setLines(new string[] { "Press 'W,A,S,D and SPACE' to move. Move mouse to look around.", "Tap 'V' to toggle flying. Tap 'E' to release mouse.", "Walk up to tank and press F to drive, Left click to fire.", "Press 'ESC' to close game.", "Press F3 to show/hide debug menu.", "press F4 to enable/disable drawing hitboxes.", "press F5 to enable/disable noclip.", "press F12 to enable fullscreen." }).setFontSize(0.015F).setPanelColor(CustomColor.lightGrey)));
             GUIManager.addGUIComponentToGUI(mainGUIName, "crossHair", new GUICrosshair());
 
@@ -108,7 +108,7 @@ namespace RabbetGameEngine
             }
 
             DebugInfo.displayOrClearDebugInfo();
-            GUIManager.rebuildTextInGUIAndRequestDraw(mainGUIName);//do last, applies any changes to the text on screen.
+            GUIManager.rebuildTextInGUI(mainGUIName);//do last, applies any changes to the text on screen.
         }
 
         /*Called when player lands direct hit on a cactus, TEMPORARY!*/

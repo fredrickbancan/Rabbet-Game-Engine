@@ -70,7 +70,6 @@ namespace RabbetGameEngine.VFX
             float diam = ((float)Math.Sqrt(2)) / 4;
             for (int i = 0; i < 256; i++)//layers
             {
-                VFXPointCloud voxels = new VFXPointCloud(new Vector3(-32 * diam, (float)i * diam / 2, -32 * diam), CustomColor.grey, false, true, 1000, 0.5F, 1.0F);
                 PointParticle[] points = new PointParticle[64 * 64];
                 for (int j = 0; j < 64 * 64; j++)
                 {

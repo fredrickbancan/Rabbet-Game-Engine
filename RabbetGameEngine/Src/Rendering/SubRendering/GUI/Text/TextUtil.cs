@@ -28,14 +28,23 @@ namespace RabbetGameEngine.GUI.Text
         /*Goes through the font file directory and adds all fonts*/
         public static void loadAllFoundTextFiles()
         {
-            string[] allFileDirectoriesAndName = Directory.GetFiles(ResourceUtil.getFontFileDir());
-            foreach(string dir in allFileDirectoriesAndName)
+            try
             {
-                if (dir.Contains(".fnt"))
+
+
+                string[] allFileDirectoriesAndName = Directory.GetFiles(ResourceUtil.getFontFileDir());
+                foreach (string dir in allFileDirectoriesAndName)
                 {
-                    string fontName = dir.Replace(ResourceUtil.getFontFileDir(), "").Replace(".fnt", "");//removes directory and file extension
-                    tryAddNewFontToGlobalList(fontName);
+                    if (dir.Contains(".fnt"))
+                    {
+                        string fontName = dir.Replace(ResourceUtil.getFontFileDir(), "").Replace(".fnt", "");//removes directory and file extension
+                        tryAddNewFontToGlobalList(fontName);
+                    }
                 }
+            }
+            catch(IOException e)
+            {
+                Application.error(e.Message);
             }
         }
 

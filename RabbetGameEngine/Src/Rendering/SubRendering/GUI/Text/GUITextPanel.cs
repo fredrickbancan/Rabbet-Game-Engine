@@ -1,7 +1,7 @@
-﻿using RabbetGameEngine.Models;
+﻿using OpenTK;
+using RabbetGameEngine.Debugging;
+using RabbetGameEngine.Models;
 using RabbetGameEngine.SubRendering.GUI.Text;
-using OpenTK;
-using System;
 
 namespace RabbetGameEngine.GUI.Text
 {
@@ -75,9 +75,11 @@ namespace RabbetGameEngine.GUI.Text
 
         public void build()
         {
+            Profiler.beginEndProfile("textBuild");
             format.panelPixelPos.X = format.panelPos.X * GameInstance.gameWindowWidth;
             format.panelPixelPos.Y = format.panelPos.Y * GameInstance.gameWindowHeight;
             this.models = TextModelBuilder2D.convertstringArrayToModelArray(format.lines, format.font, format.panelColour, format.panelPixelPos, format.fontSize * GameInstance.dpiScale, format.screenEdgePadding, format.alignment);
+            Profiler.beginEndProfile("textBuild");
         }
 
         public void hide()

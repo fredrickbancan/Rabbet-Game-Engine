@@ -135,6 +135,7 @@ namespace RabbetGameEngine.SubRendering
                 case BatchType.none:
                     ShaderUtil.tryGetShader("debug", out batchShader);
                     break;
+
                 case BatchType.guiCutout:
                     ShaderUtil.tryGetShader(ShaderUtil.guiCutoutName, out batchShader);
                     break;

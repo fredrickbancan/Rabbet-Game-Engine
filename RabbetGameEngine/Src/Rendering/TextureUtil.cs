@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -20,19 +21,26 @@ namespace RabbetGameEngine
 
         private static void loadAllTexturesRecursive(string directory)
         {
-            string[] allFiles = Directory.GetFiles(directory);
-            string[] allDirectories = Directory.GetDirectories(directory);
-            foreach (string file in allFiles)
+            try
             {
-                if (file.Contains(".png"))
+                string[] allFiles = Directory.GetFiles(directory);
+                string[] allDirectories = Directory.GetDirectories(directory);
+                foreach (string file in allFiles)
                 {
-                    tryAddNewTexture(file);
+                    if (file.Contains(".png"))
+                    {
+                        tryAddNewTexture(file);
+                    }
+                }
+
+                foreach (string dir in allDirectories)
+                {
+                    loadAllTexturesRecursive(dir);
                 }
             }
-
-            foreach (string dir in allDirectories)
+            catch (Exception e)
             {
-                loadAllTexturesRecursive(dir);
+                Application.error(e.Message);
             }
         }
 

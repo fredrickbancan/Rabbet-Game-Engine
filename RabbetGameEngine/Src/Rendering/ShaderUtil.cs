@@ -21,6 +21,7 @@ namespace RabbetGameEngine
         public static readonly string lerpTrianglesTransparentName = "Lerp_FT";
         public static readonly string trianglesTransparentName = "Static_FT";
 
+        public static readonly string fileExtension = ".shader";
         private static Dictionary<string, Shader> shaders = null;
         public static void loadAllFoundShaderFiles()
         {
@@ -36,7 +37,7 @@ namespace RabbetGameEngine
             string[] allDirectories = Directory.GetDirectories(directory);
             foreach (string file in allFiles)
             {
-                if (file.Contains(""))
+                if (file.Contains(fileExtension))
                 {
                     tryAddNewShader(file);
                 }
@@ -50,7 +51,7 @@ namespace RabbetGameEngine
 
         private static void tryAddNewShader(string shaderDir)
         {
-            string shaderName = Path.GetFileName(shaderDir).Replace(".shader", "");//removes directory
+            string shaderName = Path.GetFileName(shaderDir).Replace(fileExtension, "");//removes directory
             Shader addingShader = new Shader(shaderDir);
             shaders.Add(shaderName, addingShader);
         }

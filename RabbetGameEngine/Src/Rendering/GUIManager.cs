@@ -169,11 +169,11 @@ namespace RabbetGameEngine.GUI
             }
         }
 
-        public static void rebuildTextInGUIAndRequestDraw(string guiName)
+        public static void rebuildTextInGUI(string guiName)
         {
             if (allGUIs.TryGetValue(guiName, out GUIScreen screen))
             {
-                screen.buildAndRequestTextRender();
+                screen.buildText();
             }
             else
             {
@@ -185,7 +185,7 @@ namespace RabbetGameEngine.GUI
         {
             if(currentDisplayedScreen != null)
             {
-                currentDisplayedScreen.buildAndRequestTextRender();
+                currentDisplayedScreen.buildText();
             }
         }
 

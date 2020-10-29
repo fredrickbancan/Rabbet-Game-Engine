@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>RabbetGameEngine</RootNamespace>
     <AssemblyName>RabbetGameEngine</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
@@ -27,6 +27,7 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -58,24 +59,44 @@
     <Reference Include="MedallionRandom, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MedallionRandom.1.1.0\lib\net452\MedallionRandom.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="NVorbis, Version=0.10.0.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\NVorbis.0.10.1\lib\net45\NVorbis.dll</HintPath>
     </Reference>
-    <Reference Include="OpenTK, Version=3.0.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
-      <HintPath>..\packages\OpenTK.3.0.1\lib\net20\OpenTK.dll</HintPath>
+    <Reference Include="OpenTK, Version=3.2.1.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenTK.3.2.1\lib\net20\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.4.0\lib\netstandard2.0\System.Buffers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.4.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Src\Rendering\SkyboxRenderer.cs" />
     <Compile Include="Src\Rendering\SubRendering\Batching\DrawCommand.cs" />
     <Compile Include="Src\Rendering\SubRendering\Batching\MatrixCombiner.cs" />
+    <Compile Include="Src\Sound\Sound.cs" />
+    <Compile Include="Src\Sound\SoundManager.cs" />
+    <Compile Include="Src\Sound\SoundUtil.cs" />
     <Compile Include="Src\Universe\Skybox.cs" />
+    <None Include="OpenTK.dll.config" />
     <None Include="Res\Shaders\FrameBuffer.shader" />
     <None Include="Res\Shaders\Planet\StaticLines.shader" />
     <None Include="Res\Shaders\Planet\Static_F.shader" />
@@ -159,10 +180,13 @@
     <None Include="Res\Shaders\Planet\Lerp_F.shader" />
     <None Include="Res\Shaders\Planet\Static_FT.shader" />
     <None Include="Res\Shaders\Planet\Lerp_FT.shader" />
+    <None Include="Res\Sounds\calm3.ogg" />
+    <None Include="Res\Sounds\Explosion_1.ogg" />
+    <None Include="Res\Sounds\Explosion_2.ogg" />
+    <None Include="Res\Sounds\Explosion_3.ogg" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="OpenTK.dll.config" />
     <None Include="packages.config" />
     <None Include="Res\Font\Arial.fnt" />
     <None Include="Res\Font\Consolas.fnt" />
@@ -196,6 +220,8 @@
     <Content Include="Res\Font\Arial.png" />
     <Content Include="Res\Font\Consolas.png" />
     <Content Include="Res\Font\Trebuchet.png" />
+    <Content Include="Res\Icon\icon.ico" />
+    <Content Include="Res\Icon\icon.png" />
     <Content Include="Res\Shaders\ReadMe.txt" />
     <Content Include="Res\Texture\aie.png" />
     <Content Include="Res\Texture\blanket.png" />
@@ -215,7 +241,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Res\OBJ\VFX\" />
-    <Folder Include="Res\Sounds\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
 </Project>

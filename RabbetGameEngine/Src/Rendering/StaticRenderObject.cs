@@ -72,6 +72,7 @@ namespace RabbetGameEngine
                 tex.use();
             }
             shader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+            shader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
             shader.setUniformVec3F("fogColor", fogColor);
             shader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());

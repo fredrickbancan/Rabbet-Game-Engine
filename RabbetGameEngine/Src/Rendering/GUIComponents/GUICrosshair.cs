@@ -1,5 +1,6 @@
 ﻿using OpenTK;
 using RabbetGameEngine.Models;
+using RabbetGameEngine.SubRendering;
 using RabbetGameEngine.SubRendering.GUI;
 namespace RabbetGameEngine.GUI
 {
@@ -12,9 +13,9 @@ namespace RabbetGameEngine.GUI
       crosshair texture will be gotten.*/
     public class GUICrosshair : GUIScreenComponent
     {
-        private Texture crosshairTexture;
-        private float texutrePixelWidth = 0F;
-        private float texutrePixelHeight = 0F;
+        private string crosshairTextureName;
+        private float texturePixelWidth = 0F;
+        private float texturePixelHeight = 0F;
         private CustomColor crosshairColor = CustomColor.black;
 
         public GUICrosshair(CustomColor color, float crosshairSize = 2.0F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0.5F, 0.5F))
@@ -34,20 +35,31 @@ namespace RabbetGameEngine.GUI
         {
             switch(type)
             {
-                case CrosshairType.normal:
-                    TextureUtil.tryGetTexture("CrosshairNormal", out crosshairTexture);
-                    texutrePixelWidth = crosshairTexture.getWidth() * crosshairSize;
-                    texutrePixelHeight = crosshairTexture.getHeight() * crosshairSize;
+               case CrosshairType.normal:
+                    crosshairTextureName = "CrosshairNormal";
+                    TextureUtil.tryGetTexture(crosshairTextureName, out this.componentTexture);
+                    texturePixelWidth = componentTexture.getWidth() * crosshairSize;
+                    texturePixelHeight = componentTexture.getHeight() * crosshairSize;
                     break;
 
                 default:
-                    TextureUtil.tryGetTexture("debug", out crosshairTexture);
-                    texutrePixelWidth = crosshairTexture.getWidth() * crosshairSize;
-                    texutrePixelHeight = crosshairTexture.getHeight() * crosshairSize;
+                    texturePixelWidth = 100;
+                    texturePixelHeight = 100;
+                    crosshairTextureName = "debug";
                     break;
             }
 
-            setSizePixels(texutrePixelWidth, texutrePixelHeight);
+            setSizePixels(texturePixelWidth, texturePixelHeight);
+            scaleAndTranslate();
         }
+
+        public override void requestRender()
+        {
+            if (!hidden)
+            {
+                Renderer.requestRender(BatchType.guiCutout, this.componentTexture, this.componentQuadModel.copyModel().transformVertices(this.translationAndScale));
+            }
+        }
+
     }
 }

@@ -37,17 +37,17 @@ namespace RabbetGameEngine
             Application.infoPrint("OpenGL Version: " + GL.GetString(StringName.Version));
             Application.infoPrint("OpenGL Vendor: " + GL.GetString(StringName.Vendor));
             Application.infoPrint("Shading Language Version: " + GL.GetString(StringName.ShadingLanguageVersion));
-            Application.debugPrint("Loaded " + ShaderUtil.getShaderCount() + " shaders.");
-            Application.debugPrint("Loaded " + TextureUtil.getTextureCount() + " textures.");
-            Application.debugPrint("Loaded " + MeshUtil.getModelCount() + " models.");
+            Application.infoPrint("Loaded " + ShaderUtil.getShaderCount() + " shaders.");
+            Application.infoPrint("Loaded " + TextureUtil.getTextureCount() + " textures.");
+            Application.infoPrint("Loaded " + MeshUtil.getModelCount() + " models.");
             GL.Viewport(preFullScreenSize = GameInstance.get.ClientRectangle);
             GL.Enable(EnableCap.DepthTest);
-            GL.Enable(EnableCap.CullFace);
+           // GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.LineWidth(3);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
-            orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1000.0F);
+            orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1.0F);
             staticDraws = new Dictionary<string, StaticRenderObject>();
             if(useOffScreenBuffer) OffScreen.init();
             SkyboxRenderer.init();
@@ -58,7 +58,7 @@ namespace RabbetGameEngine
         {
             GL.Viewport(GameInstance.get.ClientRectangle);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
-            orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1000.0F);
+            orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1.0F);
             GUIManager.onWindowResize();
         }
 

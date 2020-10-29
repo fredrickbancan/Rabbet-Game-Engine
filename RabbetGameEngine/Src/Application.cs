@@ -12,11 +12,12 @@ namespace RabbetGameEngine
         static void Main(string[] args)
         {
             Rectangle resolution = Screen.PrimaryScreen.Bounds;
-            GameInstance game = new GameInstance(resolution.Width, resolution.Height, resolution.Width/2, resolution.Height/2, "Rabbet Game Engine version " + version);
+            GameInstance game = new GameInstance(resolution.Width, resolution.Height, resolution.Width/2, resolution.Height/2, Application.applicationName);
             game.Run(); //Will start the OpenTk Game instance running. Eeach frame will call OnUpdateFrame and OnRenderFrame. I am using my own tickrate class to controll ticks (TicksAndFps.cs)  
             game.Dispose();
         }
-        public static readonly string version = "0.0.7_indev";
+        public static readonly string version = "0.0.8_indev";
+        public static readonly string applicationName = "RabbetGameEngine " + version;
 
         #region Print functions
         public static void infoPrint(object s)
@@ -36,6 +37,11 @@ namespace RabbetGameEngine
             Console.BackgroundColor = ConsoleColor.White;
             Console.ForegroundColor = ConsoleColor.White;
         }
+
+        /// <summary>
+        /// prints the error object provided and then waits for input. afterwards closes application.
+        /// </summary>
+        /// <param name="s">Error message</param>
         public static void error(object s)
         {
             Console.BackgroundColor = ConsoleColor.DarkRed;
@@ -43,6 +49,8 @@ namespace RabbetGameEngine
             Console.WriteLine("Error!: " + s);
             Console.BackgroundColor = ConsoleColor.White;
             Console.ForegroundColor = ConsoleColor.White;
+            Console.ReadKey();
+            GameInstance.get.Close();
         }
         public static void debugPrint(object s)
         {

@@ -83,6 +83,16 @@ namespace RabbetGameEngine
         {
             return this.camera;
         }
+        
+        public ref Vector3 getPositionHandle()
+        {
+            return ref pos;
+        }
+
+        public ref Vector3 getVelocityHandle()
+        {
+            return ref velocity;
+        }
 
         public override bool doingAction(Action act)
         {
