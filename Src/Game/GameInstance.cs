@@ -54,7 +54,6 @@ namespace RabbetGameEngine
             //create and spawn player in new world
             thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
             SoundManager.setListener(thePlayer);
-            SoundManager.playSoundAux("Explosion_1");
             currentPlanet.spawnEntityInWorld(new EntityTank(currentPlanet, new Vector3(5, 10, -5)));
             for (int i = 0; i < 2; i++)
             {
@@ -121,6 +120,15 @@ namespace RabbetGameEngine
             GUIManager.onTick();
             MainGUI.onTick();
             currentPlanet.onTick();
+            if(rand.Next(0,30) == 0)
+            {
+                SoundManager.playSoundAux("Explosion_" + rand.Next(1, 4).ToString(), 1.0F, 1.5F - (float)rand.NextDouble() * 0.2F);
+            }
+            if (rand.Next(0, 30) == 0)
+            {
+                SoundManager.playSoundAux("calm3");
+            }
+            SoundManager.onTick();
             Profiler.updateAverages();
             Renderer.onTickEnd();
             Profiler.beginEndProfile("Loop");

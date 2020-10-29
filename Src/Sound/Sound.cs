@@ -1,5 +1,6 @@
 ﻿using NVorbis;
 using System;
+using System.Collections.Generic;
 
 namespace RabbetGameEngine.Sound
 {
@@ -10,12 +11,12 @@ namespace RabbetGameEngine.Sound
         private TimeSpan totalTime;
         private int channels = 0;
         private long totalSamples = 0;
-        private float[] samplesBuffer;
+        private byte[] data;
         public Sound(string dir)
         {
             if(dir == "debug")
             {
-
+                //TODO: create debug sound data
             }
             else
             {
@@ -33,9 +34,36 @@ namespace RabbetGameEngine.Sound
                 sampleRate = reader.SampleRate;
                 totalTime = reader.TotalTime;
                 totalSamples = reader.TotalSamples;
-                samplesBuffer = new float[totalSamples];
-                reader.ReadSamples(samplesBuffer, 0, samplesBuffer.Length);
+                reader.ClipSamples = true;
+                List<byte> bytes = new List<byte>((int)(sampleRate * channels * 2 * totalTime.TotalSeconds));
+                float[] samplesBuffer = new float[sampleRate / 10 * channels];
+                int count = 0;
+                while((count = reader.ReadSamples(samplesBuffer, 0, samplesBuffer.Length)) > 0)
+                {
+                    for(int i = 0; i < count; i++)
+                    {
+                        int temp = (int)(short.MaxValue * samplesBuffer[i]);
+                        if (temp > short.MaxValue)
+                        {
+                            temp = short.MaxValue;
+                        }
+                        else if (temp < short.MinValue)
+                        {
+                            temp = short.MinValue;
+                        }
+                        short tempBytes = (short)temp;
+                        byte byte1 = (byte)((tempBytes >> 8) & 0x00FF);
+                        byte byte2 = (byte)((tempBytes >> 0) & 0x00FF);
+
+                        // Little endian
+                        bytes.Add(byte2);
+                        bytes.Add(byte1);
+                    }
+
+                }
                 reader.Dispose();
+                // TODO: Add better implementation so that there's no need for array copying
+                data = bytes.ToArray();
             }
             catch (Exception e)
             {
@@ -58,9 +86,9 @@ namespace RabbetGameEngine.Sound
             return totalSamples;
         }
 
-        public float[] getData()
+        public byte[] getData()
         {
-            return samplesBuffer;
+            return data;
         }
 
         public TimeSpan getTotalTime()
@@ -68,7 +96,10 @@ namespace RabbetGameEngine.Sound
             return totalTime;
         }
 
-
+        public bool isStereo()
+        {
+            return channels >= 2;
+        }
         private void loadDebugSound()
         {
 

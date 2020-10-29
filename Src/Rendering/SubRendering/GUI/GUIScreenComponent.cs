@@ -47,7 +47,7 @@ namespace RabbetGameEngine.SubRendering.GUI
 
         protected virtual void scaleAndTranslate()
         {
-            translationAndScale = Matrix4.CreateScale((GameInstance.dpiScale * widthPixels) * 0.07F, (GameInstance.dpiScale * heightPixels) * 0.07F, 1) *  Matrix4.CreateTranslation(screenPosAbsolute.X,  screenPosAbsolute.Y, -0.1F);
+            translationAndScale = Matrix4.CreateScale((GameInstance.dpiScale * widthPixels) * 0.07F, (GameInstance.dpiScale * heightPixels) * 0.07F, 1) *  Matrix4.CreateTranslation(screenPosAbsolute.X - 0.01F,  screenPosAbsolute.Y, -0.2F);
         }
 
         public virtual void setHide(bool flag)
