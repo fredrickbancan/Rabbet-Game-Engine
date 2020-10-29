@@ -5,7 +5,7 @@
     {
         public static string getResourceFileDir()
         {
-            return @"..\..\Res\";
+            return @"..\..\..\Res\";
         }
         public static string getIconFileDir(string fileName = "")
         {

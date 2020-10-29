@@ -1,5 +1,5 @@
-﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
 using System;
 
@@ -23,7 +23,7 @@ namespace RabbetGameEngine.SubRendering
         private static int height;
         private static FramebufferErrorCode errorCode;
 
-        public static void init(float superSamplingMultiplyer = 1.0F)
+        public static void init(int width, int height)
         {
             Application.debugPrint("Rendering is utilizing offscreen buffer!");
 
@@ -34,8 +34,8 @@ namespace RabbetGameEngine.SubRendering
             GL.GenTextures(blendFrames, colorBuffers);
             depthBuffer = GL.GenRenderbuffer();
 
-            width = (int)(GameInstance.realScreenWidth * superSamplingMultiplyer);//*2 on width and height for 4x super sampling
-            height = (int)(GameInstance.realScreenHeight * superSamplingMultiplyer);
+            OffScreen.width = width;
+            OffScreen.height = height;
 
             GL.BindTexture(TextureTarget.Texture2D, colorBuffers[0]);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);

@@ -1,11 +1,11 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.GUI;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.SubRendering;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 
 namespace RabbetGameEngine
@@ -21,7 +21,6 @@ namespace RabbetGameEngine
         private static Matrix4 orthographicMatrix;
         public static readonly bool useOffScreenBuffer = false;
         private static int renderFrame;//used to animate textures (noise texture for now)
-        private static Rectangle preFullScreenSize;//used to store the window dimentions before going into full screen
        
         /// <summary>
         /// A list of all requested
@@ -40,23 +39,23 @@ namespace RabbetGameEngine
             Application.infoPrint("Loaded " + ShaderUtil.getShaderCount() + " shaders.");
             Application.infoPrint("Loaded " + TextureUtil.getTextureCount() + " textures.");
             Application.infoPrint("Loaded " + MeshUtil.getModelCount() + " models.");
-            GL.Viewport(preFullScreenSize = GameInstance.get.ClientRectangle);
+            GL.Viewport(GameInstance.get.getGameWindowSize());
             GL.Enable(EnableCap.DepthTest);
-           // GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.LineWidth(3);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
             orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1.0F);
             staticDraws = new Dictionary<string, StaticRenderObject>();
-            if(useOffScreenBuffer) OffScreen.init();
+            if(useOffScreenBuffer) OffScreen.init(0,0);
             SkyboxRenderer.init();
         }
 
         /*Called each time the game window is resized*/
         public static void onResize()
         {
-            GL.Viewport((int)GameInstance.get.Bounds.Center.X, (int)GameInstance.get.Bounds.Center.Y, GameInstance.get.Size.X, GameInstance.get.Size.Y);
+            GL.Viewport(GameInstance.get.getGameWindowSize());
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
             orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1.0F);
             GUIManager.onWindowResize();
@@ -205,13 +204,11 @@ namespace RabbetGameEngine
         {
             if (GameSettings.fullscreen)
             {
-                preFullScreenSize = GameInstance.get.ClientRectangle;
                 GameInstance.get.WindowState = WindowState.Fullscreen;
             }
             else
             {
                 GameInstance.get.WindowState = WindowState.Normal;
-                GameInstance.get.ClientRectangle = preFullScreenSize;
             }
 
         }

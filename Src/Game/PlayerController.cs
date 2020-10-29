@@ -1,4 +1,4 @@
-﻿using OpenTK.Input;
+﻿using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace RabbetGameEngine
 {
@@ -15,12 +15,12 @@ namespace RabbetGameEngine
             if (!GameInstance.get.thePlayer.paused)
             {
                 currentKeyboardState = keyboard;
-                checkAndAddAction(Key.W, Action.fowards);
-                checkAndAddAction(Key.S, Action.backwards);
-                checkAndAddAction(Key.A, Action.strafeLeft);
-                checkAndAddAction(Key.D, Action.strafeRight);
-                checkAndAddAction(Key.Space, Action.jump);
-                checkAndAddAction(Key.F, Action.interact);
+                checkAndAddAction(Keys.W, Action.fowards);
+                checkAndAddAction(Keys.S, Action.backwards);
+                checkAndAddAction(Keys.A, Action.strafeLeft);
+                checkAndAddAction(Keys.D, Action.strafeRight);
+                checkAndAddAction(Keys.Space, Action.jump);
+                checkAndAddAction(Keys.F, Action.interact);
             }
         }
 
@@ -37,19 +37,19 @@ namespace RabbetGameEngine
           usefull for input such as opening menus, attacking, jumping, things that only need one key press.*/
         public static void updateSinglePressInput(KeyboardState keyboard)
         {
-            if(Input.singleKeyPress(Key.E))
+            if(Input.singleKeyPress(Keys.E))
             {
-                GameInstance.pauseGame();
+                GameInstance.get.pauseGame();
             }
 
-            if (Input.singleKeyPress(Key.V))
+            if (Input.singleKeyPress(Keys.V))
             {
                 GameInstance.get.thePlayer.toggleFlying();
             }
         }
 
         /*if key is down, adds action to player.*/
-        private static void checkAndAddAction(Key key, Action act)
+        private static void checkAndAddAction(Keys key, Action act)
         {
             if(currentKeyboardState.IsKeyDown(key))
                 playerActions[(int)act] = true;

@@ -1,4 +1,5 @@
-﻿using OpenTK.Input;
+﻿using OpenTK.Mathematics;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace RabbetGameEngine
 {
@@ -6,13 +7,16 @@ namespace RabbetGameEngine
       and manipulating the games logic respectively. Checking should be done each tick.*/
     public static class Input
     {
-        private static bool mouseHidden = false;
-
         private static KeyboardState previouskeyboardState;
         private static KeyboardState keyboardState;
 
         private static MouseState previousMouseState;
         private static MouseState mouseState;
+
+        private static bool mouseGrabbed = false;
+
+        private static Vector2 mousePos;
+        private static Vector2 mouseDelta = new Vector2(0,0);
 
         /*called every tick to check which keys are being pressed and manipulates the provided game instance reference's logic and entities */
         public static void updateInput()
@@ -20,13 +24,14 @@ namespace RabbetGameEngine
             PlayerController.resetActions();
             updateMouseButtonInput();
             updateKeyboardInput();
+            updateMouse();
         }
         private static void updateMouseButtonInput()
         {
             previousMouseState = mouseState;
-            mouseState = Mouse.GetState();
+            mouseState = GameInstance.get.MouseState.GetSnapshot();
             /*Only update mouse input if the game window is focused, and if any key is being pressed.*/
-            if (GameInstance.get.Focused && mouseState.IsAnyButtonDown)
+            if (GameInstance.get.IsFocused && mouseState.IsAnyButtonDown)
             {
                 //do constant input here
 
@@ -38,43 +43,39 @@ namespace RabbetGameEngine
         private static void updateKeyboardInput()
         {
             previouskeyboardState = keyboardState;
-            keyboardState = Keyboard.GetState();
+            keyboardState = GameInstance.get.KeyboardState.GetSnapshot();
 
             /*Only update keyboard input if the game window is focused, and if any key is being pressed.*/
-            if (GameInstance.get.Focused && keyboardState.IsAnyKeyDown)
+            if (GameInstance.get.IsFocused && keyboardState.IsAnyKeyDown)
             {
-                if (singleKeyPress(Key.Escape))
+                if (singleKeyPress(Keys.Escape))
                 {
-                    GameInstance.get.Exit();
+                    GameInstance.get.Close();
                 }
 
-                if (singleKeyPress(Key.F3))
+                if (singleKeyPress(Keys.F3))
                 {
                     toggleBoolean(ref GameSettings.debugScreen);
                 }
 
-                if (singleKeyPress(Key.F4))
+                if (singleKeyPress(Keys.F4))
                 {
                     toggleBoolean(ref GameSettings.drawHitboxes);
                 }
-                if (singleKeyPress(Key.F5))
+                if (singleKeyPress(Keys.F5))
                 {
                     toggleBoolean(ref GameSettings.noclip);
                 }
 
-                if (singleKeyPress(Key.F11))
+                if (singleKeyPress(Keys.F11))
                 {
-                    toggleBoolean(ref GameSettings.fullscreen);
-                    Renderer.onToggleFullscreen();
+                    //TODO: Test next update of OpenTK, currently broken. (can not exit fullscreen mode)
+                    //toggleBoolean(ref GameSettings.fullscreen);
+                   // Renderer.onToggleFullscreen();
                 }
                 PlayerController.updateInput(keyboardState);//do player input 
                 PlayerController.updateSinglePressInput(keyboardState);//do player single button input
             }
-        }
-        /*Places the mouse cursor at the center of the game window*/
-        public static void centerMouse()
-        {
-            Mouse.SetPosition(GameInstance.windowCenterX, GameInstance.windowCenterY); // center the mouse cursor
         }
 
         public static void toggleBoolean(ref bool boolean)
@@ -89,34 +90,40 @@ namespace RabbetGameEngine
             }
         }
 
-        /*toggles the visibility of the mouse cursor*/
-        public static void toggleHideMouse()
-        {
-            if(!mouseHidden)
-            {
-                GameInstance.get.CursorVisible = false;
-                mouseHidden = true;
-            }
-            else
-            {
-                GameInstance.get.CursorVisible = true;
-                mouseHidden = false;
-            }
-        }
-
-        public static bool getIsMouseHidden()
-        {
-            return mouseHidden;
-        }
-
         //returns true if this key is pressed, and only for the first frame.
-        public static bool singleKeyPress(Key key)
+        public static bool singleKeyPress(Keys key)
         {
-            return keyboardState[key] && !previouskeyboardState[key];
+            return keyboardState.IsKeyDown(key) && !previouskeyboardState.IsKeyDown(key);
         }
         public static bool singleMouseButtonPress(MouseButton key)
         {
-            return mouseState[key] && !previousMouseState[key];
+            return mouseState.IsButtonDown(key) && !previousMouseState.IsButtonDown(key);
         }
+        public static void setCursorHiddenAndGrabbed(bool flag)
+        {
+            GameInstance.get.CursorVisible = !flag;
+            mouseGrabbed = flag;
+        }
+
+        private static void updateMouse()
+        {
+            mousePos = GameInstance.get.MousePosition;
+            
+            if(mouseGrabbed)
+            {
+                mouseDelta = mousePos - GameInstance.gameWindowCenter;
+                GameInstance.get.MousePosition = GameInstance.gameWindowCenter;
+            }
+            else
+            {
+                mouseDelta = Vector2.Zero;
+            }
+        }
+
+        public static Vector2 getMouseDelta()
+        {
+            return mouseDelta;
+        }
+
     }
 }

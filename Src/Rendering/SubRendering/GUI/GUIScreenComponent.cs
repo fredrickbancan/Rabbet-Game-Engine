@@ -1,6 +1,5 @@
-﻿using OpenTK;
+﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
-
 namespace RabbetGameEngine.SubRendering.GUI
 {
     public class GUIScreenComponent

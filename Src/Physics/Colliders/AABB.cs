@@ -1,4 +1,5 @@
-﻿using OpenTK;
+﻿using OpenTK.Mathematics;
+
 namespace RabbetGameEngine.Physics
 {
     /*A struct for doing axis aligned bounding box collisions*/

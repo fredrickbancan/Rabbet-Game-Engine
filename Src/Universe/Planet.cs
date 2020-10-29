@@ -1,6 +1,5 @@
 ﻿using Medallion;
-using OpenTK;
-using RabbetGameEngine.Debugging;
+using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Physics;
 using RabbetGameEngine.SubRendering;

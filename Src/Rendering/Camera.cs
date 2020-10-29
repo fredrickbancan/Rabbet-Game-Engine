@@ -1,5 +1,4 @@
-﻿using OpenTK;
-using OpenTK.Input;
+﻿using OpenTK.Mathematics;
 using System;
 
 namespace RabbetGameEngine
@@ -8,8 +7,8 @@ namespace RabbetGameEngine
     public class Camera
     {
         private float pitch, yaw;
-        private int mouseDeltaX;
-        private int mouseDeltaY;
+        private float mouseDeltaX;
+        private float mouseDeltaY;
         private Matrix4 viewMatrix;
         private Vector3 camUpVector;
         private Vector3 up;
@@ -40,7 +39,6 @@ namespace RabbetGameEngine
         public void onUpdate()
         {
             updateMouseDeltas();
-            Input.centerMouse();
             pitch -= mouseDeltaY * GameSettings.mouseSensitivity;
             yaw += mouseDeltaX * GameSettings.mouseSensitivity;
 
@@ -78,11 +76,8 @@ namespace RabbetGameEngine
         /*updates mouse input for camera*/
         private void updateMouseDeltas()
         {
-            MouseState mouseState = Mouse.GetCursorState();
-
-            /*compares the current curor pos to the center of screen location each frame. The cursor will then be reset to cetner after taking value.*/
-            mouseDeltaX = mouseState.X - GameInstance.windowCenterX;
-            mouseDeltaY = mouseState.Y - GameInstance.windowCenterY;
+            mouseDeltaX = Input.getMouseDelta().X;
+            mouseDeltaY = Input.getMouseDelta().Y;
         }
         public Matrix4 getViewMatrix()
         {

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\disckord\\Desktop\\RabbetGameEngine\\RabbetGameEngine.csproj": {}
+    "C:\\Users\\disckord\\Desktop\\RabbetGameEngine workspace\\Rabbet-Game-Engine\\RabbetGameEngine.csproj": {}
   },
   "projects": {
-    "C:\\Users\\disckord\\Desktop\\RabbetGameEngine\\RabbetGameEngine.csproj": {
+    "C:\\Users\\disckord\\Desktop\\RabbetGameEngine workspace\\Rabbet-Game-Engine\\RabbetGameEngine.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\disckord\\Desktop\\RabbetGameEngine\\RabbetGameEngine.csproj",
+        "projectUniqueName": "C:\\Users\\disckord\\Desktop\\RabbetGameEngine workspace\\Rabbet-Game-Engine\\RabbetGameEngine.csproj",
         "projectName": "RabbetGameEngine",
-        "projectPath": "C:\\Users\\disckord\\Desktop\\RabbetGameEngine\\RabbetGameEngine.csproj",
+        "projectPath": "C:\\Users\\disckord\\Desktop\\RabbetGameEngine workspace\\Rabbet-Game-Engine\\RabbetGameEngine.csproj",
         "packagesPath": "C:\\Users\\disckord\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\disckord\\Desktop\\RabbetGameEngine\\obj\\",
+        "outputPath": "C:\\Users\\disckord\\Desktop\\RabbetGameEngine workspace\\Rabbet-Game-Engine\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\disckord\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -49,6 +49,10 @@
             "OpenTK": {
               "target": "Package",
               "version": "[4.0.6, )"
+            },
+            "System.Drawing.Common": {
+              "target": "Package",
+              "version": "[4.7.0, )"
             }
           },
           "imports": [

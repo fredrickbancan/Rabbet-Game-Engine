@@ -1,4 +1,4 @@
-﻿using OpenTK;
+﻿using OpenTK.Mathematics;
 using RabbetGameEngine.SubRendering;
 using System;
 namespace RabbetGameEngine.Models

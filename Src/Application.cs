@@ -1,5 +1,4 @@
-﻿using OpenTK.Windowing.Common.Input;
-using OpenTK.Windowing.Desktop;
+﻿using OpenTK.Windowing.Desktop;
 using System;
 namespace RabbetGameEngine
 {
@@ -10,12 +9,8 @@ namespace RabbetGameEngine
     {
         static void Main(string[] args)
         {
-            GameWindowSettings gameWindowSet = new GameWindowSettings();
-            NativeWindowSettings nativeWindowSet = new NativeWindowSettings();
-            nativeWindowSet.Title = applicationName;
-            nativeWindowSet.Icon = new WindowIcon();
-            GameInstance game = new GameInstance();
-
+            GameInstance game = new GameInstance(GameWindowSettings.Default, NativeWindowSettings.Default);
+            game.Run();
         }
         public static readonly string version = "0.0.8_indev";
         public static readonly string applicationName = "RabbetGameEngine " + version;

@@ -1,4 +1,4 @@
-﻿using OpenTK;
+﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Physics;
 using System;
 namespace RabbetGameEngine
