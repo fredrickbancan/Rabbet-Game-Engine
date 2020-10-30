@@ -16,7 +16,6 @@ namespace RabbetGameEngine.Sound
         private static List<PlayingSound> sounds = null;
         public static void init()
         {
-            return;
             try
             {
                 device = ALC.OpenDevice(null);
