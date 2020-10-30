@@ -9,8 +9,21 @@ namespace RabbetGameEngine
     {
         static void Main(string[] args)
         {
-            GameInstance game = new GameInstance(GameWindowSettings.Default, NativeWindowSettings.Default);
+            NativeWindowSettings w = new NativeWindowSettings();
+            w.StartFocused = true;
+            w.StartVisible = true;
+
+            GameWindowSettings g = new GameWindowSettings();
+            GameInstance game = new GameInstance(g, w);
+            try
+            {
+
             game.Run();
+            }
+            catch(Exception e)
+            {
+                Application.error("Failed to run game, Exception: " + e.Message + "\nStack Trace: " + e.StackTrace);
+            }
         }
         public static readonly string version = "0.0.8_indev";
         public static readonly string applicationName = "RabbetGameEngine " + version;
@@ -18,20 +31,12 @@ namespace RabbetGameEngine
         #region Print functions
         public static void infoPrint(object s)
         {
-            Console.BackgroundColor = ConsoleColor.Blue;
-            Console.ForegroundColor = ConsoleColor.Black;
             Console.WriteLine("Info: " + s);
-            Console.BackgroundColor = ConsoleColor.White;
-            Console.ForegroundColor = ConsoleColor.White;
         }
 
         public static void warn(object s)
         {
-            Console.BackgroundColor = ConsoleColor.Yellow;
-            Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine("Warning: " + s);
-            Console.BackgroundColor = ConsoleColor.White;
-            Console.ForegroundColor = ConsoleColor.White;
         }
 
         /// <summary>
@@ -40,21 +45,13 @@ namespace RabbetGameEngine
         /// <param name="s">Error message</param>
         public static void error(object s)
         {
-            Console.BackgroundColor = ConsoleColor.DarkRed;
-            Console.ForegroundColor = ConsoleColor.Black;
             Console.WriteLine("Error!: " + s);
-            Console.BackgroundColor = ConsoleColor.White;
-            Console.ForegroundColor = ConsoleColor.White;
             Console.ReadKey();
             GameInstance.get.Close();
         }
         public static void debugPrint(object s)
         {
-            Console.BackgroundColor = ConsoleColor.Green;
-            Console.ForegroundColor = ConsoleColor.Black;
             Console.WriteLine("Debug: " + s);
-            Console.BackgroundColor = ConsoleColor.White;
-            Console.ForegroundColor = ConsoleColor.White;
         }
         #endregion
     }

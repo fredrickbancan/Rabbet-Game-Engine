@@ -94,6 +94,16 @@ namespace RabbetGameEngine
             return ref velocity;
         }
 
+        public ref Vector3 getFrontVectorHandle()
+        {
+            return ref frontVector;
+        }
+
+        public ref Vector3 getUpVectorHandle()
+        {
+            return ref upVector;
+        }
+
         public override bool doingAction(Action act)
         {
             return PlayerController.getDoingAction(act);

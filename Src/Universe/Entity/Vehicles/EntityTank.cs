@@ -1,7 +1,7 @@
-﻿using OpenTK;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Physics;
+using RabbetGameEngine.Sound;
 using RabbetGameEngine.VFX;
 using System;
 namespace RabbetGameEngine
@@ -94,6 +94,7 @@ namespace RabbetGameEngine
         public void onDriverAttack()
         {
             Vector3 muzzleLocation = getMuzzleLocation();
+            SoundManager.playSoundAux("tankfire", 1.0F, 1.0F - (float)GameInstance.rand.NextDouble() * 0.1F);
             currentPlanet.spawnEntityInWorld(new EntityTankProjectile(currentPlanet, muzzleLocation, getMuzzleFrontVector(), barrelPitch, bodyYaw));
             VFXUtil.doSmallSmokePuffEffect(currentPlanet, muzzleLocation, (float)barrelPitch, (float)bodyYaw);
         }

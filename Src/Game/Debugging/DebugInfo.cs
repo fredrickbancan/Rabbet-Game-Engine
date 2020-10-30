@@ -1,5 +1,6 @@
 ﻿using RabbetGameEngine.GUI;
 using RabbetGameEngine.GUI.Text;
+using RabbetGameEngine.Sound;
 using RabbetGameEngine.SubRendering;
 
 namespace RabbetGameEngine.Debugging
@@ -28,6 +29,7 @@ namespace RabbetGameEngine.Debugging
                 float colAverage = Profiler.getAverageForProfile("Collisions");
                 float batchAverage = Profiler.getAverageForProfile("batching");
                 float textBuildAverage = Profiler.getAverageForProfile("textBuild");
+                float soundsAverage = Profiler.getAverageForProfile("sounds");
                 float gameLoopAverage = Profiler.getAverageForProfile("Loop");
                 GUIManager.unHideTextPanelInGUI(MainGUI.mainGUIName, debugInfoTextPanelName);
                 GUIManager.getTextPanelFormatFromGUI(MainGUI.mainGUIName, debugInfoTextPanelName).setLines(
@@ -49,11 +51,13 @@ namespace RabbetGameEngine.Debugging
                        ("       Entity Collisions: " + entColAverage.ToString("0.00") + "ms." ),
                        ("       World Collisions: " + colAverage.ToString("0.00") + "ms." ),
                        ("       Text building: " + textBuildAverage.ToString("0.00") + "ms." ),
+                       ("       Sounds: " + soundsAverage.ToString("0.00") + "ms." ),
                        ("       Batching: " + batchAverage.ToString("0.00") + "ms." ),
-                       ("   }Residual: " + (gameLoopAverage - (entColAverage + colAverage + textBuildAverage + batchAverage)).ToString("0.00") + "ms." ),
+                       ("   }Residual: " + (gameLoopAverage - (entColAverage + colAverage + soundsAverage + textBuildAverage + batchAverage)).ToString("0.00") + "ms." ),
                        ("}" ),
                         ("Entities: " + GameInstance.get.currentPlanet.getEntityCount()),
                         ("VFX's: " + GameInstance.get.currentPlanet.getVFXCount()),
+                        ("Sounds: " + SoundManager.getPlayingSoundsCount()),
                         ("Batches: " + BatchManager.batchCount),
                         ("Draw Calls: " + Renderer.totalDraws),
                        }); 

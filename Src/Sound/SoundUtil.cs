@@ -4,15 +4,16 @@ using System.IO;
 using System.Linq;
 
 namespace RabbetGameEngine.Sound
-{//TODO: set up automated random playing of sound files with number suffixes
+{
     public static class SoundUtil
     {
-        private static Dictionary<string, Sound> allSounds;
+        private static Dictionary<string, List<Sound>> allSounds;
         public static readonly string fileExtension = ".ogg";
         public static void loadAllFoundSoundFiles()
         {
-            allSounds = new Dictionary<string, Sound>();
-            allSounds.Add("debug", new Sound("debug"));
+            allSounds = new Dictionary<string, List<Sound>>();
+            allSounds.Add("debug", new List<Sound>());
+            allSounds.ElementAt(0).Value.Add(new Sound("debug"));
             loadAllSoundsRecursive(ResourceUtil.getSoundFileDir());
 
         }
@@ -44,17 +45,43 @@ namespace RabbetGameEngine.Sound
         private static void tryAddNewSound(string soundDir)
         {
             string soundName = Path.GetFileName(soundDir).Replace(fileExtension, "");//removes directory
-            allSounds.Add(soundName, new Sound(soundDir));
+            if(soundName.Contains(".random"))
+            {
+                string splitName = soundName.Split(".random")[0];
+                if(allSounds.TryGetValue(splitName, out List<Sound> value))
+                {
+                    value.Add(new Sound(soundDir));
+                }
+                else
+                {
+                    allSounds.Add(splitName, new List<Sound>(new Sound[] { new Sound(soundDir) }));
+                }
+            }
+            else
+            {
+                allSounds.Add(soundName, new List<Sound>(new Sound[] { new Sound(soundDir) }));
+            }
         }
 
         public static bool tryGetSound(string name, out Sound snd)
         {
-            if(!allSounds.TryGetValue(name, out snd))
+            List<Sound> soundCollection = null;
+            if(!allSounds.TryGetValue(name, out soundCollection))
             {
-                Application.warn("Could not find sound for requested sound name: " + name + "!");
-                snd = allSounds.ElementAt(0).Value;
+                Application.warn("Could not find sound for requested sound name: " + name + " , Assigning debug sound.");
+                snd = allSounds.ElementAt(0).Value[0];//assign debug sound
                 return false;
             }
+
+            if(soundCollection.Count > 1)
+            {
+                snd =  soundCollection[GameInstance.rand.Next(0, soundCollection.Count)];
+            }
+            else
+            {
+                snd = soundCollection[0];
+            }
+
             return true;
         }
 
@@ -72,9 +99,12 @@ namespace RabbetGameEngine.Sound
 
         public static void deleteAll()
         {
-            foreach(Sound s in allSounds.Values)
+            foreach(List<Sound> sc in allSounds.Values)
             {
-                s.delete();
+                foreach(Sound s in sc)
+                {
+                    s.delete();
+                }
             }
         }
     }

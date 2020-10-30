@@ -2,6 +2,7 @@
 using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Physics;
+using RabbetGameEngine.Sound;
 using RabbetGameEngine.SubRendering;
 using RabbetGameEngine.VFX;
 using System;
@@ -218,7 +219,7 @@ namespace RabbetGameEngine
         {
             //render an explosion effect
             VFXUtil.doExplosionEffect(this, loc, radius);
-
+            SoundManager.playSoundAt("explosion", ref loc, 5.0F - (float)GameInstance.rand.NextDouble() * 2.0F, 1.2F - (float)GameInstance.rand.NextDouble() * 0.2F);
             //force away nearby entities
             foreach (Entity ent in entities.Values)
             {

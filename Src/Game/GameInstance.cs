@@ -21,6 +21,8 @@ namespace RabbetGameEngine
         private static Random privateRand;
         private static int windowWidth;
         private static int windowHeight;
+        private static int screenWidth;
+        private static int screenHeight;
         private static Vector2 windowCenter;
         private static float dpiY;
         public EntityPlayer thePlayer;
@@ -28,6 +30,8 @@ namespace RabbetGameEngine
 
         public GameInstance(GameWindowSettings gameWindowSettings, NativeWindowSettings windowSettings) : base(gameWindowSettings, windowSettings)
         {
+
+            GameInstance.instance = this;
             GameInstance.windowWidth = this.ClientRectangle.Size.X;
             GameInstance.windowHeight = this.ClientRectangle.Size.Y;
             Title = Application.applicationName;
@@ -35,38 +39,53 @@ namespace RabbetGameEngine
             byte[] data;
             IconLoader.getIcon("icon", out iconWidth, out iconHeight, out data);
             Icon = new WindowIcon(new OpenTK.Windowing.Common.Input.Image[] { new OpenTK.Windowing.Common.Input.Image(iconWidth, iconHeight, data) });
+            this.WindowState = OpenTK.Windowing.Common.WindowState.Maximized;
+            screenWidth = ClientRectangle.Size.X;
+            screenHeight = ClientRectangle.Size.Y;
+            int hw = ClientRectangle.HalfSize.X;
+            int hh = ClientRectangle.HalfSize.Y;
+            this.WindowState = OpenTK.Windowing.Common.WindowState.Normal;
+            ClientRectangle = new Box2i(hw - hw / 2, hh - hh / 2, hw + hw / 2, hh + hh / 2);
+            Context.MakeCurrent();
         }
-
+        
         protected override void OnLoad()
         {
-            GameInstance.instance = this;
-            GameInstance.privateRand = new Random();
-            GameSettings.loadSettings();
-            TextUtil.loadAllFoundTextFiles();
-            SoundManager.init();
-            windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
-            setDPIScale();
-            Renderer.init();
-            TicksAndFrames.init(30);
-            MainGUI.init();
-            DebugInfo.init();
-            currentPlanet = new Planet(0xdeadbeef);
-            //create and spawn player in new world
-            thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
-            SoundManager.setListener(thePlayer);
-            currentPlanet.spawnEntityInWorld(new EntityTank(currentPlanet, new Vector3(5, 10, -5)));
-            for (int i = 0; i < 2; i++)
+            try
             {
-                currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(0, 10, 0)));
+                GameInstance.privateRand = new Random();
+                GameSettings.loadSettings();
+                TextUtil.loadAllFoundTextFiles();
+                SoundManager.init();
+                windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
+                setDPIScale();
+                Renderer.init();
+                TicksAndFrames.init(30);
+                MainGUI.init();
+                DebugInfo.init();
+                currentPlanet = new Planet(0xdeadbeef);
+                //create and spawn player in new world
+                thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
+                SoundManager.setListenerInfo(thePlayer);
+                currentPlanet.spawnEntityInWorld(new EntityTank(currentPlanet, new Vector3(5, 10, -5)));
+                for (int i = 0; i < 2; i++)
+                {
+                    currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(0, 10, 0)));
+                }
+                currentPlanet.spawnEntityInWorld(thePlayer);
+                Input.setCursorHiddenAndGrabbed(true);
+                SoundManager.playSoundAux("calm3");
             }
-            currentPlanet.spawnEntityInWorld(thePlayer);
-            Input.setCursorHiddenAndGrabbed(true);
+            catch(Exception e)
+            {
+                Application.error("Failed load game, Exception: " + e.Message + "\nStack Trace: " + e.StackTrace);
+            }
             base.OnLoad();
         }
 
         public Size getGameWindowSize()
         {
-            return new Size(ClientSize.X, ClientSize.Y);
+            return new Size(ClientRectangle.Size.X, ClientRectangle.Size.Y);
         }
 
         /*overriding OpenTk render update function, called every frame.*/
@@ -75,7 +94,14 @@ namespace RabbetGameEngine
             base.OnRenderFrame(args);
             
             Input.updateInput();
-            TicksAndFrames.doOnTickUntillRealtimeSync(onTick);
+            try
+            {
+                TicksAndFrames.doOnTickUntillRealtimeSync(onTick);
+            }
+            catch(Exception e)
+            {
+                Application.error("Failed to run game tick, Exception: " + e.Message + "\nStack Trace: " + e.StackTrace);
+            }
             TicksAndFrames.updateFPS();
             SoundManager.onFrame();
             thePlayer.onCameraUpdate();//do this before calling on tick to prepare camera variables
@@ -119,15 +145,8 @@ namespace RabbetGameEngine
             Renderer.onTickStart();
             GUIManager.onTick();
             MainGUI.onTick();
+            SoundManager.setListenerInfo(thePlayer);
             currentPlanet.onTick();
-            if(rand.Next(0,30) == 0)
-            {
-                SoundManager.playSoundAux("Explosion_" + rand.Next(1, 4).ToString(), 1.0F, 1.5F - (float)rand.NextDouble() * 0.2F);
-            }
-            if (rand.Next(0, 30) == 0)
-            {
-                SoundManager.playSoundAux("calm3");
-            }
             SoundManager.onTick();
             Profiler.updateAverages();
             Renderer.onTickEnd();

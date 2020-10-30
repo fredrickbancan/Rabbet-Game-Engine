@@ -225,7 +225,6 @@ namespace RabbetGameEngine
             TextureUtil.deleteAll();
             OffScreen.onClose();
         }
-
         public static Matrix4 projMatrix { get => projectionMatrix; }
         public static int frame { get => renderFrame; }
         public static int totalDraws { get { return privateTotalDrawCallCount; } set { privateTotalDrawCallCount = value; } }
