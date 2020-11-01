@@ -7,8 +7,6 @@ namespace RabbetGameEngine
     public class Camera
     {
         private float pitch, yaw;
-        private float mouseDeltaX;
-        private float mouseDeltaY;
         private Matrix4 viewMatrix;
         private Vector3 camUpVector;
         private Vector3 up;
@@ -38,12 +36,8 @@ namespace RabbetGameEngine
           also updates mouse input and rotates camera dependingly.*/
         public void onUpdate()
         {
-            updateMouseDeltas();
-            pitch -= mouseDeltaY * GameSettings.mouseSensitivity;
-            yaw += mouseDeltaX * GameSettings.mouseSensitivity;
+            updateRotations();
 
-          //  if (yaw > 360.0F) { yaw = 0.0F; }
-          //  if (yaw < -360.0F) { yaw = 0.0F; }
             /*cap yaw so cam and entity can not flip*/
             if (pitch >= 90.0F)
             {
@@ -73,11 +67,10 @@ namespace RabbetGameEngine
         {
         }
 
-        /*updates mouse input for camera*/
-        private void updateMouseDeltas()
+        private void updateRotations()
         {
-            mouseDeltaX = Input.getMouseDelta().X;
-            mouseDeltaY = Input.getMouseDelta().Y;
+            pitch -= Input.getMouseDelta().Y * GameSettings.mouseSensitivity;
+            yaw += Input.getMouseDelta().X * GameSettings.mouseSensitivity;
         }
         public Matrix4 getViewMatrix()
         {

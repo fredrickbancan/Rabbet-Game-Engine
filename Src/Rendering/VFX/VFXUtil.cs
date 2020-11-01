@@ -3,7 +3,7 @@ using RabbetGameEngine.Models;
 using System;
 using System.Collections.Generic;
 
-namespace RabbetGameEngine.VFX
+namespace RabbetGameEngine.VisualEffects
 {
     /*A static class for cleaning up some code involving VFX. Calls can be made to the functions here to create or 
       change certain VFX*/

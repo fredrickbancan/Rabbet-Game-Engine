@@ -2,10 +2,11 @@
 using RabbetGameEngine.Models;
 using RabbetGameEngine.SubRendering;
 
-namespace RabbetGameEngine.VFX
+namespace RabbetGameEngine.VisualEffects
 {
+    //TODO: Create vfx class for singular point particles.
     /*Base class for any VFX using point particles*/
-    public class VFXPointCloud : VFXBase
+    public class VFXPointCloud : VFX
     {
         protected PointCloudModel cloudModel;
         protected CustomColor pointColor;

@@ -1,9 +1,9 @@
 ﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
 using System;
-namespace RabbetGameEngine.VFX
+namespace RabbetGameEngine.VisualEffects
 {
-    public class VFXExplosion : VFXBase
+    public class VFXExplosion : VFX
     {
         protected static readonly string textureName = "Explosion";
         protected static readonly string modelname = "IcoSphere";

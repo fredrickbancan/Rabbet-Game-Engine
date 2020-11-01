@@ -187,7 +187,7 @@ namespace RabbetGameEngine.SubRendering
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
-                if (batchAt.getBatchType() == type && batchAt.addToBatch(pParticle, pParticle))
+                if (batchAt.getBatchType() == type && (lerp ? batchAt.addToBatch(pParticle, pParticle) : batchAt.addToBatch(pParticle)))
                 {
                     return;//successfull batch adding
                 }

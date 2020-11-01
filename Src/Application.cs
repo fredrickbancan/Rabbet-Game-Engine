@@ -25,7 +25,7 @@ namespace RabbetGameEngine
                 Application.error("Failed to run game, Exception: " + e.Message + "\nStack Trace: " + e.StackTrace);
             }
         }
-        public static readonly string version = "0.0.8_indev";
+        public static readonly string version = "0.0.9_indev";
         public static readonly string applicationName = "RabbetGameEngine " + version;
 
         #region Print functions

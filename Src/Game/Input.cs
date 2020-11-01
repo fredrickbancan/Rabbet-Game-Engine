@@ -14,8 +14,6 @@ namespace RabbetGameEngine
         private static MouseState mouseState;
 
         private static bool mouseGrabbed = false;
-
-        private static Vector2 mousePos;
         private static Vector2 mouseDelta = new Vector2(0,0);
 
         /*called every tick to check which keys are being pressed and manipulates the provided game instance reference's logic and entities */
@@ -95,24 +93,28 @@ namespace RabbetGameEngine
         {
             return keyboardState.IsKeyDown(key) && !previouskeyboardState.IsKeyDown(key);
         }
+
         public static bool singleMouseButtonPress(MouseButton key)
         {
             return mouseState.IsButtonDown(key) && !previousMouseState.IsButtonDown(key);
         }
+
         public static void setCursorHiddenAndGrabbed(bool flag)
         {
             GameInstance.get.CursorVisible = !flag;
+            GameInstance.get.CursorGrabbed = flag;
+            if(!flag)
+            {
+                GameInstance.get.MousePosition = GameInstance.gameWindowCenter;
+            }
             mouseGrabbed = flag;
         }
 
         private static void updateMouse()
         {
-            mousePos = GameInstance.get.MousePosition;
-            
             if(mouseGrabbed)
             {
-                mouseDelta = mousePos - GameInstance.gameWindowCenter;
-                GameInstance.get.MousePosition = GameInstance.gameWindowCenter;
+                mouseDelta =  GameInstance.get.MouseState.Delta;
             }
             else
             {

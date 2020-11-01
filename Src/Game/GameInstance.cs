@@ -39,6 +39,9 @@ namespace RabbetGameEngine
             byte[] data;
             IconLoader.getIcon("icon", out iconWidth, out iconHeight, out data);
             Icon = new WindowIcon(new OpenTK.Windowing.Common.Input.Image[] { new OpenTK.Windowing.Common.Input.Image(iconWidth, iconHeight, data) });
+          
+            //TODO: Implement more elegent technique of centering and sizing window, as well as obtaining monitor resolution. (Will most likely require OpenTK future development updates). Test next update of OpenTK.
+
             this.WindowState = OpenTK.Windowing.Common.WindowState.Maximized;
             screenWidth = ClientRectangle.Size.X;
             screenHeight = ClientRectangle.Size.Y;
@@ -66,7 +69,6 @@ namespace RabbetGameEngine
                 currentPlanet = new Planet(0xdeadbeef);
                 //create and spawn player in new world
                 thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
-                SoundManager.setListenerInfo(thePlayer);
                 currentPlanet.spawnEntityInWorld(new EntityTank(currentPlanet, new Vector3(5, 10, -5)));
                 for (int i = 0; i < 2; i++)
                 {
@@ -74,7 +76,6 @@ namespace RabbetGameEngine
                 }
                 currentPlanet.spawnEntityInWorld(thePlayer);
                 Input.setCursorHiddenAndGrabbed(true);
-                SoundManager.playSoundAux("calm3");
             }
             catch(Exception e)
             {
@@ -145,7 +146,6 @@ namespace RabbetGameEngine
             Renderer.onTickStart();
             GUIManager.onTick();
             MainGUI.onTick();
-            SoundManager.setListenerInfo(thePlayer);
             currentPlanet.onTick();
             SoundManager.onTick();
             Profiler.updateAverages();

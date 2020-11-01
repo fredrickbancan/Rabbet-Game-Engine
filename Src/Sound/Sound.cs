@@ -16,7 +16,11 @@ namespace RabbetGameEngine.Sound
         {
             if(dir == "debug")
             {
-                //TODO: create debug sound data
+                data = new byte[1000];
+                GameInstance.rand.NextBytes(data);
+                sampleRate = 11025;
+                channels = 1;
+                totalTime = TimeSpan.FromSeconds(1);
             }
             else
             {
@@ -62,7 +66,6 @@ namespace RabbetGameEngine.Sound
 
                 }
                 reader.Dispose();
-                // TODO: Add better implementation so that there's no need for array copying
                 data = bytes.ToArray();
             }
             catch (Exception e)

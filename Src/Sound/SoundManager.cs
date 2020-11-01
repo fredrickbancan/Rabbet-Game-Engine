@@ -19,7 +19,11 @@ namespace RabbetGameEngine.Sound
             try
             {
                 device = ALC.OpenDevice(null);
-                context = ALC.CreateContext(device, new int[] { });
+                ALContextAttributes c = new ALContextAttributes();
+                c.MonoSources = 255;
+                c.StereoSources = 127;
+                c.Sync = true;
+                context = ALC.CreateContext(device, c);
             }
             catch(Exception e)
             {
@@ -41,52 +45,27 @@ namespace RabbetGameEngine.Sound
                 Application.infoPrint("Loaded " + SoundUtil.getSoundFileCount() + " sound files.");
                 initialized = true;
                 sounds = new List<PlayingSound>();
+                AL.DistanceModel(ALDistanceModel.None);
             }
 
         }
-
-        public static void setListenerInfo(EntityPlayer player)
-        {
-            if (!initialized) return;
-            AL.Listener(ALListener3f.Position, ref player.getPositionHandle());
-            AL.Listener(ALListener3f.Velocity, ref player.getVelocityHandle());
-            AL.Listener(ALListenerfv.Orientation, ref player.getFrontVectorHandle(), ref player.getUpVectorHandle()) ;
-        }
-
         public static void playSoundAux(string soundName, float volume = 1.0F, float speed = 1.0F)
         {
             if (!initialized) return;
             Profiler.beginEndProfile("sounds");
             Sound snd = SoundUtil.getSound(soundName);
-            int buf = AL.GenBuffer();
-            int src = AL.GenSource();
-            sounds.Add(new PlayingSound(buf, src, snd, TicksAndFrames.getRealTimeMills()));
-            AL.BufferData(buf, snd.isStereo() ? ALFormat.Stereo16 : ALFormat.Mono16, snd.getData(), snd.getSampleRate());
-            AL.Source(src, ALSourcei.Buffer, buf);
-            AL.Source(src, ALSourceb.SourceRelative, true);
-            AL.Source(src, ALSourcef.Gain, volume);
-            AL.Source(src, ALSourcef.Pitch, speed);
-            AL.SourcePlay(src);
+            sounds.Add(new PlayingSound(snd, volume, speed, TicksAndFrames.getRealTimeMills()));
             Profiler.beginEndProfile("sounds");
         }
 
-        public static void playSoundAt(string soundName, ref Vector3 pos, float volume = 1.0F, float speed = 1.0F)
+        //TODO: Fix positional audio only coming from one of either speakers at once.
+        public static void playSoundAt(string soundName, Vector3 pos, float volume = 1.0F, float speed = 1.0F)
         {
             if (!initialized) return;
             Profiler.beginEndProfile("sounds");
             Sound snd = SoundUtil.getSound(soundName);
             if (snd.isStereo()) { Profiler.beginEndProfile("sounds"); return; }
-            int buf = AL.GenBuffer();
-            int src = AL.GenSource();
-            sounds.Add(new PlayingSound(buf, src, snd, TicksAndFrames.getRealTimeMills()));
-            AL.BufferData(buf, ALFormat.Mono16, snd.getData(), snd.getSampleRate());
-            AL.Source(src, ALSourcei.Buffer, buf);
-            AL.Source(src, ALSourcef.Pitch, speed);
-            AL.Source(src, ALSourcef.MaxGain, volume);
-            AL.Source(src, ALSourcef.MaxDistance, volume * 32.0F);
-            AL.Source(src, ALSourcef.RolloffFactor, 0.5F);
-            AL.Source(src, ALSource3f.Position, ref pos);
-            AL.SourcePlay(src);
+            sounds.Add(new PlayingSound(snd, volume, speed, pos, TicksAndFrames.getRealTimeMills()));
             Profiler.beginEndProfile("sounds");
         }
 
@@ -98,12 +77,18 @@ namespace RabbetGameEngine.Sound
         public static void onTick()
         {
             if (!initialized) return;
+
             Profiler.beginEndProfile("sounds");
+
             long ms = TicksAndFrames.getRealTimeMills();
+            EntityPlayer p = GameInstance.get.thePlayer;
+
             for (int i = 0; i < sounds.Count; i++)
             {
                 PlayingSound s = sounds.ElementAt(i);
-                s.onTick(ms);
+
+                s.onTick(p, ms);
+
                 if (s.finishedPlaying)
                 {
                     s.delete();
@@ -111,6 +96,7 @@ namespace RabbetGameEngine.Sound
                     i--;
                 }
             }
+
             Profiler.beginEndProfile("sounds");
         }
 

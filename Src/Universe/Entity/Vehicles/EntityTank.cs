@@ -2,7 +2,7 @@
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Physics;
 using RabbetGameEngine.Sound;
-using RabbetGameEngine.VFX;
+using RabbetGameEngine.VisualEffects;
 using System;
 namespace RabbetGameEngine
 {

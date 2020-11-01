@@ -23,6 +23,7 @@ namespace RabbetGameEngine
         protected EntityVehicle currentVehicle;
         protected Vector3 frontVector;//vector pointing to the direction the entity is facing
         protected Vector3 upVector;
+        protected Vector3 rightVector;
         protected Vector3 movementVector;//a unit vector describing the direction of movement by this entity, e.g: walking
         protected float headPitch; // Pitch of the living entity head
         public static readonly float defaultWalkSpeed = 0.075F;
@@ -92,6 +93,7 @@ namespace RabbetGameEngine
                 frontVector.Z = (float)(Math.Sin(MathUtil.radians(yaw)));
             }
             frontVector.Normalize();
+            rightVector = Vector3.Normalize(Vector3.Cross(frontVector, upVector));
         }
 
         /*Changes velocity based on state and movement vector, movement vector is changed by movement functions such as walkFowards()*/
@@ -125,7 +127,7 @@ namespace RabbetGameEngine
             velocity.X += frontVector.X * movementVector.Z * walkSpeedModified;//fowards and backwards movement
             if(isFlying)velocity.Y += frontVector.Y * movementVector.Z * walkSpeedModified;//fowards and backwards movement for flying
             velocity.Z += frontVector.Z * movementVector.Z * walkSpeedModified;//fowards and backwards movement
-            velocity += Vector3.Normalize(Vector3.Cross(frontVector, upVector)) * movementVector.X * walkSpeedModified;//strafing movement
+            velocity += rightVector * movementVector.X * walkSpeedModified;//strafing movement
 
             movementVector *= 0;//reset movement vector
 
@@ -217,6 +219,10 @@ namespace RabbetGameEngine
         public virtual Vector3 getUpVector()
         {
             return this.upVector;
+        }
+        public virtual Vector3 getRightVector()
+        {
+            return this.rightVector;
         }
 
         public override Vector3 getLerpPos()

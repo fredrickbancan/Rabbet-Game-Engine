@@ -18,8 +18,15 @@ namespace RabbetGameEngine
         {
             return (val - min) / (max - min);
         }
+        public static float normalizeClamped(float min, float max, float val)//returns a float in between 0 and 1 representing the percentage that VAL is from Min to Max e.g: min of 0 and max of 100 with value 50 will return 0.5
+        {
+            return clamp((val - min) / (max - min), 0, 1);
+        }
 
-        public static float normalizeCustom(float mapMin, float mapMax, float min, float max, float val)//returns a float in between mapMin and mapMax representing the percentage that VAL is from Min to Max e.g: min of 0 and max of 100 with value 50 will return 0
+        /// <summary>
+        /// returns a float in between mapMin and mapMax representing the percentage that VAL is from Min to Max.
+        /// </summary>
+        public static float normalizeCustom(float mapMin, float mapMax, float min, float max, float val)
         {
             return (mapMax - mapMin) * normalize(min, max, val) + mapMin;
         }

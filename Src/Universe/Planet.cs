@@ -4,7 +4,7 @@ using RabbetGameEngine.Models;
 using RabbetGameEngine.Physics;
 using RabbetGameEngine.Sound;
 using RabbetGameEngine.SubRendering;
-using RabbetGameEngine.VFX;
+using RabbetGameEngine.VisualEffects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +18,7 @@ namespace RabbetGameEngine
         private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
         public Dictionary<int, Entity> entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
         public List<AABB> worldColliders = new List<AABB>();//list of colliders with no parent, ie, walls.
-        public List<VFXBase> vfxList = new List<VFXBase>();
+        public List<VFX> vfxList = new List<VFX>();
         private Skybox planetSkybox;
         private string wallTextureName = "transparent";
         private string groundTextureName = "wood";
@@ -178,7 +178,7 @@ namespace RabbetGameEngine
         {
             for (int i = 0; i < vfxList.Count; i++)
             {
-                VFXBase vfx = vfxList.ElementAt(i);
+                VisualEffects.VFX vfx = vfxList.ElementAt(i);
                 if (vfx == null)
                 {
                     vfxList.Remove(vfx);
@@ -219,7 +219,7 @@ namespace RabbetGameEngine
         {
             //render an explosion effect
             VFXUtil.doExplosionEffect(this, loc, radius);
-            SoundManager.playSoundAt("explosion", ref loc, 5.0F - (float)GameInstance.rand.NextDouble() * 2.0F, 1.2F - (float)GameInstance.rand.NextDouble() * 0.2F);
+            SoundManager.playSoundAt("explosion", loc, 2.0F, 1.2F - (float)GameInstance.rand.NextDouble() * 0.2F);
             //force away nearby entities
             foreach (Entity ent in entities.Values)
             {
@@ -245,7 +245,7 @@ namespace RabbetGameEngine
             spawnEntityInWorld(theEntity);
         }
 
-        public void spawnVFXInWorld(VFXBase vfx)
+        public void spawnVFXInWorld(VFX vfx)
         {
             vfxList.Add(vfx);
         }
