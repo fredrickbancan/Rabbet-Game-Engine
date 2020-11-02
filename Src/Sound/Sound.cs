@@ -108,6 +108,9 @@ namespace RabbetGameEngine.Sound
 
         }
 
+        /// <summary>
+        /// Currently doesnt do anything, may be useful in future.
+        /// </summary>
         public void delete()
         {
 

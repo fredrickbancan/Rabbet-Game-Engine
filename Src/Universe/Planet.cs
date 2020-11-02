@@ -20,14 +20,17 @@ namespace RabbetGameEngine
         public List<AABB> worldColliders = new List<AABB>();//list of colliders with no parent, ie, walls.
         public List<VFX> vfxList = new List<VFX>();
         private Skybox planetSkybox;
-        private string wallTextureName = "transparent";
+        private string wallTextureName = "leafywall";
         private string groundTextureName = "wood";
         private Random random;
-
+        private float fogDensity;
+        private float fogGradient;
         public Planet(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
             fogColor = CustomColor.lightGrey.toNormalVec3();
+            fogDensity = 0.0128F;
+            fogGradient = 2.5F;
             planetSkybox = new Skybox(CustomColor.lightSkyBlue.toNormalVec3(), this);
             SkyboxRenderer.setSkyboxToDraw(planetSkybox);
             generateWorld();
@@ -219,7 +222,7 @@ namespace RabbetGameEngine
         {
             //render an explosion effect
             VFXUtil.doExplosionEffect(this, loc, radius);
-            SoundManager.playSoundAt("explosion", loc, 2.0F, 1.2F - (float)GameInstance.rand.NextDouble() * 0.2F);
+            SoundManager.playSoundAt("explosion", loc, 4.0F, 1.2F - (float)GameInstance.rand.NextDouble() * 0.2F);
             //force away nearby entities
             foreach (Entity ent in entities.Values)
             {
@@ -232,6 +235,16 @@ namespace RabbetGameEngine
                     }
                 }
             }
+        }
+
+        public float getFogDensity()
+        {
+            return fogDensity;
+        }
+
+        public float getFogGradient()
+        {
+            return fogGradient;
         }
 
         public void spawnEntityInWorld(Entity theEntity)

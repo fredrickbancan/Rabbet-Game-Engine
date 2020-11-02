@@ -1,9 +1,9 @@
 ﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Models;
-using RabbetGameEngine.SubRendering.GUI.Text;
+using RabbetGameEngine.Text;
 
-namespace RabbetGameEngine.GUI.Text
+namespace RabbetGameEngine.GUI
 {
     public class TextFormat// a simle class for submitting format options for a text panel
     {

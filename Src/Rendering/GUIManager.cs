@@ -1,6 +1,4 @@
-﻿using RabbetGameEngine.GUI.Text;
-using RabbetGameEngine.SubRendering.GUI;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace RabbetGameEngine.GUI
 {

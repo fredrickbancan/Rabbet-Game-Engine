@@ -1,6 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
-namespace RabbetGameEngine.SubRendering.GUI
+namespace RabbetGameEngine.GUI
 {
     public class GUIScreenComponent
     {

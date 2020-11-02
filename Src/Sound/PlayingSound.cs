@@ -6,6 +6,7 @@ namespace RabbetGameEngine.Sound
     public class PlayingSound
     {
         public static readonly int extraPlayMills = 100;
+        public static readonly float volumeDistanceFactor = 64.0F;
         public int bufferID = 0;
         public int srcID = 0;
         public Sound theSound = null;
@@ -15,11 +16,17 @@ namespace RabbetGameEngine.Sound
         public Vector3 sndPos;
         public float volume = 0.0F;
         public float maxDist = 0;
+        public bool loopingSound = false;
+        public string loopingSoundName = "";
 
         /// <summary>
-        /// true if this sound is not positional
+        /// true if this sound is positional
         /// </summary>
-        public bool isAux = false;
+        public bool isPositional = true;
+
+        /// <summary>
+        /// constructor for non-positional sounds
+        /// </summary>
         public PlayingSound(Sound snd, float volume, float speed, long timeStamp)
         {
             theSound = snd;
@@ -27,21 +34,35 @@ namespace RabbetGameEngine.Sound
             soundLengthMills = (long)snd.getTotalTime().TotalMilliseconds;
             bufferID = AL.GenBuffer();
             srcID = AL.GenSource();
-            AL.BufferData(bufferID, ALFormat.Stereo16, snd.getData(), snd.isStereo() ? snd.getSampleRate() : snd.getSampleRate() / 2);
+
+            if(snd.isStereo())
+            {
+                AL.BufferData(bufferID, ALFormat.Stereo16, snd.getData(), snd.getSampleRate());
+            }
+            else
+            {
+                AL.BufferData(bufferID, ALFormat.Mono16, snd.getData(), snd.getSampleRate());
+            }
+
             AL.Source(srcID, ALSourcei.Buffer, bufferID);
+            volume = MathHelper.Clamp(volume, 0, 1);
             AL.Source(srcID, ALSourcef.Gain, volume);
             AL.Source(srcID, ALSourcef.Pitch, speed);
             AL.Source(srcID, ALSourcei.SourceType, 4136 /*ALSourceType.Static*/);
             AL.SourcePlay(srcID);
-            isAux = true;
+            isPositional = false;
         }
 
+
+        /// <summary>
+        /// constructor for positional sounds
+        /// </summary>
         public PlayingSound(Sound snd, float volume, float speed, Vector3 pos, long timeStamp)
         {
             theSound = snd;
             sndPos = pos;
             this.volume = volume;
-            this.maxDist = 100 * volume;
+            this.maxDist = volumeDistanceFactor * volume;
             timeStampMills = timeStamp;
             soundLengthMills = (long)snd.getTotalTime().TotalMilliseconds;
             bufferID = AL.GenBuffer();
@@ -51,18 +72,79 @@ namespace RabbetGameEngine.Sound
             AL.Source(srcID, ALSourceb.SourceRelative, true);
             AL.Source(srcID, ALSourcef.Pitch, speed);
             AL.Source(srcID, ALSourcei.SourceType, 4136 /*ALSourceType.Static*/);
+
             EntityPlayer p = GameInstance.get.thePlayer;
             setGainBasedOnDistance(p.getEyePosition());
             setPanBasedOnAngle(p.getEyePosition(), p.getRightVector());
             AL.SourcePlay(srcID);
-            isAux = false;
+            isPositional = true;
+        }
+
+        /// <summary>
+        /// constructor for non-positional looping sounds
+        /// </summary>
+        public PlayingSound(string sndName, Sound snd, float volume, float speed)
+        {
+            loopingSoundName = sndName;
+            loopingSound = true;
+            theSound = snd;
+            bufferID = AL.GenBuffer();
+            srcID = AL.GenSource();
+
+            if (snd.isStereo())
+            {
+                AL.BufferData(bufferID, ALFormat.Stereo16, snd.getData(), snd.getSampleRate());
+            }
+            else
+            {
+                AL.BufferData(bufferID, ALFormat.Mono16, snd.getData(), snd.getSampleRate());
+            }
+
+            AL.Source(srcID, ALSourcei.Buffer, bufferID);
+            AL.Source(srcID, ALSourceb.Looping, true);
+            volume = MathHelper.Clamp(volume, 0, 1);
+            AL.Source(srcID, ALSourcef.Gain, volume);
+            AL.Source(srcID, ALSourcef.Pitch, speed);
+            AL.Source(srcID, ALSourcei.SourceType, 4136 /*ALSourceType.Static*/);
+            AL.SourcePlay(srcID);
+            isPositional = false;
+        }
+
+        /// <summary>
+        /// constructor for positional looping sounds
+        /// </summary>
+        public PlayingSound(string sndName, Sound snd, float volume, float speed, Vector3 pos)
+        {
+            loopingSoundName = sndName;
+            loopingSound = true;
+            theSound = snd;
+            sndPos = pos;
+            this.volume = volume;
+            this.maxDist = volumeDistanceFactor * volume;
+            bufferID = AL.GenBuffer();
+            srcID = AL.GenSource();
+            AL.BufferData(bufferID, ALFormat.Mono16, snd.getData(), snd.getSampleRate());
+            AL.Source(srcID, ALSourcei.Buffer, bufferID);
+            AL.Source(srcID, ALSourceb.SourceRelative, true);
+            AL.Source(srcID, ALSourceb.Looping, true);
+            AL.Source(srcID, ALSourcef.Pitch, speed);
+            AL.Source(srcID, ALSourcei.SourceType, 4136 /*ALSourceType.Static*/);
+
+            EntityPlayer p = GameInstance.get.thePlayer;
+            setGainBasedOnDistance(p.getEyePosition());
+            setPanBasedOnAngle(p.getEyePosition(), p.getRightVector());
+            AL.SourcePlay(srcID);
+            isPositional = true;
         }
 
         public void onTick(EntityPlayer listener, long currentMills)
         {
-            finishedPlaying = (currentMills - timeStampMills) > (soundLengthMills + extraPlayMills);
+            if(!loopingSound)
+            { 
+                finishedPlaying = (currentMills - timeStampMills) > (soundLengthMills + extraPlayMills);
+            }
 
-            if(!isAux && !finishedPlaying)
+            if(isPositional && !finishedPlaying)
             {
                 setGainBasedOnDistance(listener.getEyePosition());
                 setPanBasedOnAngle(listener.getEyePosition(), listener.getRightVector());

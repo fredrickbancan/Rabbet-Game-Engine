@@ -94,7 +94,7 @@ namespace RabbetGameEngine
         public void onDriverAttack()
         {
             Vector3 muzzleLocation = getMuzzleLocation();
-            SoundManager.playSoundAux("tankfire", 1.0F, 1.0F - (float)GameInstance.rand.NextDouble() * 0.1F);
+            SoundManager.playSound("tankfire", 1.0F, 1.0F - (float)GameInstance.rand.NextDouble() * 0.1F);
             currentPlanet.spawnEntityInWorld(new EntityTankProjectile(currentPlanet, muzzleLocation, getMuzzleFrontVector(), barrelPitch, bodyYaw));
             VFXUtil.doSmallSmokePuffEffect(currentPlanet, muzzleLocation, (float)barrelPitch, (float)bodyYaw);
         }

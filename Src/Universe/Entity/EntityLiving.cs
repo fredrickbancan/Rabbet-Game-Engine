@@ -104,14 +104,7 @@ namespace RabbetGameEngine
 
             if (!isGrounded)
             {
-                if (isFlying)
-                {
-                    walkSpeedModified *= 0.9F;//reduce movespeed when flying as to not accellerate out of control
-                }
-                else
-                {
-                    walkSpeedModified *= 0.05F;//reduce movespeed when jumping or mid air 
-                }
+                walkSpeedModified *= 0.05F;//reduce movespeed when jumping or mid air 
             }
             //setting movementVector.X to -1, 0 or 1 based on strafing actions
             movementVector.X = Convert.ToInt32(doingAction(Action.strafeRight)) - Convert.ToInt32(doingAction(Action.strafeLeft));

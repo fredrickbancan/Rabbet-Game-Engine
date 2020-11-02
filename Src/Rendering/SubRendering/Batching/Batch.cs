@@ -5,6 +5,8 @@ using System;
 
 namespace RabbetGameEngine.SubRendering
 {
+    //TODO: Replace wasteful array interlacing each tick with array interlacing apon requests.
+    //TODO: releive wasteful use of system memory in large empty arrays
     /*Class for containing information of a render batch. New batches will need to be created for 
       different types of rendering and/or if a previous batch is too full.*/
     public class Batch
@@ -12,10 +14,14 @@ namespace RabbetGameEngine.SubRendering
         public static int maxBufferSizeBytes = 16777216;
         public static int maxIndiciesCount = maxBufferSizeBytes / sizeof(uint);
         public static int maxVertexCount = maxBufferSizeBytes / Vertex.vertexByteSize;
+        public int maxPositionCount = maxBufferSizeBytes / (sizeof(float) * 3);
         public int maxPointCount = maxBufferSizeBytes / PointParticle.pParticleByteSize;
         public int maxMatrixCount = maxBufferSizeBytes / (sizeof(float) * 16);
         public int maxDrawCommandCount = maxBufferSizeBytes / DrawCommand.sizeInBytes;
         private bool usingLerpPoints = false;
+
+        private bool usesPositions = false;
+        private bool usesPrevPositions = false;
 
         /// <summary>
         /// true if this batch requires transparency sorting
@@ -37,9 +43,14 @@ namespace RabbetGameEngine.SubRendering
         private Matrix4[] prevTickModelMatrices = null;
         private Matrix4[] modelMatrices = null;
 
+        /*If using prev positions for lerping, they will be stored in a single vbo interlaced. Otherwise if positions are being used, they are stored flat in a single vbo.*/
+        private Vector3[] positions = null;
+        private Vector3[] prevPositions = null;
+
         private DrawCommand[] drawCommands = null;
 
-        private bool usesMultiDrawLerp = false;
+        private bool usesMultiDrawIndirect = false;
+        private bool usesLerpMatrices = false;
         private bool pointBased = false;
 
         /// <summary>
@@ -147,6 +158,10 @@ namespace RabbetGameEngine.SubRendering
 
                 case BatchType.text3D:
                     ShaderUtil.tryGetShader(ShaderUtil.text3DName, out batchShader);
+                    positions = new Vector3[maxPositionCount];
+                    drawCommands = new DrawCommand[maxDrawCommandCount];
+                    usesMultiDrawIndirect = true;
+                    usesPositions = true;
                     break;
 
                 case BatchType.triangles:
@@ -168,7 +183,8 @@ namespace RabbetGameEngine.SubRendering
                     prevTickModelMatrices = new Matrix4[maxMatrixCount];
                     modelMatrices = new Matrix4[maxMatrixCount];
                     drawCommands = new DrawCommand[maxDrawCommandCount];
-                    usesMultiDrawLerp = true;
+                    usesMultiDrawIndirect = true;
+                    usesLerpMatrices = true;
                     break;
 
                 case BatchType.lerpTrianglesTransparent:
@@ -177,7 +193,8 @@ namespace RabbetGameEngine.SubRendering
                     prevTickModelMatrices = new Matrix4[maxMatrixCount];
                     modelMatrices = new Matrix4[maxMatrixCount];
                     drawCommands = new DrawCommand[maxDrawCommandCount];
-                    usesMultiDrawLerp = true;
+                    usesMultiDrawIndirect = true;
+                    usesLerpMatrices = true;
                     requiresSorting = true;
                     break;
 
@@ -187,7 +204,8 @@ namespace RabbetGameEngine.SubRendering
                     prevTickModelMatrices = new Matrix4[maxMatrixCount];
                     modelMatrices = new Matrix4[maxMatrixCount];
                     drawCommands = new DrawCommand[maxDrawCommandCount];
-                    usesMultiDrawLerp = true;
+                    usesMultiDrawIndirect = true;
+                    usesLerpMatrices = true;
                     break;
             }
         }
@@ -208,13 +226,28 @@ namespace RabbetGameEngine.SubRendering
                 return false;
             }
            
-            if (usesMultiDrawLerp)
+            if (usesMultiDrawIndirect)
             { 
-                //if this batch cant fit the matrices or draw commands then return false
-                if (requestedObjectItterator + 1 >= maxMatrixCount) return false;
+                if(usesLerpMatrices)
+                {
+                    if (requestedObjectItterator + 1 >= maxMatrixCount) return false;
+                    modelMatrices[requestedObjectItterator] = theModel.modelMatrix;
+                    prevTickModelMatrices[requestedObjectItterator] = theModel.prevModelMatrix;
+                }
+                else if(usesPositions)
+                {
+                    if (requestedObjectItterator + 1 >= maxPositionCount) return false;
+                    if(usesPrevPositions)
+                    {
+                        positions[requestedObjectItterator] = theModel.worldPos;
+                        prevPositions[requestedObjectItterator] = theModel.prevWorldPos;
+                    }
+                    else
+                    {
+                        positions[requestedObjectItterator] = theModel.worldPos;
+                    }
+                }
                 if (requestedObjectItterator + 1 >= maxDrawCommandCount) return false;
-                modelMatrices[requestedObjectItterator] = theModel.modelMatrix;
-                prevTickModelMatrices[requestedObjectItterator] = theModel.prevModelMatrix;
                 configureDrawCommandsForCurrentObject(theModel.indices.Length, theModel.vertices.Length);
                 Array.Copy(theModel.indices, 0, batchedModel.indices, requestedIndicesCount, theModel.indices.Length);
             }
@@ -309,12 +342,28 @@ namespace RabbetGameEngine.SubRendering
         /// </summary>
         public void onTickEnd()
         {
-            if (usesMultiDrawLerp)
+            if (usesMultiDrawIndirect)
             {
-                VAO.bindMatricesVBO();
-                //interlacing both arrays into one to submit to gpu
-                //using matricesItterator to only interlace and submit the necessary amount of data.
-                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (requestedObjectItterator * 2) * (sizeof(float) * 16),  MatrixCombiner.interlaceMatrixArraysByCount(modelMatrices, prevTickModelMatrices, requestedObjectItterator));
+                if(usesLerpMatrices)
+                {
+                    VAO.bindMatricesVBO();
+                    //interlacing both arrays into one to submit to gpu
+                    //using matricesItterator to only interlace and submit the necessary amount of data.
+                    GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (requestedObjectItterator * 2) * (sizeof(float) * 16), MatrixCombiner.interlaceMatrixArraysByCount(modelMatrices, prevTickModelMatrices, requestedObjectItterator));
+                }
+                else if(usesPositions)
+                {
+                    VAO.bindPBO();
+                    if(usesPrevPositions)
+                    {
+                        GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (requestedObjectItterator * 2) * (sizeof(float) * 3), VectorCombiner.interlaceVector3ArraysByCount(positions, prevPositions, requestedObjectItterator));
+                    }
+                    else
+                    {
+                        GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, requestedObjectItterator * (sizeof(float) * 3), positions);
+                    }
+                }
+               
                 
                 VAO.bindIndirectBufferObject();
                 GL.BufferSubData(BufferTarget.DrawIndirectBuffer, IntPtr.Zero, requestedObjectItterator * DrawCommand.sizeInBytes, drawCommands);
@@ -347,6 +396,8 @@ namespace RabbetGameEngine.SubRendering
             batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
             batchShader.setUniformVec3F("cameraPos", Renderer.camPos);
             batchShader.setUniformVec3F("fogColor", fogColor);
+            batchShader.setUniform1F("fogDensity", GameInstance.get.currentPlanet.getFogDensity());
+            batchShader.setUniform1F("fogGradient", GameInstance.get.currentPlanet.getFogGradient());
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             batchShader.setUniform1I("frame", Renderer.frame);
             batchShader.setUniformVec2F("viewPortSize", Renderer.useOffScreenBuffer ? new Vector2(OffScreen.getWidth, OffScreen.getHeight) : new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
@@ -363,9 +414,17 @@ namespace RabbetGameEngine.SubRendering
                 batchTex.use();
             }
 
-            if (usesMultiDrawLerp)
+            if (usesMultiDrawIndirect)
             {
-                VAO.bindMatricesVBO();
+                if(usesLerpMatrices)
+                {
+                    VAO.bindMatricesVBO();
+                }
+                else if(usesPositions)
+                {
+                    VAO.bindPBO();
+                }
+
                 VAO.bindIndirectBufferObject();
                 GL.MultiDrawElementsIndirect(VAO.getPrimType(), DrawElementsType.UnsignedInt, IntPtr.Zero, requestedObjectItterator, 0);
                 return;

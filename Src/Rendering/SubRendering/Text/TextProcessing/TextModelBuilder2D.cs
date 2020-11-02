@@ -1,8 +1,8 @@
 ﻿using OpenTK.Mathematics;
-using RabbetGameEngine.GUI.Text;
 using RabbetGameEngine.Models;
+using RabbetGameEngine.SubRendering;
 using System.Text;
-namespace RabbetGameEngine.SubRendering.GUI.Text
+namespace RabbetGameEngine.Text
 {
     /*this class is responsable for building arrays of veritces for text on the screen.*/
     public static class TextModelBuilder2D

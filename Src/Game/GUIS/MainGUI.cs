@@ -1,6 +1,6 @@
 ﻿using RabbetGameEngine.Debugging;
 using RabbetGameEngine.GUI;
-using RabbetGameEngine.GUI.Text;
+using RabbetGameEngine.Text;
 
 namespace RabbetGameEngine
 {

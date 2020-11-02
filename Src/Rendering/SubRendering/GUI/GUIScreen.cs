@@ -1,9 +1,9 @@
-﻿using RabbetGameEngine.GUI.Text;
-using RabbetGameEngine.Models;
-using RabbetGameEngine.SubRendering.GUI.Text;
+﻿using RabbetGameEngine.Models;
+using RabbetGameEngine.SubRendering;
+using RabbetGameEngine.Text;
 using System.Collections.Generic;
 
-namespace RabbetGameEngine.SubRendering.GUI
+namespace RabbetGameEngine.GUI
 {
     /*An object containing multiple GUI based screen components to be displayed.
       Multiple gui screens can be created and displayed seperately.*/

@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace RabbetGameEngine.Sound
 {
-    //TODO: Add support for looping sounds
+    //TODO: Add support for sounds from moving objects
     public static class SoundManager
     {
         private static ALContext context = ALContext.Null;
@@ -22,7 +22,6 @@ namespace RabbetGameEngine.Sound
                 ALContextAttributes c = new ALContextAttributes();
                 c.MonoSources = 255;
                 c.StereoSources = 127;
-                c.Sync = true;
                 context = ALC.CreateContext(device, c);
             }
             catch(Exception e)
@@ -43,13 +42,14 @@ namespace RabbetGameEngine.Sound
                 Application.infoPrint("Open AL Extensions: " + AL.Get(ALGetString.Extensions));
                 SoundUtil.loadAllFoundSoundFiles();
                 Application.infoPrint("Loaded " + SoundUtil.getSoundFileCount() + " sound files.");
-                initialized = true;
                 sounds = new List<PlayingSound>();
                 AL.DistanceModel(ALDistanceModel.None);
+                initialized = true;
             }
 
         }
-        public static void playSoundAux(string soundName, float volume = 1.0F, float speed = 1.0F)
+
+        public static void playSound(string soundName, float volume = 1.0F, float speed = 1.0F)
         {
             if (!initialized) return;
             Profiler.beginEndProfile("sounds");
@@ -58,7 +58,6 @@ namespace RabbetGameEngine.Sound
             Profiler.beginEndProfile("sounds");
         }
 
-        //TODO: Fix positional audio only coming from one of either speakers at once.
         public static void playSoundAt(string soundName, Vector3 pos, float volume = 1.0F, float speed = 1.0F)
         {
             if (!initialized) return;
@@ -66,6 +65,25 @@ namespace RabbetGameEngine.Sound
             Sound snd = SoundUtil.getSound(soundName);
             if (snd.isStereo()) { Profiler.beginEndProfile("sounds"); return; }
             sounds.Add(new PlayingSound(snd, volume, speed, pos, TicksAndFrames.getRealTimeMills()));
+            Profiler.beginEndProfile("sounds");
+        }
+
+        public static void playSoundLooping(string soundName, float volume = 1.0F, float speed = 1.0F)
+        {
+            if (!initialized) return;
+            Profiler.beginEndProfile("sounds");
+            Sound snd = SoundUtil.getSound(soundName);
+            sounds.Add(new PlayingSound(soundName, snd, volume, speed));
+            Profiler.beginEndProfile("sounds");
+        }
+
+        public static void playSoundLoopingAt(string soundName, Vector3 pos, float volume = 1.0F, float speed = 1.0F)
+        {
+            if (!initialized) return;
+            Profiler.beginEndProfile("sounds");
+            Sound snd = SoundUtil.getSound(soundName);
+            if (snd.isStereo()) { Profiler.beginEndProfile("sounds"); return; }
+            sounds.Add(new PlayingSound(soundName, snd, volume, speed, pos));
             Profiler.beginEndProfile("sounds");
         }
 
@@ -96,7 +114,38 @@ namespace RabbetGameEngine.Sound
                     i--;
                 }
             }
+            Profiler.beginEndProfile("sounds");
+        }
 
+        public static void stopPlayingSoundLooping(string soundName)
+        {
+            Profiler.beginEndProfile("sounds");
+            foreach (PlayingSound s in sounds)
+            {
+                if(s.loopingSound && !s.isPositional)
+                {
+                    if(s.loopingSoundName == soundName)
+                    {
+                        s.finishedPlaying = true;
+                    }
+                }
+            }
+            Profiler.beginEndProfile("sounds");
+        }
+
+        public static void stopPlayingSoundLoopingAt(string soundName, Vector3 pos)
+        {
+            Profiler.beginEndProfile("sounds");
+            foreach (PlayingSound s in sounds)
+            {
+                if (s.loopingSound && s.isPositional)
+                {
+                    if (s.loopingSoundName == soundName && s.sndPos.Equals(pos))
+                    {
+                        s.finishedPlaying = true;
+                    }
+                }
+            }
             Profiler.beginEndProfile("sounds");
         }
 
@@ -109,10 +158,12 @@ namespace RabbetGameEngine.Sound
         public static void onClosing()
         {
             if (!initialized) return;
+
             foreach (PlayingSound s in sounds)
             {
                 s.delete();
             }
+
             if (context != ALContext.Null)
             {
                 ALC.MakeContextCurrent(ALContext.Null);

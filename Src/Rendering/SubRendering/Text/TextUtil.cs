@@ -1,8 +1,7 @@
-﻿using RabbetGameEngine.SubRendering.GUI.Text;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
-namespace RabbetGameEngine.GUI.Text
+namespace RabbetGameEngine.Text
 {
     //enum for text alignment choices
     public enum TextAlign { LEFT, CENTER, RIGHT };

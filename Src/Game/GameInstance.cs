@@ -4,9 +4,11 @@ using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.GUI;
-using RabbetGameEngine.GUI.Text;
 using RabbetGameEngine.Sound;
 using RabbetGameEngine.Src.Game;
+using RabbetGameEngine.SubRendering;
+using RabbetGameEngine.Text;
+using RabbetGameEngine.VisualEffects;
 using System;
 using System.Drawing;
 
@@ -75,6 +77,10 @@ namespace RabbetGameEngine
                     currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(0, 10, 0)));
                 }
                 currentPlanet.spawnEntityInWorld(thePlayer);
+                SoundManager.playSoundLoopingAt("waterroll", new Vector3(16, 1, 16), 0.1F);
+                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll", "Arial_Shadow", "waterroll.ogg, 10% volume", new Vector3(16,2.5F,16), 5.0F, CustomColor.white));
+                SoundManager.playSoundLoopingAt("waterroll_large", new Vector3(-16, 1, -16), 0.5F);
+                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", "Arial_Shadow", "waterroll_large.ogg, 50% volume", new Vector3(-16,2.5F,-16), 5.0F, CustomColor.white));
                 Input.setCursorHiddenAndGrabbed(true);
             }
             catch(Exception e)
@@ -146,6 +152,8 @@ namespace RabbetGameEngine
             Renderer.onTickStart();
             GUIManager.onTick();
             MainGUI.onTick();
+            HitboxRenderer.addPointToBeRendered(new Vector3(16,1,16));
+            HitboxRenderer.addPointToBeRendered(new Vector3(-16,1,-16));
             currentPlanet.onTick();
             SoundManager.onTick();
             Profiler.updateAverages();

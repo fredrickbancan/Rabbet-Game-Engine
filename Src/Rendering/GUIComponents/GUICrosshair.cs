@@ -1,7 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.SubRendering;
-using RabbetGameEngine.SubRendering.GUI;
 namespace RabbetGameEngine.GUI
 {
     public enum CrosshairType//enum for all different types of crosshairs

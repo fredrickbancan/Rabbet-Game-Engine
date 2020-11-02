@@ -47,6 +47,7 @@ namespace RabbetGameEngine.VisualEffects
             }
 
             cloudModel = new PointCloudModel(points);
+            hasModel = true;
             return this;
         }
 

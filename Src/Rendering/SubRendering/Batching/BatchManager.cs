@@ -10,6 +10,9 @@ namespace RabbetGameEngine.SubRendering
         none,
         guiCutout,
         guiText,
+        /// <summary>
+        /// text3D objects should be built relative to 0,0,0. And then a position vector should be sent to the GPU for the position of the text in real world.
+        /// </summary>
         text3D,
         triangles,
         lines,
@@ -159,6 +162,7 @@ namespace RabbetGameEngine.SubRendering
             }
         }
 
+
         public static void requestRender(PointParticle pParticle, bool transparency, bool lerp)
         {
             BatchType type;
@@ -197,7 +201,7 @@ namespace RabbetGameEngine.SubRendering
                     //ensure that all opaque batches come before transparent ones in the list.
                     if (transparency)
                     {
-                        insertTransparentNonGUIBatch(new Batch(transparency, lerp), pParticle);
+                        insertTransparentNonGUIBatch(new Batch(transparency, lerp), pParticle, lerp);
                     }
                     else
                     {
@@ -281,19 +285,34 @@ namespace RabbetGameEngine.SubRendering
         }
 
         
-        private static void insertTransparentNonGUIBatch(Batch theBatch, PointParticle p)
+        private static void insertTransparentNonGUIBatch(Batch theBatch, PointParticle p, bool lerp)
         {
             for (int i = batches.Count - 1; i >= 0; --i)
             {
                 if (!batches.ElementAt(i).transparentGUI)
                 {
                     batches.Insert(i + 1, theBatch);
-                    batches.ElementAt(i + 1).addToBatch(p, p);//TODO: replace with non lerp points add func
+                    if (lerp)
+                    {
+                        batches.ElementAt(i + 1).addToBatch(p, p);
+                    }
+                    else
+                    {
+                        batches.ElementAt(i + 1).addToBatch(p);
+                    }
                     return;
                 }
             }
             batches.Insert(0, theBatch);
-            batches.ElementAt(0).addToBatch(p, p);
+
+            if (lerp)
+            {
+                batches.ElementAt(0).addToBatch(p, p);
+            }
+            else
+            {
+                batches.ElementAt(0).addToBatch(p);
+            }
         }
 
         public static void drawAll(Matrix4 viewMatrix, Vector3 fogColor)

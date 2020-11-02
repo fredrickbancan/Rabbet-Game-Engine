@@ -7,7 +7,12 @@ namespace RabbetGameEngine
     {
         public static float fov = 80; //fov of player camera
         public static float mouseSensitivity = 0.08F;
+
+        /// <summary>
+        /// This setting MUST be between 0 and 1
+        /// </summary>
         public static float masterVolume = 0.5F;
+
         public static bool vsync = false;
         public static bool displayFps = true;
         public static bool debugScreen = true;

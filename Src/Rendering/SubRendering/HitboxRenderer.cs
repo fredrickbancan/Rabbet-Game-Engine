@@ -42,7 +42,7 @@ namespace RabbetGameEngine.SubRendering
                     break;
 
                 case ColliderType.point:
-                    addPointToBeRendered((PointCollider)hitBox);
+                    addPointToBeRendered(hitBox.getCenterVec());
                     break;
             }
         }
@@ -54,9 +54,9 @@ namespace RabbetGameEngine.SubRendering
           
         }
 
-        public static void addPointToBeRendered(PointCollider point)
+        public static void addPointToBeRendered(Vector3 pos)
         {
-            PointParticle pParticle = new PointParticle(point.pos, CustomColor.facility.toNormalVec4(), 0.05F, true);
+            PointParticle pParticle = new PointParticle(pos, CustomColor.facility.toNormalVec4(), 0.05F, true);
             Renderer.requestRender(pParticle, false, false);
 
             Vector4 redColor = CustomColor.red.toNormalVec4();
@@ -65,12 +65,12 @@ namespace RabbetGameEngine.SubRendering
 
             Vertex[] lineVerts = new Vertex[]
             {
-                new Vertex(point.pos, redColor, Vector2.Zero),//normal x line start
-                new Vertex(point.pos + new Vector3(1F,0,0), redColor, Vector2.Zero),//normal x line end
-                 new Vertex(point.pos, greenColor, Vector2.Zero),//normal y line start
-                new Vertex(point.pos+ new Vector3(0,1F,0), greenColor, Vector2.Zero),//normal y line end
-                 new Vertex(point.pos, blueColor, Vector2.Zero),//normal z line start
-                new Vertex(point.pos+ new Vector3(0,0,1F), blueColor, Vector2.Zero)//normal z line end
+                new Vertex(pos, redColor, Vector2.Zero),//normal x line start
+                new Vertex(pos + new Vector3(1F,0,0), redColor, Vector2.Zero),//normal x line end
+                 new Vertex(pos, greenColor, Vector2.Zero),//normal y line start
+                new Vertex(pos+ new Vector3(0,1F,0), greenColor, Vector2.Zero),//normal y line end
+                 new Vertex(pos, blueColor, Vector2.Zero),//normal z line start
+                new Vertex(pos+ new Vector3(0,0,1F), blueColor, Vector2.Zero)//normal z line end
             };
 
             uint[] lineIndices = new uint[]

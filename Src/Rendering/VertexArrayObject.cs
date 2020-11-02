@@ -12,6 +12,7 @@ namespace RabbetGameEngine
         private int vaoID;
         private int vboID;
         private int iboID;
+        private int pboID;
         private int instVboID;
         private int matricesVboID;
         private int indirectBufferID;
@@ -19,6 +20,17 @@ namespace RabbetGameEngine
         private bool usesIndices = true;
         private bool usesMatrices = false;
         private bool usesIndirect = false;
+
+        /// <summary>
+        /// True if this vao has a buffer for vec3 positions, i.e: 3d text. Not nececarially lerp
+        /// </summary>
+        private bool usesPositions = false;
+
+        /// <summary>
+        /// true if thi vao has a buffer for prev vec3 positions, i.e: lerp 3d text.
+        /// </summary>
+        private bool usesPrevPositions = false;
+
         private bool particleBased = false;
         private bool lerpParticles = false;
         private int bufferByteSize = 0;
@@ -103,6 +115,11 @@ namespace RabbetGameEngine
             switch (batchType)
             {
                 case BatchType.none:
+                    break;
+                case BatchType.text3D:
+                    primType = PrimitiveType.Triangles;
+                    usesIndirect = true;
+                    usesPositions = true;
                     break;
 
                 case BatchType.triangles:
@@ -295,8 +312,8 @@ namespace RabbetGameEngine
                     GL.BindBuffer(BufferTarget.ArrayBuffer, matricesVboID);
                     GL.BufferData(BufferTarget.ArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
 
-                    int stride = 16 * sizeof(float) * 2;
                     int sizeOfMatrix = 16 * sizeof(float);
+                    int stride = sizeOfMatrix * 2;
                     //modelMatrixRow0
                     GL.EnableVertexAttribArray(4);
                     GL.VertexAttribPointer(4, 4, VertexAttribPointerType.Float, false, stride, 0);
@@ -331,6 +348,34 @@ namespace RabbetGameEngine
                     GL.VertexAttribPointer(11, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 48);
                     GL.VertexAttribDivisor(11, 1);
                 }
+                else if (usesPositions)
+                {
+                    pboID = GL.GenBuffer();
+                    GL.BindBuffer(BufferTarget.ArrayBuffer, pboID);
+                    GL.BufferData(BufferTarget.ArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
+                    int stride;
+                    if(usesPrevPositions)
+                    {
+                        stride = sizeof(float) * 3 * 2;
+                        GL.EnableVertexAttribArray(4);
+                        GL.VertexAttribPointer(4, 3, VertexAttribPointerType.Float, false, stride, 0);
+                        GL.VertexAttribDivisor(4, 1);
+
+                        //prev pos ptr
+                        GL.EnableVertexAttribArray(5);
+                        GL.VertexAttribPointer(5, 3, VertexAttribPointerType.Float, false, stride, sizeof(float) * 3);
+                        GL.VertexAttribDivisor(5, 1);
+                    }
+                    else
+                    {
+                        stride = sizeof(float) * 3;
+                        GL.EnableVertexAttribArray(4);
+                        GL.VertexAttribPointer(4, 3, VertexAttribPointerType.Float, false, stride, 0);
+                        GL.VertexAttribDivisor(4, 1);
+                    }
+                    
+                }
+
                 if (usesIndirect)
                 {
                     indirectBufferID = GL.GenBuffer();
@@ -436,6 +481,12 @@ namespace RabbetGameEngine
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, iboID);
         }
 
+        public void bindPBO()
+        {
+            if (usesPositions)
+                GL.BindBuffer(BufferTarget.ArrayBuffer, pboID);
+        }
+
         public void bindInstVBO()
         {
             if (particleBased)
@@ -509,6 +560,11 @@ namespace RabbetGameEngine
             if(usesIndirect)
             {
                 GL.DeleteBuffer(indirectBufferID);
+            }
+
+            if(usesPositions)
+            {
+                GL.DeleteBuffer(pboID);
             }
 
             if(particleBased)

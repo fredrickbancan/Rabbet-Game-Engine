@@ -12,6 +12,8 @@ namespace RabbetGameEngine.Models
         public uint[] indices = null;
         public Matrix4 modelMatrix = Matrix4.Identity;
         public Matrix4 prevModelMatrix = Matrix4.Identity;
+        public Vector3 worldPos;
+        public Vector3 prevWorldPos;
         public Model(Vertex[] vertices, uint[] indices)
         {
             this.vertices = vertices;
@@ -112,7 +114,7 @@ namespace RabbetGameEngine.Models
             uint[] indicesCopy = new uint[indices.Length];
             Array.Copy(indices, indicesCopy, indices.Length);
             Array.Copy(vertices, verticesCopy, vertices.Length);
-            return new Model(verticesCopy, indicesCopy);
+            return new Model(verticesCopy, indicesCopy).setModelPos(worldPos).setModelPrevPos(prevWorldPos);
         }
 
         /// <summary>
@@ -131,6 +133,17 @@ namespace RabbetGameEngine.Models
             return this;
         }
 
+        public Model setModelPos(Vector3 pos)
+        {
+            this.worldPos = pos;
+            return this;
+        }
+
+        public Model setModelPrevPos(Vector3 pos)
+        {
+            this.prevWorldPos = pos;
+            return this;
+        }
         public Model setModelMatrix(Matrix4 m)
         {
             this.modelMatrix = m;

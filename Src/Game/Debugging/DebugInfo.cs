@@ -1,5 +1,4 @@
 ﻿using RabbetGameEngine.GUI;
-using RabbetGameEngine.GUI.Text;
 using RabbetGameEngine.Sound;
 using RabbetGameEngine.SubRendering;
 

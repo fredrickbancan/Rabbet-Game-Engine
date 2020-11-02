@@ -10,11 +10,7 @@ using System.Linq;
 
 namespace RabbetGameEngine
 {
-    /*This class will be responsable for most of the games rendering requests. It will then send the requests to the suitable sub renderers.
-      e.g, when the game requests text to be rendered on the screen, the renderer will send a request to the TextRenderer2D.
-      e.g, when the game requests entity models to be rendered in the world, the renderer will send a request to the model draw function.
-      This class also contains the projection matrix.*/
-    public static class Renderer
+    public static class Renderer//TODO: Add support for 3d text rendering
     {
         private static int privateTotalDrawCallCount;
         private static Matrix4 projectionMatrix;
@@ -23,7 +19,7 @@ namespace RabbetGameEngine
         private static int renderFrame;//used to animate textures (noise texture for now)
        
         /// <summary>
-        /// A list of all requested
+        /// A list of all requested static renders
         /// </summary>
         private static Dictionary<string, StaticRenderObject> staticDraws;
         
