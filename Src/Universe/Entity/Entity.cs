@@ -74,6 +74,11 @@ namespace RabbetGameEngine
             hasModel = false;
             entityModel = null;
             removalFlag = true;
+
+            if(GameSettings.debugScreen)
+            {
+                currentPlanet.removeLabelFromObject(this);
+            }
         }
 
         public bool getIsMarkedForRemoval()

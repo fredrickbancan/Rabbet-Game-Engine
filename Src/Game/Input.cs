@@ -54,6 +54,7 @@ namespace RabbetGameEngine
                 if (singleKeyPress(Keys.F3))
                 {
                     toggleBoolean(ref GameSettings.debugScreen);
+                    GameInstance.get.onToggleDebugScreen();
                 }
 
                 if (singleKeyPress(Keys.F4))

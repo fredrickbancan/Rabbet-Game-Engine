@@ -121,6 +121,10 @@ namespace RabbetGameEngine
         {
             return this.pos;
         }
+        public virtual Vector3 getPrevTickPosition()
+        {
+            return this.previousTickPos;
+        }
         public virtual Vector3 getVelocity()
         {
             return this.velocity;

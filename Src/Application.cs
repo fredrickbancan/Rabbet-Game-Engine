@@ -47,7 +47,6 @@ namespace RabbetGameEngine
         {
             Console.WriteLine("Error!: " + s);
             Console.ReadKey();
-            GameInstance.get.Close();
         }
         public static void debugPrint(object s)
         {

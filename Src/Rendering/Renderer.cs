@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace RabbetGameEngine
 {
-    public static class Renderer//TODO: Add support for 3d text rendering
+    public static class Renderer
     {
         private static int privateTotalDrawCallCount;
         private static Matrix4 projectionMatrix;

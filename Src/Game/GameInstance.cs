@@ -10,6 +10,7 @@ using RabbetGameEngine.SubRendering;
 using RabbetGameEngine.Text;
 using RabbetGameEngine.VisualEffects;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace RabbetGameEngine
@@ -93,6 +94,30 @@ namespace RabbetGameEngine
         public Size getGameWindowSize()
         {
             return new Size(ClientRectangle.Size.X, ClientRectangle.Size.Y);
+        }
+
+        /// <summary>
+        /// Should be called after toggling gamesettings.debugscreen
+        /// </summary>
+        public void onToggleDebugScreen()
+        {
+            if(GameSettings.debugScreen)
+            {
+                foreach(KeyValuePair<int, Entity> e in currentPlanet.entities)
+                {
+                    currentPlanet.addDebugLabel(new VFXMovingText3D(e.Value, "debugLabel", "Arial_Shadow", "Entity: " +  e.Key.ToString(), new Vector3(0,1,0), 2.0F, CustomColor.white));
+                }
+            }
+            else
+            {
+                foreach(VFX v in currentPlanet.vfxList)
+                {
+                    if(v.vfxName == "debugLabel")
+                    {
+                        v.ceaseToExist();
+                    }
+                }
+            }
         }
 
         /*overriding OpenTk render update function, called every frame.*/

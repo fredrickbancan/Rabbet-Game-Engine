@@ -10,10 +10,12 @@ namespace RabbetGameEngine.SubRendering
         none,
         guiCutout,
         guiText,
+
         /// <summary>
         /// text3D objects should be built relative to 0,0,0. And then a position vector should be sent to the GPU for the position of the text in real world.
         /// </summary>
         text3D,
+        lerpText3D,
         triangles,
         lines,
         iSpheres,

@@ -19,6 +19,7 @@ namespace RabbetGameEngine
         public Dictionary<int, Entity> entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
         public List<AABB> worldColliders = new List<AABB>();//list of colliders with no parent, ie, walls.
         public List<VFX> vfxList = new List<VFX>();
+        public List<VFXMovingText3D> debugLabelList = new List<VFXMovingText3D>();
         private Skybox planetSkybox;
         private string wallTextureName = "leafywall";
         private string groundTextureName = "wood";
@@ -118,11 +119,11 @@ namespace RabbetGameEngine
         {
             planetSkybox.onTick();
 
+            doEntityCollisions();
+            tickEntities();
             tickVFX();
 
-            doEntityCollisions();
 
-            tickEntities();
 
             if (GameSettings.drawHitboxes)
             {
@@ -181,7 +182,7 @@ namespace RabbetGameEngine
         {
             for (int i = 0; i < vfxList.Count; i++)
             {
-                VisualEffects.VFX vfx = vfxList.ElementAt(i);
+                VFX vfx = vfxList.ElementAt(i);
                 if (vfx == null)
                 {
                     vfxList.Remove(vfx);
@@ -201,6 +202,33 @@ namespace RabbetGameEngine
                 }
 
                 vfx.sendRenderRequest();
+            }
+
+            if(GameSettings.debugScreen)
+            {
+                for (int i = 0; i < debugLabelList.Count; i++)
+                {
+                    VFXMovingText3D vfx = debugLabelList.ElementAt(i);
+                    if (vfx == null)
+                    {
+                        debugLabelList.Remove(vfx);
+                        i--;
+                    }
+                    else if (!vfx.exists())
+                    {
+                        debugLabelList.Remove(debugLabelList.ElementAt(i));
+                        i--;
+                    }
+                    else
+                    {
+                        vfx.preTick();
+                        vfx.onTick();
+                        vfx.postTick();
+                        CollisionHandler.tryToMoveObject(vfx, worldColliders);
+                    }
+
+                    vfx.sendRenderRequest();
+                }
             }
         }
 
@@ -250,6 +278,10 @@ namespace RabbetGameEngine
         public void spawnEntityInWorld(Entity theEntity)
         {
             entities.Add(entityIDItterator++, theEntity);
+            if(GameSettings.debugScreen)
+            {
+                addDebugLabel(new VFXMovingText3D(theEntity, "debugLabel", "Arial_Shadow", "Entity: " + (entityIDItterator-1).ToString(), new Vector3(0,1,0), 2.0F, CustomColor.white));
+            }
         }
 
         public void spawnEntityInWorldAtPosition(Entity theEntity, Vector3 atPosition)
@@ -261,6 +293,22 @@ namespace RabbetGameEngine
         public void spawnVFXInWorld(VFX vfx)
         {
             vfxList.Add(vfx);
+        }
+
+        public void addDebugLabel(VFXMovingText3D label)
+        {
+            debugLabelList.Add(label);
+        }
+
+        public void removeLabelFromObject(PositionalObject obj)
+        {
+            foreach(VFXMovingText3D v in debugLabelList)
+            {
+                if(v.parent == obj)
+                {
+                    v.ceaseToExist();
+                }
+            }
         }
 
         public int getEntityCount()

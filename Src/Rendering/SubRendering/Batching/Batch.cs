@@ -164,6 +164,17 @@ namespace RabbetGameEngine.SubRendering
                     usesPositions = true;
                     break;
 
+                case BatchType.lerpText3D:
+                    ShaderUtil.tryGetShader(ShaderUtil.lerpText3DName, out batchShader);
+                    maxPointCount /= 2;
+                    positions = new Vector3[maxPositionCount];
+                    prevPositions = new Vector3[maxPositionCount];
+                    drawCommands = new DrawCommand[maxDrawCommandCount];
+                    usesMultiDrawIndirect = true;
+                    usesPositions = true;
+                    usesPrevPositions = true;
+                    break;
+
                 case BatchType.triangles:
                     ShaderUtil.tryGetShader(ShaderUtil.trianglesName, out batchShader);
                     break;

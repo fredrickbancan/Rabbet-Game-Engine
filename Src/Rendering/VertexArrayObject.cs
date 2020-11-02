@@ -122,6 +122,13 @@ namespace RabbetGameEngine
                     usesPositions = true;
                     break;
 
+                case BatchType.lerpText3D:
+                    primType = PrimitiveType.Triangles;
+                    usesIndirect = true;
+                    usesPositions = true;
+                    usesPrevPositions = true;
+                    break;
+
                 case BatchType.triangles:
                 case BatchType.trianglesTransparent:
                     primType = PrimitiveType.Triangles;

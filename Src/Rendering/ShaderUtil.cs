@@ -10,6 +10,7 @@ namespace RabbetGameEngine
         public static readonly string guiCutoutName = "GuiCutout";
         public static readonly string text2DName = "GuiText";
         public static readonly string text3DName = "StaticText3D_F";
+        public static readonly string lerpText3DName = "LerpText3D_F";
         public static readonly string trianglesName = "Static_F";
         public static readonly string linesName = "StaticLines";
         public static readonly string iSpheresName = "StaticISpheres_F";
