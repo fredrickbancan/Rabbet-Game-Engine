@@ -28,8 +28,6 @@ void main()
 //Out variables from vertex shader are passed into the fragment shaders in variables, part of glsl language.
 #shader fragment
 #version 330 core
-#extension GL_ARB_conservative_depth : enable
-layout(depth_greater) out float gl_FragDepth;
 out vec4 color;
 in vec4 worldSpacePos;
 

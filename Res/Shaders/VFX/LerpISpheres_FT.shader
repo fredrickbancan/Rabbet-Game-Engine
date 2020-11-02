@@ -1,6 +1,6 @@
 ﻿//shader for rendering point particles Dynamically opaque
 #shader vertex
-#version 330
+#version 330 core
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 pointColor;
 layout(location = 2) in float radius;
@@ -92,7 +92,7 @@ void main()
 
 /*#############################################################################################################################################################################################*/
 #shader fragment
-#version 330
+#version 330 core
 layout(location = 0) out vec4 fragColor;
 in float visibility;
 in vec4 vColor;

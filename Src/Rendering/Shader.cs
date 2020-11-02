@@ -1,5 +1,4 @@
-﻿using OpenTK;
-using OpenTK.Graphics.OpenGL;
+﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
@@ -24,11 +23,13 @@ namespace RabbetGameEngine
         };
 
         public static readonly string debugDefaultVertexShader = 
+            "#version 330 core\n" +
             "void main()\n" +
             "{\n" +
             "gl_Position = vec4(0,0,0,0);\n" +
             "}\n";
         public static readonly string debugDefaultFragmentShader =
+            "#version 330 core\n" +
             "void main()\n" +
             "{\n" +
             "discard;\n" +
