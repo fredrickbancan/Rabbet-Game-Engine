@@ -5,6 +5,7 @@ namespace RabbetGameEngine
     /*This class acts as the main entry point for the program. Contains static functions for
       Printing information to the console.*/
 
+    //TODO: Impliment some sort of error screen to avoid crashes and properly shut down game.
     class Application
     {
         static void Main(string[] args)

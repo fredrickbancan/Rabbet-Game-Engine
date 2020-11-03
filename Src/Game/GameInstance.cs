@@ -180,6 +180,7 @@ namespace RabbetGameEngine
             MainGUI.onTick();
             HitboxRenderer.addPointToBeRendered(new Vector3(16,1,16));
             HitboxRenderer.addPointToBeRendered(new Vector3(-16,1,-16));
+            currentPlanet.spawnVFXInWorld(new VFXSnowParticle(new Vector3(0,10,0)));
             currentPlanet.onTick();
             SoundManager.onTick();
             Profiler.updateAverages();
