@@ -15,8 +15,6 @@ namespace RabbetGameEngine
         private static int privateTotalDrawCallCount;
         private static Matrix4 projectionMatrix;
         private static Matrix4 orthographicMatrix;
-        public static readonly bool useOffScreenBuffer = false;
-        private static int renderFrame;//used to animate textures (noise texture for now)
        
         /// <summary>
         /// A list of all requested static renders
@@ -44,7 +42,6 @@ namespace RabbetGameEngine
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
             orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1.0F);
             staticDraws = new Dictionary<string, StaticRenderObject>();
-            if(useOffScreenBuffer) OffScreen.init(0,0);
             SkyboxRenderer.init();
         }
 
@@ -77,10 +74,10 @@ namespace RabbetGameEngine
             Profiler.beginEndProfile("batching");
         }
 
-        public static void requestRender(PointParticle point, bool transparency, bool lerp)
+        public static void requestRender(PointParticle point, bool transparency)
         {
             Profiler.beginEndProfile("batching");
-            BatchManager.requestRender(point, transparency, lerp);
+            BatchManager.requestRender(point, transparency);
             Profiler.beginEndProfile("batching");
         }
 
@@ -106,7 +103,6 @@ namespace RabbetGameEngine
         /*Called before all draw calls*/
         private static void preRender()
         {
-            if (useOffScreenBuffer) OffScreen.prepareToRenderToOffScreenTexture();
             GL.Clear(ClearBufferMask.DepthBufferBit);
             privateTotalDrawCallCount = 0;
         }
@@ -123,10 +119,7 @@ namespace RabbetGameEngine
         /*Called after all draw calls*/
         private static void postRender()
         {
-            if (useOffScreenBuffer) OffScreen.renderOffScreenTexture();
             GameInstance.get.SwapBuffers();
-            renderFrame++;
-            renderFrame %= 4096;
         }
 
         public static void addStaticDrawTriangles(string name, string textureName, string shaderName, Model data)
@@ -219,15 +212,12 @@ namespace RabbetGameEngine
             BatchManager.deleteAll();
             ShaderUtil.deleteAll();
             TextureUtil.deleteAll();
-            OffScreen.onClose();
         }
         public static Matrix4 projMatrix { get => projectionMatrix; }
-        public static int frame { get => renderFrame; }
         public static int totalDraws { get { return privateTotalDrawCallCount; } set { privateTotalDrawCallCount = value; } }
-
         public static Matrix4 orthoMatrix { get => orthographicMatrix; }
-
         public static Vector3 camPos { get => GameInstance.get.thePlayer.getLerpEyePos(); }
+
     }
 }
  

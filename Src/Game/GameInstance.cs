@@ -82,6 +82,7 @@ namespace RabbetGameEngine
                 currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll", "Arial_Shadow", "waterroll.ogg, 10% volume", new Vector3(16,2.5F,16), 5.0F, CustomColor.white));
                 SoundManager.playSoundLoopingAt("waterroll_large", new Vector3(-16, 1, -16), 0.5F);
                 currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", "Arial_Shadow", "waterroll_large.ogg, 50% volume", new Vector3(-16,2.5F,-16), 5.0F, CustomColor.white));
+
                 Input.setCursorHiddenAndGrabbed(true);
             }
             catch(Exception e)

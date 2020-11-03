@@ -151,7 +151,8 @@ namespace RabbetGameEngine.SubRendering
                     //ensure that all opaque batches come before transparent ones in the list.
                     if (transparency)
                     {
-                        insertTransparentNonGUIBatch(new Batch(transparency, lerp), pParticleModel);
+                        batches.Add(new Batch(transparency, lerp));
+                        batches.ElementAt(i + 1).addToBatch(pParticleModel);
                     }
                     else
                     {
@@ -165,35 +166,23 @@ namespace RabbetGameEngine.SubRendering
         }
 
 
-        public static void requestRender(PointParticle pParticle, bool transparency, bool lerp)
+        public static void requestRender(PointParticle pParticle, bool transparency)
         {
             BatchType type;
             if (transparency)
             {
-                if (!lerp)
-                {
                     type = BatchType.iSpheresTransparent;
-                }
-                else
-                {
-                    type = BatchType.lerpISpheresTransparent;
-                }
+                
             }
             else
             {
-                if (!lerp)
-                {
                     type = BatchType.iSpheres;
-                }
-                else
-                {
-                    type = BatchType.lerpISpheres;
-                }
+                
             }
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
-                if (batchAt.getBatchType() == type && (lerp ? batchAt.addToBatch(pParticle, pParticle) : batchAt.addToBatch(pParticle)))
+                if (batchAt.getBatchType() == type && batchAt.addToBatch(pParticle))
                 {
                     return;//successfull batch adding
                 }
@@ -203,11 +192,12 @@ namespace RabbetGameEngine.SubRendering
                     //ensure that all opaque batches come before transparent ones in the list.
                     if (transparency)
                     {
-                        insertTransparentNonGUIBatch(new Batch(transparency, lerp), pParticle, lerp);
+                        batches.Add(new Batch(transparency, false));
+                        batches.ElementAt(i + 1).addToBatch(pParticle);
                     }
                     else
                     {
-                        batches.Insert(0, new Batch(transparency, lerp));
+                        batches.Insert(0, new Batch(transparency, false));
                         batches.ElementAt(0).addToBatch(pParticle);
                     }
 
@@ -271,51 +261,6 @@ namespace RabbetGameEngine.SubRendering
             batches.ElementAt(0).addToBatch(mod);
         }
 
-        private static void insertTransparentNonGUIBatch(Batch theBatch,PointCloudModel pModel)
-        {
-            for (int i = batches.Count - 1; i >= 0; --i)
-            {
-                if (!batches.ElementAt(i).transparentGUI)
-                {
-                    batches.Insert(i + 1, theBatch);
-                    batches.ElementAt(i + 1).addToBatch(pModel);
-                    return;
-                }
-            }
-            batches.Insert(0, theBatch);
-            batches.ElementAt(0).addToBatch(pModel);
-        }
-
-        
-        private static void insertTransparentNonGUIBatch(Batch theBatch, PointParticle p, bool lerp)
-        {
-            for (int i = batches.Count - 1; i >= 0; --i)
-            {
-                if (!batches.ElementAt(i).transparentGUI)
-                {
-                    batches.Insert(i + 1, theBatch);
-                    if (lerp)
-                    {
-                        batches.ElementAt(i + 1).addToBatch(p, p);
-                    }
-                    else
-                    {
-                        batches.ElementAt(i + 1).addToBatch(p);
-                    }
-                    return;
-                }
-            }
-            batches.Insert(0, theBatch);
-
-            if (lerp)
-            {
-                batches.ElementAt(0).addToBatch(p, p);
-            }
-            else
-            {
-                batches.ElementAt(0).addToBatch(p);
-            }
-        }
 
         public static void drawAll(Matrix4 viewMatrix, Vector3 fogColor)
         {

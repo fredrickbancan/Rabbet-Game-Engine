@@ -1,7 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 
@@ -130,7 +129,7 @@ namespace RabbetGameEngine.Models
 
                 for (int i = 0; i < positions.Count; i++)
                 {
-                    vertexResult.Add(new Vertex(positions.ElementAt(i), CustomColor.colorToNormalVec4(Color.White), orderedUVs[i]));
+                    vertexResult.Add(new Vertex(positions.ElementAt(i), CustomColor.white.toNormalVec4(), orderedUVs[i]));
                 }
                 successfullyLoaded = true;//do last, to make sure there is not mistake with any lines starting with f triggering a new face processing method call
             }

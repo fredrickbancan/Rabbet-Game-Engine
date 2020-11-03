@@ -12,8 +12,6 @@ uniform float fogGradient = 2.5;
 out vec4 vColor;
 
 uniform float percentageToNextTick;
-uniform int frame;
-
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 

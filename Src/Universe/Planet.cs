@@ -127,7 +127,7 @@ namespace RabbetGameEngine
 
             if (GameSettings.drawHitboxes)
             {
-                HitboxRenderer.addAllHitboxesToBeRendered(worldColliders, entities);
+                HitboxRenderer.addAllHitboxesToBeRendered(worldColliders, entities, vfxList);
             }
         }
 

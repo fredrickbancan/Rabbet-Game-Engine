@@ -57,7 +57,15 @@ namespace RabbetGameEngine
         public virtual void postTick()
         {
             velocity += acceleration;
-            velocity *= (1 - airResistance);
+            if(isGrounded)
+            {
+                velocity *= (1 - groundResistance);
+            }
+            else
+            {
+                velocity *= (1 - airResistance);
+            }
+            
 
             //do last
             if (!hasDoneFirstUpdate)
@@ -271,6 +279,7 @@ namespace RabbetGameEngine
         public virtual void setCollider(ICollider collider)
         {
             this.collider = collider;
+            this.hasCollider = true;
         }
         public virtual float posX { get => pos.X; set => pos.X = value; }
         public virtual float posY { get => pos.Y; set => pos.Y = value; }

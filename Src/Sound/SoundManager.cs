@@ -8,6 +8,7 @@ using System.Linq;
 namespace RabbetGameEngine.Sound
 {
     //TODO: Add support for sounds from moving objects
+    //TODO: Add support for Looping sounds from moving objects
     public static class SoundManager
     {
         private static ALContext context = ALContext.Null;

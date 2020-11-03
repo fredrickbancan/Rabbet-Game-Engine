@@ -15,7 +15,6 @@ out vec4 vColor;
 out float visibility;//for fog
 
 uniform float percentageToNextTick;
-uniform int frame;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;

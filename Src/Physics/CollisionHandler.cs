@@ -14,6 +14,8 @@ namespace RabbetGameEngine.Physics
         point
     };
 
+    //TODO: Prevent projectiles from colliding with eachother.
+
     /// <summary>
     /// Abstraction for collision code. This class will be responsable for calculating collisions by
     /// offsetting the hitbox of entities and altering their velocity. This also moves them by their velocity
@@ -177,17 +179,19 @@ namespace RabbetGameEngine.Physics
                 float xDist;//distance between boxes in X direction, depending on position and velocitx
 
                 //if ent is moving towards positive x and entitx box is "to left" of other box
-                if (objVel.X > 0.0F && objAABB.maxX <= otherAABB.minX)
+                if (objVel.X > 0.0F )
                 {
-                    xDist = otherAABB.minX - objAABB.maxX;
-                    if (xDist < objVel.X)
+                    if(objAABB.maxX <= otherAABB.minX)
                     {
-                        objVel.X = xDist;
+                        xDist = otherAABB.minX - objAABB.maxX;
+                        if (xDist < objVel.X)
+                        {
+                            objVel.X = xDist;
+                        }
                     }
+                    
                 }
-
-                //if ent is moving towards negative x and entitx box is "to right" of other box
-                if (objVel.X < 0.0F && objAABB.minX >= otherAABB.maxX)
+                else if (objVel.X < 0.0F && objAABB.minX >= otherAABB.maxX)
                 {
                     xDist = otherAABB.maxX - objAABB.minX;//creating negative dist for comparing with negative velocitx so there is no need to use abs() func
                     if (xDist > objVel.X)
@@ -213,17 +217,19 @@ namespace RabbetGameEngine.Physics
                 float yDist;//distance between boxes in Y direction, depending on position and velocity
 
                 //if ent is moving towards positive y and entity box is "below" of other box
-                if(objVel.Y > 0.0F && objAABB.maxY <= otherAABB.minY)
+                if(objVel.Y > 0.0F )
                 {
-                    yDist = otherAABB.minY - objAABB.maxY;
-                    if(yDist < objVel.Y)
+                    if(objAABB.maxY <= otherAABB.minY)
                     {
-                        objVel.Y = yDist;
+                        yDist = otherAABB.minY - objAABB.maxY;
+                        if (yDist < objVel.Y)
+                        {
+                            objVel.Y = yDist;
+                        }
                     }
+                    
                 }
-
-                //if ent is moving towards negative y and entity box is "above" of other box
-                if (objVel.Y < 0.0F && objAABB.minY >= otherAABB.maxY)
+                else if (objVel.Y < 0.0F && objAABB.minY >= otherAABB.maxY)
                 {
                     yDist = otherAABB.maxY - objAABB.minY;//creating negative dist for comparing with negative velocity so there is no need to use abs() func
                     if (yDist > objVel.Y)
@@ -249,17 +255,19 @@ namespace RabbetGameEngine.Physics
                 float zDist;//distance between boxes in Z direction, depending on position and velocitx
 
                 //if ent is moving towards positive z and entitx box is "behnid" of other box
-                if (objVel.Z > 0.0F && objAABB.maxZ <= otherAABB.minZ)
+                if (objVel.Z > 0.0F )
                 {
-                    zDist = otherAABB.minZ - objAABB.maxZ;
-                    if (zDist < objVel.Z)
+                    if(objAABB.maxZ <= otherAABB.minZ)
                     {
-                        objVel.Z = zDist;
+                        zDist = otherAABB.minZ - objAABB.maxZ;
+                        if (zDist < objVel.Z)
+                        {
+                            objVel.Z = zDist;
+                        }
                     }
+                    
                 }
-
-                //if ent is moving towards negative z and entitx box is "in front" of other box
-                if (objVel.Z < 0.0F && objAABB.minZ >= otherAABB.maxZ)
+                else if (objVel.Z < 0.0F && objAABB.minZ >= otherAABB.maxZ)
                 {
                     zDist = otherAABB.maxZ - objAABB.minZ;//creating negative dist for comparing with negative velocitx so there is no need to use abs() func
                     if (zDist > objVel.Z)
@@ -271,7 +279,8 @@ namespace RabbetGameEngine.Physics
             return objVel;
         }
         #endregion
-        //TODO: impliment point vs AABB collisions
+        
+
         #region PointVsAABB
         /// <summary>
         /// Applies collision resolution velocity to the provided object velocity vector. Resulting from a Point vs AABB collision.
@@ -282,6 +291,32 @@ namespace RabbetGameEngine.Physics
         /// <returns>The provided Point collider for the object properly offset during collision resolution</returns>
         private static Vector3 applyCollisionPointVsAABBX(Vector3 objVel, PointCollider objPoint, AABB otherAABB)
         {
+            if (objPoint.pos.Y >= otherAABB.minY && objPoint.pos.Y <= otherAABB.maxY && objPoint.pos.Z >= otherAABB.minZ && objPoint.pos.Z <= otherAABB.maxZ)
+            {
+                float xDist;//distance between boxes in Y direction, depending on position and velocity
+
+                //if ent is moving towards positive y and entity point is "below" of other box
+                if (objVel.X > 0.0F)
+                {
+                    if (objPoint.pos.X <= otherAABB.minX)
+                    {
+                        xDist = otherAABB.minX - objPoint.pos.X;
+                        if (xDist < objVel.X)
+                        {
+                            objVel.X = xDist;
+                        }
+                    }
+
+                }
+                else if (objVel.X < 0.0F && objPoint.pos.X >= otherAABB.maxX)
+                {
+                    xDist = otherAABB.maxX - objPoint.pos.X;//creating negative dist for comparing with negative velocity so there is no need to use abs() func
+                    if (xDist > objVel.X)
+                    {
+                        objVel.X = xDist;
+                    }
+                }
+            }
             return objVel;
         }
 
@@ -294,6 +329,32 @@ namespace RabbetGameEngine.Physics
         /// <returns>The provided Point collider for the object properly offset during collision resolution</returns>
         private static Vector3 applyCollisionPointVsAABBY(Vector3 objVel, PointCollider objPoint, AABB otherAABB)
         {
+            if (objPoint.pos.X >= otherAABB.minX && objPoint.pos.X <= otherAABB.maxX && objPoint.pos.Z >= otherAABB.minZ && objPoint.pos.Z <= otherAABB.maxZ)
+            {
+                float yDist;//distance between boxes in Y direction, depending on position and velocity
+
+                //if ent is moving towards positive y and entity point is "below" of other box
+                if (objVel.Y > 0.0F)
+                {
+                    if (objPoint.pos.Y <= otherAABB.minY)
+                    {
+                        yDist = otherAABB.minY - objPoint.pos.Y;
+                        if (yDist < objVel.Y)
+                        {
+                            objVel.Y = yDist;
+                        }
+                    }
+                    
+                }
+                else if (objVel.Y < 0.0F && objPoint.pos.Y >= otherAABB.maxY)
+                {
+                    yDist = otherAABB.maxY - objPoint.pos.Y;//creating negative dist for comparing with negative velocity so there is no need to use abs() func
+                    if (yDist > objVel.Y)
+                    {
+                        objVel.Y = yDist;
+                    }
+                }
+            }
             return objVel;
         }
 
@@ -306,6 +367,32 @@ namespace RabbetGameEngine.Physics
         /// <returns>The provided Point collider for the object properly offset during collision resolution</returns>
         private static Vector3 applyCollisionPointVsAABBZ(Vector3 objVel, PointCollider objPoint, AABB otherAABB)
         {
+            if (objPoint.pos.Y >= otherAABB.minY && objPoint.pos.Y <= otherAABB.maxY && objPoint.pos.X >= otherAABB.minX && objPoint.pos.X <= otherAABB.maxX)
+            {
+                float zDist;//distance between boxes in Y direction, depending on position and velocity
+
+                //if ent is moving towards positive y and entity point is "below" of other box
+                if (objVel.Z > 0.0F)
+                {
+                    if (objPoint.pos.Z <= otherAABB.minZ)
+                    {
+                        zDist = otherAABB.minZ - objPoint.pos.Z;
+                        if (zDist < objVel.Z)
+                        {
+                            objVel.Z = zDist;
+                        }
+                    }
+
+                }
+                else if (objVel.Z < 0.0F && objPoint.pos.Z >= otherAABB.maxZ)
+                {
+                    zDist = otherAABB.maxZ - objPoint.pos.Z;//creating negative dist for comparing with negative velocity so there is no need to use abs() func
+                    if (zDist > objVel.Z)
+                    {
+                        objVel.Z = zDist;
+                    }
+                }
+            }
             return objVel;
         }
         #endregion

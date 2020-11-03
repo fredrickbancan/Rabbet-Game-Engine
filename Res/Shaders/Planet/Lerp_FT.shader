@@ -18,7 +18,6 @@ out float visibility;//for fog
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform float percentageToNextTick;
-uniform int frame;
 
 void main()
 {

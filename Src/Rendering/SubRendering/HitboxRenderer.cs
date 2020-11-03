@@ -1,6 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Physics;
+using RabbetGameEngine.VisualEffects;
 using System.Collections.Generic;
 namespace RabbetGameEngine.SubRendering
 {
@@ -15,11 +16,16 @@ namespace RabbetGameEngine.SubRendering
         }
 
         /*called on tick. Adds all of the provided colliders to a list of hitboxes to be dynamically batched and drawn.*/
-        public static void addAllHitboxesToBeRendered(List<AABB> worldColliders, Dictionary<int, Entity> entities)
+        public static void addAllHitboxesToBeRendered(List<AABB> worldColliders, Dictionary<int, Entity> entities, List<VFX> effects)
         {
             foreach (AABB hitBox in worldColliders)
             {
                 addBoxToBeRendered(hitBox);
+            }
+
+            foreach(VFX v in effects)
+            {
+                addHitboxToBeRendered(v.getCollider());
             }
 
             foreach(Entity ent in entities.Values)
@@ -57,7 +63,7 @@ namespace RabbetGameEngine.SubRendering
         public static void addPointToBeRendered(Vector3 pos)
         {
             PointParticle pParticle = new PointParticle(pos, CustomColor.facility.toNormalVec4(), 0.05F, true);
-            Renderer.requestRender(pParticle, false, false);
+            Renderer.requestRender(pParticle, false);
 
             Vector4 redColor = CustomColor.red.toNormalVec4();
             Vector4 greenColor = CustomColor.green.toNormalVec4();

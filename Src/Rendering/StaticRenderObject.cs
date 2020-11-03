@@ -1,7 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
-using RabbetGameEngine.SubRendering;
 
 namespace RabbetGameEngine
 {
@@ -78,8 +77,6 @@ namespace RabbetGameEngine
             shader.setUniform1F("fogDensity", GameInstance.get.currentPlanet.getFogDensity());
             shader.setUniform1F("fogGradient", GameInstance.get.currentPlanet.getFogGradient());
             shader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
-            shader.setUniform1I("frame", Renderer.frame);
-            shader.setUniformVec2F("viewPortSize", Renderer.useOffScreenBuffer ? new Vector2(OffScreen.getWidth, OffScreen.getHeight) : new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowWidth));
 
             if (pointBased)
             {

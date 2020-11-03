@@ -5,13 +5,13 @@ using System;
 
 namespace RabbetGameEngine.SubRendering
 {
-    //TODO: Replace wasteful array interlacing each tick with array interlacing apon requests.
+    //TODO: Replace wasteful array interlacing each tick with array interlacing apon buffer updates.
     //TODO: releive wasteful use of system memory in large empty arrays
     /*Class for containing information of a render batch. New batches will need to be created for 
       different types of rendering and/or if a previous batch is too full.*/
     public class Batch
     {
-        public static int maxBufferSizeBytes = 16777216;
+        public static int maxBufferSizeBytes = 8388608;
         public static int maxIndiciesCount = maxBufferSizeBytes / sizeof(uint);
         public static int maxVertexCount = maxBufferSizeBytes / Vertex.vertexByteSize;
         public int maxPositionCount = maxBufferSizeBytes / (sizeof(float) * 3);
@@ -37,15 +37,13 @@ namespace RabbetGameEngine.SubRendering
 
         /*points are stored in a single VBO half packed, meaning the prevTickBatchedPoints start in the second half of the array. all the batchedPoints come first, and then the prevTickBatchedPoints are packed after them.*/
         private PointParticle[] batchedPoints = null;
-        private PointParticle[] prevTickBatchedPoints = null;
 
         /*Matrices are stored in a single VBO interlaced. all the modelMatrices come first, and then the prevTickModelMatrices are packed after them.*/
-        private Matrix4[] prevTickModelMatrices = null;
         private Matrix4[] modelMatrices = null;
 
         /*If using prev positions for lerping, they will be stored in a single vbo interlaced. Otherwise if positions are being used, they are stored flat in a single vbo.*/
         private Vector3[] positions = null;
-        private Vector3[] prevPositions = null;
+   
 
         private DrawCommand[] drawCommands = null;
 
@@ -58,6 +56,22 @@ namespace RabbetGameEngine.SubRendering
         /// the individual objects so the shader can determine which model matrices to use to transform it.
         /// </summary>
         private int requestedObjectItterator = 0;
+
+        /// <summary>
+        /// Used for properly interlacing and including new requests for lerp triangle types which require 2 matrices per object
+        /// </summary>
+        private int matricesItterator = 0;
+
+        /// <summary>
+        /// Used for properly interlacing and including new requests for lerp points which require 2 points per point.
+        /// </summary>
+        private int pointsItterator = 0;
+
+        /// <summary>
+        /// Used for properly interlacing and including new requests for lerp 3d text or any other type which uses 2 positions per object.
+        /// </summary>
+        private int positionItterator = 0;
+
 
         /// <summary>
         /// number of vertices requested to be added to this batch since the last update.
@@ -346,6 +360,9 @@ namespace RabbetGameEngine.SubRendering
             requestedVerticesCount = 0;
             requestedIndicesCount = 0;
             requestedObjectItterator = 0;
+            matricesItterator = 0;
+            pointsItterator = 0;
+            positionItterator = 0;
         }
 
         /// <summary>
@@ -410,9 +427,6 @@ namespace RabbetGameEngine.SubRendering
             batchShader.setUniform1F("fogDensity", GameInstance.get.currentPlanet.getFogDensity());
             batchShader.setUniform1F("fogGradient", GameInstance.get.currentPlanet.getFogGradient());
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
-            batchShader.setUniform1I("frame", Renderer.frame);
-            batchShader.setUniformVec2F("viewPortSize", Renderer.useOffScreenBuffer ? new Vector2(OffScreen.getWidth, OffScreen.getHeight) : new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
-
             if(pointBased)
             {
                 VAO.bindInstVBO();

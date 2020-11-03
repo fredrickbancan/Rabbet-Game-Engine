@@ -1,5 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using System.Drawing;
 
 namespace RabbetGameEngine
 {
@@ -40,55 +39,36 @@ namespace RabbetGameEngine
         public static CustomColor hotPink = new CustomColor(255, 105, 180);
         public static CustomColor magenta = new CustomColor(255, 0, 255);
 
-        Color systemColor;//color is stored using system color struct
+        Color4 baseColor;//color is stored using system color struct
 
-        public CustomColor(Color setColor)
+        public CustomColor(Color4 setColor)
         {
-            systemColor = setColor;
+            baseColor = setColor;
         }
         public CustomColor(byte r, byte g, byte b, byte a = byte.MaxValue)
         {
-            systemColor = Color.FromArgb(a,r,g,b);
+            baseColor = new Color4(r,g,b,a);
+        }
+        public CustomColor(float r, float g, float b, float a = 255.0F)
+        {
+            baseColor = new Color4(r, g, b, a);
         }
 
-        public CustomColor setColor(Color newColor)
+        public CustomColor setColor(Color4 newColor)
         {
-            systemColor = newColor;
+            baseColor = newColor;
             return this;
-        }
-
-        /*returns the rgb(a) values of this color as a vector*/
-        public Vector3 toVec3()
-        {
-            return new Vector3(systemColor.R, systemColor.G, systemColor.B);
-        }
-
-        public Vector4 toVec4()
-        {
-            return new Vector4(systemColor.R, systemColor.G, systemColor.B, systemColor.A);
         }
 
         /*returns the rgb(a) values of this color normalized from 0 to 1 instead of 0 to 255, as a vector*/
         public Vector3 toNormalVec3()
         {
-            return new Vector3(MathUtil.normalize(0, 255, systemColor.R), MathUtil.normalize(0, 255, systemColor.G), MathUtil.normalize(0, 255, systemColor.B));
+            return new Vector3(baseColor.R, baseColor.G, baseColor.B);
         }
 
         public Vector4 toNormalVec4()
         {
-            return new Vector4(MathUtil.normalize(0, 255, systemColor.R), MathUtil.normalize(0, 255, systemColor.G), MathUtil.normalize(0, 255, systemColor.B), MathUtil.normalize(0, 255, systemColor.A));
-        }
-
-        /*Returns a vector 4 with the values of the color normalized from 0 to 1, format: RGBA*/
-        public static Vector4 colorToNormalVec4(Color color)
-        {
-            return new Vector4(MathUtil.normalize(0, 255, color.R), MathUtil.normalize(0, 255, color.G), MathUtil.normalize(0, 255, color.B), MathUtil.normalize(0, 255, color.A));
-        }
-
-        /*Returns a vector 3 with the values of the color normalized from 0 to 1, format: RGB*/
-        public static Vector3 colorToNormalVec3(Color color)
-        {
-            return new Vector3(MathUtil.normalize(0, 255, color.R), MathUtil.normalize(0, 255, color.G), MathUtil.normalize(0, 255, color.B));
+            return new Vector4(baseColor.R, baseColor.G, baseColor.B, baseColor.A);
         }
 
         /*returns the provided color with its saturation decreased by the provided percentage (0.0 to 1.0)*/
@@ -99,22 +79,22 @@ namespace RabbetGameEngine
             if (percentage > 1F)
                 percentage = 1F;
 
-            float newRed = (float)systemColor.R;
-            float newGreen = (float)systemColor.G;
-            float newBlue = (float)systemColor.B;
+            float newRed = baseColor.R;
+            float newGreen = baseColor.G;
+            float newBlue = baseColor.B;
 
             MathUtil.smooth3(ref newRed, ref newGreen, ref newBlue, percentage);
-            return new CustomColor((byte)newRed, (byte)newGreen, (byte)newBlue, systemColor.A);
+            return new CustomColor(newRed, newGreen, newBlue, baseColor.A);
         }
 
         public Vector3 reduceSaturationVec3(float percentage)
         {
             if (percentage <= 0)
-                return this.toVec3();
+                return this.toNormalVec3();
             if (percentage > 1F)
                 percentage = 1F;
 
-            Vector3 result = this.toVec3();
+            Vector3 result = this.toNormalVec3();
 
             MathUtil.smooth3(ref result.X, ref result.Y, ref result.Z, percentage);
 
@@ -124,31 +104,15 @@ namespace RabbetGameEngine
         public Vector4 reduceSaturationVec4(float percentage)
         {
             if (percentage <= 0)
-                return this.toVec4();
+                return this.toNormalVec4();
             if (percentage > 1F)
                 percentage = 1F;
 
-            Vector4 result = this.toVec4();
+            Vector4 result = this.toNormalVec4();
 
             MathUtil.smooth3(ref result.X, ref result.Y, ref result.Z, percentage);
 
             return result;
-        }
-
-        /*returns the provided color with its saturation decreased by the provided percentage (0.0 to 1.0)*/
-        public static CustomColor reduceSaturation(Color color, float percentage)
-        {
-            if (percentage <= 0)
-                return new CustomColor(color);
-            if (percentage > 1F)
-                percentage = 1F;
-
-            float newRed = (float)color.R;
-            float newGreen = (float)color.G;
-            float newBlue = (float)color.B;
-
-            MathUtil.smooth3(ref newRed, ref newGreen, ref newBlue, percentage);
-            return new CustomColor(Color.FromArgb(color.A, (int)newRed, (int)newGreen, (int)newBlue));
         }
 
         public static Vector3 reduceSaturation(Vector3 color, float percentage)
@@ -166,27 +130,27 @@ namespace RabbetGameEngine
         /*changes the brightness of this color by the provided percentage (1.0F is 100%)*/
         public CustomColor setBrightPercent(float percentage)
         {
-            systemColor = Color.FromArgb(systemColor.A, (int)(systemColor.R * percentage), (int)(systemColor.G * percentage), (int)(systemColor.B * percentage));
+            baseColor =new Color4(baseColor.R * percentage, baseColor.G * percentage, baseColor.B * percentage, baseColor.A);
             return this;
         }
 
         public CustomColor setAlphaPercent(float percentage)
         {
             percentage = MathUtil.clamp(percentage, 0, 1);
-            systemColor = Color.FromArgb((int)(systemColor.A * percentage),systemColor.R , systemColor.G , systemColor.B );
+            baseColor.A *= percentage;
             return this;
         }
         
         public CustomColor setAlphaF(float a)
         {
             a = MathUtil.clamp(a, 0, 1);
-            systemColor = Color.FromArgb((int)(255 * a), systemColor.R, systemColor.G, systemColor.B);
+            baseColor.A = a;
             return this;
         }
 
-        public byte r { get => systemColor.R; set { systemColor = Color.FromArgb(systemColor.A, value, systemColor.G, systemColor.B); } }
-        public byte g { get => systemColor.G; set { systemColor = Color.FromArgb(systemColor.A, systemColor.R, value, systemColor.B); } }
-        public byte b { get => systemColor.B; set { systemColor = Color.FromArgb(systemColor.A, systemColor.R, systemColor.G, value); } }
-        public byte a { get => systemColor.A; set { systemColor = Color.FromArgb(value, systemColor.R, systemColor.G, systemColor.B); } }
+        public float r { get => baseColor.R; set { baseColor.R = value; } }
+        public float g { get => baseColor.G; set { baseColor.G = value; } }
+        public float b { get => baseColor.B; set { baseColor.B = value; } }
+        public float a { get => baseColor.A; set { baseColor.A = value; } }
     }
 }

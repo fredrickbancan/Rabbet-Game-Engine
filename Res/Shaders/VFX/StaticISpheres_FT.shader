@@ -18,8 +18,6 @@ out vec2 coords;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform vec3 cameraPos;
-//vector of viewport dimensions
-uniform vec2 viewPortSize;
 uniform float percentageToNextTick;
 uniform int frame;
 out float fAoc;
