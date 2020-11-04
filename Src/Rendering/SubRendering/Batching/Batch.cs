@@ -5,18 +5,29 @@ using System;
 
 namespace RabbetGameEngine.SubRendering
 {
-    //TODO: Fix point cloud batching and rendering
-    //TODO: Render lerp points as cheated spherical billboard sprites and measure performance diff.
     public class Batch
     {
+        //TODO: Figure out sending a billboarded viewmatrix to the shader and impliment
+        public enum BillBoardType
+        {
+            NONE,
+            CHEAP_CYLINDRICAL,
+            CHEAP_SPHERICAL,
+            CYLINDRICAL,
+            SPHERICAL
+        }
+        public static readonly int vectorSize = sizeof(float) * 3;
+        public static readonly int matrixSize = sizeof(float) * 16;
         public static readonly int initialArraySize = 32;
         public static readonly int maxBufferSizeBytes = 8388608;
         public static readonly int maxIndiciesCount = maxBufferSizeBytes / sizeof(uint);
         public static readonly int maxVertexCount = maxBufferSizeBytes / Vertex.vertexByteSize;
-        public static readonly int maxPositionCount = maxBufferSizeBytes / (sizeof(float) * 3);
+        public static readonly int maxPositionCount = maxBufferSizeBytes / vectorSize;
         public static readonly int maxPointCount = maxBufferSizeBytes / PointParticle.pParticleByteSize;
-        public static readonly int maxMatrixCount = maxBufferSizeBytes / (sizeof(float) * 16);
+        public static readonly int maxMatrixCount = maxBufferSizeBytes / matrixSize;
         public static readonly int maxDrawCommandCount = maxBufferSizeBytes / DrawCommand.sizeInBytes;
+
+        private BillBoardType billboard = BillBoardType.NONE;
 
         private bool usingLerpPoints = false;
         private bool usesPositions = false;
@@ -103,10 +114,12 @@ namespace RabbetGameEngine.SubRendering
         public Batch(bool pointTransparency, bool lerp)
         {
             pointBased = true;
+           
             if(pointTransparency)
             {
                 if(!lerp)
                 {
+                    billboard = BillBoardType.SPHERICAL;
                     batchType = BatchType.iSpheresTransparent;
                     ShaderUtil.tryGetShader(ShaderUtil.iSpheresTransparentName, out batchShader);
                     requiresSorting = true;
@@ -116,6 +129,7 @@ namespace RabbetGameEngine.SubRendering
                 }
                 else
                 {
+                    billboard = BillBoardType.CHEAP_SPHERICAL;
                     batchType = BatchType.lerpISpheresTransparent;
                     ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresTransparentName, out batchShader);
                     VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
@@ -129,6 +143,7 @@ namespace RabbetGameEngine.SubRendering
             {
                 if (!lerp)
                 {
+                    billboard = BillBoardType.SPHERICAL;
                     batchType = BatchType.iSpheres;
                     ShaderUtil.tryGetShader(ShaderUtil.iSpheresName, out batchShader);
                     VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
@@ -137,6 +152,7 @@ namespace RabbetGameEngine.SubRendering
                 }
                 else
                 {
+                    billboard = BillBoardType.CHEAP_SPHERICAL;
                     batchType = BatchType.lerpISpheres;
                     ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresName, out batchShader);
                     usingLerpPoints = true;
@@ -171,6 +187,7 @@ namespace RabbetGameEngine.SubRendering
                     drawCommands = new DrawCommand[initialArraySize];
                     usesMultiDrawIndirect = true;
                     usesPositions = true;
+                    billboard = BillBoardType.CHEAP_SPHERICAL;
                     break;
 
                 case BatchType.lerpText3D:
@@ -400,20 +417,12 @@ namespace RabbetGameEngine.SubRendering
             return true;
         }
 
-        /// <summary>
-        /// attempts to add the provided single point to the batch. This method only works for 
-        /// batches with have a batch type of single points!
-        /// </summary>
-        /// <param name="singlePoint">The single point</param>
-        /// <param name="prevTickSinglePoint">The single point's previous tick data.</param>
-        /// <returns>true if this batch is able to accept the point.</returns>
         public bool addToBatch(PointCloudModel theModel)
         {
             int n;
-            int c;
             if(usingLerpPoints)
             {
-                if((n = pointsItterator + (c = theModel.points.Length + theModel.prevPoints.Length)) >= maxPointCount)
+                if((n = pointsItterator + theModel.points.Length * 2) >= maxPointCount)
                 {
                     return false;
                 }
@@ -429,38 +438,39 @@ namespace RabbetGameEngine.SubRendering
                         Array.Resize<PointParticle>(ref batchedPoints, n);
                     }
                 }
-                n = 0;
                 //interlace points
-                //TODO: impl
-                pointsItterator += c;
+                for(n = 0; n < theModel.points.Length; n++)
+                {
+                    batchedPoints[pointsItterator] = theModel.points[n];
+                    batchedPoints[pointsItterator + 1] = theModel.prevPoints[n];
+                    pointsItterator += 2;
+                }
                 return true;
             }
-            else
-            {
-                if ((n = pointsItterator + theModel.prevPoints.Length) >= maxPointCount)
-                {
-                    return false;
-                }
 
-                if(n >= batchedPoints.Length)//resizing batched points array
+            if ((n = pointsItterator + theModel.prevPoints.Length) >= maxPointCount)
+            {
+                return false;
+            }
+
+            if (n >= batchedPoints.Length)//resizing batched points array
+            {
+                if ((n *= 2) >= maxPointCount)
                 {
-                    if((n*=2) >= maxPointCount)
-                    {
-                        Array.Resize<PointParticle>(ref batchedPoints, maxPointCount);
-                    }
-                    else
-                    {
-                        Array.Resize<PointParticle>(ref batchedPoints, n);
-                    }
+                    Array.Resize<PointParticle>(ref batchedPoints, maxPointCount);
+                }
+                else
+                {
+                    Array.Resize<PointParticle>(ref batchedPoints, n);
                 }
             }
+
             Array.Copy(theModel.points, 0, batchedPoints, pointsItterator, theModel.points.Length);
             pointsItterator += theModel.points.Length;
             return true;
         }
 
         /// <summary>
-        /// Sets up and configures vertexattribptrs and vertexattribdivisors for the current requested object.
         /// This is required for LERP type batches for selecting the correct matrices.
         /// </summary>
         private void configureDrawCommandsForCurrentObject(int objIndCount, int vertCount)
@@ -503,19 +513,13 @@ namespace RabbetGameEngine.SubRendering
                     VAO.bindMatricesVBO();
                     //interlacing both arrays into one to submit to gpu
                     //using matricesItterator to only interlace and submit the necessary amount of data.
-                    GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (requestedObjectItterator * 2) * (sizeof(float) * 16), modelMatrices);
+                    GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, matricesItterator * matrixSize, modelMatrices);
                 }
                 else if(usesPositions)
                 {
                     VAO.bindPBO();
-                    if(usesPrevPositions)
-                    {
-                        GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, (requestedObjectItterator * 2) * (sizeof(float) * 3), positions);
-                    }
-                    else
-                    {
-                        GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, requestedObjectItterator * (sizeof(float) * 3), positions);
-                    }
+                    GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, positionItterator * vectorSize, positions);
+
                 }
                
                 
@@ -533,7 +537,7 @@ namespace RabbetGameEngine.SubRendering
             }
             else 
             {
-                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, pointsItterator  *  PointParticle.pParticleByteSize, batchedPoints);
+                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, pointsItterator * PointParticle.pParticleByteSize, batchedPoints);
             }
         }
         
@@ -541,9 +545,10 @@ namespace RabbetGameEngine.SubRendering
         {
             VAO.bindVaoVboIbo();
             batchShader.use();
+
             batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
-            batchShader.setUniformMat4F("viewMatrix", viewMatrix);
             batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
+            batchShader.setUniformMat4F("viewMatrix", viewMatrix);
             batchShader.setUniformVec3F("cameraPos", Renderer.camPos);
             batchShader.setUniformVec3F("fogColor", fogColor);
             batchShader.setUniform1F("fogDensity", GameInstance.get.currentPlanet.getFogDensity());
@@ -552,7 +557,7 @@ namespace RabbetGameEngine.SubRendering
             if(pointBased)
             {
                 VAO.bindInstVBO();
-                GL.DrawArraysInstanced(VAO.getPrimType(), 0, 4, pointsItterator);
+                GL.DrawArraysInstanced(VAO.getPrimType(), 0, 4, usingLerpPoints ? pointsItterator / 2 : pointsItterator);
                 return;
             }
 

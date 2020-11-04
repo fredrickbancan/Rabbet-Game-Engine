@@ -41,11 +41,6 @@ namespace RabbetGameEngine.Physics
                 {
                     continue;
                 }
-                //Exclude entity collisions if they dont use aabb
-                if(entAt.getCollider().getType() != ColliderType.aabb)
-                {
-                    continue;
-                }
 
                 Vector2 entXZ;
                 Vector2 otherEntXZ;
@@ -53,27 +48,26 @@ namespace RabbetGameEngine.Physics
                 for (int j = i + 1; j < entities.Count; ++j)
                 {
                     Entity otherEntAt = entities.Values.ElementAt(j);
-                    if(!otherEntAt.getHasCollider() || otherEntAt.getCollider().getType() != ColliderType.aabb)
+                    if(!otherEntAt.getHasCollider() || otherEntAt.getIsProjectile())
                     {
                         continue;
                     }
-
+                    entXZ = entAt.getPosition().Xz;
                     //if boxes touch
                     if(!AABB.areBoxesNotTouching((AABB)entAt.getCollider(), (AABB)otherEntAt.getCollider()))
                     {
-                        if ((otherEntXZ = otherEntAt.getPosition().Xz) != (entXZ = entAt.getPosition().Xz))
+                        if (!entAt.getIsProjectile())
                         {
-                           pushVec = Vector2.Normalize(otherEntXZ - entXZ) * pushVel;
+                            otherEntXZ = otherEntAt.getPosition().Xz;
+
+                            if (entXZ.X == otherEntXZ.X) entXZ.X += 0.01F;//avoid division by zero in normalize func
+
+                            pushVec = Vector2.Normalize(otherEntXZ - entXZ) * pushVel;
+
+                            entAt.addVelocity(new Vector3(-pushVec.X, 0, -pushVec.Y));
+                            otherEntAt.addVelocity(new Vector3(pushVec.X, 0, pushVec.Y));
                         }
-                        else
-                        { 
-                            //avoiding divide by zero in normalize func
-                            pushVec = Vector2.Normalize((otherEntXZ - new Vector2(0.0001F, 0.0001F)) - entXZ) * pushVel;
-                        }
-                        entAt.addVelocity(new Vector3(-pushVec.X, 0, -pushVec.Y));
-                        otherEntAt.addVelocity(new Vector3(pushVec.X, 0, pushVec.Y));
-                        entAt.onCollideWithEntity(otherEntAt);
-                        otherEntAt.onCollideWithEntity(entAt);
+                        entAt.onCollideWithEntity(otherEntAt);//TODO: Projectiles arent colliding with entities for some reason
                     }
                 }
 

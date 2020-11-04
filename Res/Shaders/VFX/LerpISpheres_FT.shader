@@ -29,46 +29,6 @@ uniform float percentageToNextTick;
 uniform int frame;
 out float fAoc;
 
-mat4 rotationMatrix(vec3 axis, float angle)
-{
-    float s = sin(angle);
-    float c = cos(angle);
-    float oc = 1.0 - c;
-
-    return mat4(oc * axis.x * axis.x + c, oc * axis.x * axis.y - axis.z * s, oc * axis.z * axis.x + axis.y * s, 0.0,
-        oc * axis.x * axis.y + axis.z * s, oc * axis.y * axis.y + c, oc * axis.y * axis.z - axis.x * s, 0.0,
-        oc * axis.z * axis.x - axis.y * s, oc * axis.y * axis.z + axis.x * s, oc * axis.z * axis.z + c, 0.0,
-        0.0, 0.0, 0.0, 1.0);
-}
-
-
-vec4 lookAtCamRotation(vec4 spritePos, float rad)
-{
-    vec3 rightVec = vec3(1, 0, 0);
-    vec3 upVec = vec3(0, 1, 0);
-    vec3 lookAt = vec3(0, 0, 1);
-    vec4 endPos = vec4(corner.x * rad * 2, corner.y * rad * 2, 0, 0);
-    vec3 spriteToCamX = cameraPos - spritePos.xyz;
-
-    spriteToCamX.y = 0;
-
-    spriteToCamX = normalize(spriteToCamX);
-    vec3 upAux = normalize(cross(lookAt, spriteToCamX));
-
-    float angleCosine = dot(lookAt, spriteToCamX);
-    float angleY = acos(angleCosine) * 180 / 3.141;
-    mat4 rotX = rotationMatrix(upAux, -radians(angleY));
-
-    vec3 spriteToCamY = cameraPos - spritePos.xyz;
-
-    spriteToCamY = normalize(spriteToCamY);
-
-    angleCosine = dot(spriteToCamX, spriteToCamY);
-    float angleX = acos(angleCosine) * 180 / 3.141;
-    float f = spriteToCamY.y < 0.0F ? 1.0F : -1.0F;
-    return rotX * rotationMatrix(vec3(f, 0.0, 0.0), -radians(angleX)) * endPos + spritePos;
-}
-
 void main()
 {
     coords = corner * 2.0;
@@ -77,8 +37,24 @@ void main()
 
     //lerping pos
     worldPos = (prevPosition + (position - prevPosition) * percentageToNextTick);
+    //create translation
+    mat4 modelMatrix = mat4(1.0F);
+    modelMatrix[3][0] = worldPos.x;
+    modelMatrix[3][1] = worldPos.y;
+    modelMatrix[3][2] = worldPos.z;
 
-    vec4 positionRelativeToCam = viewMatrix * lookAtCamRotation(worldPos, rad);
+    //remove rotation
+    mat4 modelViewBillboard = viewMatrix * modelMatrix;
+    modelViewBillboard[0][0] = 1;
+    modelViewBillboard[0][1] = 0;
+    modelViewBillboard[0][2] = 0;
+    modelViewBillboard[1][0] = 0;
+    modelViewBillboard[1][1] = 1;
+    modelViewBillboard[1][2] = 0;
+    modelViewBillboard[2][0] = 0;
+    modelViewBillboard[2][1] = 0;
+    modelViewBillboard[2][2] = 1;
+    vec4 positionRelativeToCam = modelViewBillboard * vec4(corner.x * rad * 2, corner.y * rad * 2, 0, 1);
     gl_Position = projectionMatrix * positionRelativeToCam;
 
     float distanceFromCam = length(positionRelativeToCam.xyz);
@@ -115,20 +91,7 @@ void makeSphere()
     {//discard if the vectors length is more than 0.5
         discard;
     }
-    float z = sqrt(1.0F - d);
-    vec3 normal = vec3(coords, z);
-    normal = mat3(transpose(viewMatrix)) * normal;
-    vec3 cameraPos = vec3(worldPos) + rad * normal;
 
-
-    ////Set the depth based on the new cameraPos.
-    vec4 clipPos = projectionMatrix * viewMatrix * vec4(cameraPos, 1.0);
-    float ndcDepth = clipPos.z / clipPos.w;
-    /*gl_FragDepth = ((gl_DepthRange.diff * ndcDepth) + gl_DepthRange.near + gl_DepthRange.far) / 2.0;
-    if (gl_FragDepth < 0.0000001)
-    {
-        discard;
-    }*/
     //calc ambient occlusion for circle
     if (bool(fAoc))
         ambientOcclusion = sqrt(1.0F - d / 2);

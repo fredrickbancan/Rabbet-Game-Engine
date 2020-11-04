@@ -3,9 +3,9 @@ using RabbetGameEngine.Physics;
 
 namespace RabbetGameEngine
 {
-    /*Abstraction base class of objects with any type of position, rotation, velocity, interpolation.*/
     public class PositionalObject
     {
+        //TODO: Move all front vectors, right vectors and up vectors to this base class.
         protected Vector3 previousTickPos;
         protected Vector3 pos;
         protected Vector3 velocity;

@@ -14,6 +14,7 @@ namespace RabbetGameEngine
         private bool removalFlag = false;// true if this entity should be removed in the next tick
         protected int existedTicks = 0;//number of ticks this entity has existed for
         protected bool isPlayer = false;
+        protected bool isProjectile = false;
         public Entity(Planet planet) : base()
         {
             currentPlanet = planet;
@@ -125,9 +126,13 @@ namespace RabbetGameEngine
             
         }
 
-        public virtual bool getIsPlayer()//returns true if this entityliving is a player
+        public bool getIsPlayer()//returns true if this entityliving is a player
         {
             return isPlayer;
+        }
+        public bool getIsProjectile()
+        {
+            return isProjectile;
         }
 
     }

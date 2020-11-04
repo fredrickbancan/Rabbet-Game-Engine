@@ -6,7 +6,6 @@ using RabbetGameEngine.Debugging;
 using RabbetGameEngine.GUI;
 using RabbetGameEngine.Sound;
 using RabbetGameEngine.Src.Game;
-using RabbetGameEngine.SubRendering;
 using RabbetGameEngine.Text;
 using RabbetGameEngine.VisualEffects;
 using System;
@@ -20,6 +19,7 @@ namespace RabbetGameEngine
     public class GameInstance : GameWindow
     {
         public static int temp = 0;
+        public static readonly string entityLabelName = "entLabel";
         private static GameInstance instance;
         private static Random privateRand;
         private static int windowWidth;
@@ -78,10 +78,12 @@ namespace RabbetGameEngine
                     currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(0, 10, 0)));
                 }
                 currentPlanet.spawnEntityInWorld(thePlayer);
+
+                //temp sound examples
                 SoundManager.playSoundLoopingAt("waterroll", new Vector3(16, 1, 16), 0.1F);
-                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll", "Arial_Shadow", "waterroll.ogg, 10% volume", new Vector3(16,2.5F,16), 5.0F, CustomColor.white));
+                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll", GameSettings.defaultFont, "waterroll.ogg, 10% volume", new Vector3(16,2.5F,16), 5.0F, CustomColor.white));
                 SoundManager.playSoundLoopingAt("waterroll_large", new Vector3(-16, 1, -16), 0.5F);
-                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", "Arial_Shadow", "waterroll_large.ogg, 50% volume", new Vector3(-16,2.5F,-16), 5.0F, CustomColor.white));
+                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", GameSettings.defaultFont, "waterroll_large.ogg, 50% volume", new Vector3(-16,2.5F,-16), 5.0F, CustomColor.white));
 
                 Input.setCursorHiddenAndGrabbed(true);
             }
@@ -100,20 +102,20 @@ namespace RabbetGameEngine
         /// <summary>
         /// Should be called after toggling gamesettings.debugscreen
         /// </summary>
-        public void onToggleDebugScreen()
+        public void onToggleEntityLabels()
         {
-            if(GameSettings.debugScreen)
+            if(GameSettings.entityLabels)
             {
                 foreach(KeyValuePair<int, Entity> e in currentPlanet.entities)
                 {
-                    currentPlanet.addDebugLabel(new VFXMovingText3D(e.Value, "debugLabel", "Arial_Shadow", "Entity: " +  e.Key.ToString(), new Vector3(0,1,0), 2.0F, CustomColor.white));
+                    currentPlanet.addDebugLabel(new VFXMovingText3D(e.Value, entityLabelName, GameSettings.defaultFont, "Entity: " +  e.Key.ToString(), new Vector3(0,1,0), 2.0F, CustomColor.white));
                 }
             }
             else
             {
                 foreach(VFX v in currentPlanet.vfxList)
                 {
-                    if(v.vfxName == "debugLabel")
+                    if(v.vfxName == entityLabelName)
                     {
                         v.ceaseToExist();
                     }
@@ -178,9 +180,6 @@ namespace RabbetGameEngine
             Renderer.onTickStart();
             GUIManager.onTick();
             MainGUI.onTick();
-            HitboxRenderer.addPointToBeRendered(new Vector3(16,1,16));
-            HitboxRenderer.addPointToBeRendered(new Vector3(-16,1,-16));
-            currentPlanet.spawnVFXInWorld(new VFXSnowParticle(new Vector3(0,10,0)));
             currentPlanet.onTick();
             SoundManager.onTick();
             Profiler.updateAverages();

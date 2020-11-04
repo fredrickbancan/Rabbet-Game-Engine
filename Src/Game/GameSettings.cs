@@ -13,11 +13,13 @@ namespace RabbetGameEngine
         /// </summary>
         public static float masterVolume = 0.5F;
 
+        public static string defaultFont = "Arial_Shadow";
+
         public static bool vsync = false;
         public static bool displayFps = true;
-        public static bool debugScreen = true;
+        public static bool debugScreen = false;
+        public static bool entityLabels = false;
         public static bool drawHitboxes = false;
-        public static bool superSampling = true;
         public static bool fullscreen = false;
         public static bool noclip = false;//disables player clipping
         public static void loadSettings()

@@ -152,7 +152,6 @@ namespace RabbetGameEngine.Models
         public PointCloudModel createTransformedCopy(Matrix4 modelMatrix, Matrix4 prevTickModelMatrix)
         {
             PointCloudModel result;
-
             PointParticle[] resultPoints = new PointParticle[this.points.Length];
             PointParticle[] resultPrevPoints = new PointParticle[this.prevPoints.Length];
             Array.Copy(points,resultPoints, points.Length);

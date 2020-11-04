@@ -26,6 +26,7 @@ namespace RabbetGameEngine
         private Random random;
         private float fogDensity;
         private float fogGradient;
+        private float drawDistance;//TODO: Impliment draw distance which when changed will dynamically update fog to hide cutoff, also change VFX so they do not spawn if outside draw distance.
         public Planet(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
@@ -204,7 +205,7 @@ namespace RabbetGameEngine
                 vfx.sendRenderRequest();
             }
 
-            if(GameSettings.debugScreen)
+            if(GameSettings.entityLabels)
             {
                 for (int i = 0; i < debugLabelList.Count; i++)
                 {
@@ -278,7 +279,7 @@ namespace RabbetGameEngine
         public void spawnEntityInWorld(Entity theEntity)
         {
             entities.Add(entityIDItterator++, theEntity);
-            if(GameSettings.debugScreen)
+            if(GameSettings.entityLabels)
             {
                 addDebugLabel(new VFXMovingText3D(theEntity, "debugLabel", "Arial_Shadow", "Entity: " + (entityIDItterator-1).ToString(), new Vector3(0,1,0), 2.0F, CustomColor.white));
             }

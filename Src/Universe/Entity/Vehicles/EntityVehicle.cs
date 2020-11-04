@@ -3,7 +3,7 @@ using System;
 
 namespace RabbetGameEngine
 {
-    //TODO: Fix riding entity bounding box colliding with vehicle and being disjoint, and riding entity pos not matching vehicle pos + offset
+    //TODO: Rework entity vehicle systems. Fix riding entity bounding box colliding with vehicle and being disjoint, and riding entity pos not matching vehicle pos + offset
     public class EntityVehicle : Entity
     {
         protected EntityLiving mountingEntity;

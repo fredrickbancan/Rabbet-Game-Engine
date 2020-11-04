@@ -51,26 +51,31 @@ namespace RabbetGameEngine
                     GameInstance.get.Close();
                 }
 
+                if (singleKeyPress(Keys.F1))
+                {
+                    toggleBoolean(ref GameSettings.drawHitboxes);
+                }
+                
+                if (singleKeyPress(Keys.F2))
+                {
+                    toggleBoolean(ref GameSettings.entityLabels);
+                    GameInstance.get.onToggleEntityLabels();
+                }
+
                 if (singleKeyPress(Keys.F3))
                 {
                     toggleBoolean(ref GameSettings.debugScreen);
-                    GameInstance.get.onToggleDebugScreen();
                 }
 
                 if (singleKeyPress(Keys.F4))
                 {
-                    toggleBoolean(ref GameSettings.drawHitboxes);
+                    //TODO: Test next update of OpenTK, currently broken. (can not exit fullscreen mode)
+                    //toggleBoolean(ref GameSettings.fullscreen);
+                   // Renderer.onToggleFullscreen();
                 }
                 if (singleKeyPress(Keys.F5))
                 {
                     toggleBoolean(ref GameSettings.noclip);
-                }
-
-                if (singleKeyPress(Keys.F11))
-                {
-                    //TODO: Test next update of OpenTK, currently broken. (can not exit fullscreen mode)
-                    //toggleBoolean(ref GameSettings.fullscreen);
-                   // Renderer.onToggleFullscreen();
                 }
                 PlayerController.updateInput(keyboardState);//do player input 
                 PlayerController.updateSinglePressInput(keyboardState);//do player single button input

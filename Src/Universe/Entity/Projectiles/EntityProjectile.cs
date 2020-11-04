@@ -1,9 +1,8 @@
 ﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Physics;
-using System;
 namespace RabbetGameEngine
 {
-    class EntityProjectile : Entity, IDisposable
+    class EntityProjectile : Entity
     {
         protected float maxExistedTicks;
 
@@ -14,16 +13,12 @@ namespace RabbetGameEngine
             this.maxExistedTicks = TicksAndFrames.getNumOfTicksForSeconds(maxLivingSeconds);
             this.collider = new AABB(new Vector3(-0.125F, -0.125F, -0.125F), new Vector3(0.125F, 0.125F, 0.125F), this);
             this.hasCollider = true;
+            this.isProjectile = true;
         }
 
         public override void onTick()
         {
             base.onTick();
-
-            //rotate to match direction
-
-
-            
             if(hasCollided)
             {
                 onCollide();
@@ -32,25 +27,19 @@ namespace RabbetGameEngine
             //do last
             if(existedTicks > maxExistedTicks)//delete this projectile if it has reached its limit of existance time
             {
-                Dispose();
+                ceaseToExist();
             }
         }
 
         public virtual void onCollide()
         {
-            Dispose();
+            ceaseToExist();
         }
 
         public override void onCollideWithEntity(Entity ent)
         {
             base.onCollideWithEntity(ent);
             onCollide();
-        }
-
-        public void Dispose()
-        {
-            ceaseToExist();
-            GC.SuppressFinalize(this);
         }
     }
 }

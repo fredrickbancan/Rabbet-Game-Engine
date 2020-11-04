@@ -57,7 +57,7 @@ namespace RabbetGameEngine.SubRendering
         {
             //add a copy of the aabb line model transformed to aabb collider specs
             Renderer.requestRender(BatchType.lines, null, aabbModelPrefab.copyModel().transformVertices(new Vector3((float)box.extentX * 2, (float)box.extentY * 2, (float)box.extentZ * 2), Vector3.Zero, box.centerVec));
-          
+            renderPointWithNormalLines(box.centerVec);
         }
 
         public static void addPointToBeRendered(Vector3 pos)
@@ -65,6 +65,12 @@ namespace RabbetGameEngine.SubRendering
             PointParticle pParticle = new PointParticle(pos, CustomColor.facility.toNormalVec4(), 0.05F, true);
             Renderer.requestRender(pParticle, false);
 
+            renderPointWithNormalLines(pos);
+        }
+
+
+        public static void renderPointWithNormalLines(Vector3 pos)
+        {
             Vector4 redColor = CustomColor.red.toNormalVec4();
             Vector4 greenColor = CustomColor.green.toNormalVec4();
             Vector4 blueColor = CustomColor.blue.toNormalVec4();
@@ -72,11 +78,11 @@ namespace RabbetGameEngine.SubRendering
             Vertex[] lineVerts = new Vertex[]
             {
                 new Vertex(pos, redColor, Vector2.Zero),//normal x line start
-                new Vertex(pos + new Vector3(1F,0,0), redColor, Vector2.Zero),//normal x line end
+                new Vertex(pos + new Vector3(1F,0,0), new Vector4(0.0F), Vector2.Zero),//normal x line end
                  new Vertex(pos, greenColor, Vector2.Zero),//normal y line start
-                new Vertex(pos+ new Vector3(0,1F,0), greenColor, Vector2.Zero),//normal y line end
+                new Vertex(pos+ new Vector3(0,1F,0), new Vector4(0.0F), Vector2.Zero),//normal y line end
                  new Vertex(pos, blueColor, Vector2.Zero),//normal z line start
-                new Vertex(pos+ new Vector3(0,0,1F), blueColor, Vector2.Zero)//normal z line end
+                new Vertex(pos+ new Vector3(0,0,1F), new Vector4(0.0F), Vector2.Zero)//normal z line end
             };
 
             uint[] lineIndices = new uint[]
