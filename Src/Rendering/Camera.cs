@@ -77,6 +77,11 @@ namespace RabbetGameEngine
             return this.viewMatrix;
         }
 
+        public Vector3 getFrontVector()
+        {
+            return camFrontVector;
+        }
+
         public float getYaw()
         {
             return yaw;

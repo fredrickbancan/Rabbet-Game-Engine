@@ -11,7 +11,7 @@ namespace RabbetGameEngine
         /// <summary>
         /// This setting MUST be between 0 and 1
         /// </summary>
-        public static float masterVolume = 0.5F;
+        public static float masterVolume = 0.2F;
 
         public static string defaultFont = "Arial_Shadow";
 

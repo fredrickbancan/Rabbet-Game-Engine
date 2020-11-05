@@ -9,7 +9,6 @@ layout(location = 4) in vec4 prevPosition;
 layout(location = 5) in vec4 prevPointColor;
 layout(location = 6) in float prevRadius;
 layout(location = 7) in float prevAoc;
-layout(location = 8) in vec2 corner;//instanced quad corner
 
 
 uniform float fogDensity = 0.0075;
@@ -17,12 +16,9 @@ const float fogGradient = 2.5;
 
 out vec4 vColor;
 out float visibility;
-out vec4 worldPos;
-out float rad;
-out vec2 coords;
+
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
-uniform vec3 cameraPos;
 //vector of viewport dimensions
 uniform vec2 viewPortSize;
 uniform float percentageToNextTick;
@@ -30,31 +26,13 @@ uniform int frame;
 out float fAoc;
 void main()
 {
-    coords = corner * 2.0;
-    //lerping radius
-    rad = (prevRadius + (radius - prevRadius) * percentageToNextTick);
-
-    //lerping pos
-    worldPos = (prevPosition + (position - prevPosition) * percentageToNextTick);
-    //create translation
-    mat4 modelMatrix = mat4(1.0F);
-    modelMatrix[3][0] = worldPos.x;
-    modelMatrix[3][1] = worldPos.y;
-    modelMatrix[3][2] = worldPos.z;
-
-    //remove rotation
-    mat4 modelViewBillboard = viewMatrix * modelMatrix;
-    modelViewBillboard[0][0] = 1;
-    modelViewBillboard[0][1] = 0;
-    modelViewBillboard[0][2] = 0;
-    modelViewBillboard[1][0] = 0;
-    modelViewBillboard[1][1] = 1;
-    modelViewBillboard[1][2] = 0;
-    modelViewBillboard[2][0] = 0;
-    modelViewBillboard[2][1] = 0;
-    modelViewBillboard[2][2] = 1;
-    vec4 positionRelativeToCam = modelViewBillboard * vec4(corner.x * rad * 2, corner.y * rad * 2, 0, 1);
+    //lerping position
+    vec4 worldPosition = prevPosition + (position - prevPosition) * percentageToNextTick;
+    vec4 positionRelativeToCam = viewMatrix * worldPosition;
     gl_Position = projectionMatrix * positionRelativeToCam;
+
+    //keeps the point size consistent with distance AND resolution. Lerp radius.
+    gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * (prevRadius + (radius - prevRadius) * percentageToNextTick) / gl_Position.w;//FIX: this does not take into account aspect ratio and can cause points to be elipsical in shape.
 
     float distanceFromCam = length(positionRelativeToCam.xyz);
     visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));
@@ -65,40 +43,42 @@ void main()
     fAoc = aoc;
 }
 
+
 /*#############################################################################################################################################################################################*/
 #shader fragment
 #version 330 core
+
 layout(location = 0) out vec4 fragColor;
 in float visibility;
 in vec4 vColor;
 in float fAoc;
-in vec4 worldPos;
-in float rad;
-in vec2 coords;
-uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix;
+
 uniform vec3 fogColor;
+
 
 float ambientOcclusion;//variable for applying a shadowing effect towards the edges of the point to give the illusion of a sphereical shape
 
-void makeSphere()
+void makeCircle()
 {
     //clamps fragments to circle shape. 
-    float d = dot(coords, coords);
+    vec2 centerVec = gl_PointCoord - vec2(0.5F);//get a vector from center of square to coord
+    float coordLength = length(centerVec);
 
-    if (d >= 1.0F)
+    if (coordLength >= 0.5F)
     {//discard if the vectors length is more than 0.5
         discard;
     }
+
     //calc ambient occlusion for circle
     if (bool(fAoc))
-        ambientOcclusion = sqrt(1.0F - d / 2);
+        ambientOcclusion = sqrt(1.0 - coordLength);
 }
 
 
 void main()
 {
-    makeSphere();
+    makeCircle();
+
     vec3 colorModified = vColor.rgb;
     if (bool(fAoc))
     {
@@ -107,9 +87,8 @@ void main()
         colorModified.g *= ambientOcclusion;
         colorModified.b *= ambientOcclusion;
     }
-    
 
-	//add fog effect to frag
+    //add fog effect to frag
     fragColor.rgb = mix(fogColor, colorModified, visibility);
     fragColor.a = 1;
 }

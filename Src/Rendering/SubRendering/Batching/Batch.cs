@@ -6,32 +6,23 @@ using System;
 namespace RabbetGameEngine.SubRendering
 {
     public class Batch
-    {
-        //TODO: Figure out sending a billboarded viewmatrix to the shader and impliment
-        public enum BillBoardType
-        {
-            NONE,
-            CHEAP_CYLINDRICAL,
-            CHEAP_SPHERICAL,
-            CYLINDRICAL,
-            SPHERICAL
-        }
+    { 
         public static readonly int vectorSize = sizeof(float) * 3;
         public static readonly int matrixSize = sizeof(float) * 16;
         public static readonly int initialArraySize = 32;
-        public static readonly int maxBufferSizeBytes = 8388608;
-        public static readonly int maxIndiciesCount = maxBufferSizeBytes / sizeof(uint);
-        public static readonly int maxVertexCount = maxBufferSizeBytes / Vertex.vertexByteSize;
-        public static readonly int maxPositionCount = maxBufferSizeBytes / vectorSize;
-        public static readonly int maxPointCount = maxBufferSizeBytes / PointParticle.pParticleByteSize;
-        public static readonly int maxMatrixCount = maxBufferSizeBytes / matrixSize;
-        public static readonly int maxDrawCommandCount = maxBufferSizeBytes / DrawCommand.sizeInBytes;
-
-        private BillBoardType billboard = BillBoardType.NONE;
+        public static readonly int baseMaxBufferSizeBytes = 8388608;
+        private int maxBufferSizeBytes = baseMaxBufferSizeBytes;
+        private int maxIndiciesCount;
+        private int maxVertexCount;
+        private int maxPositionCount;
+        private int maxPointCount;
+        private int maxMatrixCount;
+        private int maxDrawCommandCount;
 
         private bool usingLerpPoints = false;
         private bool usesPositions = false;
         private bool usesPrevPositions = false;
+        private bool usesQuadInstancing = false;
 
         /// <summary>
         /// true if this batch requires transparency sorting
@@ -109,27 +100,29 @@ namespace RabbetGameEngine.SubRendering
             VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
             batchedModel = new Model(new Vertex[initialArraySize], new uint[initialArraySize]);
             initializeBatchFormat();
+            calculateBatchLimitations();
         }
 
         public Batch(bool pointTransparency, bool lerp)
         {
             pointBased = true;
-           
-            if(pointTransparency)
+
+            calculateBatchLimitations();
+
+            if (pointTransparency)
             {
                 if(!lerp)
                 {
-                    billboard = BillBoardType.SPHERICAL;
                     batchType = BatchType.iSpheresTransparent;
                     ShaderUtil.tryGetShader(ShaderUtil.iSpheresTransparentName, out batchShader);
                     requiresSorting = true;
                     VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
                     batchedPoints = new PointParticle[initialArraySize];
+                    usesQuadInstancing = true;
                     return;
                 }
                 else
                 {
-                    billboard = BillBoardType.CHEAP_SPHERICAL;
                     batchType = BatchType.lerpISpheresTransparent;
                     ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresTransparentName, out batchShader);
                     VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
@@ -143,16 +136,15 @@ namespace RabbetGameEngine.SubRendering
             {
                 if (!lerp)
                 {
-                    billboard = BillBoardType.SPHERICAL;
                     batchType = BatchType.iSpheres;
                     ShaderUtil.tryGetShader(ShaderUtil.iSpheresName, out batchShader);
                     VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
                     batchedPoints = new PointParticle[initialArraySize];
+                    usesQuadInstancing = true;
                     return;
                 }
                 else
                 {
-                    billboard = BillBoardType.CHEAP_SPHERICAL;
                     batchType = BatchType.lerpISpheres;
                     ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresName, out batchShader);
                     usingLerpPoints = true;
@@ -161,7 +153,16 @@ namespace RabbetGameEngine.SubRendering
                     return;
                 }
             }
-           
+        }
+
+        private void calculateBatchLimitations()
+        {
+            maxIndiciesCount = maxBufferSizeBytes / sizeof(uint);
+            maxVertexCount = maxBufferSizeBytes / Vertex.vertexByteSize;
+            maxDrawCommandCount = maxBufferSizeBytes / DrawCommand.sizeInBytes;
+            maxMatrixCount = maxBufferSizeBytes / (sizeof(float) * 16);
+            maxPositionCount = maxBufferSizeBytes / (sizeof(float) * 3);
+            maxPointCount = maxBufferSizeBytes / PointParticle.pParticleByteSize;
         }
 
         private void initializeBatchFormat()
@@ -174,10 +175,12 @@ namespace RabbetGameEngine.SubRendering
 
                 case BatchType.guiCutout:
                     ShaderUtil.tryGetShader(ShaderUtil.guiCutoutName, out batchShader);
+                    maxBufferSizeBytes /= 2;
                     break;
 
                 case BatchType.guiText:
                     ShaderUtil.tryGetShader(ShaderUtil.text2DName, out batchShader);
+                    maxBufferSizeBytes /= 2;
                     transparentGUI = true;
                     break;
 
@@ -185,15 +188,16 @@ namespace RabbetGameEngine.SubRendering
                     ShaderUtil.tryGetShader(ShaderUtil.text3DName, out batchShader);
                     positions = new Vector3[initialArraySize];
                     drawCommands = new DrawCommand[initialArraySize];
+                    maxBufferSizeBytes /= 2;
                     usesMultiDrawIndirect = true;
                     usesPositions = true;
-                    billboard = BillBoardType.CHEAP_SPHERICAL;
                     break;
 
                 case BatchType.lerpText3D:
                     ShaderUtil.tryGetShader(ShaderUtil.lerpText3DName, out batchShader);
                     positions = new Vector3[initialArraySize];
                     drawCommands = new DrawCommand[initialArraySize];
+                    maxBufferSizeBytes /= 2;
                     usesMultiDrawIndirect = true;
                     usesPositions = true;
                     usesPrevPositions = true;
@@ -201,21 +205,25 @@ namespace RabbetGameEngine.SubRendering
 
                 case BatchType.triangles:
                     ShaderUtil.tryGetShader(ShaderUtil.trianglesName, out batchShader);
+                    maxBufferSizeBytes /= 2;
                     break;
 
                 case BatchType.trianglesTransparent:
                     ShaderUtil.tryGetShader(ShaderUtil.trianglesTransparentName, out batchShader);
+                    maxBufferSizeBytes /= 2;
                     requiresSorting = true;
                     break;
 
                 case BatchType.lines:
-                    ShaderUtil.tryGetShader(ShaderUtil.linesName, out batchShader);
+                    ShaderUtil.tryGetShader(ShaderUtil.linesName, out batchShader); 
+                    maxBufferSizeBytes /= 2;
                     break;
 
                 case BatchType.lerpTriangles:
                     ShaderUtil.tryGetShader(ShaderUtil.lerpTrianglesName, out batchShader);
                     modelMatrices = new Matrix4[initialArraySize];
                     drawCommands = new DrawCommand[initialArraySize];
+                    maxBufferSizeBytes /= 4;
                     usesMultiDrawIndirect = true;
                     usesLerpMatrices = true;
                     break;
@@ -223,7 +231,8 @@ namespace RabbetGameEngine.SubRendering
                 case BatchType.lerpTrianglesTransparent:
                     ShaderUtil.tryGetShader(ShaderUtil.lerpTrianglesTransparentName, out batchShader);
                     modelMatrices = new Matrix4[initialArraySize];
-                    drawCommands = new DrawCommand[initialArraySize];
+                    drawCommands = new DrawCommand[initialArraySize]; 
+                    maxBufferSizeBytes /= 4;
                     usesMultiDrawIndirect = true;
                     usesLerpMatrices = true;
                     requiresSorting = true;
@@ -233,6 +242,7 @@ namespace RabbetGameEngine.SubRendering
                     ShaderUtil.tryGetShader(ShaderUtil.lerpLinesName, out batchShader);
                     modelMatrices = new Matrix4[initialArraySize];
                     drawCommands = new DrawCommand[initialArraySize];
+                    maxBufferSizeBytes /= 4;
                     usesMultiDrawIndirect = true;
                     usesLerpMatrices = true;
                     break;
@@ -491,7 +501,7 @@ namespace RabbetGameEngine.SubRendering
             drawCommands[requestedObjectItterator] = new DrawCommand((uint)(objIndCount), (uint)(1), (uint)(requestedIndicesCount), (uint)(requestedVerticesCount), (uint)(requestedObjectItterator));
         }
 
-        public void onTickStart()
+        public void beforeTick()
         {
             requestedVerticesCount = 0;
             requestedIndicesCount = 0;
@@ -545,7 +555,6 @@ namespace RabbetGameEngine.SubRendering
         {
             VAO.bindVaoVboIbo();
             batchShader.use();
-
             batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
             batchShader.setUniformMat4F("viewMatrix", viewMatrix);
@@ -556,8 +565,14 @@ namespace RabbetGameEngine.SubRendering
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             if(pointBased)
             {
-                VAO.bindInstVBO();
-                GL.DrawArraysInstanced(VAO.getPrimType(), 0, 4, usingLerpPoints ? pointsItterator / 2 : pointsItterator);
+                if(usesQuadInstancing)
+                {
+                    VAO.bindInstVBO();
+                    GL.DrawArraysInstanced(VAO.getPrimType(), 0, 4, pointsItterator);
+                    return;
+                }
+                batchShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
+                GL.DrawArrays(VAO.getPrimType(), 0, pointsItterator/2);
                 return;
             }
 

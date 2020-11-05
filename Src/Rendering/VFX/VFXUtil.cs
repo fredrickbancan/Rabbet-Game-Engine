@@ -44,13 +44,10 @@ namespace RabbetGameEngine.VisualEffects
             planet.spawnVFXInWorld(explosion2);
         }
 
-        public static void doSmallSmokePuffEffect(Planet planet, Vector3 location, float pitch = 0, float yaw = -90, float roll = 0)
+        public static void doSmallSmokePuffEffect(Planet planet, Vector3 location)
         {
             VFXPointCloud smoke = new VFXPointCloud(location, CustomColor.darkGrey, true, false, 4F, 0.05F, 0.7F);
             smoke.constructRandomPointCloudModel(7, 0.05F, true);
-            smoke.setPitch(pitch);
-            smoke.setYaw(yaw);
-            smoke.setRoll(roll);
             smoke.setYAccel(0.001572F);
             smoke.setExpansionResistance(0.2572F);
             smoke.setExpansionVelocity(2.5F);

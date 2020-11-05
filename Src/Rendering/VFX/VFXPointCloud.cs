@@ -4,8 +4,6 @@ using RabbetGameEngine.SubRendering;
 
 namespace RabbetGameEngine.VisualEffects
 {
-    //TODO: Create vfx class for singular point particles.
-    /*Base class for any VFX using point particles*/
     public class VFXPointCloud : VFX
     {
         protected PointCloudModel cloudModel;

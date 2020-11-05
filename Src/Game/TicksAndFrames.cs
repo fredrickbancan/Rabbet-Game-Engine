@@ -18,6 +18,7 @@ namespace RabbetGameEngine
         private static int frames;
         private static int framesPerSec;
         private static double timer;
+        private static long millInSec = (long)TimeSpan.FromSeconds(1).TotalMilliseconds;
         public static void init(int tps)
         {
             ticksPerSecond = tps;
@@ -59,7 +60,7 @@ namespace RabbetGameEngine
                 }
                 return;
             }
-            while((applicationTime + msPerTick) < getRealTimeMills())
+            while((applicationTime + msPerTick) < getRealTimeMills() && getRealTimeMills() - (applicationTime + msPerTick) < millInSec)
             {
                 onTickFunc();
                 applicationTime += (long)msPerTick;

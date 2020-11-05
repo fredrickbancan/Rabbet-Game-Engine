@@ -23,6 +23,8 @@ namespace RabbetGameEngine
         private Skybox planetSkybox;
         private string wallTextureName = "leafywall";
         private string groundTextureName = "wood";
+        private static readonly Vector3 fallPlaneRespawnPos = new Vector3(0,128,0);
+        private static readonly float fallPlaneHeight = -10.0F;
         private Random random;
         private float fogDensity;
         private float fogGradient;
@@ -162,6 +164,10 @@ namespace RabbetGameEngine
                 entAt.preTick();
                 entAt.onTick();
                 entAt.postTick();
+                if(entAt.getPosition().Y < fallPlaneHeight)
+                {
+                    entAt.setPosition(fallPlaneRespawnPos);
+                }
                 if (entAt.getIsPlayer() && GameSettings.noclip)
                 {
                     entAt.getColliderHandle().offset(entAt.getVelocity());

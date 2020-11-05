@@ -48,7 +48,7 @@ namespace RabbetGameEngine.SubRendering
                     break;
 
                 case ColliderType.point:
-                    addPointToBeRendered(hitBox.getCenterVec());
+                    renderPointWithNormalLines(hitBox.getCenterVec());
                     break;
             }
         }
@@ -60,17 +60,11 @@ namespace RabbetGameEngine.SubRendering
             renderPointWithNormalLines(box.centerVec);
         }
 
-        public static void addPointToBeRendered(Vector3 pos)
+        public static void renderPointWithNormalLines(Vector3 pos)
         {
             PointParticle pParticle = new PointParticle(pos, CustomColor.facility.toNormalVec4(), 0.05F, true);
             Renderer.requestRender(pParticle, false);
 
-            renderPointWithNormalLines(pos);
-        }
-
-
-        public static void renderPointWithNormalLines(Vector3 pos)
-        {
             Vector4 redColor = CustomColor.red.toNormalVec4();
             Vector4 greenColor = CustomColor.green.toNormalVec4();
             Vector4 blueColor = CustomColor.blue.toNormalVec4();

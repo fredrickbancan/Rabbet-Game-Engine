@@ -7,6 +7,7 @@ using System.Linq;
 
 namespace RabbetGameEngine.Sound
 {
+    //TODO: Fix bug where after enough sounds play, new sounds are silent. Most likely due to buffers being created and deleted non stop.
     //TODO: Add support for sounds from moving objects
     //TODO: Add support for Looping sounds from moving objects
     public static class SoundManager

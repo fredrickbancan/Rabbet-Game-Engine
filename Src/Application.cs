@@ -1,33 +1,49 @@
 ﻿using OpenTK.Windowing.Desktop;
 using System;
+using System.Diagnostics;
+
 namespace RabbetGameEngine
 {
-    /*This class acts as the main entry point for the program. Contains static functions for
-      Printing information to the console.*/
 
-    //TODO: Impliment some sort of error screen to avoid crashes and properly shut down game.
+    //TODO: Impliment some sort of cross platform error screen to avoid crashes and properly shut down game.
     class Application
     {
+        private static Process process;
         static void Main(string[] args)
         {
-            NativeWindowSettings w = new NativeWindowSettings();
-            w.StartFocused = true;
-            w.StartVisible = true;
-
-            GameWindowSettings g = new GameWindowSettings();
-            GameInstance game = new GameInstance(g, w);
+            process = Process.GetCurrentProcess();   
+           
             try
             {
+                NativeWindowSettings w = new NativeWindowSettings();
+                w.StartFocused = true;
+                w.StartVisible = true;
 
-            game.Run();
+                GameWindowSettings g = new GameWindowSettings();
+
+                GameInstance game = new GameInstance(g, w);
+                game.Run();
             }
             catch(Exception e)
             {
                 Application.error("Failed to run game, Exception: " + e.Message + "\nStack Trace: " + e.StackTrace);
             }
+            finally
+            {
+                process.Dispose();
+            }
         }
         public static readonly string version = "0.1.0_indev";
         public static readonly string applicationName = "RabbetGameEngine " + version;
+
+        /// <summary>
+        /// returns the number of bytes of memory used by this application
+        /// </summary>
+        public static long getMemoryUsageBytes()
+        {
+            return (process = Process.GetCurrentProcess()).PrivateMemorySize64;
+        }
+
 
         #region Print functions
         public static void infoPrint(object s)

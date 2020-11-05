@@ -59,6 +59,7 @@ namespace RabbetGameEngine.Debugging
                         ("Sounds: " + SoundManager.getPlayingSoundsCount()),
                         ("Batches: " + BatchManager.batchCount),
                         ("Draw Calls: " + Renderer.totalDraws),
+                        ("Used memory: " + (Application.getMemoryUsageBytes()/1000000L).ToString() + "MB"),
                        }); 
             }
             else

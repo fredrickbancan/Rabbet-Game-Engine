@@ -20,6 +20,7 @@ namespace RabbetGameEngine
         private bool usesIndices = true;
         private bool usesMatrices = false;
         private bool usesIndirect = false;
+        private bool usesQuadInstancing = false;
 
         /// <summary>
         /// True if this vao has a buffer for vec3 positions, i.e: 3d text. Not nececarially lerp
@@ -31,8 +32,8 @@ namespace RabbetGameEngine
         /// </summary>
         private bool usesPrevPositions = false;
 
-        private bool particleBased = false;
-        private bool lerpParticles = false;
+        private bool iSphereBased = false;
+        private bool lerpISphereBased = false;
         private int bufferByteSize = 0;
         private bool hasInitialized = false;
         private Vector2[] spriteInstanceData = null;
@@ -64,7 +65,7 @@ namespace RabbetGameEngine
             usesIndices = false;
             this.batchType = BatchType.none;
             dynamic = false;
-            particleBased = true;
+            iSphereBased = true;
             vaoID = GL.GenVertexArray();
             GL.BindVertexArray(vaoID);
 
@@ -160,23 +161,18 @@ namespace RabbetGameEngine
                         spriteInstanceData[i] = new Vector2(QuadPrefab.quadVertices[i].pos.X, QuadPrefab.quadVertices[i].pos.Y);
                     }
 
+                    usesQuadInstancing = true;
                     usesIndices = false;
-                    particleBased = true;
-                    lerpParticles = false;
+                    iSphereBased = true;
+                    lerpISphereBased = false;
                     break;
 
                 case BatchType.lerpISpheres:
                 case BatchType.lerpISpheresTransparent:
-                    primType = PrimitiveType.TriangleStrip;
-                    this.spriteInstanceData = new Vector2[QuadPrefab.quadVertices.Length];
-                    for (int i = 0; i < QuadPrefab.quadVertices.Length; ++i)
-                    {
-                        spriteInstanceData[i] = new Vector2(QuadPrefab.quadVertices[i].pos.X, QuadPrefab.quadVertices[i].pos.Y);
-                    }
-
+                    primType = PrimitiveType.Points;
                     usesIndices = false;
-                    particleBased = true;
-                    lerpParticles = true;
+                    iSphereBased = true;
+                    lerpISphereBased = true;
                     break;
                      
                 default:
@@ -294,12 +290,12 @@ namespace RabbetGameEngine
                 GL.BufferData(BufferTarget.ElementArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
             }
 
-            //These types require the standard VBO layout.
-            if (!particleBased)
+            vboID = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vboID);
+            GL.BufferData(BufferTarget.ArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
+
+            if (!iSphereBased)
             {
-                vboID = GL.GenBuffer();
-                GL.BindBuffer(BufferTarget.ArrayBuffer, vboID);
-                GL.BufferData(BufferTarget.ArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
 
                 GL.EnableVertexAttribArray(0);
                 GL.VertexAttribPointer(0, Vertex.positionLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.positionOffset);
@@ -309,11 +305,11 @@ namespace RabbetGameEngine
 
                 GL.EnableVertexAttribArray(2);
                 GL.VertexAttribPointer(2, Vertex.uvLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.uvOffset);
-               
+
                 GL.EnableVertexAttribArray(3);
                 GL.VertexAttribPointer(3, Vertex.objectIDLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.objectIDOffset);
-               
-                if(usesMatrices)
+
+                if (usesMatrices)
                 {
                     matricesVboID = GL.GenBuffer();
                     GL.BindBuffer(BufferTarget.ArrayBuffer, matricesVboID);
@@ -340,7 +336,7 @@ namespace RabbetGameEngine
 
                     //prevTickModelMatrixRow0
                     GL.EnableVertexAttribArray(8);
-                    GL.VertexAttribPointer(8, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix +  0);
+                    GL.VertexAttribPointer(8, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 0);
                     GL.VertexAttribDivisor(8, 1);
                     //prevTickModelMatrixRow1
                     GL.EnableVertexAttribArray(9);
@@ -361,7 +357,7 @@ namespace RabbetGameEngine
                     GL.BindBuffer(BufferTarget.ArrayBuffer, pboID);
                     GL.BufferData(BufferTarget.ArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
                     int stride;
-                    if(usesPrevPositions)
+                    if (usesPrevPositions)
                     {
                         stride = sizeof(float) * 3 * 2;
                         GL.EnableVertexAttribArray(4);
@@ -380,7 +376,7 @@ namespace RabbetGameEngine
                         GL.VertexAttribPointer(4, 3, VertexAttribPointerType.Float, false, stride, 0);
                         GL.VertexAttribDivisor(4, 1);
                     }
-                    
+
                 }
 
                 if (usesIndirect)
@@ -392,56 +388,64 @@ namespace RabbetGameEngine
             }
             else
             {
-                
-                vboID = GL.GenBuffer();
-                GL.BindBuffer(BufferTarget.ArrayBuffer, vboID);
-                GL.BufferData(BufferTarget.ArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
-                
-                int stride = lerpParticles ? PointParticle.pParticleByteSize * 2 : PointParticle.pParticleByteSize;
-                //current point data
-                GL.EnableVertexAttribArray(0);
-                GL.VertexAttribPointer(0, PointParticle.positionLength, VertexAttribPointerType.Float, false, stride, PointParticle.positionOffset);
-                GL.VertexAttribDivisor(0, 1);
-
-                GL.EnableVertexAttribArray(1);
-                GL.VertexAttribPointer(1, PointParticle.colorLength, VertexAttribPointerType.Float, false, stride, PointParticle.colorOffset);
-                GL.VertexAttribDivisor(1, 1);
-
-                GL.EnableVertexAttribArray(2);
-                GL.VertexAttribPointer(2, PointParticle.radiusLength, VertexAttribPointerType.Float, false, stride, PointParticle.radiusOffset);
-                GL.VertexAttribDivisor(2, 1);
-
-                GL.EnableVertexAttribArray(3);
-                GL.VertexAttribPointer(3, PointParticle.aocLength, VertexAttribPointerType.Float, false, stride, PointParticle.aocOffset);
-                GL.VertexAttribDivisor(3, 1);
-
-                if (lerpParticles)
+                if (lerpISphereBased)
                 {
+                    int stride = PointParticle.pParticleByteSize * 2;
+
+                    //current point data
+                    GL.EnableVertexAttribArray(0);
+                    GL.VertexAttribPointer(0, PointParticle.positionLength, VertexAttribPointerType.Float, false, stride, PointParticle.positionOffset);
+
+
+                    GL.EnableVertexAttribArray(1);
+                    GL.VertexAttribPointer(1, PointParticle.colorLength, VertexAttribPointerType.Float, false, stride, PointParticle.colorOffset);
+
+
+                    GL.EnableVertexAttribArray(2);
+                    GL.VertexAttribPointer(2, PointParticle.radiusLength, VertexAttribPointerType.Float, false, stride, PointParticle.radiusOffset);
+
+
+                    GL.EnableVertexAttribArray(3);
+                    GL.VertexAttribPointer(3, PointParticle.aocLength, VertexAttribPointerType.Float, false, stride, PointParticle.aocOffset);
+
                     //previous tick point data
                     GL.EnableVertexAttribArray(4);
                     GL.VertexAttribPointer(4, PointParticle.positionLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.positionOffset);
-                    GL.VertexAttribDivisor(4, 1);
+
 
                     GL.EnableVertexAttribArray(5);
                     GL.VertexAttribPointer(5, PointParticle.colorLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.colorOffset);
-                    GL.VertexAttribDivisor(5, 1);
+
 
                     GL.EnableVertexAttribArray(6);
                     GL.VertexAttribPointer(6, PointParticle.radiusLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.radiusOffset);
-                    GL.VertexAttribDivisor(6, 1);
+
 
                     GL.EnableVertexAttribArray(7);
                     GL.VertexAttribPointer(7, PointParticle.aocLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.aocOffset);
-                    GL.VertexAttribDivisor(7, 1);
-                    instVboID = GL.GenBuffer();
-                    GL.BindBuffer(BufferTarget.ArrayBuffer, instVboID);
-                    GL.BufferData(BufferTarget.ArrayBuffer, spriteInstanceData.Length * sizeof(float) * 2, spriteInstanceData, BufferUsageHint.StaticDraw);
-                    //quad vertex positions (vector 2 F)
-                    GL.EnableVertexAttribArray(8);
-                    GL.VertexAttribPointer(8, 2, VertexAttribPointerType.Float, false, sizeof(float) * 2, 0);
+
                 }
                 else
                 {
+                    int stride = PointParticle.pParticleByteSize;
+
+                    //current point data
+                    GL.EnableVertexAttribArray(0);
+                    GL.VertexAttribPointer(0, PointParticle.positionLength, VertexAttribPointerType.Float, false, stride, PointParticle.positionOffset);
+                    GL.VertexAttribDivisor(0,1);
+
+                    GL.EnableVertexAttribArray(1);
+                    GL.VertexAttribPointer(1, PointParticle.colorLength, VertexAttribPointerType.Float, false, stride, PointParticle.colorOffset);
+                    GL.VertexAttribDivisor(1, 1);
+
+                    GL.EnableVertexAttribArray(2);
+                    GL.VertexAttribPointer(2, PointParticle.radiusLength, VertexAttribPointerType.Float, false, stride, PointParticle.radiusOffset);
+                    GL.VertexAttribDivisor(2, 1);
+
+                    GL.EnableVertexAttribArray(3);
+                    GL.VertexAttribPointer(3, PointParticle.aocLength, VertexAttribPointerType.Float, false, stride, PointParticle.aocOffset);
+                    GL.VertexAttribDivisor(3, 1);
+
                     instVboID = GL.GenBuffer();
                     GL.BindBuffer(BufferTarget.ArrayBuffer, instVboID);
                     GL.BufferData(BufferTarget.ArrayBuffer, spriteInstanceData.Length * sizeof(float) * 2, spriteInstanceData, BufferUsageHint.StaticDraw);
@@ -449,9 +453,8 @@ namespace RabbetGameEngine
                     GL.EnableVertexAttribArray(4);
                     GL.VertexAttribPointer(4, 2, VertexAttribPointerType.Float, false, sizeof(float) * 2, 0);
                 }
-
+                
             }
-
             hasInitialized = true;
         }
 
@@ -496,7 +499,7 @@ namespace RabbetGameEngine
 
         public void bindInstVBO()
         {
-            if (particleBased)
+            if (usesQuadInstancing)
                 GL.BindBuffer(BufferTarget.ArrayBuffer, instVboID);
         }
 
@@ -574,7 +577,7 @@ namespace RabbetGameEngine
                 GL.DeleteBuffer(pboID);
             }
 
-            if(particleBased)
+            if(usesQuadInstancing)
             {
                 GL.DeleteBuffer(instVboID);
             }

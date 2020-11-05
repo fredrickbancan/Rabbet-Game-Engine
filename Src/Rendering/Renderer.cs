@@ -36,6 +36,8 @@ namespace RabbetGameEngine
             GL.Viewport(GameInstance.get.getGameWindowSize());
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.PointSprite);
+            GL.Enable(EnableCap.VertexProgramPointSize);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.LineWidth(3);
@@ -87,10 +89,10 @@ namespace RabbetGameEngine
             BatchManager.requestRender(point, prevTickPoint, transparency);
             Profiler.beginEndProfile("batching");
         }
-        public static void onTickStart()
+        public static void beforeTick()
         {
             Profiler.beginEndProfile("batching");
-            BatchManager.onTickStart();
+            BatchManager.beforeTick();
             Profiler.beginEndProfile("batching");
         }
         public static void onTickEnd()

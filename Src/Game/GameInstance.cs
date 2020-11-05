@@ -31,6 +31,11 @@ namespace RabbetGameEngine
         public EntityPlayer thePlayer;
         public Planet currentPlanet;
 
+        /// <summary>
+        /// Will be true if there has been atleast one onTick() call since last frame.
+        /// </summary>
+        private bool doneOneTick = false; 
+
         public GameInstance(GameWindowSettings gameWindowSettings, NativeWindowSettings windowSettings) : base(gameWindowSettings, windowSettings)
         {
 
@@ -72,7 +77,6 @@ namespace RabbetGameEngine
                 currentPlanet = new Planet(0xdeadbeef);
                 //create and spawn player in new world
                 thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
-                currentPlanet.spawnEntityInWorld(new EntityTank(currentPlanet, new Vector3(5, 10, -5)));
                 for (int i = 0; i < 2; i++)
                 {
                     currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(0, 10, 0)));
@@ -131,6 +135,7 @@ namespace RabbetGameEngine
             Input.updateInput();
             try
             {
+                doneOneTick = false;
                 TicksAndFrames.doOnTickUntillRealtimeSync(onTick);
             }
             catch(Exception e)
@@ -176,15 +181,22 @@ namespace RabbetGameEngine
         private void onTick()
         {
             Profiler.beginEndProfile("Loop");
+            if(!doneOneTick)
+            {
+                Renderer.beforeTick();
+            }
             windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
-            Renderer.onTickStart();
             GUIManager.onTick();
             MainGUI.onTick();
+            //for(int i = 0; i < 10; i++)
+            //currentPlanet.spawnVFXInWorld(new VFXSnowParticle(new Vector3(0,10,0)));
             currentPlanet.onTick();
             SoundManager.onTick();
             Profiler.updateAverages();
             Renderer.onTickEnd();
             Profiler.beginEndProfile("Loop");
+
+            doneOneTick = true;
         }
         
         /*Called when player lands direct hit on a cactus, TEMPORARY!*/

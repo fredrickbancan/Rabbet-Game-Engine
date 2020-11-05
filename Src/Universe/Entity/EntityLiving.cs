@@ -20,7 +20,6 @@ namespace RabbetGameEngine
     public class EntityLiving : Entity
     {
         public static readonly float interactIntervalSeconds = 1.0F;
-        protected EntityVehicle currentVehicle;
         protected Vector3 frontVector;//vector pointing to the direction the entity is facing
         protected Vector3 upVector;
         protected Vector3 rightVector;
@@ -139,44 +138,6 @@ namespace RabbetGameEngine
           For now this will only let this entity mount and dismount nearby vehicles.*/
         public virtual void interact()
         {
-            if(currentPlanet != null)
-            {
-                if (currentVehicle != null)
-                {
-                    this.unmountVehicle();
-                }
-                else 
-                {
-                    foreach (Entity ent in currentPlanet.entities.Values)
-                    {
-                        if (Vector3.Distance(ent.getPosition(), pos) < 4D)//if the entity is atleast within 4 units (meters)
-                        {
-                            if (ent is EntityVehicle vehicle)
-                            {
-                                this.mountVehicle(vehicle);
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        public virtual void unmountVehicle()
-        {
-            if (currentVehicle != null)
-            {
-                setVelocity(Vector3.Zero);
-                currentVehicle.setMountedEntity(null);
-                currentVehicle = null;
-            }
-        }
-
-        public virtual void mountVehicle(EntityVehicle theVehicle)
-        {
-            this.pos = theVehicle.getPosition() + theVehicle.getMountingOffset();
-            currentVehicle = theVehicle;
-            theVehicle.setMountedEntity(this);
         }
 
         public virtual void walkFowards()
@@ -216,15 +177,6 @@ namespace RabbetGameEngine
         public virtual Vector3 getRightVector()
         {
             return this.rightVector;
-        }
-
-        public override Vector3 getLerpPos()
-        {
-            if(currentVehicle != null)
-            {
-                return currentVehicle.getLerpPos() + currentVehicle.getMountingOffset();
-            }
-            return base.getLerpPos();
         }
 
         /*returns true if entity is doing the specified action*/

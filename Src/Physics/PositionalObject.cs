@@ -26,6 +26,7 @@ namespace RabbetGameEngine
         protected float prevTickRoll;
 
         protected ICollider collider = null;
+        protected Vector3 colliderOffset = Vector3.Zero;
         protected bool hasCollider = false;
         protected bool hasDoneFirstUpdate = false;
         protected bool isGrounded = false;
@@ -214,6 +215,10 @@ namespace RabbetGameEngine
         public virtual void setPosition(Vector3 newPos)
         {
             this.pos = newPos;
+            if(hasCollider)
+            {
+                collider.offset(pos - collider.getCenterVec());
+            }
         }
         public virtual Vector3 getLerpPos()
         {
@@ -269,6 +274,11 @@ namespace RabbetGameEngine
         public virtual ICollider getCollider()
         {
             return collider;
+        }
+
+        public Vector3 getColliderOffset()
+        {
+            return colliderOffset;
         }
 
         public void setHasCollided(bool flag)

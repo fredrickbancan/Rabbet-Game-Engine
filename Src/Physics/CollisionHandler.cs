@@ -14,8 +14,6 @@ namespace RabbetGameEngine.Physics
         point
     };
 
-    //TODO: Prevent projectiles from colliding with eachother.
-
     /// <summary>
     /// Abstraction for collision code. This class will be responsable for calculating collisions by
     /// offsetting the hitbox of entities and altering their velocity. This also moves them by their velocity
@@ -33,8 +31,11 @@ namespace RabbetGameEngine.Physics
         /// <param name="entities"> All world entities to collide eachother.</param>
         public static void collideEntities(Dictionary<int, Entity> entities)
         {
-            Profiler.beginEndProfile("EntCollisions");
-            for(int i = 0; i < entities.Count; ++i)
+            Profiler.beginEndProfile("EntCollisions"); 
+            Vector2 entXZ;
+            Vector2 otherEntXZ;
+            Vector2 pushVec;
+            for (int i = 0; i < entities.Count; ++i)
             { 
                 Entity entAt = entities.Values.ElementAt(i);
                 if (!entAt.getHasCollider())
@@ -42,23 +43,20 @@ namespace RabbetGameEngine.Physics
                     continue;
                 }
 
-                Vector2 entXZ;
-                Vector2 otherEntXZ;
-                Vector2 pushVec;
                 for (int j = i + 1; j < entities.Count; ++j)
                 {
                     Entity otherEntAt = entities.Values.ElementAt(j);
-                    if(!otherEntAt.getHasCollider() || otherEntAt.getIsProjectile())
+                    if(!otherEntAt.getHasCollider() || (otherEntAt.getIsProjectile() && entAt.getIsProjectile()))
                     {
                         continue;
                     }
-                    entXZ = entAt.getPosition().Xz;
-                    //if boxes touch
+
                     if(!AABB.areBoxesNotTouching((AABB)entAt.getCollider(), (AABB)otherEntAt.getCollider()))
                     {
-                        if (!entAt.getIsProjectile())
+                        if (!entAt.getIsProjectile() || !otherEntAt.getIsProjectile())
                         {
                             otherEntXZ = otherEntAt.getPosition().Xz;
+                            entXZ = entAt.getPosition().Xz;
 
                             if (entXZ.X == otherEntXZ.X) entXZ.X += 0.01F;//avoid division by zero in normalize func
 
@@ -67,7 +65,8 @@ namespace RabbetGameEngine.Physics
                             entAt.addVelocity(new Vector3(-pushVec.X, 0, -pushVec.Y));
                             otherEntAt.addVelocity(new Vector3(pushVec.X, 0, pushVec.Y));
                         }
-                        entAt.onCollideWithEntity(otherEntAt);//TODO: Projectiles arent colliding with entities for some reason
+                        entAt.onCollideWithEntity(otherEntAt);
+                        otherEntAt.onCollideWithEntity(entAt);
                     }
                 }
 
@@ -75,6 +74,7 @@ namespace RabbetGameEngine.Physics
             Profiler.beginEndProfile("EntCollisions");
         }
 
+        //TODO: Optimize further to reduce time spent on colliding particles!
         /// <summary>
         /// Should be done after on tick and before post tick.
         /// tries to move the provided positional object by its velocity with respect to all of the provided colliders.
@@ -154,7 +154,7 @@ namespace RabbetGameEngine.Physics
             obj.setVelocity(objVel);
 
             //lastly, position obj to center of hitbox offset
-            obj.setPosition(objCollider.getCenterVec());
+            obj.setPosition(objCollider.getCenterVec() - obj.getColliderOffset());
             Profiler.beginEndProfile("Collisions");
         }
 
