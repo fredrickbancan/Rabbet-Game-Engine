@@ -41,7 +41,7 @@ namespace RabbetGameEngine
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.LineWidth(3);
-            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, GameSettings.maxDrawDistance);
             orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1.0F);
             staticDraws = new Dictionary<string, StaticRenderObject>();
             SkyboxRenderer.init();
@@ -98,6 +98,7 @@ namespace RabbetGameEngine
         public static void onTickEnd()
         {
             Profiler.beginEndProfile("batching");
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, GameInstance.get.getDrawDistance());
             BatchManager.onTickEnd();
             Profiler.beginEndProfile("batching");
         }

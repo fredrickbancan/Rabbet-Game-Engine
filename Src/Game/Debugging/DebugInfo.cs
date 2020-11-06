@@ -1,6 +1,5 @@
 ﻿using RabbetGameEngine.GUI;
 using RabbetGameEngine.Sound;
-using RabbetGameEngine.SubRendering;
 
 namespace RabbetGameEngine.Debugging
 {
@@ -34,33 +33,26 @@ namespace RabbetGameEngine.Debugging
                 GUIManager.getTextPanelFormatFromGUI(MainGUI.mainGUIName, debugInfoTextPanelName).setLines(
                        new string[]
                        {
-                        ("Player Name: " + GameInstance.get.thePlayer.getName()),
-                        ("X: " + GameInstance.get.thePlayer.getPosition().X.ToString("0.00")),
+                       /* ("X: " + GameInstance.get.thePlayer.getPosition().X.ToString("0.00")),
                         ("Y: " + GameInstance.get.thePlayer.getPosition().Y.ToString("0.00")),
                         ("Z: " + GameInstance.get.thePlayer.getPosition().Z.ToString("0.00")),
                         ("Velocity X: " + GameInstance.get.thePlayer.getVelocity().X.ToString("0.00")),
                         ("Velocity Y: " + GameInstance.get.thePlayer.getVelocity().Y.ToString("0.00 ")),
-                        ("Velocity Z: " + GameInstance.get.thePlayer.getVelocity().Z.ToString("0.00")),
-                       ("Head Pitch: " + GameInstance.get.thePlayer.getHeadPitch().ToString("0.00")),
-                       ("Yaw: " + GameInstance.get.thePlayer.getYaw().ToString("0.00")),
+                        ("Velocity Z: " + GameInstance.get.thePlayer.getVelocity().Z.ToString("0.00")),*/
                        ("Profiler Averages (MS)" ),
-                       ("{" ),
                        ("   GameLoop: " + gameLoopAverage.ToString("0.00") + "ms." ),
                        ("   {" ),
                        ("       Entity Collisions: " + entColAverage.ToString("0.00") + "ms." ),
                        ("       World Collisions: " + colAverage.ToString("0.00") + "ms." ),
                        ("       Text building: " + textBuildAverage.ToString("0.00") + "ms." ),
-                       ("       Sounds: " + soundsAverage.ToString("0.00") + "ms." ),
                        ("       Batching: " + batchAverage.ToString("0.00") + "ms." ),
                        ("   }Residual: " + (gameLoopAverage - (entColAverage + colAverage + soundsAverage + textBuildAverage + batchAverage)).ToString("0.00") + "ms." ),
-                       ("}" ),
                         ("Entities: " + GameInstance.get.currentPlanet.getEntityCount()),
-                        ("VFX's: " + GameInstance.get.currentPlanet.getVFXCount()),
+                        ("VFX: " + GameInstance.get.currentPlanet.getVFXCount()),
                         ("Sounds: " + SoundManager.getPlayingSoundsCount()),
-                        ("Batches: " + BatchManager.batchCount),
                         ("Draw Calls: " + Renderer.totalDraws),
-                        ("Used memory: " + (Application.getMemoryUsageBytes()/1000000L).ToString() + "MB"),
-                       }); 
+                        ("Used memory: " + (Application.getMemoryUsageBytes()/1000000L).ToString() + "MB")
+                       });
             }
             else
             {

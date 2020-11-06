@@ -105,7 +105,6 @@ namespace RabbetGameEngine
             {
                 GUIManager.hideTextPanelInGUI(mainGUIName, "airShot");
             }
-
             DebugInfo.displayOrClearDebugInfo();
             GUIManager.rebuildTextInGUI(mainGUIName);//do last, applies any changes to the text on screen.
         }

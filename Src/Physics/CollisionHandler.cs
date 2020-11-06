@@ -23,7 +23,7 @@ namespace RabbetGameEngine.Physics
     public static class CollisionHandler
     {
         private static readonly float pushVel = 0.05F * 0.5F;
-        //TODO: impliment some sort of space partitioning (i.e, chunks) to avoid O(n^2 - n) complexity. Make sure to perform tests to measure performance changes.
+        //TODO: impliment some sort of space partitioning (i.e, chunks) to avoid O(n^2 - n) complexity. Use technique to ignore unseen VFX. Make sure to perform tests to measure performance changes.
         /// <summary>
         /// Does collisions with each entity against all other entities it is touching.
         /// No hard collisions, only pushing eachother away.

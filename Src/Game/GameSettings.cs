@@ -11,11 +11,12 @@ namespace RabbetGameEngine
         /// <summary>
         /// This setting MUST be between 0 and 1
         /// </summary>
-        public static float masterVolume = 0.2F;
+        public static float masterVolume = 0.05F;
 
         public static string defaultFont = "Arial_Shadow";
 
         public static bool vsync = false;
+        public static float maxDrawDistance = 1000.0F;
         public static bool displayFps = true;
         public static bool debugScreen = false;
         public static bool entityLabels = false;

@@ -7,7 +7,6 @@ namespace RabbetGameEngine.Sound
     {
         public static readonly int extraPlayMills = 100;
         public static readonly float volumeDistanceFactor = 64.0F;
-        public int bufferID = 0;
         public int srcID = 0;
         public Sound theSound = null;
         public bool finishedPlaying = false;
@@ -32,21 +31,11 @@ namespace RabbetGameEngine.Sound
             theSound = snd;
             timeStampMills = timeStamp;
             soundLengthMills = (long)snd.getTotalTime().TotalMilliseconds;
-            bufferID = AL.GenBuffer();
-            srcID = AL.GenSource();
+            srcID = SoundManager.getSourceID();
 
-            if(snd.isStereo())
-            {
-                AL.BufferData(bufferID, ALFormat.Stereo16, snd.getData(), snd.getSampleRate());
-            }
-            else
-            {
-                AL.BufferData(bufferID, ALFormat.Mono16, snd.getData(), snd.getSampleRate());
-            }
-
-            AL.Source(srcID, ALSourcei.Buffer, bufferID);
+            AL.Source(srcID, ALSourcei.Buffer, snd.getBufferID());
             volume = MathHelper.Clamp(volume, 0, 1);
-            AL.Source(srcID, ALSourcef.Gain, volume);
+            AL.Source(srcID, ALSourcef.Gain, volume * GameSettings.masterVolume);
             AL.Source(srcID, ALSourcef.Pitch, speed);
             AL.Source(srcID, ALSourcei.SourceType, 4136 /*ALSourceType.Static*/);
             AL.SourcePlay(srcID);
@@ -65,10 +54,8 @@ namespace RabbetGameEngine.Sound
             this.maxDist = volumeDistanceFactor * volume;
             timeStampMills = timeStamp;
             soundLengthMills = (long)snd.getTotalTime().TotalMilliseconds;
-            bufferID = AL.GenBuffer();
-            srcID = AL.GenSource();
-            AL.BufferData(bufferID, ALFormat.Mono16, snd.getData(), snd.getSampleRate());
-            AL.Source(srcID, ALSourcei.Buffer, bufferID);
+            srcID = SoundManager.getSourceID();
+            AL.Source(srcID, ALSourcei.Buffer, snd.getBufferID());
             AL.Source(srcID, ALSourceb.SourceRelative, true);
             AL.Source(srcID, ALSourcef.Pitch, speed);
             AL.Source(srcID, ALSourcei.SourceType, 4136 /*ALSourceType.Static*/);
@@ -88,22 +75,11 @@ namespace RabbetGameEngine.Sound
             loopingSoundName = sndName;
             loopingSound = true;
             theSound = snd;
-            bufferID = AL.GenBuffer();
-            srcID = AL.GenSource();
-
-            if (snd.isStereo())
-            {
-                AL.BufferData(bufferID, ALFormat.Stereo16, snd.getData(), snd.getSampleRate());
-            }
-            else
-            {
-                AL.BufferData(bufferID, ALFormat.Mono16, snd.getData(), snd.getSampleRate());
-            }
-
-            AL.Source(srcID, ALSourcei.Buffer, bufferID);
+            srcID = SoundManager.getSourceID();
+            AL.Source(srcID, ALSourcei.Buffer, snd.getBufferID());
             AL.Source(srcID, ALSourceb.Looping, true);
             volume = MathHelper.Clamp(volume, 0, 1);
-            AL.Source(srcID, ALSourcef.Gain, volume);
+            AL.Source(srcID, ALSourcef.Gain, volume * GameSettings.masterVolume);
             AL.Source(srcID, ALSourcef.Pitch, speed);
             AL.Source(srcID, ALSourcei.SourceType, 4136 /*ALSourceType.Static*/);
             AL.SourcePlay(srcID);
@@ -121,10 +97,8 @@ namespace RabbetGameEngine.Sound
             sndPos = pos;
             this.volume = volume;
             this.maxDist = volumeDistanceFactor * volume;
-            bufferID = AL.GenBuffer();
-            srcID = AL.GenSource();
-            AL.BufferData(bufferID, ALFormat.Mono16, snd.getData(), snd.getSampleRate());
-            AL.Source(srcID, ALSourcei.Buffer, bufferID);
+            srcID = SoundManager.getSourceID();
+            AL.Source(srcID, ALSourcei.Buffer, snd.getBufferID());
             AL.Source(srcID, ALSourceb.SourceRelative, true);
             AL.Source(srcID, ALSourceb.Looping, true);
             AL.Source(srcID, ALSourcef.Pitch, speed);
@@ -181,11 +155,10 @@ namespace RabbetGameEngine.Sound
             AL.Source(srcID, ALSource3f.Position, dot, 0, -1);
         }
 
-        public void delete()
+        public void stopPlaying()
         {
             AL.SourceStop(srcID);
-            AL.DeleteBuffer(bufferID);
-            AL.DeleteSource(srcID);
+            AL.Source(srcID, ALSourcei.Buffer, 0);
         }
     }
 }

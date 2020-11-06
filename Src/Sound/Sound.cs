@@ -1,4 +1,5 @@
 ﻿using NVorbis;
+using OpenTK.Audio.OpenAL;
 using System;
 using System.Collections.Generic;
 
@@ -11,16 +12,19 @@ namespace RabbetGameEngine.Sound
         private TimeSpan totalTime;
         private int channels = 0;
         private long totalSamples = 0;
-        private byte[] data;
+        private int bufferID;
         public Sound(string dir)
         {
             if(dir == "debug")
             {
-                data = new byte[1000];
+                byte[]  data = new byte[1000];
                 GameInstance.rand.NextBytes(data);
                 sampleRate = 11025;
                 channels = 1;
                 totalTime = TimeSpan.FromSeconds(1);
+                bufferID = AL.GenBuffer();
+                AL.BufferData(bufferID, ALFormat.Mono16, data, getSampleRate());
+
             }
             else
             {
@@ -66,7 +70,16 @@ namespace RabbetGameEngine.Sound
 
                 }
                 reader.Dispose();
-                data = bytes.ToArray();
+                byte[] data = bytes.ToArray();
+                bufferID = AL.GenBuffer();
+                if (isStereo())
+                {
+                    AL.BufferData(bufferID, ALFormat.Stereo16, data, getSampleRate());
+                }
+                else
+                {
+                    AL.BufferData(bufferID, ALFormat.Mono16, data, getSampleRate());
+                }
             }
             catch (Exception e)
             {
@@ -89,9 +102,9 @@ namespace RabbetGameEngine.Sound
             return totalSamples;
         }
 
-        public byte[] getData()
+        public int getBufferID()
         {
-            return data;
+            return bufferID;
         }
 
         public TimeSpan getTotalTime()
@@ -103,17 +116,10 @@ namespace RabbetGameEngine.Sound
         {
             return channels >= 2;
         }
-        private void loadDebugSound()
-        {
 
-        }
-
-        /// <summary>
-        /// Currently doesnt do anything, may be useful in future.
-        /// </summary>
         public void delete()
         {
-
+            AL.DeleteBuffer(bufferID);
         }
     }
 }

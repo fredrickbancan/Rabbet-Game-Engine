@@ -7,7 +7,6 @@ using System.Linq;
 
 namespace RabbetGameEngine.Sound
 {
-    //TODO: Fix bug where after enough sounds play, new sounds are silent. Most likely due to buffers being created and deleted non stop.
     //TODO: Add support for sounds from moving objects
     //TODO: Add support for Looping sounds from moving objects
     public static class SoundManager
@@ -16,6 +15,9 @@ namespace RabbetGameEngine.Sound
         private static ALDevice device = ALDevice.Null;
         private static bool initialized = false;
         private static List<PlayingSound> sounds = null;
+        private static List<int> freeSourceIDs;
+        private static List<int> busySourceIDs;
+        private static List<int> usedSourceIDs;
         public static void init()
         {
             try
@@ -28,13 +30,13 @@ namespace RabbetGameEngine.Sound
             }
             catch(Exception e)
             {
-                Application.warn("Could not instantiate OpenAL context! Exception: " + e.Message);
+                Application.warn("Could not instantiate OpenAL context! Exception: " + e.Message + "\nSound will not be working.");
                 return;
             }
 
             if (!ALC.MakeContextCurrent(context) || context == ALContext.Null || device == ALDevice.Null)
             {
-                Application.warn("Could not instantiate OpenAL context!\nDevice null: " + (device == ALDevice.Null) + "\nContext null: " + (context == ALContext.Null) + (device != ALDevice.Null ? ("\nAL Device error: " + ALC.GetError(device)) : ""));
+                Application.warn("Could not instantiate OpenAL context!\nDevice null: " + (device == ALDevice.Null) + "\nContext null: " + (context == ALContext.Null) + (device != ALDevice.Null ? ("\nAL Device error: " + ALC.GetError(device)) : "") + "\nSound will not be working.");
             }
             else
             {
@@ -45,6 +47,9 @@ namespace RabbetGameEngine.Sound
                 SoundUtil.loadAllFoundSoundFiles();
                 Application.infoPrint("Loaded " + SoundUtil.getSoundFileCount() + " sound files.");
                 sounds = new List<PlayingSound>();
+                freeSourceIDs = new List<int>();
+                busySourceIDs = new List<int>();
+                usedSourceIDs = new List<int>();
                 AL.DistanceModel(ALDistanceModel.None);
                 initialized = true;
             }
@@ -111,7 +116,8 @@ namespace RabbetGameEngine.Sound
 
                 if (s.finishedPlaying)
                 {
-                    s.delete();
+                    s.stopPlaying();
+                    freeSourceID(s.srcID);
                     sounds.RemoveAt(i);
                     i--;
                 }
@@ -156,14 +162,42 @@ namespace RabbetGameEngine.Sound
             if(!initialized)return 0;
             return sounds.Count;
         }
+        public static int getSourceID()
+        {
+            int id;
+            if (freeSourceIDs.Count > 0)
+            {
+                id = freeSourceIDs.ElementAt(freeSourceIDs.Count - 1);
+                freeSourceIDs.RemoveAt(freeSourceIDs.Count - 1);
+                busySourceIDs.Add(id);
+                return id;
+            }
+            id = AL.GenSource();
+            busySourceIDs.Add(id);
+            usedSourceIDs.Add(id);
+            return id;
+        }
+
+        public static void freeSourceID(int id)
+        {
+            if (busySourceIDs.Remove(id))
+            {
+                freeSourceIDs.Add(id);
+            }
+        }
 
         public static void onClosing()
         {
             if (!initialized) return;
 
-            foreach (PlayingSound s in sounds)
+            foreach(PlayingSound s in sounds)
             {
-                s.delete();
+                s.stopPlaying();
+            }
+
+            foreach (int id in usedSourceIDs)
+            {
+                AL.DeleteSource(id);
             }
 
             if (context != ALContext.Null)

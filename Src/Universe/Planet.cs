@@ -14,6 +14,8 @@ namespace RabbetGameEngine
     /*This class will be the abstraction of any environment constructed for the player and entities to exist in.*/
     public class Planet
     {
+        public static readonly float minDrawDistance = 64.0F;
+        public static readonly float maxDrawDistance = 1000.0F;
         private Vector3 fogColor;
         private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
         public Dictionary<int, Entity> entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
@@ -28,13 +30,12 @@ namespace RabbetGameEngine
         private Random random;
         private float fogDensity;
         private float fogGradient;
-        private float drawDistance;//TODO: Impliment draw distance which when changed will dynamically update fog to hide cutoff, also change VFX so they do not spawn if outside draw distance.
+        private float drawDistance = 0;//TODO: Impliment draw distance which when changed will dynamically update fog to hide cutoff, also change VFX so they do not spawn if outside draw distance.
         public Planet(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
             fogColor = CustomColor.lightGrey.toNormalVec3();
-            fogDensity = 0.0128F;
-            fogGradient = 2.5F;
+            setDrawDistanceAndFog(100.0F);
             planetSkybox = new Skybox(CustomColor.lightSkyBlue.toNormalVec3(), this);
             SkyboxRenderer.setSkyboxToDraw(planetSkybox);
             generateWorld();
@@ -164,10 +165,12 @@ namespace RabbetGameEngine
                 entAt.preTick();
                 entAt.onTick();
                 entAt.postTick();
+
                 if(entAt.getPosition().Y < fallPlaneHeight)
                 {
                     entAt.setPosition(fallPlaneRespawnPos);
                 }
+
                 if (entAt.getIsPlayer() && GameSettings.noclip)
                 {
                     entAt.getColliderHandle().offset(entAt.getVelocity());
@@ -177,6 +180,7 @@ namespace RabbetGameEngine
                 {
                     CollisionHandler.tryToMoveObject(entAt, worldColliders);
                 }
+
                 if(entAt.getHasModel())
                 {
                     entAt.getEntityModel().onTick();
@@ -185,6 +189,7 @@ namespace RabbetGameEngine
             }
 
         }
+
         private void tickVFX()
         {
             for (int i = 0; i < vfxList.Count; i++)
@@ -194,11 +199,13 @@ namespace RabbetGameEngine
                 {
                     vfxList.Remove(vfx);
                     i--;
+                    continue;
                 }
                 else if (!vfx.exists())
                 {
                     vfxList.Remove(vfxList.ElementAt(i));
                     i--;
+                    continue;
                 }
                 else
                 {
@@ -207,7 +214,6 @@ namespace RabbetGameEngine
                     vfx.postTick();
                     CollisionHandler.tryToMoveObject(vfx, worldColliders);
                 }
-
                 vfx.sendRenderRequest();
             }
 
@@ -272,6 +278,12 @@ namespace RabbetGameEngine
             }
         }
 
+        private void setDrawDistanceAndFog(float dist)
+        {
+            drawDistance = dist;
+            fogDensity = //TODO: implement range based fog
+            fogGradient = 2.5F;
+        }
         public float getFogDensity()
         {
             return fogDensity;
@@ -280,6 +292,11 @@ namespace RabbetGameEngine
         public float getFogGradient()
         {
             return fogGradient;
+        }
+
+        public float getDrawDistance()
+        {
+            return drawDistance;
         }
 
         public void spawnEntityInWorld(Entity theEntity)
