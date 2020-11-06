@@ -3,7 +3,7 @@
 namespace RabbetGameEngine.Physics
 {
     /*A struct for doing axis aligned bounding box collisions*/
-    public struct AABB : ICollider
+    public struct AABB
     {
         public Vector3 minBounds;
         public Vector3 maxBounds;

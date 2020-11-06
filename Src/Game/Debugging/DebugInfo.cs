@@ -47,7 +47,9 @@ namespace RabbetGameEngine.Debugging
                        ("       Text building: " + textBuildAverage.ToString("0.00") + "ms." ),
                        ("       Batching: " + batchAverage.ToString("0.00") + "ms." ),
                        ("   }Residual: " + (gameLoopAverage - (entColAverage + colAverage + soundsAverage + textBuildAverage + batchAverage)).ToString("0.00") + "ms." ),
-                        ("Entities: " + GameInstance.get.currentPlanet.getEntityCount()),
+
+                       ("aux profile: " + Profiler.getAverageForProfile("aux").ToString("0.00") + "ms." ),
+                       ("Entities: " + GameInstance.get.currentPlanet.getEntityCount()),
                         ("VFX: " + GameInstance.get.currentPlanet.getVFXCount()),
                         ("Sounds: " + SoundManager.getPlayingSoundsCount()),
                         ("Draw Calls: " + Renderer.totalDraws),

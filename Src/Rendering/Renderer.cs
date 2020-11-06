@@ -40,7 +40,7 @@ namespace RabbetGameEngine
             GL.Enable(EnableCap.VertexProgramPointSize);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            GL.LineWidth(3);
+            GL.LineWidth(1);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, GameSettings.maxDrawDistance);
             orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1.0F);
             staticDraws = new Dictionary<string, StaticRenderObject>();
@@ -94,6 +94,7 @@ namespace RabbetGameEngine
             Profiler.beginEndProfile("batching");
             BatchManager.beforeTick();
             Profiler.beginEndProfile("batching");
+            HitboxRenderer.beforeTick();
         }
         public static void onTickEnd()
         {
@@ -101,6 +102,7 @@ namespace RabbetGameEngine
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, GameInstance.get.getDrawDistance());
             BatchManager.onTickEnd();
             Profiler.beginEndProfile("batching");
+            HitboxRenderer.onTickEnd();
         }
 
         /*Called before all draw calls*/

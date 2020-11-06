@@ -51,7 +51,7 @@ namespace RabbetGameEngine.Physics
                         continue;
                     }
 
-                    if(!AABB.areBoxesNotTouching((AABB)entAt.getCollider(), (AABB)otherEntAt.getCollider()))
+                    if(!AABB.areBoxesNotTouching((AABB)entAt.getBox(), (AABB)otherEntAt.getBox()))
                     {
                         if (!entAt.getIsProjectile() || !otherEntAt.getIsProjectile())
                         {
@@ -74,7 +74,7 @@ namespace RabbetGameEngine.Physics
             Profiler.beginEndProfile("EntCollisions");
         }
 
-        //TODO: Optimize further to reduce time spent on colliding particles!
+        //TODO: Optimize further to reduce time spent on colliding with world, maybe space partitioning? (i.e, chunks)
         /// <summary>
         /// Should be done after on tick and before post tick.
         /// tries to move the provided positional object by its velocity with respect to all of the provided colliders.
@@ -90,56 +90,32 @@ namespace RabbetGameEngine.Physics
             }
             Profiler.beginEndProfile("Collisions");
 
-            ICollider objCollider = obj.getColliderHandle();
+            AABB objCollider = obj.getBoxHandle();
             Vector3 objVel = obj.getVelocity();
             Vector3 prevObjVel = objVel;
 
-            switch(objCollider.getType())
+            for (int i = 0; i < worldAABB.Count; i++)
             {
-                case ColliderType.aabb:
-                    AABB objBox = (AABB)objCollider;//using this to avoid casting inside the loops
-                    for (int i = 0; i < worldAABB.Count; i++)
-                    {
-                        objVel = applyCollisionAABBVsAABBY(objVel, objBox, worldAABB.ElementAt(i));
-                    }
-                    objCollider.offset(0, objVel.Y, 0);
-                    objBox = (AABB)objCollider;
-                    for (int i = 0; i < worldAABB.Count; i++)
-                    {
-                        objVel = applyCollisionAABBVsAABBX(objVel, objBox, worldAABB.ElementAt(i));
-                    }
-                    objCollider.offset(objVel.X, 0, 0);
-                    objBox = (AABB)objCollider;
-                    for (int i = 0; i < worldAABB.Count; i++)
-                    {
-                        objVel = applyCollisionAABBVsAABBZ(objVel, objBox, worldAABB.ElementAt(i));
-                    }
-                    objCollider.offset(0, 0, objVel.Z);
-                    break;
-
-                case ColliderType.point:
-                    PointCollider objPoint = (PointCollider)objCollider;
-                    for (int i = 0; i < worldAABB.Count; i++)
-                    {
-                        objVel = applyCollisionPointVsAABBY(objVel, objPoint, worldAABB.ElementAt(i));
-                    }
-                    objCollider.offset(0, objVel.Y, 0);
-
-                    for (int i = 0; i < worldAABB.Count; i++)
-                    {
-                        objVel = applyCollisionPointVsAABBZ(objVel, objPoint, worldAABB.ElementAt(i));
-                    }
-                    objCollider.offset(0, 0, objVel.Z);
-
-                    for (int i = 0; i < worldAABB.Count; i++)
-                    {
-                        objVel = applyCollisionPointVsAABBX(objVel, objPoint, worldAABB.ElementAt(i));
-                    }
-                    objCollider.offset(objVel.X, 0, 0);
-                    break;
+                objVel = applyCollisionAABBVsAABBY(objVel, objCollider, worldAABB.ElementAt(i));
             }
-            
-            if(prevObjVel.X != objVel.X || prevObjVel.Y != objVel.Y || prevObjVel.Z != objVel.Z)
+
+            objCollider.offset(0, objVel.Y, 0);
+
+            for (int i = 0; i < worldAABB.Count; i++)
+            {
+                objVel = applyCollisionAABBVsAABBX(objVel, objCollider, worldAABB.ElementAt(i));
+            }
+
+            objCollider.offset(objVel.X, 0, 0);
+
+            for (int i = 0; i < worldAABB.Count; i++)
+            {
+                objVel = applyCollisionAABBVsAABBZ(objVel, objCollider, worldAABB.ElementAt(i));
+            }
+
+            objCollider.offset(0, 0, objVel.Z);
+
+            if (prevObjVel.X != objVel.X || prevObjVel.Y != objVel.Y || prevObjVel.Z != objVel.Z)
             {
                 obj.setHasCollided(true);
             }
@@ -273,122 +249,6 @@ namespace RabbetGameEngine.Physics
             return objVel;
         }
         #endregion
-        
 
-        #region PointVsAABB
-        /// <summary>
-        /// Applies collision resolution velocity to the provided object velocity vector. Resulting from a Point vs AABB collision.
-        /// </summary>
-        /// <param name="objVel">velocity to be modified</param>
-        /// <param name="objPoint">object Sphere hitbox</param>
-        /// <param name="otherAABB">other plane hitbox</param>
-        /// <returns>The provided Point collider for the object properly offset during collision resolution</returns>
-        private static Vector3 applyCollisionPointVsAABBX(Vector3 objVel, PointCollider objPoint, AABB otherAABB)
-        {
-            if (objPoint.pos.Y >= otherAABB.minY && objPoint.pos.Y <= otherAABB.maxY && objPoint.pos.Z >= otherAABB.minZ && objPoint.pos.Z <= otherAABB.maxZ)
-            {
-                float xDist;//distance between boxes in Y direction, depending on position and velocity
-
-                //if ent is moving towards positive y and entity point is "below" of other box
-                if (objVel.X > 0.0F)
-                {
-                    if (objPoint.pos.X <= otherAABB.minX)
-                    {
-                        xDist = otherAABB.minX - objPoint.pos.X;
-                        if (xDist < objVel.X)
-                        {
-                            objVel.X = xDist;
-                        }
-                    }
-
-                }
-                else if (objVel.X < 0.0F && objPoint.pos.X >= otherAABB.maxX)
-                {
-                    xDist = otherAABB.maxX - objPoint.pos.X;//creating negative dist for comparing with negative velocity so there is no need to use abs() func
-                    if (xDist > objVel.X)
-                    {
-                        objVel.X = xDist;
-                    }
-                }
-            }
-            return objVel;
-        }
-
-        /// <summary>
-        /// Applies collision resolution velocity to the provided object velocity vector. Resulting from a Point vs AABB collision.
-        /// </summary>
-        /// <param name="objVel">velocity to be modified</param>
-        /// <param name="objPoint">object Sphere hitbox</param>
-        /// <param name="otherAABB">other plane hitbox</param>
-        /// <returns>The provided Point collider for the object properly offset during collision resolution</returns>
-        private static Vector3 applyCollisionPointVsAABBY(Vector3 objVel, PointCollider objPoint, AABB otherAABB)
-        {
-            if (objPoint.pos.X >= otherAABB.minX && objPoint.pos.X <= otherAABB.maxX && objPoint.pos.Z >= otherAABB.minZ && objPoint.pos.Z <= otherAABB.maxZ)
-            {
-                float yDist;//distance between boxes in Y direction, depending on position and velocity
-
-                //if ent is moving towards positive y and entity point is "below" of other box
-                if (objVel.Y > 0.0F)
-                {
-                    if (objPoint.pos.Y <= otherAABB.minY)
-                    {
-                        yDist = otherAABB.minY - objPoint.pos.Y;
-                        if (yDist < objVel.Y)
-                        {
-                            objVel.Y = yDist;
-                        }
-                    }
-                    
-                }
-                else if (objVel.Y < 0.0F && objPoint.pos.Y >= otherAABB.maxY)
-                {
-                    yDist = otherAABB.maxY - objPoint.pos.Y;//creating negative dist for comparing with negative velocity so there is no need to use abs() func
-                    if (yDist > objVel.Y)
-                    {
-                        objVel.Y = yDist;
-                    }
-                }
-            }
-            return objVel;
-        }
-
-        /// <summary>
-        /// Applies collision resolution velocity to the provided object velocity vector. Resulting from a Point vs AABB collision.
-        /// </summary>
-        /// <param name="objVel">velocity to be modified</param>
-        /// <param name="objPoint">object Sphere hitbox</param>
-        /// <param name="otherAABB">other plane hitbox</param>
-        /// <returns>The provided Point collider for the object properly offset during collision resolution</returns>
-        private static Vector3 applyCollisionPointVsAABBZ(Vector3 objVel, PointCollider objPoint, AABB otherAABB)
-        {
-            if (objPoint.pos.Y >= otherAABB.minY && objPoint.pos.Y <= otherAABB.maxY && objPoint.pos.X >= otherAABB.minX && objPoint.pos.X <= otherAABB.maxX)
-            {
-                float zDist;//distance between boxes in Y direction, depending on position and velocity
-
-                //if ent is moving towards positive y and entity point is "below" of other box
-                if (objVel.Z > 0.0F)
-                {
-                    if (objPoint.pos.Z <= otherAABB.minZ)
-                    {
-                        zDist = otherAABB.minZ - objPoint.pos.Z;
-                        if (zDist < objVel.Z)
-                        {
-                            objVel.Z = zDist;
-                        }
-                    }
-
-                }
-                else if (objVel.Z < 0.0F && objPoint.pos.Z >= otherAABB.maxZ)
-                {
-                    zDist = otherAABB.maxZ - objPoint.pos.Z;//creating negative dist for comparing with negative velocity so there is no need to use abs() func
-                    if (zDist > objVel.Z)
-                    {
-                        objVel.Z = zDist;
-                    }
-                }
-            }
-            return objVel;
-        }
-        #endregion
     }
 }

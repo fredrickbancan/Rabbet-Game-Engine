@@ -60,7 +60,7 @@ namespace RabbetGameEngine
                 }
                 return;
             }
-            while((applicationTime + msPerTick) < getRealTimeMills() && getRealTimeMills() - (applicationTime + msPerTick) < millInSec)
+            while((applicationTime + msPerTick) < getRealTimeMills())
             {
                 onTickFunc();
                 applicationTime += (long)msPerTick;

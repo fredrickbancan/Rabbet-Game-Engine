@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Physics;
 using RabbetGameEngine.VisualEffects;
@@ -9,15 +10,26 @@ namespace RabbetGameEngine.SubRendering
     public static class HitboxRenderer
     {
         private static Model aabbModelPrefab;
-
+        private static bool acceptingRequests = true;
         static HitboxRenderer()
         {
             aabbModelPrefab = new Model(CubePrefab.cubeVertices, LineCombiner.getIndicesForLineQuadCount(6)).setColor(CustomColor.magenta);
         }
 
+        public static void beforeTick()
+        {
+            acceptingRequests = true;
+        }
+
+        public static void onTickEnd()
+        {
+            acceptingRequests = false;
+        }
+
         /*called on tick. Adds all of the provided colliders to a list of hitboxes to be dynamically batched and drawn.*/
         public static void addAllHitboxesToBeRendered(List<AABB> worldColliders, Dictionary<int, Entity> entities, List<VFX> effects)
         {
+            if(!acceptingRequests) return;
             foreach (AABB hitBox in worldColliders)
             {
                 addBoxToBeRendered(hitBox);
@@ -25,44 +37,29 @@ namespace RabbetGameEngine.SubRendering
 
             foreach(VFX v in effects)
             {
-                addHitboxToBeRendered(v.getCollider());
+                renderPointWithNormalLines(v.getBox().centerVec);
             }
 
             foreach(Entity ent in entities.Values)
             {
-                addHitboxToBeRendered(ent.getCollider());
-            }
-        }
-
-        private static void addHitboxToBeRendered(ICollider hitBox)
-        {
-            if(hitBox == null)
-            {
-                return;
-            }
-
-            switch(hitBox.getType())
-            {
-                case ColliderType.aabb:
-                    addBoxToBeRendered((AABB)hitBox);
-                    break;
-
-                case ColliderType.point:
-                    renderPointWithNormalLines(hitBox.getCenterVec());
-                    break;
+                addBoxToBeRendered(ent.getBox());
             }
         }
 
         public static void addBoxToBeRendered(AABB box)
         {
+            if (!acceptingRequests) return;
             //add a copy of the aabb line model transformed to aabb collider specs
+            Profiler.beginEndProfile("aux");
             Renderer.requestRender(BatchType.lines, null, aabbModelPrefab.copyModel().transformVertices(new Vector3((float)box.extentX * 2, (float)box.extentY * 2, (float)box.extentZ * 2), Vector3.Zero, box.centerVec));
             renderPointWithNormalLines(box.centerVec);
+            Profiler.beginEndProfile("aux");
         }
 
         public static void renderPointWithNormalLines(Vector3 pos)
         {
-            PointParticle pParticle = new PointParticle(pos, CustomColor.facility.toNormalVec4(), 0.05F, true);
+            if (!acceptingRequests) return;
+            PointParticle pParticle = new PointParticle(pos, new Vector4(0.15F, 0.15F, 0.15F, 1), 0.025F, true);
             Renderer.requestRender(pParticle, false);
 
             Vector4 redColor = CustomColor.red.toNormalVec4();

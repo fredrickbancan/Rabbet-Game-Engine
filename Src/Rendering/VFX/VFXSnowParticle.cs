@@ -15,8 +15,7 @@ namespace RabbetGameEngine.VisualEffects
             snowCol.setAlphaF(0.8F - (float)GameInstance.rand.NextDouble() * 0.2F);
             setColorNonLerp(snowCol);
             setRandomHorizontalVelocity(0.005F);
-            setCollider(new PointCollider(pos));
-            colliderOffset = new Vector3(0, -theParticle.radius, 0);
+            setBox(new AABB(new Vector3(-theParticle.radius, -theParticle.radius, -theParticle.radius), new Vector3(theParticle.radius, theParticle.radius, theParticle.radius), this));
             setYAccel(-gravity * (0.01F - (float)GameInstance.rand.NextDouble() * 0.005F));
         }
     }

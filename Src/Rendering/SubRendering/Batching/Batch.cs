@@ -115,7 +115,6 @@ namespace RabbetGameEngine.SubRendering
                 {
                     batchType = BatchType.iSpheresTransparent;
                     ShaderUtil.tryGetShader(ShaderUtil.iSpheresTransparentName, out batchShader);
-                    requiresSorting = true;
                     VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
                     batchedPoints = new PointParticle[initialArraySize];
                     usesQuadInstancing = true;
@@ -126,7 +125,6 @@ namespace RabbetGameEngine.SubRendering
                     batchType = BatchType.lerpISpheresTransparent;
                     ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresTransparentName, out batchShader);
                     VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
-                    requiresSorting = true;
                     usingLerpPoints = true;
                     batchedPoints = new PointParticle[initialArraySize];
                     return;
@@ -565,7 +563,7 @@ namespace RabbetGameEngine.SubRendering
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             if(pointBased)
             {
-                if(usesQuadInstancing)
+                if(usesQuadInstancing)//if points are not lerp, then they use instancing.
                 {
                     VAO.bindInstVBO();
                     GL.DrawArraysInstanced(VAO.getPrimType(), 0, 4, pointsItterator);

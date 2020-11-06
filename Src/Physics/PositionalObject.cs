@@ -24,7 +24,7 @@ namespace RabbetGameEngine
         protected float prevTickYaw;
         protected float prevTickRoll;
 
-        protected ICollider collider = null;
+        protected AABB collider;
         protected Vector3 colliderOffset = Vector3.Zero;
         protected bool hasCollider = false;
         protected bool hasDoneFirstUpdate = false;
@@ -266,11 +266,11 @@ namespace RabbetGameEngine
             isGrounded = flag;
         }
 
-        public virtual ref ICollider getColliderHandle()
+        public virtual ref AABB getBoxHandle()
         {
             return ref collider;
         }
-        public virtual ICollider getCollider()
+        public virtual AABB getBox()
         {
             return collider;
         }
@@ -285,7 +285,7 @@ namespace RabbetGameEngine
             hasCollided = flag;
         }
 
-        public virtual void setCollider(ICollider collider)
+        public virtual void setBox(AABB collider)
         {
             this.collider = collider;
             this.hasCollider = true;

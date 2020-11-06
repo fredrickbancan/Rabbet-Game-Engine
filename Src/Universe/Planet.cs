@@ -11,6 +11,7 @@ using System.Linq;
 
 namespace RabbetGameEngine
 {
+    //TODO: Store projectiles in seperate list of entities for collisions efficiency since they dont need to collide eachother.
     /*This class will be the abstraction of any environment constructed for the player and entities to exist in.*/
     public class Planet
     {
@@ -173,7 +174,7 @@ namespace RabbetGameEngine
 
                 if (entAt.getIsPlayer() && GameSettings.noclip)
                 {
-                    entAt.getColliderHandle().offset(entAt.getVelocity());
+                    entAt.getBoxHandle().offset(entAt.getVelocity());
                     entAt.setPosition(entAt.getPosition() + entAt.getVelocity());
                 }
                 else
@@ -281,7 +282,7 @@ namespace RabbetGameEngine
         private void setDrawDistanceAndFog(float dist)
         {
             drawDistance = dist;
-            fogDensity = //TODO: implement range based fog
+            //fogDensity = //TODO: implement range based fog
             fogGradient = 2.5F;
         }
         public float getFogDensity()
