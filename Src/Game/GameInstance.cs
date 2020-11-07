@@ -2,6 +2,7 @@
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.GUI;
 using RabbetGameEngine.Sound;
@@ -36,27 +37,27 @@ namespace RabbetGameEngine
         /// </summary>
         private bool doneOneTick = false; 
 
-        public GameInstance(GameWindowSettings gameWindowSettings, NativeWindowSettings windowSettings) : base(gameWindowSettings, windowSettings)
+        public unsafe GameInstance(GameWindowSettings gameWindowSettings, NativeWindowSettings windowSettings) : base(gameWindowSettings, windowSettings)
         {
 
             GameInstance.instance = this;
-            GameInstance.windowWidth = this.ClientRectangle.Size.X;
-            GameInstance.windowHeight = this.ClientRectangle.Size.Y;
             Title = Application.applicationName;
             int iconWidth, iconHeight;
             byte[] data;
             IconLoader.getIcon("icon", out iconWidth, out iconHeight, out data);
             Icon = new WindowIcon(new OpenTK.Windowing.Common.Input.Image[] { new OpenTK.Windowing.Common.Input.Image(iconWidth, iconHeight, data) });
-          
-            //TODO: Implement more elegent technique of centering and sizing window, as well as obtaining monitor resolution. (Will most likely require OpenTK future development updates). Test next update of OpenTK.
 
-            this.WindowState = OpenTK.Windowing.Common.WindowState.Maximized;
-            screenWidth = ClientRectangle.Size.X;
-            screenHeight = ClientRectangle.Size.Y;
-            int hw = ClientRectangle.HalfSize.X;
-            int hh = ClientRectangle.HalfSize.Y;
-            this.WindowState = OpenTK.Windowing.Common.WindowState.Normal;
+            //TODO: Implement more elegent technique of centering and sizing window, as well as obtaining monitor resolution. (Will most likely require OpenTK future development updates). Test next update of OpenTK.
+            OpenTK.Windowing.Common.Monitor m = CurrentMonitor;
+            VideoMode mode = *GLFW.GetVideoMode(m.ToUnsafePtr<OpenTK.Windowing.GraphicsLibraryFramework.Monitor>());
+            screenWidth = mode.Width;
+            screenHeight = mode.Height;
+            int hw = screenWidth / 2;
+            int hh = screenHeight / 2;
             ClientRectangle = new Box2i(hw - hw / 2, hh - hh / 2, hw + hw / 2, hh + hh / 2);
+
+            GameInstance.windowWidth = this.ClientRectangle.Size.X;
+            GameInstance.windowHeight = this.ClientRectangle.Size.Y;
             Context.MakeCurrent();
         }
         

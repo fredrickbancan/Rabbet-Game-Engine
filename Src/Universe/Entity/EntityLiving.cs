@@ -40,6 +40,7 @@ namespace RabbetGameEngine
             frontVector = new Vector3(0.0F, 0.0F, -1.0F);
             upVector = new Vector3(0.0F, 1.0F, 0.0F);
             interactTimer = new TickTimer(interactIntervalSeconds);
+            isLiving = true;
         }
 
         public EntityLiving(Planet planet, Vector3 pos) : base(planet, pos)
@@ -47,6 +48,7 @@ namespace RabbetGameEngine
             frontVector = new Vector3(0.0F, 0.0F, -1.0F);
             upVector = new Vector3(0.0F, 1.0F, 0.0F);
             interactTimer = new TickTimer(interactIntervalSeconds);
+            isLiving = true;
         }
 
         public override void preTick()

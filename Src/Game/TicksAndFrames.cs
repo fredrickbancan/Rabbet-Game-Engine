@@ -18,7 +18,7 @@ namespace RabbetGameEngine
         private static int frames;
         private static int framesPerSec;
         private static double timer;
-        private static long millInSec = (long)TimeSpan.FromSeconds(1).TotalMilliseconds;
+        private static long millInSec5FPS = (long)TimeSpan.FromSeconds(1).TotalMilliseconds / 5;
         public static void init(int tps)
         {
             ticksPerSecond = tps;
@@ -46,8 +46,10 @@ namespace RabbetGameEngine
             frames++;
             
         }
+        
         /// <summary>
         /// runs the provided onTick function repeatidly untill application has synced with realtime
+        /// minimum frame rate is 5 FPS.
         /// </summary>
         /// <param name="onTickFunc">Reference to the onTick() function to be called</param>
         public static void doOnTickUntillRealtimeSync(System.Action onTickFunc)
@@ -64,6 +66,11 @@ namespace RabbetGameEngine
             {
                 onTickFunc();
                 applicationTime += (long)msPerTick;
+                if(getRealTimeMills() - applicationTime >= millInSec5FPS)
+                {
+                    applicationTime = getRealTimeMills() - (long)msPerTick;
+                    break;
+                }
             }
             percentToNextTick = (double)(getRealTimeMills() - applicationTime) / msPerTick;
         }

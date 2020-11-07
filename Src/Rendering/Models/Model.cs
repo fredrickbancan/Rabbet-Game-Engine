@@ -117,21 +117,6 @@ namespace RabbetGameEngine.Models
             return new Model(verticesCopy, indicesCopy).setModelPos(worldPos).setModelPrevPos(prevWorldPos);
         }
 
-        /// <summary>
-        /// Used to set the ID for this set of data for when it will be drawn.
-        /// This must be used as an identifier for each vertex of the individual objects
-        /// in a batch so the shader can determine which model matrices to use to transform it.
-        /// </summary>
-        /// <param name="f">ID of this object. Will be treated as integer index by shaders.</param>
-        /// <returns>This (builder method)</returns>
-        public Model setObjectID(float f)
-        {
-            for(int i = 0; i < vertices.Length; ++i)
-            {
-                vertices[i].objectID = f;
-            }
-            return this;
-        }
 
         public Model setModelPos(Vector3 pos)
         {

@@ -15,6 +15,7 @@ namespace RabbetGameEngine
         protected int existedTicks = 0;//number of ticks this entity has existed for
         protected bool isPlayer = false;
         protected bool isProjectile = false;
+        protected bool isLiving = false;
         public Entity(Planet planet) : base()
         {
             currentPlanet = planet;
@@ -133,6 +134,11 @@ namespace RabbetGameEngine
         public bool getIsProjectile()
         {
             return isProjectile;
+        }
+
+        public bool getIsLiving()
+        {
+            return isLiving;
         }
 
     }

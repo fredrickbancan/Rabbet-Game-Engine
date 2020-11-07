@@ -74,8 +74,8 @@ namespace RabbetGameEngine
             shader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
             shader.setUniformVec3F("fogColor", fogColor);
-            shader.setUniform1F("fogDensity", GameInstance.get.currentPlanet.getFogDensity());
-            shader.setUniform1F("fogGradient", GameInstance.get.currentPlanet.getFogGradient());
+            shader.setUniform1F("fogStart", GameInstance.get.currentPlanet.getFogStart());
+            shader.setUniform1F("fogEnd", GameInstance.get.currentPlanet.getFogEnd());
             shader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
 
             if (pointBased)

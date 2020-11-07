@@ -39,9 +39,9 @@ namespace RabbetGameEngine
                 base.onTick();
                 if(doingAction(Action.attack))
                 {
-                    currentPlanet.spawnEntityInWorld(new EntityTankProjectile(currentPlanet, (getEyePosition() + new Vector3(0,-0.55F,0)) + camera.getFrontVector(), Vector3.Normalize(camera.getFrontVector() + new Vector3(0, 0.0872F, 0)), camera.getPitch(), camera.getYaw()));
+                    currentPlanet.spawnEntityInWorld(new EntityTankProjectile(currentPlanet, (getEyePosition() + new Vector3(0, -0.55F, 0)) + camera.getFrontVector(), Vector3.Normalize(camera.getFrontVector() + new Vector3(0, 0.0872F, 0)), camera.getPitch(), camera.getYaw()));
                     VFXUtil.doSmallSmokePuffEffect(currentPlanet, (getEyePosition() + new Vector3(0, -0.55F, 0)) + camera.getFrontVector());
-                    SoundManager.playSound("tankfire", 0.7235F, 1.0F -  (float)GameInstance.rand.NextDouble() * 0.2F);
+                    SoundManager.playSound("tankfire", 0.7235F, 1.0F - (float)GameInstance.rand.NextDouble() * 0.2F);
                 }
             }
             camera.onTick();

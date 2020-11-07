@@ -7,8 +7,8 @@ layout(location = 2) in float radius;
 layout(location = 3) in float aoc;
 layout(location = 4) in vec2 corner;//instanced quad corner
 
-uniform float fogDensity = 0.0075;
-const float fogGradient = 2.5;
+uniform float fogStart = 1000.0;
+uniform float fogEnd = 1000.0;
 
 out vec4 vColor;
 out float visibility;
@@ -71,8 +71,10 @@ void main()
     gl_Position = projectionMatrix * positionRelativeToCam;
 
     float distanceFromCam = length(positionRelativeToCam.xyz);
-    visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));
+    visibility = (distanceFromCam - fogStart) / (fogEnd - fogStart);
     visibility = clamp(visibility, 0.0, 1.0);
+    visibility = 1.0 - visibility;
+    visibility *= visibility;
 
     vColor =pointColor;
     fAoc = aoc;

@@ -89,7 +89,7 @@ namespace RabbetGameEngine.VisualEffects
             //temp, sandboxing.
             if (transparency)
             {
-                this.colorAlpha *= 1 - (float)GameInstance.rand.NextDouble() * 0.052F;
+                this.colorAlpha *= 1 - (float)GameInstance.rand.NextDouble() * 0.15F;
                 if (colorAlpha < 0.01F)
                 {
                     ceaseToExist();

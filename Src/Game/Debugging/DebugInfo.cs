@@ -50,6 +50,7 @@ namespace RabbetGameEngine.Debugging
 
                        ("aux profile: " + Profiler.getAverageForProfile("aux").ToString("0.00") + "ms." ),
                        ("Entities: " + GameInstance.get.currentPlanet.getEntityCount()),
+                       ("Projectiles: " + GameInstance.get.currentPlanet.getProjectileCount()),
                         ("VFX: " + GameInstance.get.currentPlanet.getVFXCount()),
                         ("Sounds: " + SoundManager.getPlayingSoundsCount()),
                         ("Draw Calls: " + Renderer.totalDraws),

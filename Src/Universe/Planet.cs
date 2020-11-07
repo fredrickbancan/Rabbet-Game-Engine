@@ -11,32 +11,31 @@ using System.Linq;
 
 namespace RabbetGameEngine
 {
-    //TODO: Store projectiles in seperate list of entities for collisions efficiency since they dont need to collide eachother.
-    /*This class will be the abstraction of any environment constructed for the player and entities to exist in.*/
     public class Planet
     {
-        public static readonly float minDrawDistance = 64.0F;
+        public static readonly float minDrawDistance = 128.0F;
         public static readonly float maxDrawDistance = 1000.0F;
         private Vector3 fogColor;
         private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
         public Dictionary<int, Entity> entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
-        public List<AABB> worldColliders = new List<AABB>();//list of colliders with no parent, ie, walls.
         public List<VFX> vfxList = new List<VFX>();
+        public List<Entity> projectiles = new List<Entity>();
         public List<VFXMovingText3D> debugLabelList = new List<VFXMovingText3D>();
+        public List<AABB> worldColliders = new List<AABB>();//list of colliders with no parent, ie, walls.
         private Skybox planetSkybox;
         private string wallTextureName = "leafywall";
         private string groundTextureName = "wood";
         private static readonly Vector3 fallPlaneRespawnPos = new Vector3(0,128,0);
         private static readonly float fallPlaneHeight = -10.0F;
         private Random random;
-        private float fogDensity;
-        private float fogGradient;
-        private float drawDistance = 0;//TODO: Impliment draw distance which when changed will dynamically update fog to hide cutoff, also change VFX so they do not spawn if outside draw distance.
+        private float fogStart;
+        private float fogEnd;
+        private float drawDistance = 0;
         public Planet(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
             fogColor = CustomColor.lightGrey.toNormalVec3();
-            setDrawDistanceAndFog(100.0F);
+            setDrawDistanceAndFog(200.0F);
             planetSkybox = new Skybox(CustomColor.lightSkyBlue.toNormalVec3(), this);
             SkyboxRenderer.setSkyboxToDraw(planetSkybox);
             generateWorld();
@@ -124,8 +123,10 @@ namespace RabbetGameEngine
         {
             planetSkybox.onTick();
 
-            doEntityCollisions();
+            CollisionHandler.collideEntities(entities);
             tickEntities();
+            tickProjectiles();
+            CollisionHandler.testProjectilesAgainstEntities(entities, projectiles);
             tickVFX();
 
 
@@ -142,6 +143,43 @@ namespace RabbetGameEngine
             foreach (Entity ent in entities.Values)
             {
                 ent.onFrame();
+            }
+        }
+
+        private void tickProjectiles()
+        {
+            for (int i = 0; i < projectiles.Count; i++)
+            {
+                Entity entAt = projectiles.ElementAt(i);
+                if (entAt == null)
+                {
+                    projectiles.RemoveAt(i);
+                    i--;
+                    continue;
+                }
+                else if (entAt.getIsMarkedForRemoval())
+                {
+                    entAt.setCurrentPlanet(null);
+                    projectiles.RemoveAt(i);
+                    i--;
+                    continue;
+                }
+                entAt.preTick();
+                entAt.onTick();
+                entAt.postTick();
+
+                if (entAt.getPosition().Y < fallPlaneHeight)
+                {
+                    entAt.setPosition(fallPlaneRespawnPos);
+                }
+
+                CollisionHandler.tryToMoveObject(entAt, worldColliders);
+
+                if (entAt.getHasModel())
+                {
+                    entAt.getEntityModel().onTick();
+                    entAt.getEntityModel().sendRenderRequest();
+                }
             }
         }
 
@@ -198,13 +236,13 @@ namespace RabbetGameEngine
                 VFX vfx = vfxList.ElementAt(i);
                 if (vfx == null)
                 {
-                    vfxList.Remove(vfx);
+                    vfxList.RemoveAt(i);
                     i--;
                     continue;
                 }
                 else if (!vfx.exists())
                 {
-                    vfxList.Remove(vfxList.ElementAt(i));
+                    vfxList.RemoveAt(i);
                     i--;
                     continue;
                 }
@@ -246,11 +284,6 @@ namespace RabbetGameEngine
             }
         }
 
-        private void doEntityCollisions()
-        {
-            CollisionHandler.collideEntities(entities);
-        }
-
 
         /*For adding colliders with no entity parent, eg, for map collisions, inanimate immovable uncolliding objects.*/
         public void addWorldAABB(AABB collider)
@@ -282,17 +315,18 @@ namespace RabbetGameEngine
         private void setDrawDistanceAndFog(float dist)
         {
             drawDistance = dist;
-            //fogDensity = //TODO: implement range based fog
-            fogGradient = 2.5F;
-        }
-        public float getFogDensity()
-        {
-            return fogDensity;
+            fogStart = drawDistance / 16;
+            fogEnd = drawDistance - 1.0F;
         }
 
-        public float getFogGradient()
+        public float getFogStart()
         {
-            return fogGradient;
+            return fogStart;
+        }
+
+        public float getFogEnd()
+        {
+            return fogEnd;
         }
 
         public float getDrawDistance()
@@ -302,17 +336,18 @@ namespace RabbetGameEngine
 
         public void spawnEntityInWorld(Entity theEntity)
         {
-            entities.Add(entityIDItterator++, theEntity);
-            if(GameSettings.entityLabels)
+            if(theEntity.getIsProjectile())
             {
-                addDebugLabel(new VFXMovingText3D(theEntity, "debugLabel", "Arial_Shadow", "Entity: " + (entityIDItterator-1).ToString(), new Vector3(0,1,0), 2.0F, CustomColor.white));
+                projectiles.Add(theEntity);
             }
-        }
-
-        public void spawnEntityInWorldAtPosition(Entity theEntity, Vector3 atPosition)
-        {
-            theEntity.setPosition(atPosition);
-            spawnEntityInWorld(theEntity);
+            else
+            {
+                entities.Add(entityIDItterator++, theEntity);
+                if (GameSettings.entityLabels)
+                {
+                    addDebugLabel(new VFXMovingText3D(theEntity, "debugLabel", "Arial_Shadow", "Entity: " + (entityIDItterator - 1).ToString(), new Vector3(0, 1, 0), 2.0F, CustomColor.white));
+                }
+            }
         }
 
         public void spawnVFXInWorld(VFX vfx)
@@ -345,6 +380,10 @@ namespace RabbetGameEngine
             return vfxList.Count;
         }
 
+        public int getProjectileCount()
+        {
+            return projectiles.Count;
+        }
         public void onLeavingPlanet()
         {
 

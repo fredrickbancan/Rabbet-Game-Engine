@@ -25,7 +25,8 @@ namespace RabbetGameEngine.SubRendering
         lerpLines,
         lerpISpheresTransparent,
         lerpTrianglesTransparent,
-        trianglesTransparent
+        trianglesTransparent,
+        staticSpriteCylinder
     }
 
     /*Class for constructing*/
@@ -160,8 +161,7 @@ namespace RabbetGameEngine.SubRendering
                     //ensure that all opaque batches come before transparent ones in the list.
                     if (transparency)
                     {
-                        batches.Add(new Batch(transparency, lerp));
-                        batches.ElementAt(i + 1).addToBatch(pParticleModel);
+                        insertTransparentNonGUIBatch(new Batch(transparency, lerp), pParticleModel);
                     }
                     else
                     {
@@ -202,8 +202,7 @@ namespace RabbetGameEngine.SubRendering
                     //ensure that all opaque batches come before transparent ones in the list.
                     if (transparency)
                     {
-                        batches.Add(new Batch(transparency, false));
-                        batches.ElementAt(i + 1).addToBatch(pParticle);
+                        insertTransparentNonGUIBatch(new Batch(transparency, false), pParticle);
                     }
                     else
                     {
@@ -243,8 +242,7 @@ namespace RabbetGameEngine.SubRendering
                     //ensure that all opaque batches come before transparent ones in the list.
                     if (transparency)
                     {
-                        batches.Add(new Batch(transparency, true));
-                        batches.ElementAt(i + 1).addToBatch(pParticle, prevTickPParticle);
+                        insertTransparentNonGUIBatch(new Batch(transparency, true), pParticle, prevTickPParticle);
                     }
                     else
                     {
@@ -272,6 +270,50 @@ namespace RabbetGameEngine.SubRendering
             batches.ElementAt(0).addToBatch(mod);
         }
 
+        private static void insertTransparentNonGUIBatch(Batch theBatch, PointParticle p, PointParticle prevP)
+        {
+            for (int i = batches.Count - 1; i >= 0; --i)
+            {
+                if (!batches.ElementAt(i).transparentGUI)
+                {
+                    batches.Insert(i + 1, theBatch);
+                    batches.ElementAt(i + 1).addToBatch(p, prevP);
+                    return;
+                }
+            }
+            batches.Insert(0, theBatch);
+            batches.ElementAt(0).addToBatch(p, prevP);
+        }
+
+        private static void insertTransparentNonGUIBatch(Batch theBatch, PointCloudModel p)
+        {
+            for (int i = batches.Count - 1; i >= 0; --i)
+            {
+                if (!batches.ElementAt(i).transparentGUI)
+                {
+                    batches.Insert(i + 1, theBatch);
+                    batches.ElementAt(i + 1).addToBatch(p);
+                    return;
+                }
+            }
+            batches.Insert(0, theBatch);
+            batches.ElementAt(0).addToBatch(p);
+        }
+
+        private static void insertTransparentNonGUIBatch(Batch theBatch, PointParticle p)
+        {
+            for (int i = batches.Count - 1; i >= 0; --i)
+            {
+                if (!batches.ElementAt(i).transparentGUI)
+                {
+                    batches.Insert(i + 1, theBatch);
+                    batches.ElementAt(i + 1).addToBatch(p);
+                    return;
+                }
+            }
+            batches.Insert(0, theBatch);
+            batches.ElementAt(0).addToBatch(p);
+        }
 
         public static void drawAll(Matrix4 viewMatrix, Vector3 fogColor)
         {

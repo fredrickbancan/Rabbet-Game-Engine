@@ -21,6 +21,7 @@ namespace RabbetGameEngine
         public static readonly string lerpISpheresTransparentName = "LerpISpheres_FT";
         public static readonly string lerpTrianglesTransparentName = "Lerp_FT";
         public static readonly string trianglesTransparentName = "Static_FT";
+        public static readonly string staticSpriteCylinderName = "StaticSpriteCylinder_F";
 
         public static readonly string fileExtension = ".shader";
         private static Dictionary<string, Shader> shaders = null;

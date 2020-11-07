@@ -69,9 +69,8 @@ namespace RabbetGameEngine
 
                 if (singleKeyPress(Keys.F4))
                 {
-                    //TODO: Test next update of OpenTK, currently broken. (can not exit fullscreen mode)
-                    //toggleBoolean(ref GameSettings.fullscreen);
-                   // Renderer.onToggleFullscreen();
+                    toggleBoolean(ref GameSettings.fullscreen);
+                    Renderer.onToggleFullscreen();
                 }
                 if (singleKeyPress(Keys.F5))
                 {

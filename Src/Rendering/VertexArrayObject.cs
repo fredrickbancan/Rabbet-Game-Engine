@@ -6,13 +6,15 @@ using System;
 
 namespace RabbetGameEngine
 {
+    //TODO: Overhaul. this is a fucking mess, replace with some sort of modular system where attributes can be added on the fly. See c++ rabbetgameengine in disckord github for how to do this.
     /*Abstraction of a VAO for use with rendering.*/
     public class VertexArrayObject
     {
-        private int vaoID;
-        private int vboID;
-        private int iboID;
-        private int pboID;
+        private int vaoID;//vertex array object id
+        private int vboID;//vertex buffer object id
+        private int iboID;//indices buffer object id
+        private int pboID;//positions buffer object id
+        private int sboID;//scale buffer object id
         private int instVboID;
         private int matricesVboID;
         private int indirectBufferID;
@@ -21,6 +23,7 @@ namespace RabbetGameEngine
         private bool usesMatrices = false;
         private bool usesIndirect = false;
         private bool usesQuadInstancing = false;
+        private bool usesScales = false;
 
         /// <summary>
         /// True if this vao has a buffer for vec3 positions, i.e: 3d text. Not nececarially lerp
@@ -174,7 +177,18 @@ namespace RabbetGameEngine
                     iSphereBased = true;
                     lerpISphereBased = true;
                     break;
-                     
+
+                case BatchType.staticSpriteCylinder:
+                    primType = PrimitiveType.TriangleStrip;
+                    this.spriteInstanceData = new Vector2[QuadPrefab.quadVertices.Length];
+                    for (int i = 0; i < QuadPrefab.quadVertices.Length; ++i)
+                    {
+                        spriteInstanceData[i] = new Vector2(QuadPrefab.quadVertices[i].pos.X, QuadPrefab.quadVertices[i].pos.Y);
+                    }
+                    usesIndices = false;
+                    usesQuadInstancing = true;
+                    usesScales = true;
+                    break;
                 default:
                     break;
             }
@@ -266,12 +280,11 @@ namespace RabbetGameEngine
 
             GL.EnableVertexAttribArray(2);
             GL.VertexAttribPointer(2, Vertex.uvLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.uvOffset);
-           
-            GL.EnableVertexAttribArray(4);
-            GL.VertexAttribPointer(4, Vertex.objectIDLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.objectIDOffset);
             hasInitialized = true;
         }
 
+
+        
         /// <summary>
         /// Can be called to initialize this vao with the provided data.
         /// Once initialized for the first time, this does not do anything.
@@ -306,9 +319,6 @@ namespace RabbetGameEngine
                 GL.EnableVertexAttribArray(2);
                 GL.VertexAttribPointer(2, Vertex.uvLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.uvOffset);
 
-                GL.EnableVertexAttribArray(3);
-                GL.VertexAttribPointer(3, Vertex.objectIDLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.objectIDOffset);
-
                 if (usesMatrices)
                 {
                     matricesVboID = GL.GenBuffer();
@@ -318,38 +328,38 @@ namespace RabbetGameEngine
                     int sizeOfMatrix = 16 * sizeof(float);
                     int stride = sizeOfMatrix * 2;
                     //modelMatrixRow0
-                    GL.EnableVertexAttribArray(4);
-                    GL.VertexAttribPointer(4, 4, VertexAttribPointerType.Float, false, stride, 0);
-                    GL.VertexAttribDivisor(4, 1);
+                    GL.EnableVertexAttribArray(3);
+                    GL.VertexAttribPointer(3, 4, VertexAttribPointerType.Float, false, stride, 0);
+                    GL.VertexAttribDivisor(3, 1);
                     //modelMatrixRow1
-                    GL.EnableVertexAttribArray(5);
-                    GL.VertexAttribPointer(5, 4, VertexAttribPointerType.Float, false, stride, 16);
-                    GL.VertexAttribDivisor(5, 1);
+                    GL.EnableVertexAttribArray(4);
+                    GL.VertexAttribPointer(4, 4, VertexAttribPointerType.Float, false, stride, 16);
+                    GL.VertexAttribDivisor(4, 1);
                     //modelMatrixRow2
-                    GL.EnableVertexAttribArray(6);
-                    GL.VertexAttribPointer(6, 4, VertexAttribPointerType.Float, false, stride, 32);
-                    GL.VertexAttribDivisor(6, 1);
+                    GL.EnableVertexAttribArray(5);
+                    GL.VertexAttribPointer(5, 4, VertexAttribPointerType.Float, false, stride, 32);
+                    GL.VertexAttribDivisor(5, 1);
                     //modelMatrixRow3
-                    GL.EnableVertexAttribArray(7);
-                    GL.VertexAttribPointer(7, 4, VertexAttribPointerType.Float, false, stride, 48);
-                    GL.VertexAttribDivisor(7, 1);
+                    GL.EnableVertexAttribArray(6);
+                    GL.VertexAttribPointer(6, 4, VertexAttribPointerType.Float, false, stride, 48);
+                    GL.VertexAttribDivisor(6, 1);
 
                     //prevTickModelMatrixRow0
-                    GL.EnableVertexAttribArray(8);
-                    GL.VertexAttribPointer(8, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 0);
-                    GL.VertexAttribDivisor(8, 1);
+                    GL.EnableVertexAttribArray(7);
+                    GL.VertexAttribPointer(7, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 0);
+                    GL.VertexAttribDivisor(7, 1);
                     //prevTickModelMatrixRow1
-                    GL.EnableVertexAttribArray(9);
-                    GL.VertexAttribPointer(9, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 16);
-                    GL.VertexAttribDivisor(9, 1);
+                    GL.EnableVertexAttribArray(8);
+                    GL.VertexAttribPointer(8, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 16);
+                    GL.VertexAttribDivisor(8, 1);
                     //prevTickModelMatrixRow2
-                    GL.EnableVertexAttribArray(10);
-                    GL.VertexAttribPointer(10, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 32);
-                    GL.VertexAttribDivisor(10, 1);
+                    GL.EnableVertexAttribArray(9);
+                    GL.VertexAttribPointer(9, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 32);
+                    GL.VertexAttribDivisor(9, 1);
                     //prevTickModelMatrixRow3
-                    GL.EnableVertexAttribArray(11);
-                    GL.VertexAttribPointer(11, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 48);
-                    GL.VertexAttribDivisor(11, 1);
+                    GL.EnableVertexAttribArray(10);
+                    GL.VertexAttribPointer(10, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 48);
+                    GL.VertexAttribDivisor(10, 1);
                 }
                 else if (usesPositions)
                 {
@@ -360,21 +370,35 @@ namespace RabbetGameEngine
                     if (usesPrevPositions)
                     {
                         stride = sizeof(float) * 3 * 2;
-                        GL.EnableVertexAttribArray(4);
-                        GL.VertexAttribPointer(4, 3, VertexAttribPointerType.Float, false, stride, 0);
-                        GL.VertexAttribDivisor(4, 1);
+                        GL.EnableVertexAttribArray(3);
+                        GL.VertexAttribPointer(3, 3, VertexAttribPointerType.Float, false, stride, 0);
+                        GL.VertexAttribDivisor(3, 1);
 
                         //prev pos ptr
-                        GL.EnableVertexAttribArray(5);
-                        GL.VertexAttribPointer(5, 3, VertexAttribPointerType.Float, false, stride, sizeof(float) * 3);
-                        GL.VertexAttribDivisor(5, 1);
+                        GL.EnableVertexAttribArray(4);
+                        GL.VertexAttribPointer(4, 3, VertexAttribPointerType.Float, false, stride, sizeof(float) * 3);
+                        GL.VertexAttribDivisor(4, 1);
+                    
+                        if(usesScales)
+                        {
+                            GL.EnableVertexAttribArray(5);
+                            GL.VertexAttribPointer(5, 3, VertexAttribPointerType.Float, false, sizeof(float) * 3, 0);
+                            GL.VertexAttribDivisor(5, 1);
+                        }
                     }
                     else
                     {
                         stride = sizeof(float) * 3;
-                        GL.EnableVertexAttribArray(4);
-                        GL.VertexAttribPointer(4, 3, VertexAttribPointerType.Float, false, stride, 0);
-                        GL.VertexAttribDivisor(4, 1);
+                        GL.EnableVertexAttribArray(3);
+                        GL.VertexAttribPointer(3, 3, VertexAttribPointerType.Float, false, stride, 0);
+                        GL.VertexAttribDivisor(3, 1);
+
+                        if (usesScales)
+                        {
+                            GL.EnableVertexAttribArray(4);
+                            GL.VertexAttribPointer(4, 3, VertexAttribPointerType.Float, false, sizeof(float) * 3, 0);
+                            GL.VertexAttribDivisor(4, 1);
+                        }
                     }
 
                 }
@@ -491,6 +515,12 @@ namespace RabbetGameEngine
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, iboID);
         }
 
+        public void bindSBO()
+        {
+            if(usesScales)
+                GL.BindBuffer(BufferTarget.ArrayBuffer, sboID);
+        }
+
         public void bindPBO()
         {
             if (usesPositions)
@@ -524,7 +554,6 @@ namespace RabbetGameEngine
             if (usesIndices)
                 GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
         }
-
         public void unbindAll()
         {
             unbindVBO();

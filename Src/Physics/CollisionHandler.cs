@@ -23,6 +23,29 @@ namespace RabbetGameEngine.Physics
     public static class CollisionHandler
     {
         private static readonly float pushVel = 0.05F * 0.5F;
+
+        public static void testProjectilesAgainstEntities(Dictionary<int, Entity> entities, List<Entity> projectiles)
+        {
+            Profiler.beginEndProfile("EntCollisions");
+            Entity proj;
+            Entity ent;
+            for(int i = 0; i < projectiles.Count; i++)
+            {
+                proj = projectiles.ElementAt(i);
+                if (!proj.getHasCollider()) continue;
+                for(int j = 0; j < entities.Count; j++)
+                {
+                    ent = entities.ElementAt(j).Value;
+                    if (!ent.getHasCollider()) continue;
+                    if(!AABB.areBoxesNotTouching(proj.getBox(), ent.getBox()))
+                    {
+                        proj.onCollideWithEntity(ent);
+                    }
+                }
+            }
+            Profiler.beginEndProfile("EntCollisions");
+        }
+
         //TODO: impliment some sort of space partitioning (i.e, chunks) to avoid O(n^2 - n) complexity. Use technique to ignore unseen VFX. Make sure to perform tests to measure performance changes.
         /// <summary>
         /// Does collisions with each entity against all other entities it is touching.
@@ -46,25 +69,22 @@ namespace RabbetGameEngine.Physics
                 for (int j = i + 1; j < entities.Count; ++j)
                 {
                     Entity otherEntAt = entities.Values.ElementAt(j);
-                    if(!otherEntAt.getHasCollider() || (otherEntAt.getIsProjectile() && entAt.getIsProjectile()))
+                    if(!otherEntAt.getHasCollider())
                     {
                         continue;
                     }
 
                     if(!AABB.areBoxesNotTouching((AABB)entAt.getBox(), (AABB)otherEntAt.getBox()))
                     {
-                        if (!entAt.getIsProjectile() || !otherEntAt.getIsProjectile())
-                        {
-                            otherEntXZ = otherEntAt.getPosition().Xz;
-                            entXZ = entAt.getPosition().Xz;
+                        otherEntXZ = otherEntAt.getPosition().Xz;
+                        entXZ = entAt.getPosition().Xz;
 
-                            if (entXZ.X == otherEntXZ.X) entXZ.X += 0.01F;//avoid division by zero in normalize func
+                        if (entXZ.X == otherEntXZ.X) entXZ.X += 0.01F;//avoid division by zero in normalize func
 
-                            pushVec = Vector2.Normalize(otherEntXZ - entXZ) * pushVel;
+                        pushVec = Vector2.Normalize(otherEntXZ - entXZ) * pushVel;
 
-                            entAt.addVelocity(new Vector3(-pushVec.X, 0, -pushVec.Y));
-                            otherEntAt.addVelocity(new Vector3(pushVec.X, 0, pushVec.Y));
-                        }
+                        entAt.addVelocity(new Vector3(-pushVec.X, 0, -pushVec.Y));
+                        otherEntAt.addVelocity(new Vector3(pushVec.X, 0, pushVec.Y));
                         entAt.onCollideWithEntity(otherEntAt);
                         otherEntAt.onCollideWithEntity(entAt);
                     }

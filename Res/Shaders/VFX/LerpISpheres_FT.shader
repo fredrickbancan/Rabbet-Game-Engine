@@ -11,8 +11,8 @@ layout(location = 6) in float prevRadius;
 layout(location = 7) in float prevAoc;
 
 
-uniform float fogDensity = 0.0075;
-const float fogGradient = 2.5;
+uniform float fogStart = 1000.0;
+uniform float fogEnd = 1000.0;
 
 out vec4 vColor;
 out float visibility;
@@ -35,8 +35,10 @@ void main()
     gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * (prevRadius + (radius - prevRadius) * percentageToNextTick) / gl_Position.w;//TODO: this does not take into account aspect ratio and can cause points to be elipsical in shape.
 
     float distanceFromCam = length(positionRelativeToCam.xyz);
-    visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));
+    visibility = (distanceFromCam - fogStart) / (fogEnd - fogStart);
     visibility = clamp(visibility, 0.0, 1.0);
+    visibility = 1.0 - visibility;
+    visibility *= visibility;
 
     //lerping color
     vColor = mix(prevPointColor, pointColor, percentageToNextTick);

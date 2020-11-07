@@ -46,7 +46,7 @@ namespace RabbetGameEngine.VisualEffects
 
         public static void doSmallSmokePuffEffect(Planet planet, Vector3 location)
         {
-            VFXPointCloud smoke = new VFXPointCloud(location, CustomColor.darkGrey, true, false, 4F, 0.05F, 0.7F);
+            VFXPointCloud smoke = new VFXPointCloud(location, CustomColor.darkGrey, true, false, 2F, 0.05F, 0.7F);
             smoke.constructRandomPointCloudModel(7, 0.05F, true);
             smoke.setYAccel(0.001572F);
             smoke.setExpansionResistance(0.2572F);
@@ -84,11 +84,6 @@ namespace RabbetGameEngine.VisualEffects
             { 
                 Renderer.requestRender(p, false, false);
             }
-        }
-
-        public static void doDebugSnowEffect(Planet planet)
-        {
-
         }
     }
 }

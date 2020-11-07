@@ -5,6 +5,9 @@ using System;
 
 namespace RabbetGameEngine.SubRendering
 {
+    //TODO: Overhaul. resizing of different arrays needs to be automated to improve readability and performance.
+    //Too many if statements in adding to batches is slow.
+    //complexity increases when adding new data types/arrays
     public class Batch
     { 
         public static readonly int vectorSize = sizeof(float) * 3;
@@ -44,6 +47,8 @@ namespace RabbetGameEngine.SubRendering
 
         /*If using prev positions for lerping, they will be stored in a single vbo interlaced. Otherwise if positions are being used, they are stored flat in a single vbo.*/
         private Vector3[] positions = null;
+
+        private Vector3[] scales = null;
    
 
         private DrawCommand[] drawCommands = null;
@@ -243,6 +248,14 @@ namespace RabbetGameEngine.SubRendering
                     maxBufferSizeBytes /= 4;
                     usesMultiDrawIndirect = true;
                     usesLerpMatrices = true;
+                    break;
+
+                case BatchType.staticSpriteCylinder:
+                    ShaderUtil.tryGetShader(ShaderUtil.staticSpriteCylinderName, out batchShader);
+                    positions = new Vector3[initialArraySize];
+                    scales = new Vector3[initialArraySize];
+                    usesPositions = true;
+                    usesQuadInstancing = true;
                     break;
             }
         }
@@ -558,8 +571,8 @@ namespace RabbetGameEngine.SubRendering
             batchShader.setUniformMat4F("viewMatrix", viewMatrix);
             batchShader.setUniformVec3F("cameraPos", Renderer.camPos);
             batchShader.setUniformVec3F("fogColor", fogColor);
-            batchShader.setUniform1F("fogDensity", GameInstance.get.currentPlanet.getFogDensity());
-            batchShader.setUniform1F("fogGradient", GameInstance.get.currentPlanet.getFogGradient());
+            batchShader.setUniform1F("fogStart", GameInstance.get.currentPlanet.getFogStart());
+            batchShader.setUniform1F("fogEnd", GameInstance.get.currentPlanet.getFogEnd());
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             if(pointBased)
             {

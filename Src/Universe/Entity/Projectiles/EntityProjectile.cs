@@ -2,7 +2,7 @@
 using RabbetGameEngine.Physics;
 namespace RabbetGameEngine
 {
-    class EntityProjectile : Entity
+    public class EntityProjectile : Entity
     {
         protected float maxExistedTicks;
 
@@ -38,6 +38,14 @@ namespace RabbetGameEngine
 
         public override void onCollideWithEntity(Entity ent)
         {
+            if (ent.getIsLiving())
+            {
+                if (!ent.getIsGrounded())
+                {
+                    GameInstance.onAirShot();
+                }
+                GameInstance.onDirectHit();
+            }
             base.onCollideWithEntity(ent);
             onCollide();
         }

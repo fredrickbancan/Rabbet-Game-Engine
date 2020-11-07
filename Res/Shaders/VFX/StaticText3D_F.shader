@@ -4,10 +4,10 @@
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 texCoord;
-layout(location = 3) in float objectID;
-layout(location = 4) in vec3 textPos;
-uniform float fogDensity = 0.0075;
-const float fogGradient = 2.5;
+layout(location = 3) in vec3 textPos;
+
+uniform float fogStart = 1000.0;
+uniform float fogEnd = 1000.0;
 
 out vec4 vColor;
 out float visibility;
@@ -40,8 +40,10 @@ void main()
     gl_Position = projectionMatrix * positionRelativeToCam;
 
     float distanceFromCam = length(positionRelativeToCam.xyz);
-    visibility = exp(-pow((distanceFromCam * fogDensity), fogGradient));
+    visibility = (distanceFromCam - fogStart) / (fogEnd - fogStart);
     visibility = clamp(visibility, 0.0, 1.0);
+    visibility = 1.0 - visibility;
+    visibility *= visibility;
 
     vColor = vertexColor;
     fTexCoord = texCoord;

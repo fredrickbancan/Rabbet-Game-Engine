@@ -1,5 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
+using RabbetGameEngine.VisualEffects;
 using System;
 namespace RabbetGameEngine
 {
@@ -21,6 +22,7 @@ namespace RabbetGameEngine
             Vector3 velocityNormalVec = Vector3.Normalize(velocity);
             yaw = (float)((Math.Atan2(velocityNormalVec.Z, velocityNormalVec.X) * 180) / Math.PI );
             pitch = (float)(Math.Atan2(velocityNormalVec.Y, velocityNormalVec.Xz.Length) * (180D / Math.PI));
+            VFXUtil.doSmallSmokePuffEffect(currentPlanet, pos);
         }
 
         public override void ceaseToExist()
