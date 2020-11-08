@@ -38,6 +38,7 @@ namespace RabbetGameEngine.SubRendering
         /// This boolean is to ensure that renders are not requested multiple times in one frame if the game is doing multiple onTick() calls to catch up.
         /// </summary>
         private static bool acceptingRequests = true;
+
         /// <summary>
         /// Should be called before any rendering requests. For instance, begining of each tick loop.
         /// </summary>

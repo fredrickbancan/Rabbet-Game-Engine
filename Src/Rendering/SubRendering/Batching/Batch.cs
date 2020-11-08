@@ -40,18 +40,18 @@ namespace RabbetGameEngine.SubRendering
         private Model batchedModel = null;
 
         /*points are stored in a single VBO half packed, meaning the prevTickBatchedPoints start in the second half of the array. all the batchedPoints come first, and then the prevTickBatchedPoints are packed after them.*/
-        private PointParticle[] batchedPoints = null;
+        public PointParticle[] batchedPoints = null;
 
         /*Matrices are stored in a single VBO interlaced. all the modelMatrices come first, and then the prevTickModelMatrices are packed after them.*/
-        private Matrix4[] modelMatrices = null;
+        public Matrix4[] modelMatrices = null;
 
         /*If using prev positions for lerping, they will be stored in a single vbo interlaced. Otherwise if positions are being used, they are stored flat in a single vbo.*/
-        private Vector3[] positions = null;
+        public Vector3[] positions = null;
 
-        private Vector3[] scales = null;
-   
+        public Vector3[] scales = null;
 
-        private DrawCommand[] drawCommands = null;
+
+        public DrawCommand[] drawCommands = null;
 
         private bool usesMultiDrawIndirect = false;
         private bool usesLerpMatrices = false;
@@ -622,6 +622,10 @@ namespace RabbetGameEngine.SubRendering
             return batchTex;
         }
 
+        public void setVAO(VertexArrayObject vao)
+        {
+            this.VAO = vao;
+        }
 
         public bool hasBeenUsedInCurrentTick()
         {

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     /// <summary>
     /// A struct for containing draw command parameters for glMultiDrawElementsIndirect
