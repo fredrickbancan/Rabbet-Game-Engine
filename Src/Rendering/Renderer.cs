@@ -27,6 +27,7 @@ namespace RabbetGameEngine
             ShaderUtil.loadAllFoundShaderFiles();
             TextureUtil.loadAllFoundTextureFiles();
             MeshUtil.loadAllFoundModelFiles();
+            BatchUtil.init();
             Application.infoPrint("OpenGL Version: " + GL.GetString(StringName.Version));
             Application.infoPrint("OpenGL Vendor: " + GL.GetString(StringName.Vendor));
             Application.infoPrint("Shading Language Version: " + GL.GetString(StringName.ShadingLanguageVersion));
@@ -45,6 +46,7 @@ namespace RabbetGameEngine
             orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1.0F);
             staticDraws = new Dictionary<string, StaticRenderObject>();
             SkyboxRenderer.init();
+
         }
 
         /*Called each time the game window is resized*/

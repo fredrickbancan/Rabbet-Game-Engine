@@ -1,11 +1,11 @@
 ﻿//shader for rendering point particles Dynamically opaque
 #shader vertex
 #version 330 core
-layout(location = 0) in vec4 position;
-layout(location = 1) in vec4 vertexColor;
-layout(location = 2) in vec2 texCoord;
-layout(location = 3) in vec3 spritePos;
-layout(location = 4) in vec3 scale;
+layout(location = 0) in vec4 spritePos;
+layout(location = 1) in vec4 spriteColor;
+layout(location = 2) in vec3 spriteScale;
+layout(location = 3) in vec4 spriteUVMinMax;
+layout(location = 4) in vec2 corner;//instanced quad corner
 
 uniform float fogStart = 1000.0;
 uniform float fogEnd = 1000.0;
@@ -35,11 +35,11 @@ void main()
     modelViewBillboard[2][1] = 0;
     modelViewBillboard[2][2] = 1;
 
-    vec4 posScaled = position;
-    posScaled.x *= scale.x;
-    posScaled.y *= scale.y;
+    vec4 cornerScaled = corner;
+    corner.x *= scale.x;
+    corner.y *= scale.y;
 
-    vec4 positionRelativeToCam = modelViewBillboard * posScaled;
+    vec4 positionRelativeToCam = modelViewBillboard * cornerScaled;
     gl_Position = projectionMatrix * positionRelativeToCam;
 
     float distanceFromCam = length(positionRelativeToCam.xyz);
@@ -48,8 +48,12 @@ void main()
     visibility = 1.0 - visibility;
     visibility *= visibility;
 
-    vColor = vertexColor;
-    fTexCoord = texCoord;
+    vec2 uv = vec2(0.0,0.0);
+    uv.x = corner.x < 0.0 ? spriteUVMinMax.x : spriteUVMinMax.z;
+    uv.y = corner.y < 0.0 ? spriteUVMinMax.y : spriteUVMinMax.w;
+
+    vColor = spriteColor;
+    fTexCoord = uv;
 }
 
 /*#############################################################################################################################################################################################*/

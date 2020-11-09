@@ -5,10 +5,12 @@ namespace RabbetGameEngine
     public class InstanceBufferObject
     {
         public int id;
+        public VertexBufferLayout layout;
 
-        public InstanceBufferObject()
+        public InstanceBufferObject(VertexBufferLayout l)
         {
             id = GL.GenBuffer();
+            layout = l;
         }
 
 

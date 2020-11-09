@@ -43,5 +43,13 @@ namespace RabbetGameEngine
             this.radius = radius;
             this.aoc = aoc ? 1.0F : 0.0F;
         }
+
+        public static void configureLayout(VertexBufferLayout l)
+        {
+            l.add(OpenTK.Graphics.OpenGL.VertexAttribPointerType.Float, 3);
+            l.add(OpenTK.Graphics.OpenGL.VertexAttribPointerType.Float, 4);
+            l.add(OpenTK.Graphics.OpenGL.VertexAttribPointerType.Float, 1);
+            l.add(OpenTK.Graphics.OpenGL.VertexAttribPointerType.Float, 1);
+        }
     }
 }

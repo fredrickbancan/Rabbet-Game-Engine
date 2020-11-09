@@ -6,6 +6,7 @@ namespace RabbetGameEngine
 {
     //TODO: add methods for resizing dynamic buffers
     //TODO: add support for requesting certain vertex attrib layouts for vbos and instance bo
+    //TODO: consider having buffers as a set maximum size instead of resizing and giving an initial size. Also look into bufferusagehint.streamdraw.
     public class VertexArrayObject
     {
         private int vaoID;
@@ -24,6 +25,11 @@ namespace RabbetGameEngine
 
         private bool usesInstancing = false;
         private bool hasSetUpInstancing = false;
+
+        
+        private int debugTotalAttributes = 0;
+
+        public PrimitiveType drawType;
 
         public VertexArrayObject()
         {
@@ -48,10 +54,10 @@ namespace RabbetGameEngine
             usesIndices = true;
         }
 
-        public void addInstanceBuffer<T2>(T2[] data, int sizeOfType) where T2 : struct
+        public void addInstanceBuffer<T2>(T2[] data, int sizeOfType, VertexBufferLayout layout) where T2 : struct
         {
             if (hasSetUpInstancing) return;
-            instbo = new InstanceBufferObject();
+            instbo = new InstanceBufferObject(layout);
             instbo.init<T2>(data, sizeOfType);
             hasSetUpInstancing = true;
             usesInstancing = true;
@@ -76,16 +82,16 @@ namespace RabbetGameEngine
         }
 
         
-        public void addBuffer<T2>(T2[] data, int sizeOfType) where T2 : struct
+        public void addBuffer<T2>(T2[] data, int sizeOfType, VertexBufferLayout layout) where T2 : struct
         {
-            VertexBufferObject vbo = new VertexBufferObject();
+            VertexBufferObject vbo = new VertexBufferObject(layout);
             vbo.initStatic<T2>(data, sizeOfType);
             vbos.Add(vbo);
         }
 
-        public void addBufferDynamic(int initialByteSize)
+        public void addBufferDynamic(int initialByteSize, VertexBufferLayout layout)
         {
-            VertexBufferObject vbo = new VertexBufferObject();
+            VertexBufferObject vbo = new VertexBufferObject(layout);
             vbo.initDynamic(initialByteSize);
             vbos.Add(vbo);
         }
@@ -96,8 +102,57 @@ namespace RabbetGameEngine
         public void finishBuilding()
         {
             //build vertex attrib pointers based on requested layouts, etc.
+            int attribItterator = 0;
+            int offset = 0;
+            VertexBufferElement element;
+            VertexBufferObject vbo;
+            for(int i = 0; i <vbos.Count; i++)
+            {
+                vbo = vbos.ElementAt(i);
+                vbo.bind();
+                offset = 0;
+                for(int j = 0; j < vbo.layout.elements.Count; j++)
+                {
+                    element = vbo.layout.elements.ElementAt(j);
+                    GL.EnableVertexAttribArray(attribItterator);
+                    GL.VertexAttribPointer(attribItterator, element.count, element.type, element.normalized, vbo.layout.getStride(), offset);
+                    if (usesInstancing || usesIndirect)
+                    {
+                        GL.VertexAttribDivisor(attribItterator, 1);
+                    }
+                    offset += element.count * VertexBufferElement.getSizeOfType(element.type);
+                    attribItterator++;
+                }
+            }
+
+            if(usesInstancing && hasSetUpInstancing)
+            {
+                offset = 0;
+                instbo.bind();
+                for (int j = 0; j < instbo.layout.elements.Count; j++)
+                {
+                    element = instbo.layout.elements.ElementAt(j);
+                    GL.EnableVertexAttribArray(attribItterator);
+                    GL.VertexAttribPointer(attribItterator, element.count, element.type, element.normalized, instbo.layout.getStride(), offset);
+                    offset += element.count * VertexBufferElement.getSizeOfType(element.type);
+                    attribItterator++;
+                }
+            }
+            debugTotalAttributes = attribItterator;
         }
 
+        public void resizeBuffer(int vboIndex, int newSizeBytes)
+        {
+            if (vboIndex < vbos.Count)
+            {
+                VertexBufferObject vbo = vbos.ElementAt(vboIndex);
+
+                if (vbo.isDynamic)
+                    vbo.resizeBuffer(newSizeBytes);
+                else
+                    Application.warn("VAO Could not resize non-dynamic buffer at index: " + vboIndex);
+            }
+        }
 
         public void updateBuffer<T2>(int vboIndex, T2[] data, int sizeToUpdate) where T2 : struct
         {
@@ -152,7 +207,8 @@ namespace RabbetGameEngine
 
         public void delete()
         {
-            foreach(VertexBufferObject b in vbos)
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            foreach (VertexBufferObject b in vbos)
             {
                 b.delete();
             }
@@ -165,198 +221,5 @@ namespace RabbetGameEngine
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.BindVertexArray(0);
         }
-
-      /*  private void initializeDynamic()
-        {
-            if (hasInitialized) return;
-            vaoID = GL.GenVertexArray();
-            GL.BindVertexArray(vaoID);
-
-            //do initialization of buffers here
-            if (usesIndices)
-            {
-                iboID = GL.GenBuffer();
-                GL.BindBuffer(BufferTarget.ElementArrayBuffer, iboID);
-                GL.BufferData(BufferTarget.ElementArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
-            }
-
-            vboID = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vboID);
-            GL.BufferData(BufferTarget.ArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
-
-            if (!iSphereBased)
-            {
-
-                GL.EnableVertexAttribArray(0);
-                GL.VertexAttribPointer(0, Vertex.positionLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.positionOffset);
-
-                GL.EnableVertexAttribArray(1);
-                GL.VertexAttribPointer(1, Vertex.colorLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.colorOffset);
-
-                GL.EnableVertexAttribArray(2);
-                GL.VertexAttribPointer(2, Vertex.uvLength, VertexAttribPointerType.Float, false, Vertex.vertexByteSize, Vertex.uvOffset);
-
-                if (usesMatrices)
-                {
-                    matricesVboID = GL.GenBuffer();
-                    GL.BindBuffer(BufferTarget.ArrayBuffer, matricesVboID);
-                    GL.BufferData(BufferTarget.ArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
-
-                    int sizeOfMatrix = 16 * sizeof(float);
-                    int stride = sizeOfMatrix * 2;
-                    //modelMatrixRow0
-                    GL.EnableVertexAttribArray(3);
-                    GL.VertexAttribPointer(3, 4, VertexAttribPointerType.Float, false, stride, 0);
-                    GL.VertexAttribDivisor(3, 1);
-                    //modelMatrixRow1
-                    GL.EnableVertexAttribArray(4);
-                    GL.VertexAttribPointer(4, 4, VertexAttribPointerType.Float, false, stride, 16);
-                    GL.VertexAttribDivisor(4, 1);
-                    //modelMatrixRow2
-                    GL.EnableVertexAttribArray(5);
-                    GL.VertexAttribPointer(5, 4, VertexAttribPointerType.Float, false, stride, 32);
-                    GL.VertexAttribDivisor(5, 1);
-                    //modelMatrixRow3
-                    GL.EnableVertexAttribArray(6);
-                    GL.VertexAttribPointer(6, 4, VertexAttribPointerType.Float, false, stride, 48);
-                    GL.VertexAttribDivisor(6, 1);
-
-                    //prevTickModelMatrixRow0
-                    GL.EnableVertexAttribArray(7);
-                    GL.VertexAttribPointer(7, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 0);
-                    GL.VertexAttribDivisor(7, 1);
-                    //prevTickModelMatrixRow1
-                    GL.EnableVertexAttribArray(8);
-                    GL.VertexAttribPointer(8, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 16);
-                    GL.VertexAttribDivisor(8, 1);
-                    //prevTickModelMatrixRow2
-                    GL.EnableVertexAttribArray(9);
-                    GL.VertexAttribPointer(9, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 32);
-                    GL.VertexAttribDivisor(9, 1);
-                    //prevTickModelMatrixRow3
-                    GL.EnableVertexAttribArray(10);
-                    GL.VertexAttribPointer(10, 4, VertexAttribPointerType.Float, false, stride, sizeOfMatrix + 48);
-                    GL.VertexAttribDivisor(10, 1);
-                }
-                else if (usesPositions)
-                {
-                    pboID = GL.GenBuffer();
-                    GL.BindBuffer(BufferTarget.ArrayBuffer, pboID);
-                    GL.BufferData(BufferTarget.ArrayBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
-                    int stride;
-                    if (usesPrevPositions)
-                    {
-                        stride = sizeof(float) * 3 * 2;
-                        GL.EnableVertexAttribArray(3);
-                        GL.VertexAttribPointer(3, 3, VertexAttribPointerType.Float, false, stride, 0);
-                        GL.VertexAttribDivisor(3, 1);
-
-                        //prev pos ptr
-                        GL.EnableVertexAttribArray(4);
-                        GL.VertexAttribPointer(4, 3, VertexAttribPointerType.Float, false, stride, sizeof(float) * 3);
-                        GL.VertexAttribDivisor(4, 1);
-                    
-                        if(usesScales)
-                        {
-                            GL.EnableVertexAttribArray(5);
-                            GL.VertexAttribPointer(5, 3, VertexAttribPointerType.Float, false, sizeof(float) * 3, 0);
-                            GL.VertexAttribDivisor(5, 1);
-                        }
-                    }
-                    else
-                    {
-                        stride = sizeof(float) * 3;
-                        GL.EnableVertexAttribArray(3);
-                        GL.VertexAttribPointer(3, 3, VertexAttribPointerType.Float, false, stride, 0);
-                        GL.VertexAttribDivisor(3, 1);
-
-                        if (usesScales)
-                        {
-                            GL.EnableVertexAttribArray(4);
-                            GL.VertexAttribPointer(4, 3, VertexAttribPointerType.Float, false, sizeof(float) * 3, 0);
-                            GL.VertexAttribDivisor(4, 1);
-                        }
-                    }
-
-                }
-
-                if (usesIndirect)
-                {
-                    indirectBufferID = GL.GenBuffer();
-                    GL.BindBuffer(BufferTarget.DrawIndirectBuffer, indirectBufferID);
-                    GL.BufferData(BufferTarget.DrawIndirectBuffer, bufferByteSize, IntPtr.Zero, BufferUsageHint.DynamicDraw);
-                }
-            }
-            else
-            {
-                if (lerpISphereBased)
-                {
-                    int stride = PointParticle.pParticleByteSize * 2;
-
-                    //current point data
-                    GL.EnableVertexAttribArray(0);
-                    GL.VertexAttribPointer(0, PointParticle.positionLength, VertexAttribPointerType.Float, false, stride, PointParticle.positionOffset);
-
-
-                    GL.EnableVertexAttribArray(1);
-                    GL.VertexAttribPointer(1, PointParticle.colorLength, VertexAttribPointerType.Float, false, stride, PointParticle.colorOffset);
-
-
-                    GL.EnableVertexAttribArray(2);
-                    GL.VertexAttribPointer(2, PointParticle.radiusLength, VertexAttribPointerType.Float, false, stride, PointParticle.radiusOffset);
-
-
-                    GL.EnableVertexAttribArray(3);
-                    GL.VertexAttribPointer(3, PointParticle.aocLength, VertexAttribPointerType.Float, false, stride, PointParticle.aocOffset);
-
-                    //previous tick point data
-                    GL.EnableVertexAttribArray(4);
-                    GL.VertexAttribPointer(4, PointParticle.positionLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.positionOffset);
-
-
-                    GL.EnableVertexAttribArray(5);
-                    GL.VertexAttribPointer(5, PointParticle.colorLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.colorOffset);
-
-
-                    GL.EnableVertexAttribArray(6);
-                    GL.VertexAttribPointer(6, PointParticle.radiusLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.radiusOffset);
-
-
-                    GL.EnableVertexAttribArray(7);
-                    GL.VertexAttribPointer(7, PointParticle.aocLength, VertexAttribPointerType.Float, false, stride, PointParticle.pParticleByteSize + PointParticle.aocOffset);
-
-                }
-                else
-                {
-                    int stride = PointParticle.pParticleByteSize;
-
-                    //current point data
-                    GL.EnableVertexAttribArray(0);
-                    GL.VertexAttribPointer(0, PointParticle.positionLength, VertexAttribPointerType.Float, false, stride, PointParticle.positionOffset);
-                    GL.VertexAttribDivisor(0,1);
-
-                    GL.EnableVertexAttribArray(1);
-                    GL.VertexAttribPointer(1, PointParticle.colorLength, VertexAttribPointerType.Float, false, stride, PointParticle.colorOffset);
-                    GL.VertexAttribDivisor(1, 1);
-
-                    GL.EnableVertexAttribArray(2);
-                    GL.VertexAttribPointer(2, PointParticle.radiusLength, VertexAttribPointerType.Float, false, stride, PointParticle.radiusOffset);
-                    GL.VertexAttribDivisor(2, 1);
-
-                    GL.EnableVertexAttribArray(3);
-                    GL.VertexAttribPointer(3, PointParticle.aocLength, VertexAttribPointerType.Float, false, stride, PointParticle.aocOffset);
-                    GL.VertexAttribDivisor(3, 1);
-
-                    instVboID = GL.GenBuffer();
-                    GL.BindBuffer(BufferTarget.ArrayBuffer, instVboID);
-                    GL.BufferData(BufferTarget.ArrayBuffer, spriteInstanceData.Length * sizeof(float) * 2, spriteInstanceData, BufferUsageHint.StaticDraw);
-                    //quad vertex positions (vector 2 F)
-                    GL.EnableVertexAttribArray(4);
-                    GL.VertexAttribPointer(4, 2, VertexAttribPointerType.Float, false, sizeof(float) * 2, 0);
-                }
-                
-            }
-            hasInitialized = true;
-        }*/
     }
 }

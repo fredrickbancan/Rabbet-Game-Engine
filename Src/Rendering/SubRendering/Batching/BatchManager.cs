@@ -17,16 +17,20 @@ namespace RabbetGameEngine.SubRendering
         text3D,
         lerpText3D,
         triangles,
+        quads,
         lines,
         iSpheres,
         iSpheresTransparent,
         lerpISpheres,
         lerpTriangles,
+        lerpQuads,
         lerpLines,
         lerpISpheresTransparent,
         lerpTrianglesTransparent,
+        lerpQuadsTransparent,
         trianglesTransparent,
-        staticSpriteCylinder
+        quadsTransparent,
+        spriteCylinder
     }
 
     /*Class for constructing*/
@@ -64,7 +68,7 @@ namespace RabbetGameEngine.SubRendering
                 //if a batch has not been used, then it needs to be removed.
                 if (!batchAt.hasBeenUsedInCurrentTick())
                 {
-                    batchAt.delete();
+                    batchAt.deleteVAO();
                     batches.Remove(batchAt);
                     --i;
                     continue;
@@ -332,7 +336,7 @@ namespace RabbetGameEngine.SubRendering
         {
             foreach(Batch b in batches)
             {
-                b.delete();
+                b.deleteVAO();
             }
         }
 

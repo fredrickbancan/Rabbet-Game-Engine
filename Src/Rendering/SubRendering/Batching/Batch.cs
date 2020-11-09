@@ -1,11 +1,10 @@
-﻿using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
+﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
 using System;
 
 namespace RabbetGameEngine.SubRendering
 {
-    //TODO: Overhaul. resizing of different arrays needs to be automated to improve readability and performance.
+    //TODO: Implement new VAO system and adding to batches with resizing arrays AND vao buffers.
     //Too many if statements in adding to batches is slow.
     //complexity increases when adding new data types/arrays
     public class Batch
@@ -14,18 +13,14 @@ namespace RabbetGameEngine.SubRendering
         public static readonly int matrixSize = sizeof(float) * 16;
         public static readonly int initialArraySize = 32;
         public static readonly int baseMaxBufferSizeBytes = 8388608;
-        private int maxBufferSizeBytes = baseMaxBufferSizeBytes;
+        public int maxBufferSizeBytes = baseMaxBufferSizeBytes;
         private int maxIndiciesCount;
         private int maxVertexCount;
         private int maxPositionCount;
         private int maxPointCount;
+        private int maxSprite3DCount;
         private int maxMatrixCount;
         private int maxDrawCommandCount;
-
-        private bool usingLerpPoints = false;
-        private bool usesPositions = false;
-        private bool usesPrevPositions = false;
-        private bool usesQuadInstancing = false;
 
         /// <summary>
         /// true if this batch requires transparency sorting
@@ -36,8 +31,9 @@ namespace RabbetGameEngine.SubRendering
         /// true if this batch should be rendered last.
         /// </summary>
         public bool transparentGUI = false;
+
         private VertexArrayObject VAO;
-        private Model batchedModel = null;
+        public Model batchedModel = null;
 
         /*points are stored in a single VBO half packed, meaning the prevTickBatchedPoints start in the second half of the array. all the batchedPoints come first, and then the prevTickBatchedPoints are packed after them.*/
         public PointParticle[] batchedPoints = null;
@@ -50,12 +46,7 @@ namespace RabbetGameEngine.SubRendering
 
         public Vector3[] scales = null;
 
-
         public DrawCommand[] drawCommands = null;
-
-        private bool usesMultiDrawIndirect = false;
-        private bool usesLerpMatrices = false;
-        private bool pointBased = false;
 
         /// <summary>
         /// number of individual objects requested. This must be used as an identifier for each vertex of 
@@ -90,174 +81,26 @@ namespace RabbetGameEngine.SubRendering
         private int requestedIndicesCount = 0;
 
         private BatchType batchType;
-        private Texture batchTex;
-        private Shader batchShader;
+        public Texture batchTex;
+        public Shader batchShader;
 
         public Batch(BatchType type, Texture tex)
         {
-            if(type == BatchType.lerpISpheres || type == BatchType.lerpISpheresTransparent)
-            {
-                Application.error("Wrong batch constructor being used for batch of type points!!!");
-                return;
-            }
             batchType = type;
             batchTex = tex;
-            VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
-            batchedModel = new Model(new Vertex[initialArraySize], new uint[initialArraySize]);
-            initializeBatchFormat();
+            BatchUtil.buildBatch(this);
             calculateBatchLimitations();
         }
 
-        public Batch(bool pointTransparency, bool lerp)
-        {
-            pointBased = true;
-
-            calculateBatchLimitations();
-
-            if (pointTransparency)
-            {
-                if(!lerp)
-                {
-                    batchType = BatchType.iSpheresTransparent;
-                    ShaderUtil.tryGetShader(ShaderUtil.iSpheresTransparentName, out batchShader);
-                    VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
-                    batchedPoints = new PointParticle[initialArraySize];
-                    usesQuadInstancing = true;
-                    return;
-                }
-                else
-                {
-                    batchType = BatchType.lerpISpheresTransparent;
-                    ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresTransparentName, out batchShader);
-                    VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
-                    usingLerpPoints = true;
-                    batchedPoints = new PointParticle[initialArraySize];
-                    return;
-                }
-            }
-            else
-            {
-                if (!lerp)
-                {
-                    batchType = BatchType.iSpheres;
-                    ShaderUtil.tryGetShader(ShaderUtil.iSpheresName, out batchShader);
-                    VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
-                    batchedPoints = new PointParticle[initialArraySize];
-                    usesQuadInstancing = true;
-                    return;
-                }
-                else
-                {
-                    batchType = BatchType.lerpISpheres;
-                    ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresName, out batchShader);
-                    usingLerpPoints = true;
-                    VAO = VertexArrayObject.createDynamic(batchType, maxBufferSizeBytes);
-                    batchedPoints = new PointParticle[initialArraySize];
-                    return;
-                }
-            }
-        }
-
-        private void calculateBatchLimitations()
+        public void calculateBatchLimitations()
         {
             maxIndiciesCount = maxBufferSizeBytes / sizeof(uint);
             maxVertexCount = maxBufferSizeBytes / Vertex.vertexByteSize;
             maxDrawCommandCount = maxBufferSizeBytes / DrawCommand.sizeInBytes;
             maxMatrixCount = maxBufferSizeBytes / (sizeof(float) * 16);
             maxPositionCount = maxBufferSizeBytes / (sizeof(float) * 3);
+            maxSprite3DCount = maxBufferSizeBytes / Sprite3D.sizeInBytes;
             maxPointCount = maxBufferSizeBytes / PointParticle.pParticleByteSize;
-        }
-
-        private void initializeBatchFormat()
-        {
-            switch (batchType)
-            {
-                case BatchType.none:
-                    ShaderUtil.tryGetShader("debug", out batchShader);
-                    break;
-
-                case BatchType.guiCutout:
-                    ShaderUtil.tryGetShader(ShaderUtil.guiCutoutName, out batchShader);
-                    maxBufferSizeBytes /= 2;
-                    break;
-
-                case BatchType.guiText:
-                    ShaderUtil.tryGetShader(ShaderUtil.text2DName, out batchShader);
-                    maxBufferSizeBytes /= 2;
-                    transparentGUI = true;
-                    break;
-
-                case BatchType.text3D:
-                    ShaderUtil.tryGetShader(ShaderUtil.text3DName, out batchShader);
-                    positions = new Vector3[initialArraySize];
-                    drawCommands = new DrawCommand[initialArraySize];
-                    maxBufferSizeBytes /= 2;
-                    usesMultiDrawIndirect = true;
-                    usesPositions = true;
-                    break;
-
-                case BatchType.lerpText3D:
-                    ShaderUtil.tryGetShader(ShaderUtil.lerpText3DName, out batchShader);
-                    positions = new Vector3[initialArraySize];
-                    drawCommands = new DrawCommand[initialArraySize];
-                    maxBufferSizeBytes /= 2;
-                    usesMultiDrawIndirect = true;
-                    usesPositions = true;
-                    usesPrevPositions = true;
-                    break;
-
-                case BatchType.triangles:
-                    ShaderUtil.tryGetShader(ShaderUtil.trianglesName, out batchShader);
-                    maxBufferSizeBytes /= 2;
-                    break;
-
-                case BatchType.trianglesTransparent:
-                    ShaderUtil.tryGetShader(ShaderUtil.trianglesTransparentName, out batchShader);
-                    maxBufferSizeBytes /= 2;
-                    requiresSorting = true;
-                    break;
-
-                case BatchType.lines:
-                    ShaderUtil.tryGetShader(ShaderUtil.linesName, out batchShader); 
-                    maxBufferSizeBytes /= 2;
-                    break;
-
-                case BatchType.lerpTriangles:
-                    ShaderUtil.tryGetShader(ShaderUtil.lerpTrianglesName, out batchShader);
-                    modelMatrices = new Matrix4[initialArraySize];
-                    drawCommands = new DrawCommand[initialArraySize];
-                    maxBufferSizeBytes /= 4;
-                    usesMultiDrawIndirect = true;
-                    usesLerpMatrices = true;
-                    break;
-
-                case BatchType.lerpTrianglesTransparent:
-                    ShaderUtil.tryGetShader(ShaderUtil.lerpTrianglesTransparentName, out batchShader);
-                    modelMatrices = new Matrix4[initialArraySize];
-                    drawCommands = new DrawCommand[initialArraySize]; 
-                    maxBufferSizeBytes /= 4;
-                    usesMultiDrawIndirect = true;
-                    usesLerpMatrices = true;
-                    requiresSorting = true;
-                    break;
-
-                case BatchType.lerpLines:
-                    ShaderUtil.tryGetShader(ShaderUtil.lerpLinesName, out batchShader);
-                    modelMatrices = new Matrix4[initialArraySize];
-                    drawCommands = new DrawCommand[initialArraySize];
-                    maxBufferSizeBytes /= 4;
-                    usesMultiDrawIndirect = true;
-                    usesLerpMatrices = true;
-                    break;
-
-                case BatchType.staticSpriteCylinder:
-                    ShaderUtil.tryGetShader(ShaderUtil.staticSpriteCylinderName, out batchShader);
-                    positions = new Vector3[initialArraySize];
-                    scales = new Vector3[initialArraySize];
-                    usesPositions = true;
-                    usesQuadInstancing = true;
-                    break;
-            }
         }
 
         //For dynamic vertex objects, when submitting data, the residual un-updated data at the end of the buffer does not need to be cleared.
@@ -270,115 +113,7 @@ namespace RabbetGameEngine.SubRendering
         /// <returns>true if the provided model can be added</returns>
         public bool addToBatch(Model theModel)
         {
-            //if this batch cant fit the new models vertices or indices
-            int n;
-            int ind;
-            if ( (n = requestedVerticesCount + theModel.vertices.Length) >= maxVertexCount || (ind = requestedIndicesCount + theModel.indices.Length) >= maxIndiciesCount)
-            {
-                return false;
-            }
-            
-            if(n >= batchedModel.vertices.Length)//resize vertices array
-            {
-                if ((n *= 2) >= maxVertexCount)
-                {
-                    Array.Resize<Vertex>(ref batchedModel.vertices, maxVertexCount);
-                }
-                else
-                {
-                    Array.Resize<Vertex>(ref batchedModel.vertices, n);
-                }
-            }
-
-            if(ind >= batchedModel.indices.Length)//resize Indices array
-            {
-                if ((ind *= 2) >= maxIndiciesCount)
-                {
-                    Array.Resize<uint>(ref batchedModel.indices, maxIndiciesCount);
-                }
-                else
-                {
-                    Array.Resize<uint>(ref batchedModel.indices, ind);
-                }
-            }
-
-            if (usesMultiDrawIndirect)
-            { 
-                if(usesLerpMatrices)//resizing matrices array
-                {
-                    n = matricesItterator + 2;
-                    if (n >= maxMatrixCount) return false;
-                    if(n >= modelMatrices.Length)
-                    {
-                        if((n *= 2) >= maxMatrixCount)
-                        {
-                            Array.Resize<Matrix4>(ref modelMatrices, maxMatrixCount);
-                        }
-                        else
-                        {
-                            Array.Resize<Matrix4>(ref modelMatrices, n);
-                        }
-                    }
-                    modelMatrices[matricesItterator] = theModel.modelMatrix;
-                    modelMatrices[matricesItterator + 1] = theModel.prevModelMatrix;
-                    matricesItterator += 2;
-                }
-                else if(usesPositions)//resizing positions array
-                {
-                    if(usesPrevPositions)
-                    {
-                        if ((n = positionItterator + 2) >= maxPositionCount) return false;
-                        if(n >= positions.Length)
-                        {
-                            if((n *= 2) >= maxMatrixCount)
-                            {
-                                Array.Resize<Vector3>(ref positions, maxPositionCount);
-                            }
-                            else
-                            {
-                                Array.Resize<Vector3>(ref positions, n);
-                            }
-                        }
-                        positions[positionItterator] = theModel.worldPos;
-                        positions[positionItterator + 1] = theModel.prevWorldPos;
-                        positionItterator += 2;
-                    }
-                    else
-                    {
-                        if ((n = positionItterator + 1) > maxPositionCount) return false;
-                        if (n > positions.Length)
-                        {
-                            if ((n *= 2) > maxMatrixCount)
-                            {
-                                Array.Resize<Vector3>(ref positions, maxPositionCount);
-                            }
-                            else
-                            {
-                                Array.Resize<Vector3>(ref positions, n);
-                            }
-                        }
-                        positions[positionItterator++] = theModel.worldPos;
-                    }
-                }
-                if (requestedObjectItterator + 1 >= maxDrawCommandCount) return false;
-                configureDrawCommandsForCurrentObject(theModel.indices.Length, theModel.vertices.Length);
-                Array.Copy(theModel.indices, 0, batchedModel.indices, requestedIndicesCount, theModel.indices.Length);
-            }
-            else
-            {
-                for (int i = 0; i < theModel.indices.Length; ++i)
-                {
-                    batchedModel.indices[requestedIndicesCount + i] = (uint)(theModel.indices[i] + requestedVerticesCount);
-                }
-
-            }
-            
-            Array.Copy(theModel.vertices, 0, batchedModel.vertices, requestedVerticesCount, theModel.vertices.Length);
-
-            requestedVerticesCount += theModel.vertices.Length;
-            requestedIndicesCount += theModel.indices.Length;
-            requestedObjectItterator++;
-            return true;
+          
         }
 
         /// <summary>
@@ -390,105 +125,17 @@ namespace RabbetGameEngine.SubRendering
         /// <returns>true if this batch is able to accept the point.</returns>
         public bool addToBatch(PointParticle singlePoint, PointParticle prevTickSinglePoint)
         {
-            int n;
-            if((n = pointsItterator + 2) >= maxPointCount)
-            {
-                return false;
-            }
-
-            if(n >= batchedPoints.Length)//resizing batched lerp points
-            {
-                if((n *= 2) >= maxPointCount)
-                {
-                    Array.Resize<PointParticle>(ref batchedPoints, maxPointCount);
-                }
-                else
-                {
-                    Array.Resize<PointParticle>(ref batchedPoints, n);
-                }
-            }
-            batchedPoints[pointsItterator] = singlePoint;
-            batchedPoints[pointsItterator + 1] = prevTickSinglePoint;
-            pointsItterator += 2;
-            return true;
+            
         }
 
         public bool addToBatch(PointParticle singlePoint)
         {
-            int n;
-            if ((n = pointsItterator + 1) >= maxPointCount)
-            {
-                return false;
-            }
-
-            if (n >= batchedPoints.Length)//resizing batched points
-            {
-                if ((n *= 2) >= maxPointCount)
-                {
-                    Array.Resize<PointParticle>(ref batchedPoints, maxPointCount);
-                }
-                else
-                {
-                    Array.Resize<PointParticle>(ref batchedPoints, n);
-                }
-            }
-
-            batchedPoints[pointsItterator] = singlePoint;
-            ++pointsItterator;
-            return true;
+          
         }
 
         public bool addToBatch(PointCloudModel theModel)
         {
-            int n;
-            if(usingLerpPoints)
-            {
-                if((n = pointsItterator + theModel.points.Length * 2) >= maxPointCount)
-                {
-                    return false;
-                }
-
-                if(n >= batchedPoints.Length)//resizing batched points array
-                {
-                    if((n *= 2) >= maxPointCount)
-                    {
-                        Array.Resize<PointParticle>(ref batchedPoints, maxPointCount);
-                    }
-                    else
-                    {
-                        Array.Resize<PointParticle>(ref batchedPoints, n);
-                    }
-                }
-                //interlace points
-                for(n = 0; n < theModel.points.Length; n++)
-                {
-                    batchedPoints[pointsItterator] = theModel.points[n];
-                    batchedPoints[pointsItterator + 1] = theModel.prevPoints[n];
-                    pointsItterator += 2;
-                }
-                return true;
-            }
-
-            if ((n = pointsItterator + theModel.prevPoints.Length) >= maxPointCount)
-            {
-                return false;
-            }
-
-            if (n >= batchedPoints.Length)//resizing batched points array
-            {
-                if ((n *= 2) >= maxPointCount)
-                {
-                    Array.Resize<PointParticle>(ref batchedPoints, maxPointCount);
-                }
-                else
-                {
-                    Array.Resize<PointParticle>(ref batchedPoints, n);
-                }
-            }
-
-            Array.Copy(theModel.points, 0, batchedPoints, pointsItterator, theModel.points.Length);
-            pointsItterator += theModel.points.Length;
-            return true;
+         
         }
 
         /// <summary>
@@ -496,6 +143,7 @@ namespace RabbetGameEngine.SubRendering
         /// </summary>
         private void configureDrawCommandsForCurrentObject(int objIndCount, int vertCount)
         {
+            //TODO: vao indirect buffer resizing
             int n;
             if((n = requestedObjectItterator + 1) >= drawCommands.Length)//resizing drawcommands
             {
@@ -527,44 +175,12 @@ namespace RabbetGameEngine.SubRendering
         /// </summary>
         public void onTickEnd()
         {
-            if (usesMultiDrawIndirect)
-            {
-                if(usesLerpMatrices)
-                {
-                    VAO.bindMatricesVBO();
-                    //interlacing both arrays into one to submit to gpu
-                    //using matricesItterator to only interlace and submit the necessary amount of data.
-                    GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, matricesItterator * matrixSize, modelMatrices);
-                }
-                else if(usesPositions)
-                {
-                    VAO.bindPBO();
-                    GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, positionItterator * vectorSize, positions);
-
-                }
-               
-                
-                VAO.bindIndirectBufferObject();
-                GL.BufferSubData(BufferTarget.DrawIndirectBuffer, IntPtr.Zero, requestedObjectItterator * DrawCommand.sizeInBytes, drawCommands);
-            }
-
-            VAO.bindVBO();
-            VAO.bindIBO();
-
-            if(!pointBased)
-            {
-                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, requestedVerticesCount * Vertex.vertexByteSize, batchedModel.vertices);
-                GL.BufferSubData(BufferTarget.ElementArrayBuffer, IntPtr.Zero, requestedIndicesCount * sizeof(uint), batchedModel.indices);
-            }
-            else 
-            {
-                GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, pointsItterator * PointParticle.pParticleByteSize, batchedPoints);
-            }
+           //TODO: vao buffer updates
         }
         
         public void draw( Matrix4 viewMatrix, Vector3 fogColor)
         {
-            VAO.bindVaoVboIbo();
+            VAO.bind();
             batchShader.use();
             batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
@@ -574,42 +190,8 @@ namespace RabbetGameEngine.SubRendering
             batchShader.setUniform1F("fogStart", GameInstance.get.currentPlanet.getFogStart());
             batchShader.setUniform1F("fogEnd", GameInstance.get.currentPlanet.getFogEnd());
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
-            if(pointBased)
-            {
-                if(usesQuadInstancing)//if points are not lerp, then they use instancing.
-                {
-                    VAO.bindInstVBO();
-                    GL.DrawArraysInstanced(VAO.getPrimType(), 0, 4, pointsItterator);
-                    return;
-                }
-                batchShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
-                GL.DrawArrays(VAO.getPrimType(), 0, pointsItterator/2);
-                return;
-            }
-
-            if (batchTex != null && !batchTex.getIsNone())
-            {
-                batchTex.use();
-            }
-
-            if (usesMultiDrawIndirect)
-            {
-                if(usesLerpMatrices)
-                {
-                    VAO.bindMatricesVBO();
-                }
-                else if(usesPositions)
-                {
-                    VAO.bindPBO();
-                }
-
-                VAO.bindIndirectBufferObject();
-                GL.MultiDrawElementsIndirect(VAO.getPrimType(), DrawElementsType.UnsignedInt, IntPtr.Zero, requestedObjectItterator, 0);
-                return;
-            }
-            
-            GL.DrawElements(VAO.getPrimType(), requestedIndicesCount, DrawElementsType.UnsignedInt, 0);
-            return;
+           
+            //TODO: implement drawing
         }
 
         public BatchType getBatchType()
@@ -629,13 +211,10 @@ namespace RabbetGameEngine.SubRendering
 
         public bool hasBeenUsedInCurrentTick()
         {
-            if(pointBased)
-            {
-                return pointsItterator > 0;
-            }
-            return requestedVerticesCount > 0;
+            return requestedVerticesCount > 0 || pointsItterator > 0 || requestedObjectItterator > 0;
         }
-        public void delete()
+
+        public void deleteVAO()
         {
             VAO.delete();
         }

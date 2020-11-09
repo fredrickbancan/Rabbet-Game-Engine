@@ -12,16 +12,19 @@ namespace RabbetGameEngine
         public static readonly string text3DName = "StaticText3D_F";
         public static readonly string lerpText3DName = "LerpText3D_F";
         public static readonly string trianglesName = "Static_F";
+        public static readonly string quadsName = "Static_F";
         public static readonly string linesName = "StaticLines";
         public static readonly string iSpheresName = "StaticISpheres_F";
         public static readonly string iSpheresTransparentName = "StaticISpheres_FT";
         public static readonly string lerpISpheresName = "LerpISpheres_F";
         public static readonly string lerpTrianglesName = "Lerp_F";
+        public static readonly string lerpQuadsName = "Lerp_F";
         public static readonly string lerpLinesName = "Lerp_F";
         public static readonly string lerpISpheresTransparentName = "LerpISpheres_FT";
         public static readonly string lerpTrianglesTransparentName = "Lerp_FT";
+        public static readonly string lerpQuadsTransparentName = "Lerp_FT";
         public static readonly string trianglesTransparentName = "Static_FT";
-        public static readonly string staticSpriteCylinderName = "StaticSpriteCylinder_F";
+        public static readonly string spriteCylinderName = "StaticSpriteCylinder_F";
 
         public static readonly string fileExtension = ".shader";
         private static Dictionary<string, Shader> shaders = null;

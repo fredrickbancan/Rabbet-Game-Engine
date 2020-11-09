@@ -38,5 +38,12 @@ namespace RabbetGameEngine
             this.color = color;
             this.uv = uv;
         }
+
+        public static void configureLayout(VertexBufferLayout l)
+        {
+            l.add(OpenTK.Graphics.OpenGL.VertexAttribPointerType.Float, 3);
+            l.add(OpenTK.Graphics.OpenGL.VertexAttribPointerType.Float, 4);
+            l.add(OpenTK.Graphics.OpenGL.VertexAttribPointerType.Float, 2);
+        }
     }
 }
