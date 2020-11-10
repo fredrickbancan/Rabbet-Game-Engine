@@ -32,6 +32,15 @@ namespace RabbetGameEngine
             GL.BufferSubData(BufferTarget.ElementArrayBuffer, IntPtr.Zero, count * sizeof(uint), data);
         }
 
+        /// <summary>
+        /// resizes indices buffer, removes all data currently in buffer.
+        /// </summary>
+        public void resizeBuffer(int count)
+        {
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, id);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, count * sizeof(uint), IntPtr.Zero, BufferUsageHint.DynamicDraw);
+        }
+
         public void bind()
         {
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, id);

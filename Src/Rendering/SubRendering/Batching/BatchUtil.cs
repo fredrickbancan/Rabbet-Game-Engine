@@ -1,4 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
 using System;
 using System.Collections.Generic;
@@ -160,7 +161,7 @@ namespace RabbetGameEngine.SubRendering
                 case BatchType.guiCutout:
                     ShaderUtil.tryGetShader(ShaderUtil.guiCutoutName, out theBatch.batchShader);
                     theBatch.maxBufferSizeBytes /= 2;
-                    theBatch.batchedModel = new Model(new Vertex[Batch.initialArraySize], new uint[Batch.initialArraySize]);
+                    theBatch.batchedModel = new Model(new Vertex[Batch.initialArraySize], null);
                     layouts.TryGetValue(BatchType.guiCutout, out VertexBufferLayout l);
                     vao.addBufferDynamic(Batch.initialArraySize * Vertex.vertexByteSize, l);
                     vao.drawType = PrimitiveType.Triangles;
@@ -238,6 +239,108 @@ namespace RabbetGameEngine.SubRendering
             vao.finishBuilding();
             theBatch.setVAO(vao);
             theBatch.calculateBatchLimitations();
+        }
+
+        //TODO: Complete draw function for each type
+        public static void drawBatch(Batch theBatch, Matrix4 viewMatrix, Vector3 fogColor)
+        {
+            theBatch.bindVAO();
+            theBatch.batchShader.use();
+            theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+            theBatch.batchShader.setUniformMat4F("viewMatrix", viewMatrix);
+            theBatch.batchShader.setUniformVec3F("fogColor", fogColor);
+            theBatch.batchShader.setUniform1F("fogStart", GameInstance.get.currentPlanet.getFogStart());
+            theBatch.batchShader.setUniform1F("fogEnd", GameInstance.get.currentPlanet.getFogEnd());
+            switch (theBatch.getBatchType())
+            {
+                case BatchType.none:
+                    return;
+
+                case BatchType.guiCutout:
+                    theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
+                    GL.DrawArrays(PrimitiveType.Quads, 0, theBatch.requestedVerticesCount);
+                    return;
+
+                case BatchType.guiText:
+                    GL.DrawArrays(PrimitiveType.Quads, 0, theBatch.requestedVerticesCount);
+                    return;
+
+                case BatchType.text3D:
+                    GL.MultiDrawArraysIndirect(PrimitiveType.Quads, theBatch.drawCommands, theBatch.requestedObjectItterator, sizeof(uint));
+                    return;
+
+                case BatchType.lerpText3D:
+                    theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
+                    GL.MultiDrawArraysIndirect(PrimitiveType.Quads, theBatch.drawCommands, theBatch.requestedObjectItterator, sizeof(uint));
+                    return;
+
+                case BatchType.triangles:
+                    GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedIndicesCount, DrawElementsType.UnsignedInt, theBatch.batchedModel.indices);
+                    return;
+
+                case BatchType.quads:
+                    GL.DrawArrays(PrimitiveType.Quads, 0, theBatch.requestedVerticesCount);
+                    return;
+
+                case BatchType.lines:
+                    GL.DrawElements(PrimitiveType.Lines, theBatch.requestedIndicesCount, DrawElementsType.UnsignedInt, theBatch.batchedModel.indices);
+                    return;
+
+                case BatchType.iSpheres:
+                    theBatch.batchShader.setUniformVec3F("cameraPos", Renderer.camPos);
+                    GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, theBatch.pointsItterator);
+                    return;
+
+                case BatchType.iSpheresTransparent:
+                    theBatch.batchShader.setUniformVec3F("cameraPos", Renderer.camPos);
+                    GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, theBatch.pointsItterator);
+                    return;
+
+                case BatchType.lerpISpheres:
+                    theBatch.batchShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
+                    theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
+                    GL.DrawArrays(PrimitiveType.Points, 0, theBatch.pointsItterator / 2);
+                    return;
+
+                case BatchType.lerpTriangles:
+                    theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
+                    GL.MultiDrawElementsIndirect(PrimitiveType.Triangles, DrawElementsType.UnsignedInt, IntPtr.Zero, theBatch.requestedObjectItterator, 0);
+                    return;
+
+                case BatchType.lerpQuads:
+                    theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
+                    GL.MultiDrawArraysIndirect(PrimitiveType.Quads, IntPtr.Zero, theBatch.requestedObjectItterator, sizeof(uint));
+                    return;
+
+                case BatchType.lerpLines:
+                    theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
+                    GL.MultiDrawElementsIndirect(PrimitiveType.Lines,  DrawElementsType.UnsignedInt, IntPtr.Zero, theBatch.requestedObjectItterator, 0);
+                    return;
+
+                case BatchType.lerpISpheresTransparent:
+                    theBatch.batchShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
+                    theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
+                    GL.DrawArrays(PrimitiveType.Points, 0, theBatch.pointsItterator/2);
+                    return;
+
+                case BatchType.lerpTrianglesTransparent:
+                    theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
+                    GL.MultiDrawElementsIndirect(PrimitiveType.Triangles, DrawElementsType.UnsignedInt, IntPtr.Zero, theBatch.requestedObjectItterator, 0);
+                    return;
+
+                case BatchType.lerpQuadsTransparent:
+                    theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
+                    GL.MultiDrawArraysIndirect(PrimitiveType.Quads, IntPtr.Zero, theBatch.requestedObjectItterator, sizeof(uint));
+                    return;
+
+                case BatchType.trianglesTransparent:
+                    GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedIndicesCount, DrawElementsType.UnsignedInt, theBatch.batchedModel.indices);
+                    return;
+
+                case BatchType.spriteCylinder:
+                    GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, theBatch.requestedObjectItterator);
+                    return;
+            }
         }
     }
 }

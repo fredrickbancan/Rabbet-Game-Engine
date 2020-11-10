@@ -4,6 +4,8 @@ using System;
 
 namespace RabbetGameEngine.SubRendering
 {
+    //TODO: Change all text and gui quad rendering to use GL_QUADS so they do not require indices.
+    //TODO: DrawCommands are made for glmultidrawelementsindirect, so they need to be set up differently for glmultidrawarraysindirect. namely basevertex. This can be done using an offset and using the basevertex value as baseinstance and skippuing over 4 bytes.
     //TODO: Implement new VAO system and adding to batches with resizing arrays AND vao buffers.
     //Too many if statements in adding to batches is slow.
     //complexity increases when adding new data types/arrays
@@ -52,33 +54,33 @@ namespace RabbetGameEngine.SubRendering
         /// number of individual objects requested. This must be used as an identifier for each vertex of 
         /// the individual objects so the shader can determine which model matrices to use to transform it.
         /// </summary>
-        private int requestedObjectItterator = 0;
+        public int requestedObjectItterator = 0;
 
         /// <summary>
         /// Used for properly interlacing and including new requests for lerp triangle types which require 2 matrices per object
         /// </summary>
-        private int matricesItterator = 0;
+        public int matricesItterator = 0;
 
         /// <summary>
         /// Used for properly interlacing and including new requests for lerp points which require 2 points per point.
         /// </summary>
-        private int pointsItterator = 0;
+        public int pointsItterator = 0;
 
         /// <summary>
         /// Used for properly interlacing and including new requests for lerp 3d text or any other type which uses 2 positions per object.
         /// </summary>
-        private int positionItterator = 0;
+        public int positionItterator = 0;
 
 
         /// <summary>
         /// number of vertices requested to be added to this batch since the last update.
         /// </summary>
-        private int requestedVerticesCount = 0;
+        public int requestedVerticesCount = 0;
 
         /// <summary>
         /// number of indices requested to be added to this batch since the last update
         /// </summary>
-        private int requestedIndicesCount = 0;
+        public int requestedIndicesCount = 0;
 
         private BatchType batchType;
         public Texture batchTex;
@@ -113,7 +115,7 @@ namespace RabbetGameEngine.SubRendering
         /// <returns>true if the provided model can be added</returns>
         public bool addToBatch(Model theModel)
         {
-          
+            return false;
         }
 
         /// <summary>
@@ -125,17 +127,17 @@ namespace RabbetGameEngine.SubRendering
         /// <returns>true if this batch is able to accept the point.</returns>
         public bool addToBatch(PointParticle singlePoint, PointParticle prevTickSinglePoint)
         {
-            
+            return false;
         }
 
         public bool addToBatch(PointParticle singlePoint)
         {
-          
+            return false;
         }
 
         public bool addToBatch(PointCloudModel theModel)
         {
-         
+            return false;
         }
 
         /// <summary>
@@ -143,17 +145,18 @@ namespace RabbetGameEngine.SubRendering
         /// </summary>
         private void configureDrawCommandsForCurrentObject(int objIndCount, int vertCount)
         {
-            //TODO: vao indirect buffer resizing
             int n;
             if((n = requestedObjectItterator + 1) >= drawCommands.Length)//resizing drawcommands
             {
                 if((n*=2) >= maxDrawCommandCount)
                 {
                     Array.Resize<DrawCommand>(ref drawCommands, maxDrawCommandCount);
+                    VAO.resizeIndirect(maxDrawCommandCount);
                 }
                 else
                 {
                     Array.Resize<DrawCommand>(ref drawCommands, n);
+                    VAO.resizeIndirect(n);
                 }
             }
 
@@ -180,18 +183,12 @@ namespace RabbetGameEngine.SubRendering
         
         public void draw( Matrix4 viewMatrix, Vector3 fogColor)
         {
+            BatchUtil.drawBatch(this, viewMatrix, fogColor);
+        }
+
+        public void bindVAO()
+        {
             VAO.bind();
-            batchShader.use();
-            batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
-            batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
-            batchShader.setUniformMat4F("viewMatrix", viewMatrix);
-            batchShader.setUniformVec3F("cameraPos", Renderer.camPos);
-            batchShader.setUniformVec3F("fogColor", fogColor);
-            batchShader.setUniform1F("fogStart", GameInstance.get.currentPlanet.getFogStart());
-            batchShader.setUniform1F("fogEnd", GameInstance.get.currentPlanet.getFogEnd());
-            batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
-           
-            //TODO: implement drawing
         }
 
         public BatchType getBatchType()

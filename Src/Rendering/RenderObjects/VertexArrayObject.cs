@@ -154,6 +154,22 @@ namespace RabbetGameEngine
             }
         }
 
+        public void resizeIndices(int newCount)
+        {
+            if(usesIndices)
+            ibo.resizeBuffer(newCount);
+            else
+                Application.error("VAO Could not resize indices, this VAO does not use indices!");
+        }
+
+        public void resizeIndirect(int newCount)
+        {
+            if (usesIndirect)
+                indbo.resizeBuffer(newCount);
+            else
+                Application.error("VAO Could not resize indirect buffer, this VAO does not use an indirect buffer!");
+        }
+
         public void updateBuffer<T2>(int vboIndex, T2[] data, int sizeToUpdate) where T2 : struct
         {
             if (vboIndex < vbos.Count)
