@@ -6,8 +6,7 @@ using System;
 namespace RabbetGameEngine.SubRendering
 {
 
-
-    //TODO: do VAO building here based on batch type.
+    //TODO:Ensure all quad based rendering does not waste time building indices. uncluding text, gui and quad based.
     //TODO: add method(s) to help with attempting to add new data to a batch that works with different batch types. These methods can resize the vao buffers and batch arrayts, and will return false if this size exceeds the batches max buffer size.
     public static class BatchUtil
     {
@@ -31,10 +30,12 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.guiCutout:
                     ShaderUtil.tryGetShader(ShaderUtil.guiCutoutName, out theBatch.batchShader);
-                    theBatch.batchedModel = new Model(new Vertex[Batch.initialArraySize], null);
+                    theBatch.batchedModel = new Model(new Vertex[Batch.initialArraySize], new uint[Batch.initialArraySize]);
                     VertexBufferLayout l = new VertexBufferLayout();
                     Vertex.configureLayout(l);
                     vao.addBufferDynamic(Batch.initialArraySize * Vertex.vertexByteSize, l);
+                    vao.addIndicesBufferDynamic(Batch.initialArraySize);
+                    vao.updateIndices(QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6), Batch.initialArraySize);
                     vao.drawType = PrimitiveType.Triangles;
                     break;
 
@@ -91,10 +92,11 @@ namespace RabbetGameEngine.SubRendering
                     ShaderUtil.tryGetShader(ShaderUtil.quadsName, out theBatch.batchShader);
                     theBatch.maxBufferSizeBytes /= 2;
                     theBatch.batchedModel = new Model(new Vertex[Batch.initialArraySize], null);
-                    theBatch.modelMatrices = new Matrix4[Batch.initialArraySize];
                     VertexBufferLayout l5 = new VertexBufferLayout();
                     Vertex.configureLayout(l5);
                     vao.addBufferDynamic(Batch.initialArraySize * Vertex.vertexByteSize, l5);
+                    vao.addIndicesBufferDynamic(Batch.initialArraySize);
+                    vao.updateIndices(QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6), Batch.initialArraySize / 6);
                     vao.drawType = PrimitiveType.Triangles;
                     break;
 
@@ -168,7 +170,7 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.lerpQuads:
                     ShaderUtil.tryGetShader(ShaderUtil.quadsName, out theBatch.batchShader);
-                    theBatch.maxBufferSizeBytes /= 2;
+                    theBatch.maxBufferSizeBytes /= 3;
                     theBatch.batchedModel = new Model(new Vertex[Batch.initialArraySize], null);
                     theBatch.modelMatrices = new Matrix4[Batch.initialArraySize];
                     VertexBufferLayout l11 = new VertexBufferLayout();
@@ -185,6 +187,8 @@ namespace RabbetGameEngine.SubRendering
                     matl4.add(VertexAttribPointerType.Float, 4);
                     vao.addBufferDynamic(Batch.initialArraySize * sizeof(float) * 16, matl4);
                     vao.addIndirectBuffer(Batch.initialArraySize);
+                    vao.addIndicesBufferDynamic(Batch.initialArraySize);
+                    vao.updateIndices(QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6), Batch.initialArraySize / 6);
                     vao.drawType = PrimitiveType.Triangles;
                     break;
 
@@ -245,7 +249,7 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.lerpQuadsTransparent:
                     ShaderUtil.tryGetShader(ShaderUtil.lerpQuadsTransparentName, out theBatch.batchShader);
-                    theBatch.maxBufferSizeBytes /= 2;
+                    theBatch.maxBufferSizeBytes /= 3;
                     theBatch.batchedModel = new Model(new Vertex[Batch.initialArraySize], null);
                     theBatch.modelMatrices = new Matrix4[Batch.initialArraySize];
                     VertexBufferLayout l15 = new VertexBufferLayout();
@@ -262,6 +266,8 @@ namespace RabbetGameEngine.SubRendering
                     matl7.add(VertexAttribPointerType.Float, 4);
                     vao.addBufferDynamic(Batch.initialArraySize * sizeof(float) * 16, matl7);
                     vao.addIndirectBuffer(Batch.initialArraySize);
+                    vao.addIndicesBufferDynamic(Batch.initialArraySize);
+                    vao.updateIndices(QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6), Batch.initialArraySize / 6);
                     vao.drawType = PrimitiveType.Triangles;
                     break;
 
@@ -288,17 +294,11 @@ namespace RabbetGameEngine.SubRendering
                     ShaderUtil.tryGetShader(ShaderUtil.quadsTransparentName, out theBatch.batchShader);
                     theBatch.maxBufferSizeBytes /= 2;
                     theBatch.batchedModel = new Model(new Vertex[Batch.initialArraySize], null);
-                    theBatch.modelMatrices = new Matrix4[Batch.initialArraySize];
                     VertexBufferLayout l17 = new VertexBufferLayout();
                     Vertex.configureLayout(l17);
-                    vao.addBufferDynamic(Batch.initialArraySize * Vertex.vertexByteSize, l17);
-                    VertexBufferLayout matl9 = new VertexBufferLayout();
-                    matl9.add(VertexAttribPointerType.Float, 4);
-                    matl9.add(VertexAttribPointerType.Float, 4);
-                    matl9.add(VertexAttribPointerType.Float, 4);
-                    matl9.add(VertexAttribPointerType.Float, 4);
-                    vao.addBufferDynamic(Batch.initialArraySize * sizeof(float) * 16, matl9);
-                    vao.addIndirectBuffer(Batch.initialArraySize);
+                    vao.addBufferDynamic(Batch.initialArraySize * Vertex.vertexByteSize, l17); 
+                    vao.addIndicesBufferDynamic(Batch.initialArraySize);
+                    vao.updateIndices(QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6), Batch.initialArraySize / 6);
                     vao.drawType = PrimitiveType.Triangles;
                     break;
 
@@ -327,6 +327,7 @@ namespace RabbetGameEngine.SubRendering
         //This is faster than clearing the whole buffer each update.
         public static bool tryToFitInBatchModel(Model mod, Batch theBatch)
         {
+            int n;
 
             switch (theBatch.getRenderType())
             {
@@ -335,55 +336,156 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.guiCutout:
                     {
+                        n = theBatch.batchedModel.vertices.Length;
+                        if (!canFitOrResize(ref theBatch.batchedModel.vertices, mod.vertices.Length, theBatch.requestedVerticesCount, theBatch.maxVertexCount)) return false;
+                        int i = theBatch.batchedModel.indices.Length;
+                        if (canResizeQuadIndicesIfNeeded(ref theBatch.batchedModel.indices, theBatch.requestedVerticesCount + mod.vertices.Length, theBatch.maxIndiciesCount))
+                        {
+                            if (i != theBatch.batchedModel.indices.Length)
+                            theBatch.VAO.updateIndices(theBatch.batchedModel.indices, theBatch.batchedModel.indices.Length);//TODO: For some reason, batched model indices are full of 0 at this point. fix.
+                        }
+                        else return false;
 
+                        if (theBatch.batchedModel.vertices.Length != n)
+                        {
+                            theBatch.VAO.resizeBuffer(0, theBatch.batchedModel.vertices.Length);
+                        }
+
+                        Array.Copy(mod.vertices, 0, theBatch.batchedModel.vertices, theBatch.requestedVerticesCount, mod.vertices.Length);
+                        theBatch.requestedVerticesCount += mod.vertices.Length;
                     }
-                    return false;
+                    break;
 
                 case RenderType.guiText:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.text3D:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.lerpText3D:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.triangles:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.quads:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.lines:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.lerpTriangles:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.lerpQuads:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.lerpLines:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.lerpTrianglesTransparent:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.lerpQuadsTransparent:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.trianglesTransparent:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.quadsTransparent:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.spriteCylinder:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 default:
-                    return false;
+                    break;
             }
+            return true;
+        }
+        
+        /// <summary>
+        /// Returns true if an array of length srcSize can fit into the dstArray, or if the dstArray has been resized and can now accept it.
+        /// If adding the srcSize goes over maxDstSize, then returns false.
+        /// When resizing, simply doubles current dst array size, or sets dst array size to maxDstSize.
+        /// int dstFilled is how much of the dstArray is used.
+        /// </summary>
+        public static bool canFitOrResize<T2>(ref T2[] dstArr, int srcSize, int dstFilled, int maxDstSize) where T2 : struct
+        {
+            int n;
+            if ((n = dstFilled + srcSize) >= maxDstSize) return false;
+            if(n >= dstArr.Length)
+            {
+                if((n = dstArr.Length * 2) >= maxDstSize)
+                {
+                    Array.Resize<T2>(ref dstArr, maxDstSize);
+                }
+                else
+                {
+                    Array.Resize<T2>(ref dstArr, n);
+                }
+            }
+            return true;
+        }
+
+        public static bool canResizeQuadIndicesIfNeeded(ref uint[] dstIndices, int totalVertices, int maxDstSize)
+        {
+            int n;
+            if ((n = totalVertices + (totalVertices / 2)) >= maxDstSize) return false;
+            if(n >= dstIndices.Length)
+            {
+                if((n = dstIndices.Length * 2) >= maxDstSize)
+                {
+                    dstIndices = QuadCombiner.getIndicesForQuadCount(maxDstSize / 6);
+                }
+                else
+                {
+                    dstIndices = QuadCombiner.getIndicesForQuadCount(n / 6);
+                }
+            }
+            return true;
         }
 
         public static bool tryToFitInBatchPoints(PointCloudModel mod, Batch theBatch)
@@ -392,23 +494,42 @@ namespace RabbetGameEngine.SubRendering
             switch (theBatch.getRenderType())
             {
                 case RenderType.none:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.iSpheres:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.iSpheresTransparent:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.lerpISpheres:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.lerpISpheresTransparent:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 default:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
             }
+            return true;
         }
 
         public static bool tryToFitInBatchSinglePoint(PointParticle p, Batch theBatch)
@@ -417,16 +538,29 @@ namespace RabbetGameEngine.SubRendering
             switch (theBatch.getRenderType())
             {
                 case RenderType.none:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.iSpheres:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.iSpheresTransparent:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
                 default:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
             }
+            return true;
         }
 
         public static bool tryToFitInBatchLerpPoint(PointParticle p, PointParticle prevP, Batch theBatch)
@@ -435,17 +569,30 @@ namespace RabbetGameEngine.SubRendering
             switch (theBatch.getRenderType())
             {
                 case RenderType.none:
-                    return false;
-
+                    {
+                        return false;
+                    }
+                    break;
                 case RenderType.lerpISpheres:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 case RenderType.lerpISpheresTransparent:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
 
                 default:
-                    return false;
+                    {
+                        return false;
+                    }
+                    break;
             }
+
+            return true;
         }
 
         public static bool tryToFitInBatchSprite3D(Sprite3D s, Batch theBatch)
@@ -461,6 +608,73 @@ namespace RabbetGameEngine.SubRendering
                     return false;
             }
         }
+        public static void updateBuffers(Batch theBatch)
+        {
+            switch (theBatch.getRenderType())
+            {
+                case RenderType.none:
+                    return;
+
+                case RenderType.guiCutout:
+                    theBatch.VAO.updateBuffer(0, theBatch.batchedModel.vertices, theBatch.requestedVerticesCount * Vertex.vertexByteSize);
+                    return;
+
+                case RenderType.guiText:
+                    return;
+
+                case RenderType.text3D:
+                    return;
+
+                case RenderType.lerpText3D:
+                    return;
+
+                case RenderType.triangles:
+                    return;
+
+                case RenderType.quads:
+                    return;
+
+                case RenderType.lines:
+                    return;
+
+                case RenderType.iSpheres:
+                    return;
+
+                case RenderType.iSpheresTransparent:
+                    return;
+
+                case RenderType.lerpISpheres:
+                    return;
+
+                case RenderType.lerpTriangles:
+                    return;
+
+                case RenderType.lerpQuads:
+                    return;
+
+                case RenderType.lerpLines:
+                    return;
+
+                case RenderType.lerpISpheresTransparent:
+                    return;
+
+                case RenderType.lerpTrianglesTransparent:
+                    return;
+
+                case RenderType.lerpQuadsTransparent:
+                    return;
+
+                case RenderType.trianglesTransparent:
+                    return;
+
+                case RenderType.quadsTransparent:
+                    return;
+
+                case RenderType.spriteCylinder:
+                    return;
+            }
+        }
+
         public static void drawBatch(Batch theBatch, Matrix4 viewMatrix, Vector3 fogColor)
         {
             theBatch.bindVAO();
@@ -481,7 +695,7 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.guiCutout:
                     theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
-                    GL.DrawArrays(PrimitiveType.Triangles, 0, theBatch.requestedVerticesCount);
+                    GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedVerticesCount + (theBatch.requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
                     return;
 
                 case RenderType.guiText:

@@ -16,7 +16,7 @@ namespace RabbetGameEngine
         public void add(VertexAttribPointerType type, int count, bool normalized = false)
         {
             elements.Add(new VertexBufferElement(type, count, normalized));
-            stride += VertexBufferElement.getSizeOfType(type);
+            stride += VertexBufferElement.getSizeOfType(type) * count;
         }
 
         public int getStride()

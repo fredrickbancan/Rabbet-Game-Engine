@@ -16,13 +16,13 @@ namespace RabbetGameEngine.SubRendering
         public static readonly int initialArraySize = 32;
         public static readonly int baseMaxBufferSizeBytes = 8388608;
         public int maxBufferSizeBytes = baseMaxBufferSizeBytes;
-        private int maxIndiciesCount;
-        private int maxVertexCount;
-        private int maxPositionCount;
-        private int maxPointCount;
-        private int maxSprite3DCount;
-        private int maxMatrixCount;
-        private int maxDrawCommandCount;
+        public int maxIndiciesCount;
+        public int maxVertexCount;
+        public int maxPositionCount;
+        public int maxPointCount;
+        public int maxSprite3DCount;
+        public int maxMatrixCount;
+        public int maxDrawCommandCount;
 
         /// <summary>
         /// true if this batch requires transparency sorting
@@ -34,7 +34,7 @@ namespace RabbetGameEngine.SubRendering
         /// </summary>
         public bool transparentGUI = false;
 
-        private VertexArrayObject VAO;
+        public VertexArrayObject VAO;
         public Model batchedModel = null;
 
         public PointParticle[] batchedPoints = null;
@@ -139,7 +139,7 @@ namespace RabbetGameEngine.SubRendering
         /// </summary>
         public void onTickEnd()
         {
-           //TODO: vao buffer updates
+            BatchUtil.updateBuffers(this);
         }
         
         public void draw( Matrix4 viewMatrix, Vector3 fogColor)
