@@ -9,7 +9,7 @@ namespace RabbetGameEngine.VisualEffects
         bool transparency = false;
         float randomHorizontalVelocity = 0;
         float randomVerticalVelocity = 0;
-        public VFXSinglePoint(Vector3 initialPos, CustomColor color, float radius, float existingSeconds, bool aoc, bool transparency) : base(initialPos, 0, "none", null, existingSeconds,transparency ? SubRendering.BatchType.lerpISpheresTransparent : SubRendering.BatchType.lerpISpheres)
+        public VFXSinglePoint(Vector3 initialPos, CustomColor color, float radius, float existingSeconds, bool aoc, bool transparency) : base(initialPos, 0, "none", null, existingSeconds,transparency ? RenderType.lerpISpheresTransparent : RenderType.lerpISpheres)
         {
             this.transparency = transparency;
             theParticle = new PointParticle(initialPos, color.toNormalVec4(), radius, aoc);

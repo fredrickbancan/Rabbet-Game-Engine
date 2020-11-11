@@ -14,9 +14,9 @@ namespace RabbetGameEngine.Models
         protected Entity parent;
         protected Model theModel;
         protected Texture tex;
-        protected BatchType batchType;
+        protected RenderType batchType;
 
-        public EntityModel(Entity parent, string textureName, Model baseModel, BatchType type = BatchType.lerpTriangles)
+        public EntityModel(Entity parent, string textureName, Model baseModel, RenderType type = RenderType.lerpTriangles)
         {
             this.batchType = type;
             this.parent = parent;

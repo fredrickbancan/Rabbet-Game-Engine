@@ -56,7 +56,7 @@ namespace RabbetGameEngine.GUI
         {
             if (!hidden)
             {
-                Renderer.requestRender(BatchType.guiCutout, this.componentTexture, this.componentQuadModel.copyModel().transformVertices(this.translationAndScale));
+                Renderer.requestRender(RenderType.guiCutout, this.componentTexture, this.componentQuadModel.copyModel().transformVertices(this.translationAndScale));
             }
         }
 

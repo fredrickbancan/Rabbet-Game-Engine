@@ -37,16 +37,15 @@ namespace RabbetGameEngine.SubRendering
         private VertexArrayObject VAO;
         public Model batchedModel = null;
 
-        /*points are stored in a single VBO half packed, meaning the prevTickBatchedPoints start in the second half of the array. all the batchedPoints come first, and then the prevTickBatchedPoints are packed after them.*/
         public PointParticle[] batchedPoints = null;
 
-        /*Matrices are stored in a single VBO interlaced. all the modelMatrices come first, and then the prevTickModelMatrices are packed after them.*/
         public Matrix4[] modelMatrices = null;
 
-        /*If using prev positions for lerping, they will be stored in a single vbo interlaced. Otherwise if positions are being used, they are stored flat in a single vbo.*/
         public Vector3[] positions = null;
 
         public Vector3[] scales = null;
+
+        public Sprite3D[] sprites3D = null;
 
         public DrawCommand[] drawCommands = null;
 
@@ -82,11 +81,11 @@ namespace RabbetGameEngine.SubRendering
         /// </summary>
         public int requestedIndicesCount = 0;
 
-        private BatchType batchType;
+        private RenderType batchType;
         public Texture batchTex;
         public Shader batchShader;
 
-        public Batch(BatchType type, Texture tex)
+        public Batch(RenderType type, Texture tex)
         {
             batchType = type;
             batchTex = tex;
@@ -105,45 +104,7 @@ namespace RabbetGameEngine.SubRendering
             maxPointCount = maxBufferSizeBytes / PointParticle.pParticleByteSize;
         }
 
-        //For dynamic vertex objects, when submitting data, the residual un-updated data at the end of the buffer does not need to be cleared.
-        //use the submittedVerticesCount or something similar with drawElements(count) to only draw the submitted vertices and ignore the residual ones.
-        //This is faster than clearing the whole buffer each update.
-        /// <summary>
-        /// attempts to add the provided model data to the batch. Returns true if successful, and returns false if not enough room.
-        /// </summary>
-        /// <param name="theModel">The model to be added</param>
-        /// <returns>true if the provided model can be added</returns>
-        public bool addToBatch(Model theModel)
-        {
-            return false;
-        }
-
-        /// <summary>
-        /// attempts to add the provided single point to the batch. This method only works for 
-        /// batches with have a batch type of single points!
-        /// </summary>
-        /// <param name="singlePoint">The single point</param>
-        /// <param name="prevTickSinglePoint">The single point's previous tick data.</param>
-        /// <returns>true if this batch is able to accept the point.</returns>
-        public bool addToBatch(PointParticle singlePoint, PointParticle prevTickSinglePoint)
-        {
-            return false;
-        }
-
-        public bool addToBatch(PointParticle singlePoint)
-        {
-            return false;
-        }
-
-        public bool addToBatch(PointCloudModel theModel)
-        {
-            return false;
-        }
-
-        /// <summary>
-        /// This is required for LERP type batches for selecting the correct matrices.
-        /// </summary>
-        private void configureDrawCommandsForCurrentObject(int objIndCount, int vertCount)
+        public void configureDrawCommandsForCurrentObject(int objIndCount, int vertCount)
         {
             int n;
             if((n = requestedObjectItterator + 1) >= drawCommands.Length)//resizing drawcommands
@@ -191,7 +152,7 @@ namespace RabbetGameEngine.SubRendering
             VAO.bind();
         }
 
-        public BatchType getBatchType()
+        public RenderType getRenderType()
         {
             return this.batchType;
         }

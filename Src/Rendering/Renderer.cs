@@ -10,6 +10,34 @@ using System.Linq;
 
 namespace RabbetGameEngine
 {
+    public enum RenderType
+    {
+        none,
+        guiCutout,
+        guiText,
+
+        /// <summary>
+        /// text3D objects should be built relative to 0,0,0. And then a position vector should be sent to the GPU for the position of the text in real world.
+        /// </summary>
+        text3D,
+        lerpText3D,
+        triangles,
+        quads,
+        lines,
+        iSpheres,
+        iSpheresTransparent,
+        lerpISpheres,
+        lerpTriangles,
+        lerpQuads,
+        lerpLines,
+        lerpISpheresTransparent,
+        lerpTrianglesTransparent,
+        lerpQuadsTransparent,
+        trianglesTransparent,
+        quadsTransparent,
+        spriteCylinder
+    }
+
     public static class Renderer
     {
         private static int privateTotalDrawCallCount;
@@ -64,7 +92,7 @@ namespace RabbetGameEngine
             
         }
 
-        public static void requestRender(BatchType type, Texture tex, Model mod)
+        public static void requestRender(RenderType type, Texture tex, Model mod)
         {
             Profiler.beginEndProfile("batching");
             BatchManager.requestRender(type, tex, mod);
@@ -110,7 +138,7 @@ namespace RabbetGameEngine
         /*Called before all draw calls*/
         private static void preRender()
         {
-            GL.Clear(ClearBufferMask.DepthBufferBit);
+            GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
             privateTotalDrawCallCount = 0;
         }
 
@@ -129,16 +157,6 @@ namespace RabbetGameEngine
             GameInstance.get.SwapBuffers();
         }
 
-        public static void addStaticDrawTriangles(string name, string textureName, string shaderName, Model data)
-        {
-            if (staticDraws.TryGetValue(name, out StaticRenderObject s))
-            {
-                s.delete();
-                staticDraws.Remove(name);
-            }
-            staticDraws.Add(name, StaticRenderObject.createSROTriangles(textureName, shaderName, data));
-        }
-
         public static void addStaticDrawTriangles(string name, string textureName, Model data)
         {
             if (staticDraws.TryGetValue(name, out StaticRenderObject s))
@@ -146,27 +164,17 @@ namespace RabbetGameEngine
                 s.delete();
                 staticDraws.Remove(name);
             }
-            staticDraws.Add(name, StaticRenderObject.createSROTriangles(textureName, ShaderUtil.trianglesName, data));
+            staticDraws.Add(name, StaticRenderObject.createSROTriangles(textureName, data));
         }
 
-        public static void addStaticDrawLines(string name, string textureName, string shaderName, Model data)
+        public static void addStaticDrawLines(string name, Model data)
         {
             if (staticDraws.TryGetValue(name, out StaticRenderObject s))
             {
                 s.delete();
                 staticDraws.Remove(name);
             }
-            staticDraws.Add(name, StaticRenderObject.createSROLines(textureName, shaderName, data));
-        }
-
-        public static void addStaticDrawLines(string name, string textureName, Model data)
-        {
-            if (staticDraws.TryGetValue(name, out StaticRenderObject s))
-            {
-                s.delete();
-                staticDraws.Remove(name);
-            }
-            staticDraws.Add(name, StaticRenderObject.createSROLines(textureName, ShaderUtil.linesName, data));
+            staticDraws.Add(name, StaticRenderObject.createSROLines(data));
         }
 
         public static void addStaticDrawPoints(string name, PointParticle[] data, bool transparency)
@@ -178,6 +186,7 @@ namespace RabbetGameEngine
             }
             staticDraws.Add(name, StaticRenderObject.createSROPoints(data, transparency));
         }
+
         public static void removeStaticDraw(string name)
         {
             if (staticDraws.TryGetValue(name, out StaticRenderObject s))
@@ -219,6 +228,7 @@ namespace RabbetGameEngine
             BatchManager.deleteAll();
             ShaderUtil.deleteAll();
             TextureUtil.deleteAll();
+            SkyboxRenderer.deleteVAO();
         }
         public static Matrix4 projMatrix { get => projectionMatrix; }
         public static int totalDraws { get { return privateTotalDrawCallCount; } set { privateTotalDrawCallCount = value; } }

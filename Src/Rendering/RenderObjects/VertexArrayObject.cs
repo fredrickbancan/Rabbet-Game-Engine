@@ -29,11 +29,15 @@ namespace RabbetGameEngine
         
         private int debugTotalAttributes = 0;
 
+        /// <summary>
+        /// not currently used for anything but may come in handy
+        /// </summary>
         public PrimitiveType drawType;
 
         public VertexArrayObject()
         {
             vaoID = GL.GenVertexArray();
+            vbos = new List<VertexBufferObject>();
         }
 
         /// <summary>

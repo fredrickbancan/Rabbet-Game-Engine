@@ -1,4 +1,5 @@
-﻿using OpenTK.Windowing.Desktop;
+﻿using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
 using System;
 using System.Diagnostics;
 
@@ -18,9 +19,9 @@ namespace RabbetGameEngine
                 NativeWindowSettings w = new NativeWindowSettings();
                 w.StartFocused = true;
                 w.StartVisible = true;
+                w.Profile = ContextProfile.Core;
 
                 GameWindowSettings g = new GameWindowSettings();
-
                 GameInstance game = new GameInstance(g, w);
                 game.Run();
             }

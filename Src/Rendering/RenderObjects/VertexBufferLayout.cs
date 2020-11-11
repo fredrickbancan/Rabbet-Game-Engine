@@ -6,7 +6,10 @@ namespace RabbetGameEngine
     {
         public List<VertexBufferElement> elements = null;
 
-        
+        public VertexBufferLayout()
+        {
+            elements = new List<VertexBufferElement>();
+        }
 
         private int stride = 0;
 

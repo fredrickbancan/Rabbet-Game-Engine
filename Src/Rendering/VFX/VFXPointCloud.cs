@@ -15,7 +15,7 @@ namespace RabbetGameEngine.VisualEffects
         protected Matrix4 prevTickModelMatrix = Matrix4.Identity;
         protected bool transparency = false;
 
-        public VFXPointCloud(Vector3 pos, CustomColor color, bool transparency, bool ambientOcclusion, float maxExistingSeconds, float radius, float alpha) : base(pos, 1.0F, "none", null, maxExistingSeconds, transparency ? BatchType.lerpISpheresTransparent : BatchType.lerpISpheres)
+        public VFXPointCloud(Vector3 pos, CustomColor color, bool transparency, bool ambientOcclusion, float maxExistingSeconds, float radius, float alpha) : base(pos, 1.0F, "none", null, maxExistingSeconds, transparency ? RenderType.lerpISpheresTransparent : RenderType.lerpISpheres)
         {
             this.transparency = transparency;
             if(!transparency)

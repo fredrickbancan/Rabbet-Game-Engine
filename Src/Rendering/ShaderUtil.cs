@@ -7,6 +7,7 @@ namespace RabbetGameEngine
       throughout the game without having to be re-loaded and re-allocated.*/
     public static class ShaderUtil
     {
+        public static readonly string skyboxName = "Skybox";
         public static readonly string guiCutoutName = "GuiCutout";
         public static readonly string text2DName = "GuiText";
         public static readonly string text3DName = "StaticText3D_F";
@@ -24,6 +25,7 @@ namespace RabbetGameEngine
         public static readonly string lerpTrianglesTransparentName = "Lerp_FT";
         public static readonly string lerpQuadsTransparentName = "Lerp_FT";
         public static readonly string trianglesTransparentName = "Static_FT";
+        public static readonly string quadsTransparentName = "Static_FT";
         public static readonly string spriteCylinderName = "StaticSpriteCylinder_F";
 
         public static readonly string fileExtension = ".shader";

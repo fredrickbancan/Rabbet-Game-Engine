@@ -5,33 +5,7 @@ using System.Linq;
 
 namespace RabbetGameEngine.SubRendering
 {
-    public enum BatchType
-    {
-        none,
-        guiCutout,
-        guiText,
-
-        /// <summary>
-        /// text3D objects should be built relative to 0,0,0. And then a position vector should be sent to the GPU for the position of the text in real world.
-        /// </summary>
-        text3D,
-        lerpText3D,
-        triangles,
-        quads,
-        lines,
-        iSpheres,
-        iSpheresTransparent,
-        lerpISpheres,
-        lerpTriangles,
-        lerpQuads,
-        lerpLines,
-        lerpISpheresTransparent,
-        lerpTrianglesTransparent,
-        lerpQuadsTransparent,
-        trianglesTransparent,
-        quadsTransparent,
-        spriteCylinder
-    }
+   
 
     /*Class for constructing*/
     public static class BatchManager
@@ -82,23 +56,20 @@ namespace RabbetGameEngine.SubRendering
         /// Can be called to request that the provided data be added to the appropriate existing batch
         /// or, if said batch does not exist or is full, creates and adds a new batch.
         /// </summary>
-        /// <param name="type">The category of batch this data applies to</param>
-        /// <param name="vertices">The vertices of this render data</param>
-        /// <param name="indices">The indices of this render data, can be left blank if this does not need indices (i.e points)</param>
-        public static void requestRender(BatchType type, Texture tex, Model theModel)
+        public static void requestRender(RenderType type, Texture tex, Model theModel)
         {
             if (!acceptingRequests) return;
             if (batches.Count < 1)
             {
                 batches.Add(new Batch(type, tex));
-                batches.ElementAt(0).addToBatch(theModel);
+                BatchUtil.tryToFitInBatchModel(theModel, batches.ElementAt(0));
                 return;
             }
 
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
-                if(batchAt.getBatchType() == type && batchAt.getBatchtexture() == tex &&  batchAt.addToBatch(theModel))
+                if(batchAt.getRenderType() == type && batchAt.getBatchtexture() == tex &&  BatchUtil.tryToFitInBatchModel(theModel, batchAt))
                 {
                     return;//successfull batch adding
                 }
@@ -106,19 +77,19 @@ namespace RabbetGameEngine.SubRendering
                 if(i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
                     //ensure that all opaque batches come before transparent ones in the list.
-                    if (type == BatchType.guiText)
+                    if (type == RenderType.guiText)
                     {
                         batches.Add(new Batch(type, tex));
-                        batches.ElementAt(i + 1).addToBatch(theModel);
+                        BatchUtil.tryToFitInBatchModel(theModel, batches.ElementAt(i + 1));
                     }
-                    else if (type == BatchType.lerpTrianglesTransparent || type == BatchType.trianglesTransparent)
+                    else if (type == RenderType.lerpTrianglesTransparent || type == RenderType.trianglesTransparent)
                     {
                         insertTransparentNonGUIBatch(new Batch(type, tex), theModel);
                     }
                     else
                     {
                         batches.Insert(0, new Batch(type, tex));
-                        batches.ElementAt(0).addToBatch(theModel);
+                        BatchUtil.tryToFitInBatchModel(theModel, batches.ElementAt(0));
                     }
                     
                     return;
@@ -129,34 +100,34 @@ namespace RabbetGameEngine.SubRendering
         public static void requestRender(PointCloudModel pParticleModel, bool transparency, bool lerp)
         {
             if (!acceptingRequests) return;
-            BatchType type;
+            RenderType type;
             if(transparency)
             {
                 if(!lerp)
                 {
-                    type = BatchType.iSpheresTransparent;
+                    type = RenderType.iSpheresTransparent;
                 }
                 else
                 {
-                    type = BatchType.lerpISpheresTransparent;
+                    type = RenderType.lerpISpheresTransparent;
                 }
             }
             else
             {
                 if (!lerp)
                 {
-                    type = BatchType.iSpheres;
+                    type = RenderType.iSpheres;
                 }
                 else
                 {
-                    type = BatchType.lerpISpheres;
+                    type = RenderType.lerpISpheres;
                 }
             }
 
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
-                if (batchAt.getBatchType() == type && batchAt.addToBatch(pParticleModel))
+                if (batchAt.getRenderType() == type && BatchUtil.tryToFitInBatchPoints(pParticleModel, batchAt))
                 {
                     return;//successfull batch adding
                 }
@@ -166,12 +137,12 @@ namespace RabbetGameEngine.SubRendering
                     //ensure that all opaque batches come before transparent ones in the list.
                     if (transparency)
                     {
-                        insertTransparentNonGUIBatch(new Batch(transparency, lerp), pParticleModel);
+                        insertTransparentNonGUIBatch(new Batch(type, null), pParticleModel);
                     }
                     else
                     {
-                        batches.Insert(0, new Batch(transparency, lerp));
-                        batches.ElementAt(0).addToBatch(pParticleModel);
+                        batches.Insert(0, new Batch(type, null));
+                        BatchUtil.tryToFitInBatchPoints(pParticleModel, batches.ElementAt(0));
                     }
 
                     return;
@@ -183,21 +154,21 @@ namespace RabbetGameEngine.SubRendering
         public static void requestRender(PointParticle pParticle, bool transparency)
         {
             if (!acceptingRequests) return;
-            BatchType type;
+            RenderType type;
             if (transparency)
             {
-                    type = BatchType.iSpheresTransparent;
+                    type = RenderType.iSpheresTransparent;
                 
             }
             else
             {
-                    type = BatchType.iSpheres;
+                    type = RenderType.iSpheres;
                 
             }
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
-                if (batchAt.getBatchType() == type && batchAt.addToBatch(pParticle))
+                if (batchAt.getRenderType() == type && BatchUtil.tryToFitInBatchSinglePoint(pParticle, batchAt))
                 {
                     return;//successfull batch adding
                 }
@@ -207,12 +178,12 @@ namespace RabbetGameEngine.SubRendering
                     //ensure that all opaque batches come before transparent ones in the list.
                     if (transparency)
                     {
-                        insertTransparentNonGUIBatch(new Batch(transparency, false), pParticle);
+                        insertTransparentNonGUIBatch(new Batch(type, null), pParticle);
                     }
                     else
                     {
-                        batches.Insert(0, new Batch(transparency, false));
-                        batches.ElementAt(0).addToBatch(pParticle);
+                        batches.Insert(0, new Batch(type, null));
+                        BatchUtil.tryToFitInBatchSinglePoint(pParticle, batches.ElementAt(0));
                     }
 
                     return;
@@ -223,21 +194,21 @@ namespace RabbetGameEngine.SubRendering
         public static void requestRender(PointParticle pParticle, PointParticle prevTickPParticle, bool transparency)
         {
             if (!acceptingRequests) return;
-            BatchType type;
+            RenderType type;
             if (transparency)
             {
-                type = BatchType.lerpISpheresTransparent;
+                type = RenderType.lerpISpheresTransparent;
 
             }
             else
             {
-                type = BatchType.lerpISpheres;
+                type = RenderType.lerpISpheres;
 
             }
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
-                if (batchAt.getBatchType() == type && batchAt.addToBatch(pParticle, prevTickPParticle))
+                if (batchAt.getRenderType() == type && BatchUtil.tryToFitInBatchLerpPoint(pParticle, prevTickPParticle, batchAt))
                 {
                     return;//successfull batch adding
                 }
@@ -247,12 +218,12 @@ namespace RabbetGameEngine.SubRendering
                     //ensure that all opaque batches come before transparent ones in the list.
                     if (transparency)
                     {
-                        insertTransparentNonGUIBatch(new Batch(transparency, true), pParticle, prevTickPParticle);
+                        insertTransparentNonGUIBatch(new Batch(type, null), pParticle, prevTickPParticle);
                     }
                     else
                     {
-                        batches.Insert(0, new Batch(transparency, true));
-                        batches.ElementAt(0).addToBatch(pParticle, prevTickPParticle);
+                        batches.Insert(0, new Batch(type, null));
+                        BatchUtil.tryToFitInBatchLerpPoint(pParticle, prevTickPParticle, batches.ElementAt(0));
                     }
 
                     return;
@@ -267,12 +238,12 @@ namespace RabbetGameEngine.SubRendering
                 if (!batches.ElementAt(i).transparentGUI)
                 {
                     batches.Insert(i + 1, theBatch);
-                    batches.ElementAt(i + 1).addToBatch(mod);
+                    BatchUtil.tryToFitInBatchModel(mod, theBatch);
                     return;
                 }
             }
             batches.Insert(0, theBatch);
-            batches.ElementAt(0).addToBatch(mod);
+            BatchUtil.tryToFitInBatchModel(mod, theBatch);
         }
 
         private static void insertTransparentNonGUIBatch(Batch theBatch, PointParticle p, PointParticle prevP)
@@ -282,12 +253,12 @@ namespace RabbetGameEngine.SubRendering
                 if (!batches.ElementAt(i).transparentGUI)
                 {
                     batches.Insert(i + 1, theBatch);
-                    batches.ElementAt(i + 1).addToBatch(p, prevP);
+                    BatchUtil.tryToFitInBatchLerpPoint(p, prevP, theBatch);
                     return;
                 }
             }
             batches.Insert(0, theBatch);
-            batches.ElementAt(0).addToBatch(p, prevP);
+            BatchUtil.tryToFitInBatchLerpPoint(p, prevP, theBatch);
         }
 
         private static void insertTransparentNonGUIBatch(Batch theBatch, PointCloudModel p)
@@ -297,12 +268,12 @@ namespace RabbetGameEngine.SubRendering
                 if (!batches.ElementAt(i).transparentGUI)
                 {
                     batches.Insert(i + 1, theBatch);
-                    batches.ElementAt(i + 1).addToBatch(p);
+                    BatchUtil.tryToFitInBatchPoints(p, theBatch);
                     return;
                 }
             }
             batches.Insert(0, theBatch);
-            batches.ElementAt(0).addToBatch(p);
+            BatchUtil.tryToFitInBatchPoints(p, theBatch);
         }
 
         private static void insertTransparentNonGUIBatch(Batch theBatch, PointParticle p)
@@ -312,12 +283,12 @@ namespace RabbetGameEngine.SubRendering
                 if (!batches.ElementAt(i).transparentGUI)
                 {
                     batches.Insert(i + 1, theBatch);
-                    batches.ElementAt(i + 1).addToBatch(p);
+                    BatchUtil.tryToFitInBatchSinglePoint(p, theBatch);
                     return;
                 }
             }
             batches.Insert(0, theBatch);
-            batches.ElementAt(0).addToBatch(p);
+            BatchUtil.tryToFitInBatchSinglePoint(p, theBatch);
         }
 
         public static void drawAll(Matrix4 viewMatrix, Vector3 fogColor)

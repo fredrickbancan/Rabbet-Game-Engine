@@ -21,7 +21,7 @@ void main()
 {
    
     //create translation
-    mat4 modelMatrix = mat4(1.0F);
+    mat4 modelMatrix = mat4(1.0);
     modelMatrix[3][0] = spritePos.x;
     modelMatrix[3][1] = spritePos.y;
     modelMatrix[3][2] = spritePos.z;
@@ -35,9 +35,7 @@ void main()
     modelViewBillboard[2][1] = 0;
     modelViewBillboard[2][2] = 1;
 
-    vec4 cornerScaled = corner;
-    corner.x *= scale.x;
-    corner.y *= scale.y;
+    vec4 cornerScaled = vec4(corner.x * spriteScale.x, corner.y * spriteScale.y, 0, 1);
 
     vec4 positionRelativeToCam = modelViewBillboard * cornerScaled;
     gl_Position = projectionMatrix * positionRelativeToCam;

@@ -51,7 +51,7 @@ namespace RabbetGameEngine.SubRendering
             if (!acceptingRequests) return;
             //add a copy of the aabb line model transformed to aabb collider specs
             Profiler.beginEndProfile("aux");
-            Renderer.requestRender(BatchType.lines, null, aabbModelPrefab.copyModel().transformVertices(new Vector3((float)box.extentX * 2, (float)box.extentY * 2, (float)box.extentZ * 2), Vector3.Zero, box.centerVec));
+            Renderer.requestRender(RenderType.lines, null, aabbModelPrefab.copyModel().transformVertices(new Vector3((float)box.extentX * 2, (float)box.extentY * 2, (float)box.extentZ * 2), Vector3.Zero, box.centerVec));
             renderPointWithNormalLines(box.centerVec);
             Profiler.beginEndProfile("aux");
         }
@@ -82,7 +82,7 @@ namespace RabbetGameEngine.SubRendering
                 2,3,
                 4,5
             };
-            Renderer.requestRender(BatchType.lines, null, new Model(lineVerts, lineIndices));
+            Renderer.requestRender(RenderType.lines, null, new Model(lineVerts, lineIndices));
         }
     }
 }

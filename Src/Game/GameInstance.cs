@@ -39,7 +39,6 @@ namespace RabbetGameEngine
 
         public unsafe GameInstance(GameWindowSettings gameWindowSettings, NativeWindowSettings windowSettings) : base(gameWindowSettings, windowSettings)
         {
-
             GameInstance.instance = this;
             Title = Application.applicationName;
             int iconWidth, iconHeight;

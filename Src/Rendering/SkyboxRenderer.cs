@@ -24,8 +24,15 @@ namespace RabbetGameEngine
             temp[4] = QuadPrefab.copyModel().transformVertices(new Vector3(1, 1, 1), new Vector3(-90, 0, 0), new Vector3(0, 0.5F, 0));//top
             temp[5] = QuadPrefab.copyModel().transformVertices(new Vector3(1, 1, 1), new Vector3(90, 0, 0), new Vector3(0, -0.5F, 0));//bottom
             skyboxModel = new Model(QuadCombiner.combineData(temp), QuadCombiner.getIndicesForQuadCount(6));
-            VAO = VertexArrayObject.createStaticTriangles(skyboxModel.vertices, skyboxModel.indices);
-            ShaderUtil.tryGetShader("Skybox", out skyboxShader);
+            VAO = new VertexArrayObject();
+            VAO.beginBuilding();
+            VertexBufferLayout l = new VertexBufferLayout();
+            Vertex.configureLayout(l);
+            VAO.addBuffer(skyboxModel.vertices, Vertex.vertexByteSize, l);
+            VAO.addIndicesBuffer(skyboxModel.indices);
+            VAO.finishBuilding();
+
+            ShaderUtil.tryGetShader(ShaderUtil.skyboxName, out skyboxShader);
         }
 
         public static void setSkyboxToDraw(Skybox s)
@@ -39,7 +46,7 @@ namespace RabbetGameEngine
             {
                 return;
             }
-            VAO.bindVaoVboIbo();
+            VAO.bind();
             skyboxShader.use();
             skyboxShader.setUniformMat4F("projectionMatrix", projectionMatrix);
             skyboxShader.setUniformMat4F("viewMatrix", viewMatrix);
@@ -47,6 +54,11 @@ namespace RabbetGameEngine
             skyboxShader.setUniformVec3F("skyHorizon", skyboxToDraw.horizonColor);
             GL.DrawElements(PrimitiveType.Triangles, skyboxModel.indices.Length, DrawElementsType.UnsignedInt, 0);
             Renderer.totalDraws++;
+        }
+
+        public static void deleteVAO()
+        {
+            VAO.delete();
         }
     }
 }

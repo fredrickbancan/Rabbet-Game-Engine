@@ -47,7 +47,7 @@ namespace RabbetGameEngine.GUI
                 if (!panel.hidden)
                     foreach (Model mod in panel.models)
                     {
-                        Renderer.requestRender(BatchType.guiText, fontTexture, mod);
+                        Renderer.requestRender(RenderType.guiText, fontTexture, mod);
                     }
             }
         }

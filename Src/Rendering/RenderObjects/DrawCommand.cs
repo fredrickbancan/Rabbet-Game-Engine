@@ -13,7 +13,6 @@ namespace RabbetGameEngine
         public static readonly byte firstIndexOffset = (byte)Marshal.OffsetOf(typeof(DrawCommand), "firstIndex");
         public static readonly byte baseVertexOffset = (byte)Marshal.OffsetOf(typeof(DrawCommand), "baseVertex");
         public static readonly byte baseInstanceOffset = (byte)Marshal.OffsetOf(typeof(DrawCommand), "baseInstance");
-
         uint count;
         uint instanceCount;
         uint firstIndex;
