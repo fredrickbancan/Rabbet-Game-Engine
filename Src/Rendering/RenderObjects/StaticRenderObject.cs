@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
 
 namespace RabbetGameEngine
@@ -115,6 +116,7 @@ namespace RabbetGameEngine
                 case RenderType.none:
                     return;
                 case RenderType.triangles:
+                    GL.DrawElements(PrimitiveType.Triangles, renderLength, DrawElementsType.UnsignedInt, 0);
                     return;
                 case RenderType.lines:
                     return;

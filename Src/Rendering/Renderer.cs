@@ -138,7 +138,7 @@ namespace RabbetGameEngine
         /*Called before all draw calls*/
         private static void preRender()
         {
-            GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
+            GL.Clear(ClearBufferMask.DepthBufferBit);
             privateTotalDrawCallCount = 0;
         }
 

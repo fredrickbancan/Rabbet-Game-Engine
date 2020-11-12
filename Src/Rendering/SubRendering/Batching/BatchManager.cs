@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace RabbetGameEngine.SubRendering
 {
-   
+
 
     /*Class for constructing*/
     public static class BatchManager

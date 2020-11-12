@@ -1,11 +1,9 @@
 ﻿using OpenTK.Mathematics;
-using RabbetGameEngine.Models;
 using System;
 
 namespace RabbetGameEngine.SubRendering
 {
     //TODO: Change all text and gui quad rendering to use GL_QUADS so they do not require indices.
-    //TODO: DrawCommands are made for glmultidrawelementsindirect, so they need to be set up differently for glmultidrawarraysindirect. namely basevertex. This can be done using an offset and using the basevertex value as baseinstance and skippuing over 4 bytes.
     //TODO: Implement new VAO system and adding to batches with resizing arrays AND vao buffers.
     //Too many if statements in adding to batches is slow.
     //complexity increases when adding new data types/arrays
@@ -35,7 +33,8 @@ namespace RabbetGameEngine.SubRendering
         public bool transparentGUI = false;
 
         public VertexArrayObject VAO;
-        public Model batchedModel = null;
+        public Vertex[] vertices;
+        public uint[] indices;
 
         public PointParticle[] batchedPoints = null;
 
@@ -104,7 +103,7 @@ namespace RabbetGameEngine.SubRendering
             maxPointCount = maxBufferSizeBytes / PointParticle.pParticleByteSize;
         }
 
-        public void configureDrawCommandsForCurrentObject(int objIndCount, int vertCount)
+        public void configureDrawCommandsForCurrentObject(int objIndCount, bool quads)
         {
             int n;
             if((n = requestedObjectItterator + 1) >= drawCommands.Length)//resizing drawcommands
@@ -121,6 +120,9 @@ namespace RabbetGameEngine.SubRendering
                 }
             }
 
+            if(quads)
+            drawCommands[requestedObjectItterator] = new DrawCommand((uint)(objIndCount), (uint)(1), (uint)(0), (uint)(requestedVerticesCount), (uint)(requestedObjectItterator));
+            else
             drawCommands[requestedObjectItterator] = new DrawCommand((uint)(objIndCount), (uint)(1), (uint)(requestedIndicesCount), (uint)(requestedVerticesCount), (uint)(requestedObjectItterator));
         }
 

@@ -6,6 +6,10 @@ namespace RabbetGameEngine
     {
         public List<VertexBufferElement> elements = null;
 
+        /// <summary>
+        /// should be true if the buffer used with this layout should be accessed using glvertexattribdivior.
+        /// </summary>
+        public bool instancedData = false;
         public VertexBufferLayout()
         {
             elements = new List<VertexBufferElement>();

@@ -120,7 +120,7 @@ namespace RabbetGameEngine
                     element = vbo.layout.elements.ElementAt(j);
                     GL.EnableVertexAttribArray(attribItterator);
                     GL.VertexAttribPointer(attribItterator, element.count, element.type, element.normalized, vbo.layout.getStride(), offset);
-                    if (usesInstancing || usesIndirect)
+                    if (vbo.layout.instancedData)
                     {
                         GL.VertexAttribDivisor(attribItterator, 1);
                     }

@@ -33,7 +33,6 @@ namespace RabbetGameEngine
             GL.BindBuffer(BufferTarget.ArrayBuffer, id);
             GL.BufferData(BufferTarget.ArrayBuffer, sizeToUpdate, data, BufferUsageHint.DynamicDraw);
         }
-
         /// <summary>
         /// Must be called to resize the vbo before submitting a larger array of data.
         /// This function will clear all data currently in the vbo.
