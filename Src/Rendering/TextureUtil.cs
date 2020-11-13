@@ -17,6 +17,7 @@ namespace RabbetGameEngine
             textures.Add("debug", new Texture());//second texture will be the debug texture
             loadAllTexturesRecursive(ResourceUtil.getTextureFileDir());
             loadAllTexturesRecursive(ResourceUtil.getFontFileDir());
+            loadAllTexturesRecursive(ResourceUtil.getIconFileDir());
         }
 
         private static void loadAllTexturesRecursive(string directory)

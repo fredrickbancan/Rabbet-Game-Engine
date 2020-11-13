@@ -233,6 +233,26 @@ namespace RabbetGameEngine.SubRendering
             }
         }
 
+        public static void requestRender(Sprite3D s, Texture tex)
+        {
+            if (!acceptingRequests) return;
+            for (int i = 0; i < batches.Count; ++i)
+            {
+                Batch batchAt = batches.ElementAt(i);
+                if (batchAt.getRenderType() == RenderType.spriteCylinder && batchAt.batchTex == tex && BatchUtil.tryToFitInBatchSprite3D(s, batchAt))
+                {
+                    return;//successfull batch adding
+                }
+
+                if (i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
+                {
+                    batches.Insert(0, new Batch(RenderType.spriteCylinder, tex));
+                    BatchUtil.tryToFitInBatchSprite3D(s, batches.ElementAt(0));
+                    return;
+                }
+            }
+        }
+
         private static void insertTransparentNonGUIBatch(Batch theBatch, Model mod)
         {
             for (int i = batches.Count - 1; i >= 0; --i)

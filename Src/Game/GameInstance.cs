@@ -89,6 +89,8 @@ namespace RabbetGameEngine
                 SoundManager.playSoundLoopingAt("waterroll_large", new Vector3(-16, 1, -16), 1.0F);
                 currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", GameSettings.defaultFont, "waterroll_large.ogg, 100% volume", new Vector3(-16,2.5F,-16), 5.0F, CustomColor.white));
 
+                currentPlanet.spawnVFXInWorld(new VFXLogoSprite3D(new Vector3(0, 10, 0), new Vector2(1, 1)));
+
                 Input.setCursorHiddenAndGrabbed(true);
             }
             catch(Exception e)
@@ -188,6 +190,7 @@ namespace RabbetGameEngine
             windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
             GUIManager.onTick();
             MainGUI.onTick();
+            currentPlanet.spawnVFXInWorld(new VFXSnowParticle(new Vector3(0,10,0)));
             currentPlanet.onTick();
             SoundManager.onTick();
             Profiler.updateAverages();

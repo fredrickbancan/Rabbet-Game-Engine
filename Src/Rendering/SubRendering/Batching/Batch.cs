@@ -69,6 +69,7 @@ namespace RabbetGameEngine.SubRendering
         /// </summary>
         public int positionItterator = 0;
 
+        public int spriteItterator = 0;
 
         /// <summary>
         /// number of vertices requested to be added to this batch since the last update.
@@ -134,6 +135,7 @@ namespace RabbetGameEngine.SubRendering
             matricesItterator = 0;
             pointsItterator = 0;
             positionItterator = 0;
+            spriteItterator = 0;
         }
 
         /// <summary>

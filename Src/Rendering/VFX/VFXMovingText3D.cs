@@ -39,7 +39,7 @@ namespace RabbetGameEngine.VisualEffects
 
         public override void sendRenderRequest()
         {
-            Renderer.requestRender(batchType, vfxTexture, textModel.copyModel().scaleVertices(new Vector3(scale, scale, 1.0F)));
+            Renderer.requestRender(renderType, vfxTexture, textModel.copyModel().scaleVertices(new Vector3(scale, scale, 1.0F)));
         }
     }
 }

@@ -113,6 +113,13 @@ namespace RabbetGameEngine
             Profiler.beginEndProfile("batching");
         }
 
+        public static void requestRender(Sprite3D s, Texture tex)
+        {
+            Profiler.beginEndProfile("batching");
+            BatchManager.requestRender(s, tex);
+            Profiler.beginEndProfile("batching");
+        }
+
         public static void requestRender(PointParticle point, PointParticle prevTickPoint, bool transparency)
         {
             Profiler.beginEndProfile("batching");

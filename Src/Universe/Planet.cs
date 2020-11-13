@@ -251,6 +251,10 @@ namespace RabbetGameEngine
                     vfx.postTick();
                     CollisionHandler.tryToMoveObject(vfx, worldColliders);
                 }
+                if(vfx.getRenderType() == RenderType.spriteCylinder)
+                {
+                    Application.debugPrint("h");
+                }
                 vfx.sendRenderRequest();
             }
 

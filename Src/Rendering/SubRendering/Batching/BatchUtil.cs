@@ -7,16 +7,12 @@ namespace RabbetGameEngine.SubRendering
 {
 
     //TODO:Ensure all quad based rendering does not waste time building indices. uncluding text, gui and quad based.
-    //TODO: add method(s) to help with attempting to add new data to a batch that works with different batch types. These methods can resize the vao buffers and batch arrayts, and will return false if this size exceeds the batches max buffer size.
     public static class BatchUtil
     {
         public static void init()
         {
         }
 
-        //TODO: When building a batch which uses instanced data, be sure to build and add instance data vbo to vao.
-        //For multi draw indirect types, the indirect buffer will need to be added. Buffers containing matrices for lerping will also need to be added.
-        //Text 3D and lerp text 3D will need a seperate built buffer for positions and prev positions.
         public static void buildBatch(Batch theBatch)
         {
             VertexArrayObject vao = new VertexArrayObject();
@@ -76,15 +72,22 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.lerpText3D:
                     ShaderUtil.tryGetShader(ShaderUtil.lerpText3DName, out theBatch.batchShader);
-                    theBatch.maxBufferSizeBytes /= 2;
+                    theBatch.maxBufferSizeBytes /= 4;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
+                    theBatch.drawCommands = new DrawCommand[Batch.initialArraySize];
+                    theBatch.positions = new Vector3[Batch.initialArraySize];
+                    theBatch.indices = QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6);
                     VertexBufferLayout l3 = new VertexBufferLayout();
                     Vertex.configureLayout(l3);
                     VertexBufferLayout posl1 = new VertexBufferLayout();
                     posl1.add(VertexAttribPointerType.Float, 3);
+                    posl1.add(VertexAttribPointerType.Float, 3);
+                    posl1.instancedData = true;
                     vao.addBufferDynamic(Batch.initialArraySize * Vertex.vertexByteSize, l3);
                     vao.addBufferDynamic(Batch.initialArraySize * sizeof(float) * 3, posl1);//positions
                     vao.addIndirectBuffer(Batch.initialArraySize);
+                    vao.addIndicesBufferDynamic(theBatch.indices.Length);
+                    vao.updateIndices(theBatch.indices, theBatch.indices.Length);
                     vao.drawType = PrimitiveType.Triangles;
                     break;
 
@@ -130,6 +133,7 @@ namespace RabbetGameEngine.SubRendering
                     theBatch.batchedPoints = new PointParticle[Batch.initialArraySize];
                     VertexBufferLayout l7 = new VertexBufferLayout();
                     PointParticle.configureLayout(l7);
+                    l7.instancedData = true;
                     vao.addBufferDynamic(Batch.initialArraySize * PointParticle.pParticleByteSize, l7);
                     VertexBufferLayout instl = new VertexBufferLayout();
                     instl.add(VertexAttribPointerType.Float, 2);
@@ -142,6 +146,7 @@ namespace RabbetGameEngine.SubRendering
                     theBatch.batchedPoints = new PointParticle[Batch.initialArraySize];
                     VertexBufferLayout l8 = new VertexBufferLayout();
                     PointParticle.configureLayout(l8);
+                    l8.instancedData = true;
                     vao.addBufferDynamic(Batch.initialArraySize * PointParticle.pParticleByteSize, l8);
                     VertexBufferLayout instl1 = new VertexBufferLayout();
                     instl1.add(VertexAttribPointerType.Float, 2);
@@ -325,16 +330,15 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.spriteCylinder:
                     ShaderUtil.tryGetShader(ShaderUtil.spriteCylinderName, out theBatch.batchShader);
-                    theBatch.maxBufferSizeBytes /= 2;
+                    theBatch.sprites3D = new Sprite3D[Batch.initialArraySize];
                     VertexBufferLayout l18 = new VertexBufferLayout();
                     Sprite3D.configureLayout(l18);
+                    l18.instancedData = true;
                     vao.addBufferDynamic(Batch.initialArraySize * Sprite3D.sizeInBytes, l18);
                     VertexBufferLayout instl2 = new VertexBufferLayout();
                     instl2.add(VertexAttribPointerType.Float, 2);
                     vao.addInstanceBuffer(QuadPrefab.quadVertexPositions2D, sizeof(float) * 2, instl2);
-                    VertexBufferLayout sl = new VertexBufferLayout();
-                    sl.add(VertexAttribPointerType.Float, 3);
-                    vao.addBufferDynamic(Batch.initialArraySize * sizeof(float) * 3, sl);
+                    vao.drawType = PrimitiveType.TriangleStrip;
                     break;
             }
 
@@ -352,8 +356,6 @@ namespace RabbetGameEngine.SubRendering
 
             switch (theBatch.getRenderType())
             {
-                case RenderType.none:
-                    return false;
 
                 case RenderType.guiCutout:
                     {
@@ -443,7 +445,39 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.lerpText3D:
                     {
-                        return false;
+                        n = theBatch.vertices.Length;
+                        if (!canFitOrResize(ref theBatch.vertices, mod.vertices.Length, theBatch.requestedVerticesCount, theBatch.maxVertexCount)) return false;
+                        int p = theBatch.positions.Length;
+                        if (!canFitOrResize(ref theBatch.positions, 2, theBatch.positionItterator, theBatch.maxPositionCount)) return false;
+                        int i = theBatch.indices.Length;
+                        if (canResizeQuadIndicesIfNeeded(ref theBatch.indices, mod.vertices.Length + mod.vertices.Length / 2, theBatch.maxIndiciesCount))
+                        {
+                            if (i != theBatch.indices.Length)
+                            {
+                                theBatch.VAO.resizeIndices(theBatch.indices.Length);
+                                theBatch.VAO.updateIndices(theBatch.indices, theBatch.indices.Length);
+                            }
+                        }
+                        else return false;
+
+                        if (theBatch.vertices.Length != n)
+                        {
+                            theBatch.VAO.resizeBuffer(0, theBatch.vertices.Length * Vertex.vertexByteSize);
+                        }
+
+                        if (theBatch.positions.Length != p)
+                        {
+                            theBatch.VAO.resizeBuffer(1, theBatch.positions.Length * sizeof(float) * 3);
+                        }
+
+                        Array.Copy(mod.vertices, 0, theBatch.vertices, theBatch.requestedVerticesCount, mod.vertices.Length);
+                        theBatch.positions[theBatch.positionItterator] = mod.worldPos;
+                        theBatch.positions[theBatch.positionItterator + 1] = mod.prevWorldPos;
+                        theBatch.positionItterator += 2;
+                        theBatch.configureDrawCommandsForCurrentObject((n = mod.vertices.Length + mod.vertices.Length / 2), true);
+                        theBatch.requestedObjectItterator++;
+                        theBatch.requestedVerticesCount += mod.vertices.Length;
+                        theBatch.requestedIndicesCount += n;
                     }
                     break;
 
@@ -556,15 +590,6 @@ namespace RabbetGameEngine.SubRendering
                         return false;
                     }
                     break;
-
-                case RenderType.spriteCylinder:
-                    {
-                        return false;
-                    }
-                    break;
-
-                default:
-                    break;
             }
             return true;
         }
@@ -598,21 +623,29 @@ namespace RabbetGameEngine.SubRendering
 
             switch (theBatch.getRenderType())
             {
-                case RenderType.none:
-                    {
-                        return false;
-                    }
-                    break;
-
                 case RenderType.iSpheres:
                     {
-                        return false;
+                        n = theBatch.batchedPoints.Length;
+                        if (!canFitOrResize(ref theBatch.batchedPoints, mod.points.Length, theBatch.pointsItterator, theBatch.maxPointCount)) return false;
+                        if (theBatch.batchedPoints.Length != n)
+                        {
+                            theBatch.VAO.resizeBuffer(0, theBatch.batchedPoints.Length * PointParticle.pParticleByteSize);
+                        }
+                        Array.Copy(mod.points, 0, theBatch.batchedPoints, theBatch.pointsItterator, mod.points.Length);
+                        theBatch.pointsItterator += mod.points.Length;
                     }
                     break;
 
                 case RenderType.iSpheresTransparent:
                     {
-                        return false;
+                        n = theBatch.batchedPoints.Length;
+                        if (!canFitOrResize(ref theBatch.batchedPoints, mod.points.Length, theBatch.pointsItterator, theBatch.maxPointCount)) return false;
+                        if (theBatch.batchedPoints.Length != n)
+                        {
+                            theBatch.VAO.resizeBuffer(0, theBatch.batchedPoints.Length * PointParticle.pParticleByteSize);
+                        }
+                        Array.Copy(mod.points, 0, theBatch.batchedPoints, theBatch.pointsItterator, mod.points.Length);
+                        theBatch.pointsItterator += mod.points.Length;
                     }
                     break;
 
@@ -649,41 +682,36 @@ namespace RabbetGameEngine.SubRendering
                         }
                     }
                     break;
-
-                default:
-                    {
-                        return false;
-                    }
-                    break;
             }
             return true;
         }
 
         public static bool tryToFitInBatchSinglePoint(PointParticle p, Batch theBatch)
         {
-
+            int n;
             switch (theBatch.getRenderType())
             {
-                case RenderType.none:
-                    {
-                        return false;
-                    }
-                    break;
-
                 case RenderType.iSpheres:
                     {
-                        return false;
+                        n = theBatch.batchedPoints.Length;
+                        if (!canFitOrResize(ref theBatch.batchedPoints, 1, theBatch.pointsItterator, theBatch.maxPointCount)) return false;
+                        if (theBatch.batchedPoints.Length != n)
+                        {
+                            theBatch.VAO.resizeBuffer(0, theBatch.batchedPoints.Length * PointParticle.pParticleByteSize);
+                        }
+                        theBatch.batchedPoints[theBatch.pointsItterator++] = p;
                     }
                     break;
 
                 case RenderType.iSpheresTransparent:
                     {
-                        return false;
-                    }
-                    break;
-                default:
-                    {
-                        return false;
+                        n = theBatch.batchedPoints.Length;
+                        if (!canFitOrResize(ref theBatch.batchedPoints, 1, theBatch.pointsItterator, theBatch.maxPointCount)) return false;
+                        if (theBatch.batchedPoints.Length != n)
+                        {
+                            theBatch.VAO.resizeBuffer(0, theBatch.batchedPoints.Length * PointParticle.pParticleByteSize);
+                        }
+                        theBatch.batchedPoints[theBatch.pointsItterator++] = p;
                     }
                     break;
             }
@@ -692,29 +720,35 @@ namespace RabbetGameEngine.SubRendering
 
         public static bool tryToFitInBatchLerpPoint(PointParticle p, PointParticle prevP, Batch theBatch)
         {
+            int n;
 
             switch (theBatch.getRenderType())
             {
-                case RenderType.none:
-                    {
-                        return false;
-                    }
-                    break;
                 case RenderType.lerpISpheres:
                     {
-                        return false;
+                        n = theBatch.batchedPoints.Length;
+                        if (!canFitOrResize(ref theBatch.batchedPoints, 2, theBatch.pointsItterator, theBatch.maxPointCount)) return false;
+                        if (theBatch.batchedPoints.Length != n)
+                        {
+                            theBatch.VAO.resizeBuffer(0, theBatch.batchedPoints.Length * PointParticle.pParticleByteSize);
+                        }
+                        theBatch.batchedPoints[theBatch.pointsItterator] = p;
+                        theBatch.batchedPoints[theBatch.pointsItterator + 1] = prevP;
+                        theBatch.pointsItterator += 2;
                     }
                     break;
 
                 case RenderType.lerpISpheresTransparent:
                     {
-                        return false;
-                    }
-                    break;
-
-                default:
-                    {
-                        return false;
+                        n = theBatch.batchedPoints.Length;
+                        if (!canFitOrResize(ref theBatch.batchedPoints, 2, theBatch.pointsItterator, theBatch.maxPointCount)) return false;
+                        if (theBatch.batchedPoints.Length != n)
+                        {
+                            theBatch.VAO.resizeBuffer(0, theBatch.batchedPoints.Length * PointParticle.pParticleByteSize);
+                        }
+                        theBatch.batchedPoints[theBatch.pointsItterator] = p;
+                        theBatch.batchedPoints[theBatch.pointsItterator + 1] = prevP;
+                        theBatch.pointsItterator += 2;
                     }
                     break;
             }
@@ -724,16 +758,23 @@ namespace RabbetGameEngine.SubRendering
 
         public static bool tryToFitInBatchSprite3D(Sprite3D s, Batch theBatch)
         {
+            int n;
             switch (theBatch.getRenderType())
             {
-                case RenderType.none:
-                    return false;
-
                 case RenderType.spriteCylinder:
-                    return false;
-                default:
-                    return false;
+                    {
+                        n = theBatch.sprites3D.Length;
+                        if (!canFitOrResize(ref theBatch.sprites3D, 1, theBatch.spriteItterator, theBatch.maxSprite3DCount)) return false;
+
+                        if (theBatch.sprites3D.Length != n)
+                        {
+                            theBatch.VAO.resizeBuffer(0, theBatch.sprites3D.Length * Sprite3D.sizeInBytes);
+                        }
+                        theBatch.sprites3D[theBatch.spriteItterator++] = s;
+                    }
+                    break;
             }
+            return true;
         }
 
         /// <summary>
@@ -764,9 +805,6 @@ namespace RabbetGameEngine.SubRendering
         {
             switch (theBatch.getRenderType())
             {
-                case RenderType.none:
-                    return;
-
                 case RenderType.guiCutout:
                     theBatch.VAO.updateBuffer(0, theBatch.vertices, theBatch.requestedVerticesCount * Vertex.vertexByteSize);
                     return;
@@ -782,6 +820,9 @@ namespace RabbetGameEngine.SubRendering
                     return;
 
                 case RenderType.lerpText3D:
+                    theBatch.VAO.updateBuffer(0, theBatch.vertices, theBatch.requestedVerticesCount * Vertex.vertexByteSize);
+                    theBatch.VAO.updateBuffer(1, theBatch.positions, theBatch.positionItterator * sizeof(float) * 3);
+                    theBatch.VAO.updateIndirectBuffer(theBatch.drawCommands, theBatch.requestedObjectItterator);
                     return;
 
                 case RenderType.triangles:
@@ -796,9 +837,11 @@ namespace RabbetGameEngine.SubRendering
                     return;
 
                 case RenderType.iSpheres:
+                    theBatch.VAO.updateBuffer(0, theBatch.batchedPoints, theBatch.pointsItterator * PointParticle.pParticleByteSize);
                     return;
 
                 case RenderType.iSpheresTransparent:
+                    theBatch.VAO.updateBuffer(0, theBatch.batchedPoints, theBatch.pointsItterator * PointParticle.pParticleByteSize);
                     return;
 
                 case RenderType.lerpISpheres:
@@ -835,6 +878,7 @@ namespace RabbetGameEngine.SubRendering
                     return;
 
                 case RenderType.spriteCylinder:
+                    theBatch.VAO.updateBuffer(0, theBatch.sprites3D, theBatch.spriteItterator * Sprite3D.sizeInBytes);
                     return;
             }
         }
@@ -872,7 +916,7 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.lerpText3D:
                     theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
-                    GL.MultiDrawArraysIndirect(PrimitiveType.Triangles, IntPtr.Zero, theBatch.requestedObjectItterator, sizeof(uint));
+                    GL.MultiDrawElementsIndirect(PrimitiveType.Triangles, DrawElementsType.UnsignedInt, IntPtr.Zero, theBatch.requestedObjectItterator, 0);
                     break;
 
                 case RenderType.triangles:
@@ -943,7 +987,7 @@ namespace RabbetGameEngine.SubRendering
                     break;
 
                 case RenderType.spriteCylinder:
-                    GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, theBatch.requestedObjectItterator);
+                    GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, theBatch.spriteItterator);
                     break;
             }
             theBatch.VAO.unBind();

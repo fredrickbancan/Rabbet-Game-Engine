@@ -1,6 +1,5 @@
 ﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
-using RabbetGameEngine.SubRendering;
 
 namespace RabbetGameEngine.VisualEffects
 {
@@ -25,11 +24,11 @@ namespace RabbetGameEngine.VisualEffects
         protected Texture vfxTexture;
         protected bool removalFlag = false;// true if this entity should be removed in the next tick
         protected bool shouldDeleteModel = false;// true if this vfx is using a model loaded from file. If so, it should NOT be deleted!
-        protected RenderType batchType;
+        protected RenderType renderType;
         public string vfxName = "";
         public VFX(Vector3 pos, float initialScale,  string textureName, Model baseModel, float maxExistingSeconds = 1, RenderType type = RenderType.triangles) : base(pos)
         {
-            this.batchType = type;
+            this.renderType = type;
             this.scale = initialScale;
             TextureUtil.tryGetTexture(textureName, out vfxTexture);
             maxExistingTicks = TicksAndFrames.getNumOfTicksForSeconds(maxExistingSeconds);
@@ -105,12 +104,17 @@ namespace RabbetGameEngine.VisualEffects
         public virtual void sendRenderRequest()
         {
             if(vfxModel != null)
-            Renderer.requestRender(this.batchType, vfxTexture, vfxModel);
+            Renderer.requestRender(this.renderType, vfxTexture, vfxModel);
         }
 
         public virtual void ceaseToExist()
         {
             removalFlag = true;
+        }
+
+        public RenderType getRenderType()
+        {
+            return renderType;
         }
 
         public virtual bool exists()

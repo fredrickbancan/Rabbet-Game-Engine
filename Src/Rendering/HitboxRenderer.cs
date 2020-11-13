@@ -58,7 +58,7 @@ namespace RabbetGameEngine
         {
             if (!acceptingRequests) return;
             PointParticle pParticle = new PointParticle(pos, new Vector4(0.15F, 0.15F, 0.15F, 1), 0.025F, true);
-          //  Renderer.requestRender(pParticle, false);
+            Renderer.requestRender(pParticle, false);
 
             Vector4 redColor = CustomColor.red.toNormalVec4();
             Vector4 greenColor = CustomColor.green.toNormalVec4();
