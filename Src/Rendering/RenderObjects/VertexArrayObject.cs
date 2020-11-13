@@ -147,70 +147,32 @@ namespace RabbetGameEngine
 
         public void resizeBuffer(int vboIndex, int newSizeBytes)
         {
-            if (vboIndex < vbos.Count)
-            {
-                VertexBufferObject vbo = vbos.ElementAt(vboIndex);
-
-                if (vbo.isDynamic)
-                    vbo.resizeBuffer(newSizeBytes);
-                else
-                    Application.warn("VAO Could not resize non-dynamic buffer at index: " + vboIndex);
-            }
+            vbos.ElementAt(vboIndex).resizeBuffer(newSizeBytes);
         }
 
         public void resizeIndices(int newCount)
         {
-            if(usesIndices)
             ibo.resizeBuffer(newCount);
-            else
-                Application.error("VAO Could not resize indices, this VAO does not use indices!");
         }
 
         public void resizeIndirect(int newCount)
         {
-            if (usesIndirect)
-                indbo.resizeBuffer(newCount);
-            else
-                Application.error("VAO Could not resize indirect buffer, this VAO does not use an indirect buffer!");
+            indbo.resizeBuffer(newCount);
         }
 
         public void updateBuffer<T2>(int vboIndex, T2[] data, int sizeToUpdate) where T2 : struct
         {
-            if (vboIndex < vbos.Count)
-            {
-                VertexBufferObject vbo = vbos.ElementAt(vboIndex);
-
-                if (vbo.isDynamic)
-                    vbo.updateBuffer<T2>(data, sizeToUpdate);
-                else
-                    Application.warn("VAO Could not update non-dynamic buffer at index: " + vboIndex);
-            }
+           vbos.ElementAt(vboIndex).updateBuffer(data, sizeToUpdate);
         }
+
         public void updateIndices(uint[] data, int count)
         {
-            if (usesIndices)
-            {
-                if (ibo.isDynamic)
-                    ibo.updateData(data, count);
-                else
-                    Application.warn("VAO Could not update non-dynamic index buffer");
-            }
-            else
-            {
-                Application.warn("VAO does not use indices, but has been asked to update it.");
-            }
+            ibo.updateData(data, count);
         }
 
         public void updateIndirectBuffer(DrawCommand[] data, int countToUpdate)
         {
-            if (usesIndirect)
-            {
-                indbo.updateData(data, countToUpdate);
-            }
-            else
-            {
-                Application.warn("VAO does not use Indirect, but has been asked to update it.");
-            }
+            indbo.updateData(data, countToUpdate);
         }
 
         public void bind()
@@ -223,6 +185,13 @@ namespace RabbetGameEngine
             {
                 vb.bind();
             }
+        }
+        public void unBind()
+        {
+            if (usesIndices) GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
+            if (usesIndirect) GL.BindBuffer(BufferTarget.DrawIndirectBuffer, 0);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.BindVertexArray(0);
         }
 
         public void delete()

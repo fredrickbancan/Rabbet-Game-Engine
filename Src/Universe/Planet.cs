@@ -13,8 +13,6 @@ namespace RabbetGameEngine
 {
     public class Planet
     {
-        public static readonly float minDrawDistance = 128.0F;
-        public static readonly float maxDrawDistance = 1000.0F;
         private Vector3 fogColor;
         private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
         public Dictionary<int, Entity> entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
@@ -297,7 +295,7 @@ namespace RabbetGameEngine
         {
             //render an explosion effect
             VFXUtil.doExplosionEffect(this, loc, radius);
-            SoundManager.playSoundAt("explosion", loc, 4.0F, 1.2F - (float)GameInstance.rand.NextDouble() * 0.2F);
+            SoundManager.playSoundAt("explosion", loc, 3.572F, 1.2F - (float)GameInstance.rand.NextDouble() * 0.2F);
             //force away nearby entities
             foreach (Entity ent in entities.Values)
             {
@@ -314,7 +312,7 @@ namespace RabbetGameEngine
 
         private void setDrawDistanceAndFog(float dist)
         {
-            drawDistance = dist;
+            drawDistance = Math.Clamp(dist, 0, GameSettings.maxDrawDistance);
             fogStart = drawDistance / 16;
             fogEnd = drawDistance - 1.0F;
         }

@@ -1,4 +1,5 @@
-﻿using OpenTK.Windowing.Common;
+﻿using OpenTK.Graphics.OpenGL;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using System;
 using System.Diagnostics;
@@ -45,6 +46,39 @@ namespace RabbetGameEngine
             return (process = Process.GetCurrentProcess()).PrivateMemorySize64;
         }
 
+
+        public static void checkGLErrors()
+        {
+            switch(GL.GetError())
+            {
+                case ErrorCode.NoError:
+                    break;
+                case ErrorCode.InvalidEnum:
+                    error("GL invalid enum");
+                    break;
+                case ErrorCode.InvalidValue:
+                    error("GL invalid value");
+                    break;
+                case ErrorCode.InvalidOperation:
+                    error("GL invalid operation");
+                    break;
+                case ErrorCode.StackOverflow:
+                    error("GL stack overflow");
+                    break;
+                case ErrorCode.StackUnderflow:
+                    error("GL stack underflow");
+                    break;
+                case ErrorCode.OutOfMemory:
+                    error("GL Out of Memory");
+                    break;
+                case ErrorCode.ContextLost:
+                    error("GL context lost");
+                    break;
+                case ErrorCode.InvalidFramebufferOperation:
+                    error("GL invalid Framebuffer Operation");
+                    break;
+            }
+        }
 
         #region Print functions
         public static void infoPrint(object s)

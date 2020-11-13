@@ -47,9 +47,11 @@ namespace RabbetGameEngine.SubRendering
                     --i;
                     continue;
                 }
+                
                 batchAt.onTickEnd();
             }
             acceptingRequests = false;
+
         }
 
         /// <summary>

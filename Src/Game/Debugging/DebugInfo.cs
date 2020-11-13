@@ -1,5 +1,6 @@
 ﻿using RabbetGameEngine.GUI;
 using RabbetGameEngine.Sound;
+using RabbetGameEngine.SubRendering;
 
 namespace RabbetGameEngine.Debugging
 {
@@ -54,6 +55,7 @@ namespace RabbetGameEngine.Debugging
                         ("VFX: " + GameInstance.get.currentPlanet.getVFXCount()),
                         ("Sounds: " + SoundManager.getPlayingSoundsCount()),
                         ("Draw Calls: " + Renderer.totalDraws),
+                        ("Batches: " + BatchManager.batchCount),
                         ("Used memory: " + (Application.getMemoryUsageBytes()/1000000L).ToString() + "MB")
                        });
             }

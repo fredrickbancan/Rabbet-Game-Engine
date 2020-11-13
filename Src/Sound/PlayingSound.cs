@@ -34,6 +34,8 @@ namespace RabbetGameEngine.Sound
             srcID = SoundManager.getSourceID();
 
             AL.Source(srcID, ALSourcei.Buffer, snd.getBufferID());
+            AL.Source(srcID, ALSourceb.SourceRelative, true);
+            AL.Source(srcID, ALSource3f.Position, 0,0,-0.1F);
             volume = MathHelper.Clamp(volume, 0, 1);
             AL.Source(srcID, ALSourcef.Gain, volume * GameSettings.masterVolume);
             AL.Source(srcID, ALSourcef.Pitch, speed);
@@ -140,9 +142,7 @@ namespace RabbetGameEngine.Sound
                 gain = dst * dst;
                 //Gain should only be between 1 and 0. 
                 gain = MathHelper.Clamp(gain, 0, 1);
-                gain *= volume;
             }
-
             AL.Source(srcID, ALSourcef.Gain, gain * GameSettings.masterVolume);
         }
 

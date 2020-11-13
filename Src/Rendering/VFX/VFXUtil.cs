@@ -54,6 +54,23 @@ namespace RabbetGameEngine.VisualEffects
             planet.spawnVFXInWorld(smoke);
         }
 
+        public static void doSmallBangEffect(Planet planet, Vector3 location)
+        {
+            VFXPointCloud bang = new VFXPointCloud(location, CustomColor.flame, false, false, 0.075F, 0.0375F, 1);
+            bang.constructRandomPointCloudModel(7, 0.15F, false);
+            bang.setExpansionResistance(0.5F);
+            bang.setExpansionVelocity(3F);
+            bang.setYAccel(0.004572F);
+            VFXPointCloud bang2 = new VFXPointCloud(location, CustomColor.ember, false, true, 0.075F, 0.0375F, 1);
+            bang2.constructRandomPointCloudModel(7, 0.075F, true);
+            bang2.setExpansionResistance(0.7F);
+            bang2.setExpansionVelocity(3F);
+            bang.setYAccel(0.004572F);
+            planet.spawnVFXInWorld(bang);
+            planet.spawnVFXInWorld(bang2);
+            doSmallSmokePuffEffect(planet, location);
+        }
+
         public static void doDebugSmokeEffect(Planet planet)
         {
             VFXPointCloud smoke = new VFXPointCloud(new Vector3(0, 2F, 0), CustomColor.darkGrey, true, false, 4F, 0.5F, 0.7F);

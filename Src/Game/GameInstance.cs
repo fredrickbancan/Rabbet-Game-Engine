@@ -77,17 +77,17 @@ namespace RabbetGameEngine
                 currentPlanet = new Planet(0xdeadbeef);
                 //create and spawn player in new world
                 thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
-                for (int i = 0; i < 2; i++)
+                for (int i = 0; i < 5; i++)
                 {
-                    currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(0, 10, 0)));
+                   currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(0, 10, 0)));
                 }
                 currentPlanet.spawnEntityInWorld(thePlayer);
 
                 //temp sound examples
-                SoundManager.playSoundLoopingAt("waterroll", new Vector3(16, 1, 16), 0.1F);
-                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll", GameSettings.defaultFont, "waterroll.ogg, 10% volume", new Vector3(16,2.5F,16), 5.0F, CustomColor.white));
-                SoundManager.playSoundLoopingAt("waterroll_large", new Vector3(-16, 1, -16), 0.5F);
-                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", GameSettings.defaultFont, "waterroll_large.ogg, 50% volume", new Vector3(-16,2.5F,-16), 5.0F, CustomColor.white));
+                SoundManager.playSoundLoopingAt("waterroll", new Vector3(16, 1, 16), 0.5F);
+                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll", GameSettings.defaultFont, "waterroll.ogg, 50% volume", new Vector3(16,2.5F,16), 5.0F, CustomColor.white));
+                SoundManager.playSoundLoopingAt("waterroll_large", new Vector3(-16, 1, -16), 1.0F);
+                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", GameSettings.defaultFont, "waterroll_large.ogg, 100% volume", new Vector3(-16,2.5F,-16), 5.0F, CustomColor.white));
 
                 Input.setCursorHiddenAndGrabbed(true);
             }

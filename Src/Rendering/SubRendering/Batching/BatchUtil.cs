@@ -115,10 +115,9 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.lines:
                     ShaderUtil.tryGetShader(ShaderUtil.linesName, out theBatch.batchShader);
-                    theBatch.maxBufferSizeBytes /= 3;
+                    theBatch.maxBufferSizeBytes /= 2;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.indices = new uint[Batch.initialArraySize];
-                    theBatch.modelMatrices = new Matrix4[Batch.initialArraySize];
                     VertexBufferLayout l6 = new VertexBufferLayout();
                     Vertex.configureLayout(l6);
                     vao.addBufferDynamic(Batch.initialArraySize * Vertex.vertexByteSize, l6);
@@ -373,7 +372,7 @@ namespace RabbetGameEngine.SubRendering
 
                         if (theBatch.vertices.Length != n)
                         {
-                            theBatch.VAO.resizeBuffer(0, theBatch.vertices.Length);
+                            theBatch.VAO.resizeBuffer(0, theBatch.vertices.Length * Vertex.vertexByteSize);
                         }
 
                         Array.Copy(mod.vertices, 0, theBatch.vertices, theBatch.requestedVerticesCount, mod.vertices.Length);
@@ -398,7 +397,7 @@ namespace RabbetGameEngine.SubRendering
 
                         if (theBatch.vertices.Length != n)
                         {
-                            theBatch.VAO.resizeBuffer(0, theBatch.vertices.Length);
+                            theBatch.VAO.resizeBuffer(0, theBatch.vertices.Length * Vertex.vertexByteSize);
                         }
 
                         Array.Copy(mod.vertices, 0, theBatch.vertices, theBatch.requestedVerticesCount, mod.vertices.Length);
@@ -425,12 +424,12 @@ namespace RabbetGameEngine.SubRendering
 
                         if (theBatch.vertices.Length != n)
                         {
-                            theBatch.VAO.resizeBuffer(0, theBatch.vertices.Length);
+                            theBatch.VAO.resizeBuffer(0, theBatch.vertices.Length * Vertex.vertexByteSize);
                         }
 
                         if(theBatch.positions.Length != p)
                         {
-                            theBatch.VAO.resizeBuffer(1, theBatch.positions.Length);
+                            theBatch.VAO.resizeBuffer(1, theBatch.positions.Length * sizeof(float) * 3);
                         }
 
                         Array.Copy(mod.vertices, 0, theBatch.vertices, theBatch.requestedVerticesCount, mod.vertices.Length);
@@ -462,7 +461,27 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.lines:
                     {
-                        return false;
+                        n = theBatch.vertices.Length;
+                        if (!canFitOrResize(ref theBatch.vertices, mod.vertices.Length, theBatch.requestedVerticesCount, theBatch.maxVertexCount)) return false;
+                        int i = theBatch.indices.Length;
+                        if (!canFitOrResize(ref theBatch.indices, mod.indices.Length, theBatch.requestedIndicesCount, theBatch.maxIndiciesCount)) return false;
+                        if (theBatch.vertices.Length != n)
+                        {
+                            theBatch.VAO.resizeBuffer(0, theBatch.vertices.Length * Vertex.vertexByteSize);
+                        }
+
+                        if (theBatch.indices.Length != i)
+                        {
+                            theBatch.VAO.resizeIndices(theBatch.indices.Length);
+                        }
+                        Array.Copy(mod.vertices, 0, theBatch.vertices, theBatch.requestedVerticesCount, mod.vertices.Length);
+
+                        for(i = 0; i < mod.indices.Length; i++)
+                        {
+                            theBatch.indices[theBatch.requestedIndicesCount + i] = (uint)(mod.indices[i] + theBatch.requestedVerticesCount);
+                        }
+                        theBatch.requestedVerticesCount += mod.vertices.Length;
+                        theBatch.requestedIndicesCount += mod.indices.Length;
                     }
                     break;
 
@@ -477,12 +496,12 @@ namespace RabbetGameEngine.SubRendering
 
                         if (theBatch.vertices.Length != n)
                         {
-                            theBatch.VAO.resizeBuffer(0, theBatch.vertices.Length);
+                            theBatch.VAO.resizeBuffer(0, theBatch.vertices.Length * Vertex.vertexByteSize);
                         }
 
                         if (theBatch.modelMatrices.Length != p)
                         {
-                            theBatch.VAO.resizeBuffer(1, theBatch.modelMatrices.Length);
+                            theBatch.VAO.resizeBuffer(1, theBatch.modelMatrices.Length * sizeof(float) * 16);
                         }
 
                         if(theBatch.indices.Length != i)
@@ -772,6 +791,8 @@ namespace RabbetGameEngine.SubRendering
                     return;
 
                 case RenderType.lines:
+                    theBatch.VAO.updateBuffer(0, theBatch.vertices, theBatch.requestedVerticesCount * Vertex.vertexByteSize);
+                    theBatch.VAO.updateIndices(theBatch.indices, theBatch.requestedIndicesCount);
                     return;
 
                 case RenderType.iSpheres:
@@ -821,7 +842,7 @@ namespace RabbetGameEngine.SubRendering
         public static void drawBatch(Batch theBatch, Matrix4 viewMatrix, Vector3 fogColor)
         {
             theBatch.bindVAO();
-            if(theBatch.batchTex != null)
+            if (theBatch.batchTex != null)
             {
                 theBatch.batchTex.use();
             }
@@ -834,97 +855,98 @@ namespace RabbetGameEngine.SubRendering
             switch (theBatch.getRenderType())
             {
                 case RenderType.none:
-                    return;
+                    break;
 
                 case RenderType.guiCutout:
                     theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
                     GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedVerticesCount + (theBatch.requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
-                    return;
+                    break;
 
                 case RenderType.guiText:
                     GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedVerticesCount + (theBatch.requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
-                    return;
+                    break;
 
                 case RenderType.text3D:
                     GL.MultiDrawElementsIndirect(PrimitiveType.Triangles, DrawElementsType.UnsignedInt, IntPtr.Zero, theBatch.requestedObjectItterator, 0);
-                    return;
+                    break;
 
                 case RenderType.lerpText3D:
                     theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
                     GL.MultiDrawArraysIndirect(PrimitiveType.Triangles, IntPtr.Zero, theBatch.requestedObjectItterator, sizeof(uint));
-                    return;
+                    break;
 
                 case RenderType.triangles:
                     GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedIndicesCount, DrawElementsType.UnsignedInt, theBatch.indices);
-                    return;
+                    break;
 
                 case RenderType.quads:
                     GL.DrawArrays(PrimitiveType.Triangles, 0, theBatch.requestedVerticesCount);
-                    return;
+                    break;
 
                 case RenderType.lines:
-                    GL.DrawElements(PrimitiveType.Lines, theBatch.requestedIndicesCount, DrawElementsType.UnsignedInt, theBatch.indices);
-                    return;
+                    GL.DrawElements(PrimitiveType.Lines, theBatch.requestedIndicesCount, DrawElementsType.UnsignedInt,0);
+                    break;
 
                 case RenderType.iSpheres:
                     theBatch.batchShader.setUniformVec3F("cameraPos", Renderer.camPos);
                     GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, theBatch.pointsItterator);
-                    return;
+                    break;
 
                 case RenderType.iSpheresTransparent:
                     theBatch.batchShader.setUniformVec3F("cameraPos", Renderer.camPos);
                     GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, theBatch.pointsItterator);
-                    return;
+                    break;
 
                 case RenderType.lerpISpheres:
                     theBatch.batchShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
                     theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
                     GL.DrawArrays(PrimitiveType.Points, 0, theBatch.pointsItterator / 2);
-                    return;
+                    break;
 
                 case RenderType.lerpTriangles:
                     theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
                     GL.MultiDrawElementsIndirect(PrimitiveType.Triangles, DrawElementsType.UnsignedInt, IntPtr.Zero, theBatch.requestedObjectItterator, 0);
-                    return;
+                    break;
 
                 case RenderType.lerpQuads:
                     theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
                     GL.MultiDrawArraysIndirect(PrimitiveType.Triangles, IntPtr.Zero, theBatch.requestedObjectItterator, sizeof(uint));
-                    return;
+                    break;
 
                 case RenderType.lerpLines:
                     theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
                     GL.MultiDrawElementsIndirect(PrimitiveType.Lines,  DrawElementsType.UnsignedInt, IntPtr.Zero, theBatch.requestedObjectItterator, 0);
-                    return;
+                    break;
 
                 case RenderType.lerpISpheresTransparent:
                     theBatch.batchShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
                     theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
                     GL.DrawArrays(PrimitiveType.Points, 0, theBatch.pointsItterator/2);
-                    return;
+                    break;
 
                 case RenderType.lerpTrianglesTransparent:
                     theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
                     GL.MultiDrawElementsIndirect(PrimitiveType.Triangles, DrawElementsType.UnsignedInt, IntPtr.Zero, theBatch.requestedObjectItterator, 0);
-                    return;
+                    break;
 
                 case RenderType.lerpQuadsTransparent:
                     theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
                     GL.MultiDrawArraysIndirect(PrimitiveType.Triangles, IntPtr.Zero, theBatch.requestedObjectItterator, sizeof(uint));
-                    return;
+                    break;
 
                 case RenderType.trianglesTransparent:
                     GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedIndicesCount, DrawElementsType.UnsignedInt, theBatch.indices);
-                    return;
+                    break;
 
                 case RenderType.quadsTransparent:
                     GL.DrawArrays(PrimitiveType.Triangles, 0, theBatch.requestedVerticesCount);
-                    return;
+                    break;
 
                 case RenderType.spriteCylinder:
                     GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, theBatch.requestedObjectItterator);
-                    return;
+                    break;
             }
+            theBatch.VAO.unBind();
         }
     }
 }

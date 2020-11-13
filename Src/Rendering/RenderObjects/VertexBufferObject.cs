@@ -31,7 +31,7 @@ namespace RabbetGameEngine
         public void updateBuffer<T2>(T2[] data, int sizeToUpdate) where T2 : struct
         {
             GL.BindBuffer(BufferTarget.ArrayBuffer, id);
-            GL.BufferData(BufferTarget.ArrayBuffer, sizeToUpdate, data, BufferUsageHint.DynamicDraw);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, IntPtr.Zero, sizeToUpdate, data);
         }
         /// <summary>
         /// Must be called to resize the vbo before submitting a larger array of data.

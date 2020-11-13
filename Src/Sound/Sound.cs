@@ -33,6 +33,7 @@ namespace RabbetGameEngine.Sound
             }
         }
 
+        //TODO: Fix, needs to produce array of short, also the sounds produced from this sound distorted and noisy
         private void loadOGG(string dir)
         {
             try
@@ -43,42 +44,27 @@ namespace RabbetGameEngine.Sound
                 totalTime = reader.TotalTime;
                 totalSamples = reader.TotalSamples;
                 reader.ClipSamples = true;
-                List<byte> bytes = new List<byte>((int)(sampleRate * channels * 2 * totalTime.TotalSeconds));
-                float[] samplesBuffer = new float[sampleRate / 10 * channels];
+                List<short> data = new List<short>();
+                float[] samplesBuffer = new float[totalSamples * channels];
                 int count = 0;
                 while((count = reader.ReadSamples(samplesBuffer, 0, samplesBuffer.Length)) > 0)
                 {
-                    for(int i = 0; i < count; i++)
+                    for (int i = 0; i < count; i++)
                     {
-                        int temp = (int)(short.MaxValue * samplesBuffer[i]);
-                        if (temp > short.MaxValue)
-                        {
-                            temp = short.MaxValue;
-                        }
-                        else if (temp < short.MinValue)
-                        {
-                            temp = short.MinValue;
-                        }
-                        short tempBytes = (short)temp;
-                        byte byte1 = (byte)((tempBytes >> 8) & 0x00FF);
-                        byte byte2 = (byte)((tempBytes >> 0) & 0x00FF);
-
-                        // Little endian
-                        bytes.Add(byte2);
-                        bytes.Add(byte1);
+                        short temp = (short)(Math.Clamp( 32767f * samplesBuffer[i], -32767f, 32767f));
+                        data.Add(temp);
                     }
-
                 }
                 reader.Dispose();
-                byte[] data = bytes.ToArray();
+                short[] arrData = data.ToArray();
                 bufferID = AL.GenBuffer();
                 if (isStereo())
                 {
-                    AL.BufferData(bufferID, ALFormat.Stereo16, data, getSampleRate());
+                    AL.BufferData(bufferID, ALFormat.Stereo16, arrData, getSampleRate());
                 }
                 else
                 {
-                    AL.BufferData(bufferID, ALFormat.Mono16, data, getSampleRate());
+                    AL.BufferData(bufferID, ALFormat.Mono16, arrData, getSampleRate());
                 }
             }
             catch (Exception e)

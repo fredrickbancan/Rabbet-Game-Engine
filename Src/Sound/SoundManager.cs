@@ -7,6 +7,7 @@ using System.Linq;
 
 namespace RabbetGameEngine.Sound
 {
+    //TODO: Fix sounds being distorted and way too loud
     //TODO: Add support for sounds from moving objects
     //TODO: Add support for Looping sounds from moving objects
     public static class SoundManager
