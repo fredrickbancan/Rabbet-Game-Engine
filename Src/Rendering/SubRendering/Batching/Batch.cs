@@ -27,6 +27,8 @@ namespace RabbetGameEngine.SubRendering
         /// </summary>
         public bool requiresSorting = false;
 
+        public bool hasBeenUsed = false;
+
         /// <summary>
         /// true if this batch should be rendered last.
         /// </summary>
@@ -144,6 +146,7 @@ namespace RabbetGameEngine.SubRendering
         public void onTickEnd()
         {
             BatchUtil.updateBuffers(this);
+            hasBeenUsed = false;
         }
         
         public void draw( Matrix4 viewMatrix, Vector3 fogColor)
@@ -173,7 +176,7 @@ namespace RabbetGameEngine.SubRendering
 
         public bool hasBeenUsedInCurrentTick()
         {
-            return requestedVerticesCount > 0 || pointsItterator > 0 || requestedObjectItterator > 0;
+            return hasBeenUsed;
         }
 
         public void deleteVAO()

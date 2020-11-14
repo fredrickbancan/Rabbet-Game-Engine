@@ -1,6 +1,5 @@
 ﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
-using RabbetGameEngine.SubRendering;
 using System.Text;
 namespace RabbetGameEngine.Text
 {
@@ -14,7 +13,7 @@ namespace RabbetGameEngine.Text
           The lines start from the provided topleftorigin vector. Each model in the array is a line of text.*/
         public static Model convertStringToModel(string thestring, FontFace font, Vector4 color)
         {
-            return new Model(convertStringToVertexArray(thestring, font, color), QuadCombiner.getIndicesForQuadCount(thestring.Replace(" ", "").Length));
+            return new Model(convertStringToVertexArray(thestring, font, color), null);
         }
         public static Vertex[] convertStringToVertexArray(string thestring, FontFace font, Vector4 color)
         {

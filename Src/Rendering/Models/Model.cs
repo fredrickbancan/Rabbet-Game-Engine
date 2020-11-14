@@ -110,11 +110,17 @@ namespace RabbetGameEngine.Models
         /*generates a new model using copies of this models arrays.*/
         public Model copyModel()
         {
+            if(indices != null)
+            {
+                Vertex[] verticesCopya = new Vertex[vertices.Length];
+                uint[] indicesCopy = new uint[indices.Length];
+                Array.Copy(indices, indicesCopy, indices.Length);
+                Array.Copy(vertices, verticesCopya, vertices.Length);
+                return new Model(verticesCopya, indicesCopy).setModelPos(worldPos).setModelPrevPos(prevWorldPos);
+            }
             Vertex[] verticesCopy = new Vertex[vertices.Length];
-            uint[] indicesCopy = new uint[indices.Length];
-            Array.Copy(indices, indicesCopy, indices.Length);
             Array.Copy(vertices, verticesCopy, vertices.Length);
-            return new Model(verticesCopy, indicesCopy).setModelPos(worldPos).setModelPrevPos(prevWorldPos);
+            return new Model(verticesCopy, null).setModelPos(worldPos).setModelPrevPos(prevWorldPos);
         }
 
 

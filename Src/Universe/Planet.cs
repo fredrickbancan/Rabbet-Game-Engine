@@ -22,7 +22,7 @@ namespace RabbetGameEngine
         public List<AABB> worldColliders = new List<AABB>();//list of colliders with no parent, ie, walls.
         private Skybox planetSkybox;
         private string wallTextureName = "leafywall";
-        private string groundTextureName = "wood";
+        private string groundTextureName = "jungleground";
         private static readonly Vector3 fallPlaneRespawnPos = new Vector3(0,128,0);
         private static readonly float fallPlaneHeight = -10.0F;
         private Random random;
@@ -32,9 +32,9 @@ namespace RabbetGameEngine
         public Planet(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
-            fogColor = CustomColor.lightGrey.toNormalVec3();
-            setDrawDistanceAndFog(200.0F);
-            planetSkybox = new Skybox(CustomColor.lightSkyBlue.toNormalVec3(), this);
+            fogColor = CustomColor.black.toNormalVec3();
+            setDrawDistanceAndFog(150.0F);
+            planetSkybox = new Skybox(CustomColor.black.toNormalVec3(), this);
             SkyboxRenderer.setSkyboxToDraw(planetSkybox);
             generateWorld();
         }
@@ -250,10 +250,6 @@ namespace RabbetGameEngine
                     vfx.onTick();
                     vfx.postTick();
                     CollisionHandler.tryToMoveObject(vfx, worldColliders);
-                }
-                if(vfx.getRenderType() == RenderType.spriteCylinder)
-                {
-                    Application.debugPrint("h");
                 }
                 vfx.sendRenderRequest();
             }

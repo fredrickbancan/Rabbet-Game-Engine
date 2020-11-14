@@ -6,7 +6,7 @@ namespace RabbetGameEngine.VisualEffects
     public class VFXSnowParticle : VFXSinglePoint
     {
         private CustomColor snowCol;
-        public VFXSnowParticle(Vector3 initialPos) : base(initialPos, CustomColor.white, 0.07F -  (float)GameInstance.rand.NextDouble() * 0.02F, 30.0F, false, true)
+        public VFXSnowParticle(Vector3 initialPos) : base(initialPos, CustomColor.white, 0.05F -  (float)GameInstance.rand.NextDouble() * 0.02F, 30.0F, false, true)
         {
             snowCol = CustomColor.white;
             float blueNess = (float)GameInstance.rand.NextDouble() * 0.15F;

@@ -1,6 +1,5 @@
 ﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
-using RabbetGameEngine.SubRendering;
 using System.Text;
 namespace RabbetGameEngine.Text
 {
@@ -17,7 +16,7 @@ namespace RabbetGameEngine.Text
             Model[] result = new Model[thestrings.Length];
             for(uint i = 0; i < thestrings.Length; i++)
             {
-                result[i] = new Model(convertstringToVertexArray(thestrings[i], font, color, topLeftPixelOrigin, fontSize, screenEdgePadding, alignment, i), QuadCombiner.getIndicesForQuadCount(thestrings[i].Replace(" ", "").Length));
+                result[i] = new Model(convertstringToVertexArray(thestrings[i], font, color, topLeftPixelOrigin, fontSize, screenEdgePadding, alignment, i), null);
             }
             return result;
         }

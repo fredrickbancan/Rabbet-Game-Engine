@@ -345,6 +345,7 @@ namespace RabbetGameEngine.SubRendering
             vao.finishBuilding();
             theBatch.setVAO(vao);
             theBatch.calculateBatchLimitations();
+            theBatch.hasBeenUsed = true;
         }
 
         //For dynamic vertex objects, when submitting data, the residual un-updated data at the end of the buffer does not need to be cleared.
@@ -353,7 +354,7 @@ namespace RabbetGameEngine.SubRendering
         public static bool tryToFitInBatchModel(Model mod, Batch theBatch)
         {
             int n;
-
+            theBatch.hasBeenUsed = true;
             switch (theBatch.getRenderType())
             {
 
@@ -620,6 +621,7 @@ namespace RabbetGameEngine.SubRendering
         public static bool tryToFitInBatchPoints(PointCloudModel mod, Batch theBatch)
         {
             int n;
+            theBatch.hasBeenUsed = true;
 
             switch (theBatch.getRenderType())
             {
@@ -689,6 +691,7 @@ namespace RabbetGameEngine.SubRendering
         public static bool tryToFitInBatchSinglePoint(PointParticle p, Batch theBatch)
         {
             int n;
+            theBatch.hasBeenUsed = true;
             switch (theBatch.getRenderType())
             {
                 case RenderType.iSpheres:
@@ -721,7 +724,7 @@ namespace RabbetGameEngine.SubRendering
         public static bool tryToFitInBatchLerpPoint(PointParticle p, PointParticle prevP, Batch theBatch)
         {
             int n;
-
+            theBatch.hasBeenUsed = true;
             switch (theBatch.getRenderType())
             {
                 case RenderType.lerpISpheres:
@@ -759,6 +762,7 @@ namespace RabbetGameEngine.SubRendering
         public static bool tryToFitInBatchSprite3D(Sprite3D s, Batch theBatch)
         {
             int n;
+            theBatch.hasBeenUsed = true;
             switch (theBatch.getRenderType())
             {
                 case RenderType.spriteCylinder:

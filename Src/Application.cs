@@ -35,7 +35,7 @@ namespace RabbetGameEngine
                 process.Dispose();
             }
         }
-        public static readonly string version = "0.1.0_indev";
+        public static readonly string version = "0.1.1_indev";
         public static readonly string applicationName = "RabbetGameEngine " + version;
 
         /// <summary>
