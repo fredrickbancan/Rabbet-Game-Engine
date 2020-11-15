@@ -32,13 +32,13 @@ bld/
 [Ll]ogs/
 Libs/
 obj/
-RabbetGameEngine.deps.json
-RabbetGameEngine.dll
-RabbetGameEngine.exe
-RabbetGameEngine.dll.config
-RabbetGameEngine.runtimeconfig.json
-RabbetGameEngine.runtimeconfig.dev.json
-RabbetGameEngine.xml
+*RabbetGameEngine.deps.json
+*RabbetGameEngine.dll
+*RabbetGameEngine.exe
+*RabbetGameEngine.dll.config
+*RabbetGameEngine.runtimeconfig.json
+*RabbetGameEngine.runtimeconfig.dev.json
+*RabbetGameEngine.xml
 
 
 # Visual Studio 2015/2017 cache/options directory
