@@ -14,13 +14,16 @@ namespace RabbetGameEngine
     public class Planet
     {
         private Vector3 fogColor;
+        private Vector3 horizonColor;
+        private Vector3 skyColor;
+        private Vector3 skyDirection;
+        private float sunAngle = 0;
         private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
         public Dictionary<int, Entity> entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
         public List<VFX> vfxList = new List<VFX>();
         public List<Entity> projectiles = new List<Entity>();
         public List<VFXMovingText3D> debugLabelList = new List<VFXMovingText3D>();
         public List<AABB> worldColliders = new List<AABB>();//list of colliders with no parent, ie, walls.
-        private Skybox planetSkybox;
         private string wallTextureName = "leafywall";
         private string groundTextureName = "jungleground";
         private static readonly Vector3 fallPlaneRespawnPos = new Vector3(0,128,0);
@@ -32,17 +35,33 @@ namespace RabbetGameEngine
         public Planet(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
-            fogColor = CustomColor.black.toNormalVec3();
+            horizonColor = CustomColor.lightOrange.toNormalVec3();
+            fogColor = CustomColor.lightGrey.toNormalVec3();
+            skyColor = CustomColor.skyBlue.toNormalVec3();
             setDrawDistanceAndFog(150.0F);
-            planetSkybox = new Skybox(CustomColor.black.toNormalVec3(), this);
-            SkyboxRenderer.setSkyboxToDraw(planetSkybox);
+            SkyboxRenderer.setSkyboxToDraw(this);
             generateWorld();
         }
         public Vector3 getFogColor()
         {
-            return fogColor;
+            float h = (MathF.Sin(sunAngle) + 1) * 0.5F;
+            return fogColor * h * h;
+        }
+        public Vector3 getHorizonColor()
+        {
+            return horizonColor * (MathF.Sin(sunAngle) + 1) * 0.5F;
         }
 
+        public Vector3 getSunDirection()
+        {
+            return skyDirection;
+        }
+    
+        public Vector3 getSkyColor()
+        {
+            float h = (MathF.Sin(sunAngle) + 1) * 0.5F;
+            return skyColor * h;
+        }
         private void generateWorld()//creates the playground and world colliders
         {
             float groundHeight = 0;
@@ -119,8 +138,8 @@ namespace RabbetGameEngine
 
         public void onTick()
         {
-            planetSkybox.onTick();
-
+            sunAngle += 0.01F;
+            skyDirection = new Vector3(0, MathF.Sin(sunAngle),MathF.Cos(sunAngle)).Normalized();
             CollisionHandler.collideEntities(entities);
             tickEntities();
             tickProjectiles();

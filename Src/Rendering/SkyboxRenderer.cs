@@ -7,7 +7,7 @@ namespace RabbetGameEngine
 {
     public static class SkyboxRenderer
     {
-        private static Skybox skyboxToDraw = null;
+        private static Planet skyboxToDraw = null;
         private static Model skyboxModel = null;
         private static Shader skyboxShader = null;
         private static VertexArrayObject VAO = null;
@@ -35,9 +35,9 @@ namespace RabbetGameEngine
             ShaderUtil.tryGetShader(ShaderUtil.skyboxName, out skyboxShader);
         }
 
-        public static void setSkyboxToDraw(Skybox s)
+        public static void setSkyboxToDraw(Planet p)
         {
-            skyboxToDraw = s;
+            skyboxToDraw = p;
         }
 
         public static void drawSkybox(Matrix4 projectionMatrix, Matrix4 viewMatrix)
@@ -50,8 +50,10 @@ namespace RabbetGameEngine
             skyboxShader.use();
             skyboxShader.setUniformMat4F("projectionMatrix", projectionMatrix);
             skyboxShader.setUniformMat4F("viewMatrix", viewMatrix);
-            skyboxShader.setUniformVec3F("skyTop", skyboxToDraw.skyColor);
-            skyboxShader.setUniformVec3F("skyHorizon", skyboxToDraw.horizonColor);
+            skyboxShader.setUniformVec3F("skyTop", skyboxToDraw.getSkyColor());
+            skyboxShader.setUniformVec3F("skyHorizon", skyboxToDraw.getHorizonColor());
+            skyboxShader.setUniformVec3F("fogColor", skyboxToDraw.getFogColor());
+            skyboxShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
             GL.DrawElements(PrimitiveType.Triangles, skyboxModel.indices.Length, DrawElementsType.UnsignedInt, 0);
             Renderer.totalDraws++;
         }

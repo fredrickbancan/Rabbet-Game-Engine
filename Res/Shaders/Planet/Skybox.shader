@@ -29,15 +29,35 @@ void main()
 #version 330 core
 out vec4 color;
 in vec4 worldSpacePos;
-
 uniform vec3 skyTop;
 uniform vec3 skyHorizon;
-
+uniform vec3 fogColor;
+uniform vec3 sunDir;
 void main()
 {
-	gl_FragDepth = 0.9999999F;//force fragdepth to be in background at all times
-	vec3 pointOnSphere = normalize(worldSpacePos.xyz);//normalizing the position of the frag to form a spherical depth from the camera, leaving out the w coordinate
+	vec3 fragDir = normalize(worldSpacePos.xyz);
+	
+	if (fragDir.y > 0)
+	{
+		vec3 skyModified = skyTop;
+		skyModified *= (dot(sunDir, fragDir) + 1) * 0.5;
 
-	color.rgb = mix(skyHorizon, skyTop, clamp(pointOnSphere.y, 0, 1));
+		vec3 skyHorizonModified = skyHorizon;
+		float horizonSunDot = dot(sunDir.xz, fragDir.xz);
+
+		float ratio = 1 - (horizonSunDot + 1) * 0.5F;
+		ratio += fragDir.y * 0.75F;
+
+		color.rgb = mix(skyHorizonModified, skyModified, ratio);
+
+		float sunDirDot = dot(vec3(0, 1, 0), sunDir);
+		color.rgb *= 1 - (fragDir.y * 1 - ((sunDirDot + 1 )* 0.5));
+		color.rgb *= 0.5;
+	}
+	else
+	{
+		color.rgb = fogColor;
+	}
 	color.a = 1;
+	gl_FragDepth = 0.9999999F;//force fragdepth to be in background at all times
 }

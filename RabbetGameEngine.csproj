@@ -130,7 +130,6 @@
     <Compile Include="Src\Universe\Entity\Projectiles\EntityProjectile.cs" />
     <Compile Include="Src\Universe\Entity\Projectiles\EntityTankProjectile.cs" />
     <Compile Include="Src\Universe\Planet.cs" />
-    <Compile Include="Src\Universe\Skybox.cs" />
   </ItemGroup>
 
   <ItemGroup>
