@@ -46,7 +46,6 @@ namespace RabbetGameEngine
             return (process = Process.GetCurrentProcess()).PrivateMemorySize64;
         }
 
-
         public static void checkGLErrors()
         {
             switch(GL.GetError())
