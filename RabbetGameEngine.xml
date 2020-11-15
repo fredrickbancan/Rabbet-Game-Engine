@@ -1,0 +1,496 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RabbetGameEngine</name>
+    </assembly>
+    <members>
+        <member name="M:RabbetGameEngine.Application.getMemoryUsageBytes">
+            <summary>
+            returns the number of bytes of memory used by this application
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.Application.error(System.Object)">
+            <summary>
+            prints the error object provided and then waits for input. afterwards closes application.
+            </summary>
+            <param name="s">Error message</param>
+        </member>
+        <member name="T:RabbetGameEngine.Debugging.Profiler">
+            <summary>
+            This class will be responsable for debugging, measuring and testing performance of the subsystems in this program.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.Debugging.Profiler.beginEndProfile(System.String)">
+            <summary>
+            Calling this function with a name will either create and begin a profile or end an existing running profile, or run an existing non running profile.
+            Apon ending a profile the time difference between starting and ending will be displayed. This allows us to measure how long different things take.
+            </summary>
+            <param name="profileName">Name of profile to begin/end </param>
+        </member>
+        <member name="M:RabbetGameEngine.Debugging.Profiler.getAverageForProfile(System.String)">
+            <summary>
+            Returns the average used time in ms for the requested profile per tick. returns -1 if profile isnt found
+            </summary>
+            <param name="profileName">Name of profile to get averages for</param>
+            <returns></returns>
+        </member>
+        <member name="M:RabbetGameEngine.Debugging.Profiler.Profile.updateAverage">
+            <summary>
+            should be called at the end of each tick.
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.GameInstance.doneOneTick">
+            <summary>
+            Will be true if there has been atleast one onTick() call since last frame.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.GameInstance.onToggleEntityLabels">
+            <summary>
+            Should be called after toggling gamesettings.debugscreen
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.GameSettings.masterVolume">
+            <summary>
+            This setting MUST be between 0 and 1
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.MathUtil.normalizeCustom(System.Single,System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            returns a float in between mapMin and mapMax representing the percentage that VAL is from Min to Max.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.TicksAndFrames.doOnTickUntillRealtimeSync(System.Action)">
+            <summary>
+            runs the provided onTick function repeatidly untill application has synced with realtime
+            minimum frame rate is 5 FPS.
+            </summary>
+            <param name="onTickFunc">Reference to the onTick() function to be called</param>
+        </member>
+        <member name="M:RabbetGameEngine.TicksAndFrames.nanoTime">
+            <summary>
+            returns a nano second time stamp for comparing processes
+            </summary>
+            <returns>A nano second time stamp for comparing processes</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.AABB.overlappingX(RabbetGameEngine.Physics.AABB,RabbetGameEngine.Physics.AABB)">
+            <summary>
+            returns true if the provided boxes overlap in the x direction
+            </summary>
+            <param name="a">Box A</param>
+            <param name="b">Box B</param>
+            <returns>returns true if the provided boxes overlap in the x direction, else returns false</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.AABB.overlappingY(RabbetGameEngine.Physics.AABB,RabbetGameEngine.Physics.AABB)">
+            <summary>
+            returns true if the provided boxes overlap in the y direction
+            </summary>
+            <param name="a">Box A</param>
+            <param name="b">Box B</param>
+            <returns>returns true if the provided boxes overlap in the y direction, else returns false</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.AABB.overlappingZ(RabbetGameEngine.Physics.AABB,RabbetGameEngine.Physics.AABB)">
+            <summary>
+            returns true if the provided boxes overlap in the z direction
+            </summary>
+            <param name="a">Box A</param>
+            <param name="b">Box B</param>
+            <returns>returns true if the provided boxes overlap in the z direction, else returns false</returns>
+        </member>
+        <member name="T:RabbetGameEngine.Physics.RayDirection">
+            <summary>
+            The direction that a AxisAligned ray should point.
+            </summary>
+        </member>
+        <member name="T:RabbetGameEngine.Physics.AxisAlignedRay">
+            <summary>
+            A ray which can only point in straight directions of each axis.
+            Length can be variable.
+            This can be faster than a multi directional ray.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.AxisAlignedRay.getIntersection(RabbetGameEngine.Physics.AABB,OpenTK.Mathematics.Vector3@)">
+            <summary>
+            Tests if this ray intersects the provided box
+            </summary>
+            <param name="box">the box to test against</param>
+            <param name="intersectionPos">the resulting location of intersection of the ray and box. If there is no intersection, intersection pos will be 0 in all dimensions.</param>
+            <returns>true if intersection takes place. Else returns false.</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.AxisAlignedRay.intersects(RabbetGameEngine.Physics.AABB)">
+            <summary>
+            Tests if this ray intersects the provided box
+            </summary>
+            <param name="box">the box to test against</param>
+            <returns>true if intersection takes place. Else returns false.</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.AxisAlignedRay.getClosestPointOnRay(OpenTK.Mathematics.Vector3)">
+            <summary>
+            Gives a point along this ray closest to the provided point in space
+            </summary>
+            <param name="testPoint">The point to test</param>
+            <returns>A Vector3 point along this ray closest to the provided point in space</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.AxisAlignedRay.getClosestPointOnRay(RabbetGameEngine.Physics.AxisAlignedRay,OpenTK.Mathematics.Vector3)">
+            <summary>
+            Gives a point along this ray closest to the provided point in space
+            </summary>
+            <param name="testPoint">The point to test</param>
+            <returns>A Vector3 point along this ray closest to the provided point in space</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.AxisAlignedRay.getIntersection(RabbetGameEngine.Physics.AxisAlignedRay,RabbetGameEngine.Physics.AABB,OpenTK.Mathematics.Vector3@)">
+            <summary>
+            Tests if this ray intersects the provided box
+            </summary>
+            <param name="box">the box to test against</param>
+            <param name="intersectionPos">the resulting location of intersection of the ray and box. If there is no intersection, intersection pos will be 0 in all dimensions.</param>
+            <returns>true if intersection takes place. Else returns false.</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.AxisAlignedRay.intersects(RabbetGameEngine.Physics.AxisAlignedRay,RabbetGameEngine.Physics.AABB)">
+            <summary>
+            Tests if this ray intersects the provided box
+            </summary>
+            <param name="box">the box to test against</param>
+            <returns>true if intersection takes place. Else returns false.</returns>
+        </member>
+        <member name="T:RabbetGameEngine.Physics.ColliderType">
+            <summary>
+            used for detecting which type a collider is
+            </summary>
+        </member>
+        <member name="T:RabbetGameEngine.Physics.CollisionHandler">
+            <summary>
+            Abstraction for collision code. This class will be responsable for calculating collisions by
+            offsetting the hitbox of entities and altering their velocity. This also moves them by their velocity
+            with respect to the colliders provided. All world colliders are not modified and are prioritised over
+            entity colliders.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.CollisionHandler.collideEntities(System.Collections.Generic.Dictionary{System.Int32,RabbetGameEngine.Entity})">
+            <summary>
+            Does collisions with each entity against all other entities it is touching.
+            No hard collisions, only pushing eachother away.
+            </summary>
+            <param name="entities"> All world entities to collide eachother.</param>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.CollisionHandler.tryToMoveObject(RabbetGameEngine.PositionalObject,System.Collections.Generic.List{RabbetGameEngine.Physics.AABB})">
+            <summary>
+            Should be done after on tick and before post tick.
+            tries to move the provided positional object by its velocity with respect to all of the provided colliders.
+            </summary>
+            <param name="obj"> the object to move </param>
+            <param name="worldAABB"> all world colliders </param>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.CollisionHandler.applyCollisionAABBVsAABBX(OpenTK.Mathematics.Vector3,RabbetGameEngine.Physics.AABB,RabbetGameEngine.Physics.AABB)">
+            <summary>
+            Applies collision resolution velocity to the provided object velocity vector. Resulting from an AABB vs AABB collision.
+            </summary>
+            <param name="objVel">velocity to be modified</param>
+            <param name="objAABB">object AABB hitbox</param>
+            <param name="otherAABB">other AABB hitbox</param>
+            <returns>The provided velocity the object properly offset during collision resolution</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.CollisionHandler.applyCollisionAABBVsAABBY(OpenTK.Mathematics.Vector3,RabbetGameEngine.Physics.AABB,RabbetGameEngine.Physics.AABB)">
+            <summary>
+            Applies collision resolution velocity to the provided object velocity vector. Resulting from an AABB vs AABB collision.
+            </summary>
+            <param name="objVel">velocity to be modified</param>
+            <param name="objAABB">object AABB hitbox</param>
+            <param name="otherAABB">other AABB hitbox</param>
+            <returns>The provided velocity the object properly offset during collision resolution</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.CollisionHandler.applyCollisionAABBVsAABBZ(OpenTK.Mathematics.Vector3,RabbetGameEngine.Physics.AABB,RabbetGameEngine.Physics.AABB)">
+            <summary>
+            Applies collision resolution velocity to the provided object velocity vector. Resulting from an AABB vs AABB collision.
+            </summary>
+            <param name="objVel">velocity to be modified</param>
+            <param name="objAABB">object AABB hitbox</param>
+            <param name="otherAABB">other AABB hitbox</param>
+            <returns>The provided velocity the object properly offset during collision resolution</returns>
+        </member>
+        <member name="T:RabbetGameEngine.Physics.Ray">
+            <summary>
+            A stuct for creating and testing rays against boxes and other colliders
+            This ray can not point exactly straight in any axis to avoid computational issues.
+            For rays in straight axis', use struct AxisAlignedRay.
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.Physics.Ray.origin">
+            <summary>
+            origin position of ray
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.Physics.Ray.direction">
+            <summary>
+            direction vector of ray (normalized)
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.Physics.Ray.length">
+            <summary>
+            length of this ray
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.Ray.getIntersection(RabbetGameEngine.Physics.AABB,OpenTK.Mathematics.Vector3@)">
+            <summary>
+            Tests if this ray intersects the provided box
+            </summary>
+            <param name="box">the box to test against</param>
+            <param name="intersectionPos">the resulting location of intersection of the ray and box. If there is no intersection, intersection pos will be 0 in all dimensions.</param>
+            <returns>true if intersection takes place. Else returns false.</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.Ray.intersects(RabbetGameEngine.Physics.AABB)">
+            <summary>
+            Tests if this ray intersects the provided box
+            </summary>
+            <param name="box">the box to test against</param>
+            <returns>true if intersection takes place. Else returns false.</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.Ray.getClosestPointOnRay(OpenTK.Mathematics.Vector3)">
+            <summary>
+            Gives a point along this ray closest to the provided point in space
+            </summary>
+            <param name="testPoint">The point to test</param>
+            <returns>A Vector3 point along this ray closest to the provided point in space</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.Ray.getClosestPointOnRay(RabbetGameEngine.Physics.Ray,OpenTK.Mathematics.Vector3)">
+            <summary>
+            Gives a point along the provided ray closest to the provided point in space
+            </summary>
+            <param name="testPoint">The point to test</param>
+            <param name="ray">The ray to test</param>
+            <returns>A Vector3 point along the provided ray closest to the provided point in space</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.Ray.getIntersection(RabbetGameEngine.Physics.Ray,RabbetGameEngine.Physics.AABB,OpenTK.Mathematics.Vector3@)">
+            <summary>
+            Tests if this ray intersects the provided box
+            </summary>
+            <param name="box">the box to test against</param>
+            <param name="ray">the ray to test against</param>
+            <param name="intersectionPos">resulting position of intersection. If there is no intersection, will be zero in all dimensions.</param>
+            <returns>true if intersection takes place. Else returns false.</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Physics.Ray.intersects(RabbetGameEngine.Physics.Ray,RabbetGameEngine.Physics.AABB)">
+            <summary>
+            Tests if this ray intersects the provided box
+            </summary>
+            <param name="box">the box to test against</param>
+            <param name="ray">the ray to test against</param>
+            <returns>true if intersection takes place. Else returns false.</returns>
+        </member>
+        <member name="T:RabbetGameEngine.Models.EntityModel">
+            <summary>
+            This class represents the display model of any entity, The entity base class
+            Will call the functions of this model to update and manipulate it. A new model
+            Can be created which overrides these functions to do special things, i.e, a tank
+            model for an EntityTank with multiple moving parts and multiple draw calls
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.Models.EntityModel.onTick">
+            <summary>
+            Will be called on entity TICK update to update the model matrix. Only if the parent entity has a model to be rendered.
+            By default this method will match the models rotation and position with the parent entities.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.Models.EntityModel.sendRenderRequest">
+            <summary>
+            Should be called in each tick to send the updated mesh data to the renderer and batcher
+            </summary>
+        </member>
+        <member name="T:RabbetGameEngine.Models.Model">
+            <summary>
+            a collection of model data (vertices, indices, model matrix and previous model matix.)
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.Models.Model.transformVertices(OpenTK.Mathematics.Matrix4)">
+            <summary>
+            transforms the vertices of this model by the provided model matrix.
+            This must be used for models which will be drawn without sending the model matrix to the shader.
+            I.E: Non-lerp batch types.
+            </summary>
+            <param name="modelMatrix">The transformation matrix</param>
+            <returns>this (builder method)</returns>
+        </member>
+        <member name="M:RabbetGameEngine.Models.PointCloudModel.preTick">
+            <summary>
+            stores the current state of all points in this cloud in the previous tick array.
+            This allows for interpolation.
+            THIS MUST BE CALLED BEFORE ANY CHANGES TO THE POINTS OF THIS CLOUD MODEL ARE APPLIED.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.Models.PointCloudModel.transformPoints(OpenTK.Mathematics.Matrix4)">
+            <summary>
+            transforms the points of this model by the provided model matrix.
+            This must be used to transform pointcloudmodels before rendering.
+            Linear interpolation of pos and color is done by the GPU on a point by point basis.
+            </summary>
+            <param name="modelMatrix">The transformation matrix</param>
+            <returns>this (builder method)</returns>
+        </member>
+        <member name="F:RabbetGameEngine.RenderType.text3D">
+            <summary>
+            text3D objects should be built relative to 0,0,0. And then a position vector should be sent to the GPU for the position of the text in real world.
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.Renderer.staticDraws">
+            <summary>
+            A list of all requested static renders
+            </summary>
+        </member>
+        <member name="T:RabbetGameEngine.DrawCommand">
+            <summary>
+            A struct for containing draw command parameters for glMultiDrawElementsIndirect
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.IndexBufferObject.resizeBuffer(System.Int32)">
+            <summary>
+            resizes indices buffer, removes all data currently in buffer.
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.VertexArrayObject.drawType">
+            <summary>
+            not currently used for anything but may come in handy
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.VertexArrayObject.beginBuilding">
+            <summary>
+            should be called before adding any objects to this vao.
+            objects should be added in specific orders and accessed in using indexes into the list of vbos. Order is important!.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.VertexArrayObject.finishBuilding">
+            <summary>
+            should be called after adding all objects to this vao and before using this vao to render.
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.VertexBufferLayout.instancedData">
+            <summary>
+            should be true if the buffer used with this layout should be accessed using glvertexattribdivior.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.VertexBufferObject.resizeBuffer(System.Int32)">
+            <summary>
+            Must be called to resize the vbo before submitting a larger array of data.
+            This function will clear all data currently in the vbo.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.SkyboxRenderer.init">
+            <summary>
+            builds the base skybox mesh and prepares for drawing
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.SubRendering.Batch.requiresSorting">
+            <summary>
+            true if this batch requires transparency sorting
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.SubRendering.Batch.transparentGUI">
+            <summary>
+            true if this batch should be rendered last.
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.SubRendering.Batch.requestedObjectItterator">
+            <summary>
+            number of individual objects requested. This must be used as an identifier for each vertex of 
+            the individual objects so the shader can determine which model matrices to use to transform it.
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.SubRendering.Batch.matricesItterator">
+            <summary>
+            Used for properly interlacing and including new requests for lerp triangle types which require 2 matrices per object
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.SubRendering.Batch.pointsItterator">
+            <summary>
+            Used for properly interlacing and including new requests for lerp points which require 2 points per point.
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.SubRendering.Batch.positionItterator">
+            <summary>
+            Used for properly interlacing and including new requests for lerp 3d text or any other type which uses 2 positions per object.
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.SubRendering.Batch.requestedVerticesCount">
+            <summary>
+            number of vertices requested to be added to this batch since the last update.
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.SubRendering.Batch.requestedIndicesCount">
+            <summary>
+            number of indices requested to be added to this batch since the last update
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.SubRendering.Batch.onTickEnd">
+            <summary>
+            After each tick, all the batches must submit their updated render data to the GPU to prepare for all draw calls.
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.SubRendering.BatchManager.acceptingRequests">
+            <summary>
+            This boolean is to ensure that renders are not requested multiple times in one frame if the game is doing multiple onTick() calls to catch up.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.SubRendering.BatchManager.beforeTick">
+            <summary>
+            Should be called before any rendering requests. For instance, begining of each tick loop.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.SubRendering.BatchManager.onTickEnd">
+            <summary>
+            Should be called before rendering any batches. For instance, begining end of each tick loop.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.SubRendering.BatchManager.requestRender(RabbetGameEngine.RenderType,RabbetGameEngine.Texture,RabbetGameEngine.Models.Model)">
+            <summary>
+            Can be called to request that the provided data be added to the appropriate existing batch
+            or, if said batch does not exist or is full, creates and adds a new batch.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.SubRendering.BatchManager.deleteAll">
+            <summary>
+            Required to call this before closing application.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.SubRendering.BatchUtil.canFitOrResize``1(``0[]@,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Returns true if an array of length srcSize can fit into the dstArray, or if the dstArray has been resized and can now accept it.
+            If adding the srcSize goes over maxDstSize, then returns false.
+            When resizing, simply doubles current dst array size, or sets dst array size to maxDstSize.
+            int dstFilled is how much of the dstArray is used.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.VisualEffects.VFXMovingText3D.#ctor(RabbetGameEngine.PositionalObject,System.String,System.String,System.String,OpenTK.Mathematics.Vector3,System.Single,RabbetGameEngine.CustomColor)">
+            <summary>
+            A vfx which is text in 3d space. Can move however does not have interpolation.
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.VisualEffects.VFXStaticText3D.#ctor(System.String,System.String,System.String,OpenTK.Mathematics.Vector3,System.Single,RabbetGameEngine.CustomColor)">
+            <summary>
+            A vfx which is text in 3d space. Can move however does not have interpolation.
+            </summary>
+        </member>
+        <member name="F:RabbetGameEngine.Sound.PlayingSound.isPositional">
+            <summary>
+            true if this sound is positional
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.Sound.PlayingSound.#ctor(RabbetGameEngine.Sound.Sound,System.Single,System.Single,System.Int64)">
+            <summary>
+            constructor for non-positional sounds
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.Sound.PlayingSound.#ctor(RabbetGameEngine.Sound.Sound,System.Single,System.Single,OpenTK.Mathematics.Vector3,System.Int64)">
+            <summary>
+            constructor for positional sounds
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.Sound.PlayingSound.#ctor(System.String,RabbetGameEngine.Sound.Sound,System.Single,System.Single)">
+            <summary>
+            constructor for non-positional looping sounds
+            </summary>
+        </member>
+        <member name="M:RabbetGameEngine.Sound.PlayingSound.#ctor(System.String,RabbetGameEngine.Sound.Sound,System.Single,System.Single,OpenTK.Mathematics.Vector3)">
+            <summary>
+            constructor for positional looping sounds
+            </summary>
+        </member>
+    </members>
+</doc>

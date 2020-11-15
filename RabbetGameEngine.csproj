@@ -136,7 +136,7 @@
   <ItemGroup>
     <PackageReference Include="MedallionRandom" Version="1.1.0" />
     <PackageReference Include="NVorbis" Version="0.10.1" />
-    <PackageReference Include="OpenTK" Version="4.1.0" />
+    <PackageReference Include="OpenTK" Version="4.2.0" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
 
@@ -199,9 +199,7 @@
 
   <Target Name="CopyPackageAssembliesToSubFolder" AfterTargets="ResolveReferences">
     <ItemGroup>
-      <ReferenceCopyLocalPaths Condition=" '%(ReferenceCopyLocalPaths.NuGetPackageId)' != '' "
-        Update="%(ReferenceCopyLocalPaths)"
-        DestinationSubDirectory="Libs\" />
+      <ReferenceCopyLocalPaths Condition=" '%(ReferenceCopyLocalPaths.NuGetPackageId)' != '' " Update="%(ReferenceCopyLocalPaths)" DestinationSubDirectory="Libs\" />
     </ItemGroup>
   </Target>
 </Project>
