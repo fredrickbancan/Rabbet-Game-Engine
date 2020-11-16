@@ -11,14 +11,40 @@ using System.Linq;
 
 namespace RabbetGameEngine
 {
+    //TODO: Implement changing of sky color when getting closer to dusk/dawn
+    //TODO: Implement changing of sun color depending on time of day
+    //TODO: Implement proper changing of horizon color for dusk/dawn. 
     public class Planet
     {
         private CustomColor fogColor;
         private CustomColor horizonColor;
+        private CustomColor horizonColorDawn;
+        private CustomColor horizonColorDusk;
         private CustomColor skyColor;
         private CustomColor sunColor;
         private Vector3 skyDirection;
         private float sunAngle = 0;
+        private float ambientBrightness = 0.05F;
+
+        /// <summary>
+        /// How many minutes a day night cycle will take
+        /// </summary>
+        private int dayNightCycleMinutes = 1;
+
+        /// <summary>
+        /// Total number of ticks in a day night cycle from start to finish
+        /// </summary>
+        private int totalDayNightTicks = 0;
+
+        /// <summary>
+        /// Ticks counted in current day night cycle
+        /// </summary>
+        private int dayNightTicks = 0;
+
+        /// <summary>
+        /// percentage of progress from morning to morning. 0 is dawn, 0.5 is dusk. etc.
+        /// </summary>
+        private float dayNightPercent = 0;
         private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
         public Dictionary<int, Entity> entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
         public List<VFX> vfxList = new List<VFX>();
@@ -37,9 +63,13 @@ namespace RabbetGameEngine
         {
             random = Rand.CreateJavaRandom(seed);
             horizonColor = CustomColor.lightOrange;
+            horizonColorDawn = CustomColor.lightOrange;
+            horizonColorDusk = CustomColor.darkBlossom;
             fogColor = CustomColor.lightGrey;
             skyColor = CustomColor.skyBlue;
             sunColor = CustomColor.lightYellow;
+
+            totalDayNightTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(dayNightCycleMinutes * 60);
             setDrawDistanceAndFog(150.0F);
             SkyboxRenderer.setSkyboxToDraw(this);
             generateWorld();
@@ -48,12 +78,11 @@ namespace RabbetGameEngine
         public Vector3 getFogColor()
         {
             float h = (MathF.Sin(sunAngle) + 1) * 0.5F;
-            return fogColor.copy().setBrightPercent(h * h).toNormalVec3();
+            return fogColor.copy().setBrightPercent(getGlobalBrightness()).toNormalVec3();
         }
         public Vector3 getHorizonColor()
         {
             float h = (MathF.Sin(sunAngle) + 1) * 0.5F;
-            Application.debugPrint(MathHelper.Clamp(h * 2F, 0, 1));
             return horizonColor.changeSaturation(1-h*h*2).setBrightPercent(MathHelper.Clamp(h * 2F, 0, 1)).toNormalVec3();
         }
         public Vector3 getSkyColor()
@@ -71,6 +100,24 @@ namespace RabbetGameEngine
         public Vector3 getSunColor()
         {
             return sunColor.copy().toNormalVec3();
+        }
+
+        /// <summary>
+        /// Returns float between 0 and 1 for brighness. 1 is fullbright.
+        /// </summary>
+        public float getGlobalBrightness()
+        {
+            float h = (MathF.Sin(sunAngle) + 1) * 0.5F;
+            return MathHelper.Clamp(MathF.Pow(h, 16) + ambientBrightness, 0, 1);
+        }
+
+
+        /// <summary>
+        /// returns true if the planet time is closer to dawn than dusk.
+        /// </summary>
+        public bool isDawn()
+        {
+            return dayNightPercent < 0.25F;
         }
 
         private void generateWorld()//creates the playground and world colliders
@@ -149,8 +196,7 @@ namespace RabbetGameEngine
 
         public void onTick()
         {
-            sunAngle += 0.01F;
-            skyDirection = new Vector3(0, MathF.Sin(sunAngle),MathF.Cos(sunAngle)).Normalized();
+            updateDayNightCycle();
             CollisionHandler.collideEntities(entities);
             tickEntities();
             tickProjectiles();
@@ -164,6 +210,24 @@ namespace RabbetGameEngine
                 HitboxRenderer.addAllHitboxesToBeRendered(worldColliders, entities, vfxList);
             }
         }
+
+        private void updateDayNightCycle()
+        {
+            dayNightTicks++;
+
+            //finished a day night cycle
+            if(dayNightTicks >= totalDayNightTicks)
+            {
+                dayNightTicks = 0;
+            }
+
+            dayNightPercent = MathUtil.normalizeClamped(0, totalDayNightTicks, dayNightTicks);
+            horizonColor = horizonColorDawn.mix(horizonColorDusk, 0);
+            Application.debugPrint((dayNightPercent * 2) - dayNightPercent * 1.5F);
+            sunAngle = MathUtil.radians(dayNightPercent * 360.0F);
+            skyDirection = new Vector3(MathF.Cos(sunAngle), MathF.Sin(sunAngle), 0).Normalized();
+        }
+
 
         /*Called every frame. Should not do any heavy computation, only for preparing certain things for rendering. E.G: correcting models.*/
         public void onFrame()

@@ -95,6 +95,11 @@ namespace RabbetGameEngine
             return this;
         }
 
+        public CustomColor mix(CustomColor other, float ratio)
+        {
+            return new CustomColor(MathUtil.lerp(r, other.r, ratio), MathUtil.lerp(g, other.g, ratio), MathUtil.lerp(b, other.b, ratio), a);
+        }
+
         public CustomColor setAlphaPercent(float percentage)
         {
             percentage = MathUtil.clamp(percentage, 0, 1);
