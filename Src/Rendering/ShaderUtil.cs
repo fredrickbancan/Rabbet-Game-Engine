@@ -7,7 +7,9 @@ namespace RabbetGameEngine
       throughout the game without having to be re-loaded and re-allocated.*/
     public static class ShaderUtil
     {
+        public static readonly string sunName = "Sun";
         public static readonly string skyboxName = "Skybox";
+        public static readonly string skyboxShroudName = "SkyboxShroud";
         public static readonly string guiCutoutName = "GuiCutout";
         public static readonly string text2DName = "GuiText";
         public static readonly string text3DName = "StaticText3D_F";

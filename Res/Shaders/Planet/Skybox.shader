@@ -15,12 +15,7 @@ out vec4 worldSpacePos;
 void main()
 {
 	worldSpacePos = position;
-
-	mat4 viewMatrixNoTranslation = viewMatrix;//removing translation values from view matrix, to make skybox follow player camera
-	viewMatrixNoTranslation[3][0] = 0.0F;
-	viewMatrixNoTranslation[3][1] = 0.0F;
-	viewMatrixNoTranslation[3][2] = 0.0F;
-	gl_Position = projectionMatrix * viewMatrixNoTranslation * position;
+	gl_Position = projectionMatrix * viewMatrix * position;
 }
 
 /*#############################################################################################################################################################################################*/
@@ -53,11 +48,6 @@ void main()
 		float sunDirDot = dot(vec3(0, 1, 0), sunDir);
 		color.rgb *= 1 - (fragDir.y * 1 - ((sunDirDot + 1 )* 0.5));
 		color.rgb *= 0.5;
+		color.a = 1;
 	}
-	else
-	{
-		color.rgb = fogColor;
-	}
-	color.a = 1;
-	gl_FragDepth = 0.9999999F;//force fragdepth to be in background at all times
 }

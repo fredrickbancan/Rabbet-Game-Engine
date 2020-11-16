@@ -32,7 +32,7 @@ void main()
     gl_Position = projectionMatrix * positionRelativeToCam;
 
     //keeps the point size consistent with distance AND resolution. Lerp radius.
-    gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * (prevRadius + (radius - prevRadius) * percentageToNextTick) / gl_Position.w;//FIX: this does not take into account aspect ratio and can cause points to be elipsical in shape.
+    gl_PointSize = viewPortSize.y * projectionMatrix[1][1] * (prevRadius + (radius - prevRadius) * percentageToNextTick) / gl_Position.w;
 
     float distanceFromCam = length(positionRelativeToCam.xyz);
     visibility = (distanceFromCam - fogStart) / (fogEnd - fogStart);

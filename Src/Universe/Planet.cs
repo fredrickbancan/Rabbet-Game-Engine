@@ -13,9 +13,10 @@ namespace RabbetGameEngine
 {
     public class Planet
     {
-        private Vector3 fogColor;
-        private Vector3 horizonColor;
-        private Vector3 skyColor;
+        private CustomColor fogColor;
+        private CustomColor horizonColor;
+        private CustomColor skyColor;
+        private CustomColor sunColor;
         private Vector3 skyDirection;
         private float sunAngle = 0;
         private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
@@ -35,33 +36,43 @@ namespace RabbetGameEngine
         public Planet(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
-            horizonColor = CustomColor.lightOrange.toNormalVec3();
-            fogColor = CustomColor.lightGrey.toNormalVec3();
-            skyColor = CustomColor.skyBlue.toNormalVec3();
+            horizonColor = CustomColor.lightOrange;
+            fogColor = CustomColor.lightGrey;
+            skyColor = CustomColor.skyBlue;
+            sunColor = CustomColor.lightYellow;
             setDrawDistanceAndFog(150.0F);
             SkyboxRenderer.setSkyboxToDraw(this);
             generateWorld();
         }
+        //TODO: These values can be changed once per tick instead of each frame when fetched
         public Vector3 getFogColor()
         {
             float h = (MathF.Sin(sunAngle) + 1) * 0.5F;
-            return fogColor * h * h;
+            return fogColor.copy().setBrightPercent(h * h).toNormalVec3();
         }
         public Vector3 getHorizonColor()
         {
-            return horizonColor * (MathF.Sin(sunAngle) + 1) * 0.5F;
+            float h = (MathF.Sin(sunAngle) + 1) * 0.5F;
+            Application.debugPrint(MathHelper.Clamp(h * 2F, 0, 1));
+            return horizonColor.changeSaturation(1-h*h*2).setBrightPercent(MathHelper.Clamp(h * 2F, 0, 1)).toNormalVec3();
         }
+        public Vector3 getSkyColor()
+        {
+            float h = (MathF.Sin(sunAngle) + 1) * 0.5F;
+            return skyColor.copy().setBrightPercent(h).toNormalVec3();
+        }
+
 
         public Vector3 getSunDirection()
         {
             return skyDirection;
         }
     
-        public Vector3 getSkyColor()
+        public Vector3 getSunColor()
         {
-            float h = (MathF.Sin(sunAngle) + 1) * 0.5F;
-            return skyColor * h;
+            return sunColor.copy().toNormalVec3();
         }
+
         private void generateWorld()//creates the playground and world colliders
         {
             float groundHeight = 0;

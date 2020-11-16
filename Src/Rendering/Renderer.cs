@@ -152,7 +152,7 @@ namespace RabbetGameEngine
         public static void renderAll()
         {
             preRender();
-            SkyboxRenderer.drawSkybox(projectionMatrix, GameInstance.get.thePlayer.getViewMatrix());
+            SkyboxRenderer.drawSkybox(GameInstance.get.thePlayer.getViewMatrix());
             drawAllStaticRenderObjects();
             BatchManager.drawAll(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
             postRender();

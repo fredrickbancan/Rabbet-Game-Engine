@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using System;
 
 namespace RabbetGameEngine
 {
@@ -71,14 +72,9 @@ namespace RabbetGameEngine
             return new Vector4(baseColor.R, baseColor.G, baseColor.B, baseColor.A);
         }
 
-        /*returns the provided color with its saturation decreased by the provided percentage (0.0 to 1.0)*/
-        public CustomColor reduceSaturation(float percentage)
+        /*returns the provided color with its vibrancy decreased by the provided percentage (0.0 to 1.0)*/
+        public CustomColor reduceVibrancy(float percentage)
         {
-            if (percentage <= 0)
-                return this;
-            if (percentage > 1F)
-                percentage = 1F;
-
             float newRed = baseColor.R;
             float newGreen = baseColor.G;
             float newBlue = baseColor.B;
@@ -87,46 +83,11 @@ namespace RabbetGameEngine
             return new CustomColor(newRed, newGreen, newBlue, baseColor.A);
         }
 
-        public Vector3 reduceSaturationVec3(float percentage)
+        public CustomColor changeSaturation(float percent)
         {
-            if (percentage <= 0)
-                return this.toNormalVec3();
-            if (percentage > 1F)
-                percentage = 1F;
-
-            Vector3 result = this.toNormalVec3();
-
-            MathUtil.smooth3(ref result.X, ref result.Y, ref result.Z, percentage);
-
-            return result;
+            float P = MathF.Sqrt(baseColor.R * baseColor.R * 0.299F + baseColor.G * baseColor.G * 0.587F + baseColor.B * baseColor.B * 0.114F);
+            return new CustomColor(baseColor.R + (baseColor.R - P) * percent, baseColor.G + (baseColor.G - P) * percent, baseColor.B + (baseColor.B - P) * percent, baseColor.A);
         }
-
-        public Vector4 reduceSaturationVec4(float percentage)
-        {
-            if (percentage <= 0)
-                return this.toNormalVec4();
-            if (percentage > 1F)
-                percentage = 1F;
-
-            Vector4 result = this.toNormalVec4();
-
-            MathUtil.smooth3(ref result.X, ref result.Y, ref result.Z, percentage);
-
-            return result;
-        }
-
-        public static Vector3 reduceSaturation(Vector3 color, float percentage)
-        {
-            if (percentage <= 0)
-                return color;
-            if (percentage > 1F)
-                percentage = 1F;
-
-            MathUtil.smooth3(ref color.X, ref color.Y, ref color.Z, percentage);
-
-            return color;
-        }
-
         /*changes the brightness of this color by the provided percentage (1.0F is 100%)*/
         public CustomColor setBrightPercent(float percentage)
         {
@@ -146,6 +107,11 @@ namespace RabbetGameEngine
             a = MathUtil.clamp(a, 0, 1);
             baseColor.A = a;
             return this;
+        }
+
+        public CustomColor copy()
+        {
+            return new CustomColor(baseColor);
         }
 
         public float r { get => baseColor.R; set { baseColor.R = value; } }

@@ -162,9 +162,11 @@
     <None Include="Res\Shaders\Planet\Lerp_F.shader" />
     <None Include="Res\Shaders\Planet\Lerp_FT.shader" />
     <None Include="Res\Shaders\Planet\Skybox.shader" />
+    <None Include="Res\Shaders\Planet\SkyboxShroud.shader" />
     <None Include="Res\Shaders\Planet\StaticLines.shader" />
     <None Include="Res\Shaders\Planet\Static_F.shader" />
     <None Include="Res\Shaders\Planet\Static_FT.shader" />
+    <None Include="Res\Shaders\Planet\Sun.shader" />
     <None Include="Res\Shaders\ReadMe.txt" />
     <None Include="Res\Shaders\VFX\LerpISpheres_F.shader" />
     <None Include="Res\Shaders\VFX\LerpISpheres_FT.shader" />

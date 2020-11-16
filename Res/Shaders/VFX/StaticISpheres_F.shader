@@ -37,8 +37,6 @@ mat4 rotationMatrix(vec3 axis, float angle)
 
 vec4 lookAtCamRotation(vec4 spritePos, float rad)
 {
-    vec3 rightVec = vec3(1, 0, 0);
-    vec3 upVec = vec3(0, 1, 0);
     vec3 lookAt = vec3(0, 0, 1);
     vec4 endPos = vec4(corner.x * rad * 2, corner.y * rad * 2, 0, 0);
     vec3 spriteToCamX = cameraPos - spritePos.xyz;
@@ -98,7 +96,6 @@ float ambientOcclusion;//variable for applying a shadowing effect towards the ed
 
 void makeSphere()
 {
-    //clamps fragments to circle shape. 
     float d = dot(coords, coords);
 
     if (d >= 1.0F)
