@@ -5,12 +5,15 @@ namespace RabbetGameEngine.Models
 {
     public class PointCloudModel
     {
+        bool lerp = false;
         public PointParticle[] points = null;
         public PointParticle[] prevPoints = null;
         bool hasChangedSinceLastUpdate = true;
-        public PointCloudModel(PointParticle[] points)
+        public PointCloudModel(PointParticle[] points, bool lerp = true)
         {
             this.points = points;
+            this.lerp = lerp;
+            if(lerp)
             this.prevPoints = new PointParticle[points.Length];
             preTick();
         }
@@ -55,6 +58,7 @@ namespace RabbetGameEngine.Models
         /// </summary>
         public void preTick()
         {
+            if (!lerp) return;
             if(hasChangedSinceLastUpdate)
             for(int i = 0; i < points.Length; i++)
             {
@@ -153,14 +157,18 @@ namespace RabbetGameEngine.Models
         {
             PointCloudModel result;
             PointParticle[] resultPoints = new PointParticle[this.points.Length];
-            PointParticle[] resultPrevPoints = new PointParticle[this.prevPoints.Length];
             Array.Copy(points,resultPoints, points.Length);
-            Array.Copy(prevPoints,resultPrevPoints, prevPoints.Length);
-
             for (int i = 0; i < resultPoints.Length; ++i)
             {
                 resultPoints[i].pos = Vector3.TransformPerspective(resultPoints[i].pos, modelMatrix);
             }
+            if(!lerp)
+            {
+                result = new PointCloudModel(resultPoints, false);
+                return result;
+            }
+            PointParticle[] resultPrevPoints = new PointParticle[this.prevPoints.Length];
+            Array.Copy(prevPoints,resultPrevPoints, prevPoints.Length);
 
             for (int i = 0; i < resultPrevPoints.Length; ++i)
             {

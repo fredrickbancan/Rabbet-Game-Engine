@@ -166,6 +166,7 @@
     <None Include="Res\OBJ\TankProjectile.obj" />
     <None Include="Res\Shaders\GUI\GuiCutout.shader" />
     <None Include="Res\Shaders\GUI\GuiText.shader" />
+    <None Include="Res\Shaders\Planet\Stars.shader" />
     <None Include="Res\Shaders\Planet\Lerp_F.shader" />
     <None Include="Res\Shaders\Planet\Lerp_FT.shader" />
     <None Include="Res\Shaders\Planet\Skybox.shader" />

@@ -10,6 +10,7 @@ namespace RabbetGameEngine
         public static readonly string sunName = "Sun";
         public static readonly string skyboxName = "Skybox";
         public static readonly string skyboxShroudName = "SkyboxShroud";
+        public static readonly string starsName = "Stars";
         public static readonly string guiCutoutName = "GuiCutout";
         public static readonly string text2DName = "GuiText";
         public static readonly string text3DName = "StaticText3D_F";

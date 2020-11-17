@@ -1,5 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using System;
 
 namespace RabbetGameEngine
 {
@@ -82,12 +81,6 @@ namespace RabbetGameEngine
 
             MathUtil.smooth3(ref newRed, ref newGreen, ref newBlue, percentage);
             return new CustomColor(newRed, newGreen, newBlue, baseColor.A);
-        }
-
-        public CustomColor changeSaturation(float percent)
-        {
-            float P = MathF.Sqrt(baseColor.R * baseColor.R * 0.299F + baseColor.G * baseColor.G * 0.587F + baseColor.B * baseColor.B * 0.114F);
-            return new CustomColor(baseColor.R + (baseColor.R - P) * percent, baseColor.G + (baseColor.G - P) * percent, baseColor.B + (baseColor.B - P) * percent, baseColor.A);
         }
         /*changes the brightness of this color by the provided percentage (1.0F is 100%)*/
         public CustomColor setBrightPercent(float percentage)

@@ -12,6 +12,7 @@ using System.Linq;
 namespace RabbetGameEngine
 {
     //TODO: Implement changing of sky colors for dusk and dawn.
+    //TODO: add moon with unsynced orbit from sun orbit.
     public class Planet
     {
         private CustomColor fogColor;
@@ -26,11 +27,12 @@ namespace RabbetGameEngine
         private Vector3 sunDirection;
         private float sunAngle = 0;
         private float ambientBrightness = 0.05F;
-
+        public int totalStars = 0;
+        private PointCloudModel stars = null;
         /// <summary>
         /// 0 at midnight, 1 at midday
         /// </summary>
-        private float sunHeight = 0;
+        public float sunHeight = 0;
         /// <summary>
         /// How many minutes a day night cycle will take
         /// </summary>
@@ -79,8 +81,32 @@ namespace RabbetGameEngine
 
             totalDayNightTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(dayNightCycleMinutes * 60);
             setDrawDistanceAndFog(150.0F);
+            buildStars();
             SkyboxRenderer.setSkyboxToDraw(this);
             generateWorld();
+        }
+
+        private void buildStars()//must be done before building skybox.
+        {
+            totalStars = rand.Next(2000, 2501);
+            PointParticle[] points = new PointParticle[totalStars];
+            float starColorStrength = (float)rand.NextDouble() * 0.3072F + 0.05F;
+            float maxStarRadius = (float)rand.NextDouble() * 0.025f + 0.01F;
+            for (int i = 0; i < totalStars; i++)
+            {
+                points[i] = new PointParticle(
+                    new Vector3(0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble()).Normalized(),
+                    new Vector4(1.0F - (float)rand.NextDouble() * starColorStrength, 1.0F - (float)rand.NextDouble() * starColorStrength, 1.0F - (float)rand.NextDouble() * starColorStrength, 1.0F),
+                    (float)rand.NextDouble() * maxStarRadius,
+                    false
+                    );
+            }
+            stars = new PointCloudModel(points, false);
+        }
+
+        public PointCloudModel getStars()
+        {
+            return stars;
         }
 
         public Vector3 getFogColor()
@@ -209,8 +235,6 @@ namespace RabbetGameEngine
             tickProjectiles();
             CollisionHandler.testProjectilesAgainstEntities(entities, projectiles);
             tickVFX();
-
-
 
             if (GameSettings.drawHitboxes)
             {
