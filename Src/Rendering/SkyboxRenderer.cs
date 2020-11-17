@@ -73,6 +73,7 @@ namespace RabbetGameEngine
             skyboxShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             skyboxShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
             skyboxShader.setUniformVec3F("skyTop", skyboxToDraw.getSkyColor());
+            skyboxShader.setUniformVec3F("skyAmbient", skyboxToDraw.getSkyAmbientColor());
             skyboxShader.setUniformVec3F("skyHorizon", skyboxToDraw.getHorizonColor());
             skyboxShader.setUniformVec3F("fogColor", skyboxToDraw.getFogColor());
             skyboxShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());

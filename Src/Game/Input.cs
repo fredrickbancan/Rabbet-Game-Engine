@@ -76,6 +76,10 @@ namespace RabbetGameEngine
                 {
                     toggleBoolean(ref GameSettings.noclip);
                 }
+                if (singleKeyPress(Keys.F12))
+                {
+                    ScreenShotter.takeScreenshot();
+                }
                 PlayerController.updateInput(keyboardState);//do player input 
                 PlayerController.updateSinglePressInput(keyboardState);//do player single button input
             }

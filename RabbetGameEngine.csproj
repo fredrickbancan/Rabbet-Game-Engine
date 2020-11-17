@@ -45,6 +45,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Res\ScreenShots\**" />
+    <EmbeddedResource Remove="Res\ScreenShots\**" />
+    <None Remove="Res\ScreenShots\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="Src\Application.cs" />
     <Compile Include="Src\Game\CustomColor.cs" />
     <Compile Include="Src\Game\Debugging\DebugInfo.cs" />
@@ -57,6 +63,7 @@
     <Compile Include="Src\Game\MathUtil.cs" />
     <Compile Include="Src\Game\PlayerController.cs" />
     <Compile Include="Src\Game\ResourceUtil.cs" />
+    <Compile Include="Src\Game\ScreenShotter.cs" />
     <Compile Include="Src\Game\TicksAndFrames.cs" />
     <Compile Include="Src\Game\TickTimer.cs" />
     <Compile Include="Src\Physics\AABB.cs" />

@@ -11,9 +11,7 @@ using System.Linq;
 
 namespace RabbetGameEngine
 {
-    //TODO: Implement changing of sky color when getting closer to dusk/dawn
-    //TODO: Implement changing of sun color depending on time of day
-    //TODO: Implement proper changing of horizon color for dusk/dawn. 
+    //TODO: Implement changing of sky colors for dusk and dawn.
     public class Planet
     {
         private CustomColor fogColor;
@@ -21,11 +19,18 @@ namespace RabbetGameEngine
         private CustomColor horizonColorDawn;
         private CustomColor horizonColorDusk;
         private CustomColor skyColor;
+        private CustomColor skyAmbientColor;
         private CustomColor sunColor;
-        private Vector3 skyDirection;
+        private CustomColor sunColorDawn;
+        private CustomColor sunColorDusk;
+        private Vector3 sunDirection;
         private float sunAngle = 0;
         private float ambientBrightness = 0.05F;
 
+        /// <summary>
+        /// 0 at midnight, 1 at midday
+        /// </summary>
+        private float sunHeight = 0;
         /// <summary>
         /// How many minutes a day night cycle will take
         /// </summary>
@@ -53,7 +58,7 @@ namespace RabbetGameEngine
         public List<AABB> worldColliders = new List<AABB>();//list of colliders with no parent, ie, walls.
         private string wallTextureName = "leafywall";
         private string groundTextureName = "jungleground";
-        private static readonly Vector3 fallPlaneRespawnPos = new Vector3(0,128,0);
+        private static readonly Vector3 fallPlaneRespawnPos = new Vector3(0, 128, 0);
         private static readonly float fallPlaneHeight = -10.0F;
         private Random random;
         private float fogStart;
@@ -64,42 +69,45 @@ namespace RabbetGameEngine
             random = Rand.CreateJavaRandom(seed);
             horizonColor = CustomColor.lightOrange;
             horizonColorDawn = CustomColor.lightOrange;
-            horizonColorDusk = CustomColor.darkBlossom;
+            horizonColorDusk = CustomColor.dusk;
+            skyAmbientColor = CustomColor.darkBlue.copy().reduceVibrancy(0.5F);
             fogColor = CustomColor.lightGrey;
             skyColor = CustomColor.skyBlue;
             sunColor = CustomColor.lightYellow;
+            sunColorDawn = CustomColor.lightYellow;
+            sunColorDusk = CustomColor.flame;
 
             totalDayNightTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(dayNightCycleMinutes * 60);
             setDrawDistanceAndFog(150.0F);
             SkyboxRenderer.setSkyboxToDraw(this);
             generateWorld();
         }
-        //TODO: These values can be changed once per tick instead of each frame when fetched
+
         public Vector3 getFogColor()
         {
-            float h = (MathF.Sin(sunAngle) + 1) * 0.5F;
             return fogColor.copy().setBrightPercent(getGlobalBrightness()).toNormalVec3();
         }
         public Vector3 getHorizonColor()
-        {
-            float h = (MathF.Sin(sunAngle) + 1) * 0.5F;
-            return horizonColor.changeSaturation(1-h*h*2).setBrightPercent(MathHelper.Clamp(h * 2F, 0, 1)).toNormalVec3();
+        { 
+            return horizonColor.copy().reduceVibrancy(MathUtil.normalize(0.5F, 1.25F, sunHeight * sunHeight)).setBrightPercent(MathHelper.Clamp(sunHeight * 2F, 0, 1)).toNormalVec3();
         }
         public Vector3 getSkyColor()
         {
-            float h = (MathF.Sin(sunAngle) + 1) * 0.5F;
-            return skyColor.copy().setBrightPercent(h).toNormalVec3();
+            return skyColor.copy().setBrightPercent(sunHeight + (0.5F * 1 - sunHeight * 0.5F)).toNormalVec3();
         }
 
-
+        public Vector3 getSkyAmbientColor()
+        {
+            return skyAmbientColor.reduceVibrancy(sunHeight * sunHeight).setBrightPercent(1- sunHeight * sunHeight * 1.25F).toNormalVec3();
+        }
         public Vector3 getSunDirection()
         {
-            return skyDirection;
+            return sunDirection;
         }
     
         public Vector3 getSunColor()
         {
-            return sunColor.copy().toNormalVec3();
+            return sunColor.copy().reduceVibrancy(MathUtil.normalizeClamped(0.5F, 1, sunHeight * 0.85F)).toNormalVec3();
         }
 
         /// <summary>
@@ -107,8 +115,7 @@ namespace RabbetGameEngine
         /// </summary>
         public float getGlobalBrightness()
         {
-            float h = (MathF.Sin(sunAngle) + 1) * 0.5F;
-            return MathHelper.Clamp(MathF.Pow(h, 16) + ambientBrightness, 0, 1);
+            return MathHelper.Clamp(MathF.Pow(sunHeight, 16) + ambientBrightness, 0, 1);
         }
 
 
@@ -117,7 +124,7 @@ namespace RabbetGameEngine
         /// </summary>
         public bool isDawn()
         {
-            return dayNightPercent < 0.25F;
+            return dayNightPercent < 0.5F;
         }
 
         private void generateWorld()//creates the playground and world colliders
@@ -222,10 +229,11 @@ namespace RabbetGameEngine
             }
 
             dayNightPercent = MathUtil.normalizeClamped(0, totalDayNightTicks, dayNightTicks);
-            horizonColor = horizonColorDawn.mix(horizonColorDusk, 0);
-            Application.debugPrint((dayNightPercent * 2) - dayNightPercent * 1.5F);
-            sunAngle = MathUtil.radians(dayNightPercent * 360.0F);
-            skyDirection = new Vector3(MathF.Cos(sunAngle), MathF.Sin(sunAngle), 0).Normalized();
+            horizonColor = horizonColorDawn.mix(horizonColorDusk, MathUtil.normalizeClamped(0.25F, 0.75F, dayNightPercent));
+            sunColor = sunColorDawn.mix(sunColorDusk, MathUtil.normalizeClamped(0.25F, 0.75F, dayNightPercent));
+            sunAngle = MathUtil.radians(dayNightPercent * 360.0F) - MathUtil.radians(90.0F);
+            sunDirection = new Vector3(MathF.Cos(sunAngle), MathF.Sin(sunAngle), 0).Normalized();
+            sunHeight = (MathF.Sin(sunAngle) + 1) * 0.5F;
         }
 
 

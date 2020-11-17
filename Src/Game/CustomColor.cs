@@ -28,12 +28,13 @@ namespace RabbetGameEngine
         public static CustomColor orange = new CustomColor(255, 135, 0);
         public static CustomColor darkOrange = new CustomColor(175, 110, 0);
         public static CustomColor ember = new CustomColor(255, 100, 0);
-        public static CustomColor flame = new CustomColor(255, 175, 0);
+        public static CustomColor flame = new CustomColor(255, 183, 0);
         public static CustomColor facility = new CustomColor(70, 120, 90);
         public static CustomColor steelBlue = new CustomColor(70, 100, 120);
         public static CustomColor lightBlossom = new CustomColor(255, 222, 236);
         public static CustomColor blossom = new CustomColor(255, 150, 190);
         public static CustomColor darkBlossom = new CustomColor(255, 72, 135);
+        public static CustomColor dusk = new CustomColor(255, 72, 100);
         public static CustomColor lightSkyBlue = new CustomColor(165, 192, 235);
         public static CustomColor skyBlue = new CustomColor(0, 156, 252);
         public static CustomColor aquaPain = new CustomColor(0, 255, 255);

@@ -25,6 +25,7 @@ void main()
 out vec4 color;
 in vec4 worldSpacePos;
 uniform vec3 skyTop;
+uniform vec3 skyAmbient;
 uniform vec3 skyHorizon;
 uniform vec3 fogColor;
 uniform vec3 sunDir;
@@ -35,7 +36,7 @@ void main()
 	if (fragDir.y > 0)
 	{
 		vec3 skyModified = skyTop;
-		skyModified *= (dot(sunDir, fragDir) + 1) * 0.5;
+		skyModified = mix(skyAmbient, skyTop, (dot(sunDir, fragDir) + 1) * 0.5);
 
 		vec3 skyHorizonModified = skyHorizon;
 		float horizonSunDot = dot(sunDir.xz, fragDir.xz);

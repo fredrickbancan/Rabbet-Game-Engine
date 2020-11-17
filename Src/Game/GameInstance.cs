@@ -46,7 +46,6 @@ namespace RabbetGameEngine
             IconLoader.getIcon("icon", out iconWidth, out iconHeight, out data);
             Icon = new WindowIcon(new OpenTK.Windowing.Common.Input.Image[] { new OpenTK.Windowing.Common.Input.Image(iconWidth, iconHeight, data) });
 
-            //TODO: Implement more elegent technique of centering and sizing window, as well as obtaining monitor resolution. (Will most likely require OpenTK future development updates). Test next update of OpenTK.
             OpenTK.Windowing.Common.Monitor m = CurrentMonitor;
             VideoMode mode = *GLFW.GetVideoMode(m.ToUnsafePtr<OpenTK.Windowing.GraphicsLibraryFramework.Monitor>());
             screenWidth = mode.Width;
@@ -65,6 +64,7 @@ namespace RabbetGameEngine
             try
             {
                 GameInstance.privateRand = new Random();
+                ResourceUtil.init();
                 GameSettings.loadSettings();
                 TextUtil.loadAllFoundTextFiles();
                 SoundManager.init();

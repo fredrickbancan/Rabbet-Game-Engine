@@ -79,6 +79,12 @@ namespace RabbetGameEngine
             }
         }
 
+        public static string getAppTimeStamp()
+        {
+            string s = applicationName + " " +  (DateTime.Now.Day < 10 ? "0" : "") + DateTime.Now.Day + "-" + (DateTime.Now.Month < 10 ? "0" : "") + DateTime.Now.Month + "-" + DateTime.Now.Year + "_" + (DateTime.Now.Hour < 10 ? "0" : "") + DateTime.Now.Hour + "-" + (DateTime.Now.Minute < 10 ? "0" : "") + DateTime.Now.Minute + "-" + (DateTime.Now.Second < 10 ? "0" : "") + DateTime.Now.Second + "-" + DateTime.Now.Millisecond;
+            return s;
+        }
+
         #region Print functions
         public static void infoPrint(object s)
         {

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace RabbetGameEngine
 {
@@ -8,6 +9,25 @@ namespace RabbetGameEngine
         public static readonly string workingDir = Directory.GetCurrentDirectory();
         public static readonly string libsDir = workingDir + @"\Libs\";
         public static readonly string resDir = workingDir + @"\Res\";
+
+        public static void init()
+        {
+            try
+            {
+                Directory.CreateDirectory(getIconFileDir());
+                Directory.CreateDirectory(getTextureFileDir());
+                Directory.CreateDirectory(getFontFileDir());
+                Directory.CreateDirectory(getShaderFileDir());
+                Directory.CreateDirectory(getOBJFileDir());
+                Directory.CreateDirectory(getSoundFileDir());
+                Directory.CreateDirectory(getScreenShotFileDir());
+            }
+            catch(Exception e)
+            {
+                Application.warn("Error initializing resource utilities! Error message: " + e.Message);
+            }
+        }
+
         public static string getIconFileDir(string fileName = "")
         {
             return resDir + @"Icon\" + fileName;
@@ -33,7 +53,12 @@ namespace RabbetGameEngine
 
         public static string getSoundFileDir(string soundName = "")
         {
-            return resDir + @"Sounds" + soundName;
+            return resDir + @"Sounds\" + soundName;
+        }
+
+        public static string getScreenShotFileDir(string imageName = "")
+        {
+            return resDir + @"ScreenShots\" + imageName;
         }
     }
 }
