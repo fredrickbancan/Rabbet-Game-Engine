@@ -15,6 +15,7 @@ namespace RabbetGameEngine
             textures = new Dictionary<string, Texture>();
             textures.Add("none", new Texture("none", false));//first texture will be the null texture
             textures.Add("debug", new Texture());//second texture will be the debug texture
+            textures.Add("dither", new Texture("dither", false));//second texture will be the debug texture
             loadAllTexturesRecursive(ResourceUtil.getTextureFileDir());
             loadAllTexturesRecursive(ResourceUtil.getFontFileDir());
             loadAllTexturesRecursive(ResourceUtil.getIconFileDir());

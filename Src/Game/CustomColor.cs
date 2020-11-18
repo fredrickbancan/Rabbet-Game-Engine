@@ -85,8 +85,7 @@ namespace RabbetGameEngine
         /*changes the brightness of this color by the provided percentage (1.0F is 100%)*/
         public CustomColor setBrightPercent(float percentage)
         {
-            baseColor =new Color4(baseColor.R * percentage, baseColor.G * percentage, baseColor.B * percentage, baseColor.A);
-            return this;
+            return new CustomColor(new Color4(baseColor.R * percentage, baseColor.G * percentage, baseColor.B * percentage, baseColor.A));
         }
 
         public CustomColor mix(CustomColor other, float ratio)

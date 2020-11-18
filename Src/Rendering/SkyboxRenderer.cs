@@ -5,9 +5,9 @@ using RabbetGameEngine.SubRendering;
 
 namespace RabbetGameEngine
 {
-    //TODO: Change star visibility in shader depending on their angle compared to sun angle and sun height
     public static class SkyboxRenderer
     {
+        private static Texture ditherTex = null;
         private static Planet skyboxToDraw = null;
         private static Model skyboxModel = null;
         private static Model shroudModel = null;
@@ -58,6 +58,7 @@ namespace RabbetGameEngine
             ShaderUtil.tryGetShader(ShaderUtil.sunName, out sunShader);
             ShaderUtil.tryGetShader(ShaderUtil.skyboxShroudName, out horizonShroudShader);
             ShaderUtil.tryGetShader(ShaderUtil.starsName, out starsShader);
+            TextureUtil.tryGetTexture("dither", out ditherTex);
         }
 
         public static void setSkyboxToDraw(Planet p)
@@ -81,6 +82,8 @@ namespace RabbetGameEngine
             {
                 return;
             }
+            ditherTex.use();
+
             //drawing skybox
             skyVAO.bind();
             skyboxShader.use();
@@ -88,15 +91,6 @@ namespace RabbetGameEngine
             skyboxShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
             GL.DepthRange(0.999999f, 1);
             GL.DrawElements(PrimitiveType.Triangles, skyboxModel.indices.Length, DrawElementsType.UnsignedInt, 0);
-            Renderer.totalDraws++;
-
-            //drawing horizon shroud
-            shroudVAO.bind();
-            horizonShroudShader.use();
-            horizonShroudShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
-            horizonShroudShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
-            GL.DepthRange(0.9999900f, 0.999901f);
-            GL.DrawElements(PrimitiveType.Triangles, shroudModel.indices.Length, DrawElementsType.UnsignedInt, 0);
             Renderer.totalDraws++;
 
             //drawing sun
@@ -110,14 +104,27 @@ namespace RabbetGameEngine
             //drawing stars
             if (starsVAO != null)
             {
+                GL.Disable(EnableCap.DepthTest);
+                GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.DstAlpha);//additive blending
                 starsVAO.bind();
                 starsShader.use();
                 starsShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                 starsShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
                 GL.DepthRange(0.9999920f, 0.999921f);
                 GL.DrawArrays(PrimitiveType.Points, 0, skyboxToDraw.totalStars);
+                GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+                GL.Enable(EnableCap.DepthTest);
                 Renderer.totalDraws++;
             }
+
+            //drawing horizon shroud
+            shroudVAO.bind();
+            horizonShroudShader.use();
+            horizonShroudShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+            horizonShroudShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
+            GL.DepthRange(0.9999900f, 0.999901f);
+            GL.DrawElements(PrimitiveType.Triangles, shroudModel.indices.Length, DrawElementsType.UnsignedInt, 0);
+            Renderer.totalDraws++;
             GL.DepthRange(0, 1);
         }
 

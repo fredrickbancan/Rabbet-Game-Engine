@@ -36,7 +36,7 @@ namespace RabbetGameEngine
         /// <summary>
         /// How many minutes a day night cycle will take
         /// </summary>
-        private int dayNightCycleMinutes = 15;
+        private int dayNightCycleMinutes = 1;
 
         /// <summary>
         /// Total number of ticks in a day night cycle from start to finish
@@ -90,7 +90,7 @@ namespace RabbetGameEngine
         {
             totalStars = rand.Next(3000,3501);
             PointParticle[] points = new PointParticle[totalStars];
-            float starColorStrength = 1 * 0.1072F + 0.2F;
+            float starColorStrength = 0.3072F;
             float maxStarRadius = 0.01F;
             for (int i = 0; i < totalStars; i++)
             {
@@ -123,20 +123,20 @@ namespace RabbetGameEngine
 
         public Vector3 getFogColor()
         {
-            return fogColor.copy().setBrightPercent(getGlobalBrightness()).toNormalVec3();
+            return fogColor.setBrightPercent(getGlobalBrightness()).toNormalVec3();
         }
         public Vector3 getHorizonColor()
         { 
-            return horizonColor.copy().reduceVibrancy(MathUtil.normalize(0.5F, 1.25F, sunHeight * sunHeight)).setBrightPercent(MathHelper.Clamp(sunHeight * 2F, 0, 1)).toNormalVec3();
+            return horizonColor.mix(CustomColor.white, MathUtil.normalizeClamped(0.5F, 0.75F, sunHeight * sunHeight)).setBrightPercent(MathHelper.Clamp(sunHeight * 2F, 0, 1)).toNormalVec3();
         }
         public Vector3 getSkyColor()
         {
-            return skyColor.copy().setBrightPercent(sunHeight + (0.5F * 1 - sunHeight * 0.5F)).toNormalVec3();
+            return skyColor.setBrightPercent(sunHeight + (0.5F * 1 - sunHeight * 0.5F)).toNormalVec3();
         }
 
         public Vector3 getSkyAmbientColor()
         {
-            return skyAmbientColor.reduceVibrancy(sunHeight * sunHeight).setBrightPercent(1- sunHeight * sunHeight * 1.25F).toNormalVec3();
+            return skyAmbientColor.mix(skyColor, MathUtil.normalizeClamped(0.5F, 0.75F, sunHeight * sunHeight)).setBrightPercent(1- sunHeight * sunHeight * 1.25F).toNormalVec3();
         }
         public Vector3 getSunDirection()
         {

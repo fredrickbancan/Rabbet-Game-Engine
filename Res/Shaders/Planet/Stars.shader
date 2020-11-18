@@ -19,7 +19,8 @@ void main()
 
     gl_PointSize = viewPortSize.y * radius;
     vColor = pointColor;
-    vColor.a = 1.0 - (dot((modelMatrix * position).xyz, sunDir) + 1.0) * 0.5;
+    float r = 1.0 - (dot((modelMatrix * position).xyz, sunDir) + 1.0) * 0.5;
+    vColor.a =  r * r;
     vColor.a *= 1 - sunDir.y;
 }
 
