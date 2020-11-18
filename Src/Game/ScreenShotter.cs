@@ -38,6 +38,7 @@ namespace RabbetGameEngine
             bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
             bmp.Save(fileName, System.Drawing.Imaging.ImageFormat.Png);
             bmp.Dispose();
+            Marshal.FreeHGlobal(intPtr);
         }
 
     }

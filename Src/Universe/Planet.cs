@@ -28,7 +28,9 @@ namespace RabbetGameEngine
         private float sunAngle = 0;
         private float ambientBrightness = 0.05F;
         public int totalStars = 0;
+        public int totalMoons = 0;
         private PointCloudModel stars = null;
+        private SkyMoon[] moons = null;
         /// <summary>
         /// 0 at midnight, 1 at midday
         /// </summary>
@@ -78,12 +80,46 @@ namespace RabbetGameEngine
             sunColor = CustomColor.lightYellow;
             sunColorDawn = CustomColor.lightYellow;
             sunColorDusk = CustomColor.flame;
-
+            dayNightCycleMinutes = rand.Next(25,35);
             totalDayNightTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(dayNightCycleMinutes * 60);
+            dayNightTicks = totalDayNightTicks / 4;
             setDrawDistanceAndFog(150.0F);
+            buildMoons();
             buildStars();
             SkyboxRenderer.setSkyboxToDraw(this);
             generateWorld();
+        }
+
+        private void buildMoons()
+        {
+            totalMoons = rand.Next(1, 101);
+            moons = new SkyMoon[totalMoons];
+            float moonColorStrength = 0.3572F;
+            float maxMoonRadius = 0.055F;
+            float minMoonRadius = 0.015F;
+            for (int i = 0; i < totalMoons; i++)
+            {
+                moons[i] = new SkyMoon(
+                    new Vector3(0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble()).Normalized(),
+                    new Vector2(0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble()).Normalized(),
+                    new Vector4(1.0F - (float)rand.NextDouble() * moonColorStrength, 1.0F - (float)rand.NextDouble() * moonColorStrength, 1.0F - (float)rand.NextDouble() * moonColorStrength, 1.0F),
+                    (float)rand.NextDouble() * maxMoonRadius + minMoonRadius,
+                    (float)rand.NextDouble() * 360.0F,
+                    rand.Next(0, SkyMoon.totalMoonTextures),
+                    1/*rand.Next(15,25)*/);
+            }
+        }
+        private void tickMoons()
+        {
+            for (int i = 0; i < totalMoons; i++)
+            {
+                moons[i].onTick();
+            }
+        }
+
+        public SkyMoon[] getMoons()
+        {
+            return moons;
         }
 
         private void buildStars()//must be done before building skybox.
@@ -270,6 +306,7 @@ namespace RabbetGameEngine
             sunAngle = MathUtil.radians(dayNightPercent * 360.0F) - MathUtil.radians(90.0F);
             sunDirection = new Vector3(MathF.Cos(sunAngle), MathF.Sin(sunAngle), 0).Normalized();
             sunHeight = (MathF.Sin(sunAngle) + 1) * 0.5F;
+            tickMoons();
         }
 
 

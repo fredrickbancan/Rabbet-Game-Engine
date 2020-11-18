@@ -93,6 +93,7 @@
     <Compile Include="Src\Rendering\RenderObjects\InstanceBufferObject.cs" />
     <Compile Include="Src\Rendering\RenderObjects\PointParticle.cs" />
     <Compile Include="Src\Rendering\RenderObjects\Shader.cs" />
+    <Compile Include="Src\Rendering\RenderObjects\SkyMoon.cs" />
     <Compile Include="Src\Rendering\RenderObjects\Sprite3D.cs" />
     <Compile Include="Src\Rendering\RenderObjects\StaticRenderObject.cs" />
     <Compile Include="Src\Rendering\RenderObjects\Texture.cs" />
@@ -149,6 +150,7 @@
 
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Photoshop\planets.psd" />
     <None Include="Res\Font\Arial.fnt" />
     <None Include="Res\Font\Arial.png" />
     <None Include="Res\Font\Arial_Shadow.fnt" />
@@ -174,6 +176,7 @@
     <None Include="Res\Shaders\Planet\StaticLines.shader" />
     <None Include="Res\Shaders\Planet\Static_F.shader" />
     <None Include="Res\Shaders\Planet\Static_FT.shader" />
+    <None Include="Res\Shaders\Planet\Moons.shader" />
     <None Include="Res\Shaders\Planet\Sun.shader" />
     <None Include="Res\Shaders\ReadMe.txt" />
     <None Include="Res\Shaders\VFX\LerpISpheres_F.shader" />
@@ -203,6 +206,7 @@
     <None Include="Res\Texture\pillows.png" />
     <None Include="Res\Texture\plasterwall.png" />
     <None Include="Res\Texture\sand.png" />
+    <None Include="Res\Texture\Sky\moons.png" />
     <None Include="Res\Texture\transparent.png" />
     <None Include="Res\Texture\wood.png" />
   </ItemGroup>

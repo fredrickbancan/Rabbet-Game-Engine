@@ -50,7 +50,7 @@ void main()
 		float sunDirDot = dot(vec3(0, 1, 0), sunDir);
 		color.rgb *= 1 - (fragDir.y * 1 - ((sunDirDot + 1 )* 0.5));
 		color.rgb *= 0.5;
-		color += vec4(texture2D(uTexture, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0/128.0));
+		color += vec4(texture2D(uTexture, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0/128.0));//dithering
 		color.a = 1;
 	}
 }

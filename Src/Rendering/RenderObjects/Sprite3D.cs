@@ -5,10 +5,10 @@ namespace RabbetGameEngine
     public struct Sprite3D
     {
         public static int sizeInBytes = 3 * sizeof(float) + 4 * sizeof(float) + 3 * sizeof(float) + 4 * sizeof(float);
-        Vector3 position;
-        Vector4 color;
-        Vector3 scale;
-        Vector4 uvMinMax;
+        public Vector3 position;
+        public Vector4 color;
+        public Vector3 scale;
+        public Vector4 uvMinMax;
 
         public Sprite3D(Vector3 pos, Vector4 color, Vector3 scale, Vector4 uvMinMax)
         {
