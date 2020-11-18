@@ -4,6 +4,9 @@ namespace RabbetGameEngine
 {
     static class MathUtil
     {
+        public static readonly Vector3 up = new Vector3(0, 1, 0);
+        public static readonly Vector3 front = new Vector3(0, 0, -1);
+
         public static float rand(Vector3 xyz)//returns random float using input vector3 as seed
         {
             return fract((float)(System.Math.Tan(Vector2.Distance(xyz.Xy * 1.6180339F, xyz.Xy) * xyz.Z) * xyz.Y));
@@ -160,6 +163,50 @@ namespace RabbetGameEngine
         public static Vector3 oneMinusAbsolute(Vector3 vec)
         {
             return new Vector3(1F - System.Math.Abs(vec.X), 1F - System.Math.Abs(vec.Y), 1F - System.Math.Abs(vec.Z));
+        }
+
+        public static Matrix4 dirVectorToRotation(Vector3 dir)
+        {
+            Matrix4 result = Matrix4.Identity;
+
+            Vector3 xAxis = Vector3.Cross(up, dir);
+            xAxis.NormalizeFast();
+            Vector3 yAxis = Vector3.Cross(dir, xAxis);
+            yAxis.NormalizeFast();
+            result.M11 = xAxis.X;
+            result.M21 = yAxis.X;
+            result.M31 = dir.X;
+
+            result.M12 = xAxis.Y;
+            result.M22 = yAxis.Y;
+            result.M32 = dir.Y;
+
+            result.M13 = xAxis.Z;
+            result.M23 = yAxis.Z;
+            result.M33 = dir.Z;
+            return result;
+        }
+
+        public static Matrix4 dirVectorToRotationNoFlip(Vector3 dir)
+        {
+            Matrix4 result = Matrix4.Identity;
+            bool b = dir.X < 0 || dir.Z < 0;
+            Vector3 xAxis = Vector3.Cross(b ? -up : up, dir);
+            xAxis.NormalizeFast();
+            Vector3 yAxis = Vector3.Cross(dir, xAxis);
+            yAxis.NormalizeFast();
+            result.M11 = xAxis.X;
+            result.M21 = yAxis.X;
+            result.M31 = dir.X;
+
+            result.M12 = xAxis.Y;
+            result.M22 = yAxis.Y;
+            result.M32 = dir.Y;
+
+            result.M13 = xAxis.Z;
+            result.M23 = yAxis.Z;
+            result.M33 = dir.Z;
+            return result;
         }
 
         public static Matrix4 createRotation(Vector3 rot)

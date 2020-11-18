@@ -194,6 +194,7 @@ namespace RabbetGameEngine
             MainGUI.onTick();
             currentPlanet.spawnVFXInWorld(new VFXSnowParticle(new Vector3(-privateRand.Next(-50, 50), 20, -privateRand.Next(-50, 50))));
             currentPlanet.onTick();
+            Renderer.onTick();
             SoundManager.onTick();
             Profiler.updateAverages();
             Renderer.onTickEnd();

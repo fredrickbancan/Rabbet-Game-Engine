@@ -5,7 +5,7 @@ using RabbetGameEngine.SubRendering;
 
 namespace RabbetGameEngine
 {
-    //TODO: Add stars which are built based on planet seed. Should be not visible during day.
+    //TODO: Change star visibility in shader depending on their angle compared to sun angle and sun height
     public static class SkyboxRenderer
     {
         private static Planet skyboxToDraw = null;
@@ -86,11 +86,6 @@ namespace RabbetGameEngine
             skyboxShader.use();
             skyboxShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             skyboxShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
-            skyboxShader.setUniformVec3F("skyTop", skyboxToDraw.getSkyColor());
-            skyboxShader.setUniformVec3F("skyAmbient", skyboxToDraw.getSkyAmbientColor());
-            skyboxShader.setUniformVec3F("skyHorizon", skyboxToDraw.getHorizonColor());
-            skyboxShader.setUniformVec3F("fogColor", skyboxToDraw.getFogColor());
-            skyboxShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
             GL.DepthRange(0.999999f, 1);
             GL.DrawElements(PrimitiveType.Triangles, skyboxModel.indices.Length, DrawElementsType.UnsignedInt, 0);
             Renderer.totalDraws++;
@@ -100,7 +95,6 @@ namespace RabbetGameEngine
             horizonShroudShader.use();
             horizonShroudShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             horizonShroudShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
-            horizonShroudShader.setUniformVec3F("fogColor", skyboxToDraw.getFogColor());
             GL.DepthRange(0.9999900f, 0.999901f);
             GL.DrawElements(PrimitiveType.Triangles, shroudModel.indices.Length, DrawElementsType.UnsignedInt, 0);
             Renderer.totalDraws++;
@@ -109,9 +103,6 @@ namespace RabbetGameEngine
             sunShader.use();
             sunShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             sunShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
-            sunShader.setUniformVec3F("sunPos", skyboxToDraw.getSunDirection());
-            sunShader.setUniformVec3F("sunColor", skyboxToDraw.getSunColor());
-            sunShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
             GL.DepthRange(0.9999940f, 0.999941f);
             GL.DrawArrays(PrimitiveType.Points, 0, 1);
             Renderer.totalDraws++;
@@ -123,15 +114,40 @@ namespace RabbetGameEngine
                 starsShader.use();
                 starsShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                 starsShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
-                starsShader.setUniformMat4F("modelMatrix", );
-                starsShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
-                starsShader.setUniform1F("visibility", 1.0F - skyboxToDraw.sunHeight * 1.5F);
                 GL.DepthRange(0.9999920f, 0.999921f);
                 GL.DrawArrays(PrimitiveType.Points, 0, skyboxToDraw.totalStars);
                 Renderer.totalDraws++;
             }
             GL.DepthRange(0, 1);
         }
+
+
+        public static void onTick()
+        {
+            skyboxShader.use();
+            skyboxShader.setUniformVec3F("skyTop", skyboxToDraw.getSkyColor());
+            skyboxShader.setUniformVec3F("skyAmbient", skyboxToDraw.getSkyAmbientColor());
+            skyboxShader.setUniformVec3F("skyHorizon", skyboxToDraw.getHorizonColor());
+            skyboxShader.setUniformVec3F("fogColor", skyboxToDraw.getFogColor());
+            skyboxShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
+
+            horizonShroudShader.use();
+            horizonShroudShader.setUniformVec3F("fogColor", skyboxToDraw.getFogColor());
+
+            sunShader.use();
+            sunShader.setUniformVec3F("sunPos", skyboxToDraw.getSunDirection());
+            sunShader.setUniformVec3F("sunColor", skyboxToDraw.getSunColor());
+            sunShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
+
+            if (starsVAO != null)
+            {
+                starsShader.use();
+                starsShader.setUniformMat4F("modelMatrix", MathUtil.dirVectorToRotationNoFlip(skyboxToDraw.getSunDirection()));
+                starsShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
+                starsShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
+            }
+        }
+
         public static void deleteVAO()
         {
             skyVAO.delete();

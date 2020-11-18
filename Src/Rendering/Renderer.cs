@@ -133,6 +133,12 @@ namespace RabbetGameEngine
             Profiler.beginEndProfile("batching");
             HitboxRenderer.beforeTick();
         }
+
+        public static void onTick()
+        {
+            SkyboxRenderer.onTick();
+        }
+
         public static void onTickEnd()
         {
             Profiler.beginEndProfile("batching");

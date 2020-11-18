@@ -6,39 +6,39 @@ namespace RabbetGameEngine
     public struct CustomColor
     {
         /*some custom presets*/
-        public static CustomColor lightBlue = new CustomColor(135, 135, 255);
-        public static CustomColor blue = new CustomColor(0, 0, 255);
-        public static CustomColor darkBlue = new CustomColor(0, 0, 100);
-        public static CustomColor lightRed = new CustomColor(255, 135, 135);
-        public static CustomColor red = new CustomColor(255, 0, 0);
-        public static CustomColor darkRed = new CustomColor(100, 0, 0);
-        public static CustomColor lightGreen = new CustomColor(135, 255, 135);
-        public static CustomColor green = new CustomColor(0, 255, 0);
-        public static CustomColor darkGreen = new CustomColor(0, 100, 0);
-        public static CustomColor white = new CustomColor(255, 255, 255);
-        public static CustomColor black = new CustomColor(0, 0, 0);
-        public static CustomColor lightGrey = new CustomColor(175, 175, 175);
-        public static CustomColor grey = new CustomColor(125, 125, 125);
-        public static CustomColor darkGrey = new CustomColor(72, 72, 72);
-        public static CustomColor lightYellow = new CustomColor(255, 255, 135);
-        public static CustomColor yellow = new CustomColor(255, 255, 0);
-        public static CustomColor darkYellow = new CustomColor(153, 153, 0);
-        public static CustomColor lightOrange = new CustomColor(255, 175, 85);
-        public static CustomColor orange = new CustomColor(255, 135, 0);
-        public static CustomColor darkOrange = new CustomColor(175, 110, 0);
-        public static CustomColor ember = new CustomColor(255, 100, 0);
-        public static CustomColor flame = new CustomColor(255, 183, 0);
-        public static CustomColor facility = new CustomColor(70, 120, 90);
-        public static CustomColor steelBlue = new CustomColor(70, 100, 120);
-        public static CustomColor lightBlossom = new CustomColor(255, 222, 236);
-        public static CustomColor blossom = new CustomColor(255, 150, 190);
-        public static CustomColor darkBlossom = new CustomColor(255, 72, 135);
-        public static CustomColor dusk = new CustomColor(255, 72, 100);
-        public static CustomColor lightSkyBlue = new CustomColor(165, 192, 235);
-        public static CustomColor skyBlue = new CustomColor(0, 156, 252);
-        public static CustomColor aquaPain = new CustomColor(0, 255, 255);
-        public static CustomColor hotPink = new CustomColor(255, 105, 180);
-        public static CustomColor magenta = new CustomColor(255, 0, 255);
+        public static readonly CustomColor blue = new CustomColor(0, 0, 255);
+        public static readonly CustomColor lightBlue = new CustomColor(135, 135, 255);
+        public static readonly CustomColor darkBlue = new CustomColor(0, 0, 100);
+        public static readonly CustomColor lightRed = new CustomColor(255, 135, 135);
+        public static readonly CustomColor red = new CustomColor(255, 0, 0);
+        public static readonly CustomColor darkRed = new CustomColor(100, 0, 0);
+        public static readonly CustomColor lightGreen = new CustomColor(135, 255, 135);
+        public static readonly CustomColor green = new CustomColor(0, 255, 0);
+        public static readonly CustomColor darkGreen = new CustomColor(0, 100, 0);
+        public static readonly CustomColor white = new CustomColor(255, 255, 255);
+        public static readonly CustomColor black = new CustomColor(0, 0, 0);
+        public static readonly CustomColor lightGrey = new CustomColor(175, 175, 175);
+        public static readonly CustomColor grey = new CustomColor(125, 125, 125);
+        public static readonly CustomColor darkGrey = new CustomColor(72, 72, 72);
+        public static readonly CustomColor lightYellow = new CustomColor(255, 255, 135);
+        public static readonly CustomColor yellow = new CustomColor(255, 255, 0);
+        public static readonly CustomColor darkYellow = new CustomColor(153, 153, 0);
+        public static readonly CustomColor lightOrange = new CustomColor(255, 175, 85);
+        public static readonly CustomColor orange = new CustomColor(255, 135, 0);
+        public static readonly CustomColor darkOrange = new CustomColor(175, 110, 0);
+        public static readonly CustomColor ember = new CustomColor(255, 100, 0);
+        public static readonly CustomColor flame = new CustomColor(255, 183, 0);
+        public static readonly CustomColor facility = new CustomColor(70, 120, 90);
+        public static readonly CustomColor steelBlue = new CustomColor(70, 100, 120);
+        public static readonly CustomColor lightBlossom = new CustomColor(255, 222, 236);
+        public static readonly CustomColor blossom = new CustomColor(255, 150, 190);
+        public static readonly CustomColor darkBlossom = new CustomColor(255, 72, 135);
+        public static readonly CustomColor dusk = new CustomColor(255, 72, 100);
+        public static readonly CustomColor lightSkyBlue = new CustomColor(165, 192, 235);
+        public static readonly CustomColor skyBlue = new CustomColor(0, 156, 252);
+        public static readonly CustomColor aquaPain = new CustomColor(0, 255, 255);
+        public static readonly CustomColor hotPink = new CustomColor(255, 105, 180);
+        public static readonly CustomColor magenta = new CustomColor(255, 0, 255);
 
         Color4 baseColor;//color is stored using system color struct
 

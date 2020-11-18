@@ -36,7 +36,7 @@ namespace RabbetGameEngine
         /// <summary>
         /// How many minutes a day night cycle will take
         /// </summary>
-        private int dayNightCycleMinutes = 1;
+        private int dayNightCycleMinutes = 15;
 
         /// <summary>
         /// Total number of ticks in a day night cycle from start to finish
@@ -88,19 +88,31 @@ namespace RabbetGameEngine
 
         private void buildStars()//must be done before building skybox.
         {
-            totalStars = rand.Next(2000, 2501);
+            totalStars = rand.Next(3000,3501);
             PointParticle[] points = new PointParticle[totalStars];
-            float starColorStrength = (float)rand.NextDouble() * 0.3072F + 0.05F;
-            float maxStarRadius = (float)rand.NextDouble() * 0.025f + 0.01F;
+            float starColorStrength = 1 * 0.1072F + 0.2F;
+            float maxStarRadius = 0.01F;
             for (int i = 0; i < totalStars; i++)
             {
+                Vector3 pos = new Vector3(0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble());
                 points[i] = new PointParticle(
-                    new Vector3(0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble()).Normalized(),
+                    pos.Normalized(),
                     new Vector4(1.0F - (float)rand.NextDouble() * starColorStrength, 1.0F - (float)rand.NextDouble() * starColorStrength, 1.0F - (float)rand.NextDouble() * starColorStrength, 1.0F),
-                    (float)rand.NextDouble() * maxStarRadius,
+                    (float)rand.NextDouble() * maxStarRadius + 0.0025F,
                     false
                     );
             }
+            Vector3 galaxyPlaneNormal = new Vector3(0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble()).Normalized();
+            float galaxyClusterStrength = 0.95F;
+
+            float distToPlane = 0;
+            for(int i = 0; i < totalStars/1.5F; i++)
+            {
+                distToPlane = Vector3.Dot(galaxyPlaneNormal, points[i].pos);
+                points[i].pos += galaxyPlaneNormal * (-distToPlane * galaxyClusterStrength);
+                points[i].pos.Normalize();
+            }
+
             stars = new PointCloudModel(points, false);
         }
 
