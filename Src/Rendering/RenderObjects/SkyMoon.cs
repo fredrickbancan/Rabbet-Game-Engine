@@ -5,7 +5,7 @@ namespace RabbetGameEngine
 {
     public class SkyMoon
     {
-        public static readonly int totalMoonTextures = 3;
+        public static readonly int totalMoonTextures = 4;
         public static readonly int moonTextureSheetWidthHeight = 1024;
         public static readonly int moonTextureWidthHeight = 256;
         public Sprite3D sprite;
@@ -45,10 +45,10 @@ namespace RabbetGameEngine
             cyclePercent = MathUtil.normalizeClamped(0, maxCycleTicks, cycleTicks);
             skyAngle = MathUtil.radians(cyclePercent * 360.0F) + angleOffset;
             //TODO: Implement random orbits.
-            float rotX = (float)MathF.Cos(skyAngle);
-            float rotY = (float)MathF.Sin(skyAngle);
-            float rotZ = (float)MathF.Cos(skyAngle);
-            skyDirection = new Vector3(rotX, rotY, 0.11F).Normalized();
+            float rotX = MathF.Sin(skyAngle * orbitDirection.X);
+            float rotY = MathF.Sin(skyAngle);
+            float rotZ = 0;//- MathF.Sin(skyAngle * orbitDirection.Y);
+            skyDirection = new Vector3(rotX, rotY, rotZ).Normalized();
             sprite.position = skyDirection;
         }
     }

@@ -17,9 +17,10 @@ vec4 lookAtZeroRotationNoFlip(float rad)
 {
     vec4 endPos = vec4(corner.x * rad * 2, corner.y * rad * 2, 0, 0);
     mat4 result = mat4(0);
+    vec3 up = vec3(0,1,0);
     vec3 dir = -spritePos.xyz;
-    vec3 up = vec3(0, 1, 0);
-    vec3 xAxis = cross(up, dir);
+    bool b = dir.x < 0 || dir.z < 0;
+    vec3 xAxis = cross(b ? -up : up, dir);//this method of avoiding rotation only works if rotation is aligned with perfectly with up.
     xAxis = normalize(xAxis);
     vec3 yAxis = cross(dir, xAxis);
     yAxis = normalize(yAxis);

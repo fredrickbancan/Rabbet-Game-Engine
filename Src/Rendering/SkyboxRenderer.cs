@@ -65,6 +65,8 @@ namespace RabbetGameEngine
             ShaderUtil.tryGetShader(ShaderUtil.moonsName, out moonsShader);
             TextureUtil.tryGetTexture("dither", out ditherTex);
             TextureUtil.tryGetTexture("moons", out moonsTex);
+            moonsTex.use();
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
         }
 
         public static void setSkyboxToDraw(Planet p)
@@ -147,14 +149,12 @@ namespace RabbetGameEngine
             //drawing stars
             if (starsVAO != null)
             {
-                GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.DstAlpha);//additive blending
                 starsVAO.bind();
                 starsShader.use();
                 starsShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                 starsShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
                 GL.DepthRange(0.9999960f, 0.999961f);
                 GL.DrawArrays(PrimitiveType.Points, 0, skyboxToDraw.totalStars);
-                GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
                 Renderer.totalDraws++;
             }
 
@@ -169,10 +169,7 @@ namespace RabbetGameEngine
 
             
                 //TODO: add glow effect to moons
-                //TODO: Fix stars and moon glow overlap problem
-                //TODO: Look into proper billboard quads for moons so they can go upside down and dont follow camera.(will require instancing)
-
-
+                //TODO: Fix stars glow  and moon glow overlap problem
 
             GL.DepthRange(0, 1);
         }

@@ -191,7 +191,7 @@ namespace RabbetGameEngine
         {
             Matrix4 result = Matrix4.Identity;
             bool b = dir.X < 0 || dir.Z < 0;
-            Vector3 xAxis = Vector3.Cross(b ? -up : up, dir);
+            Vector3 xAxis = Vector3.Cross(b ? -up : up, dir);//this method of avoiding rotation only works if rotation is aligned with perfectly with up.
             xAxis.NormalizeFast();
             Vector3 yAxis = Vector3.Cross(dir, xAxis);
             yAxis.NormalizeFast();

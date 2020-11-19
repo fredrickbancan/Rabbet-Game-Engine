@@ -80,7 +80,7 @@ namespace RabbetGameEngine
             sunColor = CustomColor.lightYellow;
             sunColorDawn = CustomColor.lightYellow;
             sunColorDusk = CustomColor.flame;
-            dayNightCycleMinutes = rand.Next(25,35);
+            dayNightCycleMinutes = rand.Next(15,61);
             totalDayNightTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(dayNightCycleMinutes * 60);
             dayNightTicks = totalDayNightTicks / 4;
             setDrawDistanceAndFog(150.0F);
@@ -94,19 +94,19 @@ namespace RabbetGameEngine
         {
             totalMoons = rand.Next(1, 101);
             moons = new SkyMoon[totalMoons];
-            float moonColorStrength = 0.3572F;
-            float maxMoonRadius = 0.15F;
+            float moonColorStrength = 0.072F;
+            float maxMoonRadius = 0.075F;
             float minMoonRadius = 0.05F;
             for (int i = 0; i < totalMoons; i++)
             {
                 moons[i] = new SkyMoon(
-                    new Vector3(0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble()).Normalized(),
-                    new Vector2(0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble()).Normalized(),
+                    new Vector3((0.9999F - (float)rand.NextDouble() * 0.9999F) + 0.0001F, (0.9999F - (float)rand.NextDouble() * 0.9999F) + 0.0001F, (0.9999F - (float)rand.NextDouble()*0.9999F) + 0.0001F).Normalized(),
+                    new Vector2((0.9999F - (float)rand.NextDouble() * 0.9999F) + 0.0001F, (0.9999F - (float)rand.NextDouble() * 0.9999F) + 0.0001F).Normalized(),
                     new Vector4(1.0F - (float)rand.NextDouble() * moonColorStrength, 1.0F - (float)rand.NextDouble() * moonColorStrength, 1.0F - (float)rand.NextDouble() * moonColorStrength, 1.0F),
                     (float)rand.NextDouble() * maxMoonRadius + minMoonRadius,
                     (float)rand.NextDouble() * 360.0F,
                     rand.Next(0, SkyMoon.totalMoonTextures),
-                    1/*rand.Next(15,25)*/);
+                    1/*rand.Next(5,15)*/);
             }
         }
         private void tickMoons()
