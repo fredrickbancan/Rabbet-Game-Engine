@@ -24,5 +24,5 @@ void main()
     float coordLength = length(centerVec);
 	float fade = pow(sqrt(1.05 - coordLength), 32);
 	color = vec4(sunColor, fade);
-	color += vec4(texture2D(uTexture, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0 / 128.0));//dithering
+	color.a += texture2D(uTexture, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0 / 128.0);//dithering
 }

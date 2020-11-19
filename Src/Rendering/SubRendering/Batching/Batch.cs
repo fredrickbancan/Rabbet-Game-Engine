@@ -3,10 +3,7 @@ using System;
 
 namespace RabbetGameEngine.SubRendering
 {
-    //TODO: Change all text and gui quad rendering to use GL_QUADS so they do not require indices.
-    //TODO: Implement new VAO system and adding to batches with resizing arrays AND vao buffers.
-    //Too many if statements in adding to batches is slow.
-    //complexity increases when adding new data types/arrays
+    //TODO: replace look at camera function in iSphere shaders with new faster one. (found in mathutil and in moons.shader)
     public class Batch
     { 
         public static readonly int vectorSize = sizeof(float) * 3;

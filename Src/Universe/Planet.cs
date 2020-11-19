@@ -95,8 +95,8 @@ namespace RabbetGameEngine
             totalMoons = rand.Next(1, 101);
             moons = new SkyMoon[totalMoons];
             float moonColorStrength = 0.3572F;
-            float maxMoonRadius = 0.055F;
-            float minMoonRadius = 0.015F;
+            float maxMoonRadius = 0.15F;
+            float minMoonRadius = 0.05F;
             for (int i = 0; i < totalMoons; i++)
             {
                 moons[i] = new SkyMoon(
@@ -304,7 +304,7 @@ namespace RabbetGameEngine
             horizonColor = horizonColorDawn.mix(horizonColorDusk, MathUtil.normalizeClamped(0.25F, 0.75F, dayNightPercent));
             sunColor = sunColorDawn.mix(sunColorDusk, MathUtil.normalizeClamped(0.25F, 0.75F, dayNightPercent));
             sunAngle = MathUtil.radians(dayNightPercent * 360.0F) - MathUtil.radians(90.0F);
-            sunDirection = new Vector3(MathF.Cos(sunAngle), MathF.Sin(sunAngle), 0).Normalized();
+            sunDirection = new Vector3(MathF.Cos(sunAngle), MathF.Sin(sunAngle), 0.0F).Normalized();
             sunHeight = (MathF.Sin(sunAngle) + 1) * 0.5F;
             tickMoons();
         }

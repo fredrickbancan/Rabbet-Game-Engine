@@ -48,7 +48,7 @@ namespace RabbetGameEngine
             float rotX = (float)MathF.Cos(skyAngle);
             float rotY = (float)MathF.Sin(skyAngle);
             float rotZ = (float)MathF.Cos(skyAngle);
-            skyDirection = new Vector3(rotX, rotY, 0).Normalized();
+            skyDirection = new Vector3(rotX, rotY, 0.11F).Normalized();
             sprite.position = skyDirection;
         }
     }

@@ -192,7 +192,6 @@ namespace RabbetGameEngine
             windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
             GUIManager.onTick();
             MainGUI.onTick();
-            currentPlanet.spawnVFXInWorld(new VFXSnowParticle(new Vector3(-privateRand.Next(-50, 50), 20, -privateRand.Next(-50, 50))));
             currentPlanet.onTick();
             Renderer.onTick();
             SoundManager.onTick();

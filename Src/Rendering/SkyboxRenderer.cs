@@ -96,8 +96,12 @@ namespace RabbetGameEngine
             moonsVAO.beginBuilding();
             VertexBufferLayout ml = new VertexBufferLayout();
             Sprite3D.configureLayout(ml);
+            ml.instancedData = true;
             moonsVAO.addBufferDynamic(p.totalMoons * Sprite3D.sizeInBytes, ml);
             moonsVAO.updateBuffer(0, moonBuffer, p.totalMoons * Sprite3D.sizeInBytes);
+            VertexBufferLayout il = new VertexBufferLayout();
+            il.add(VertexAttribPointerType.Float, 2);
+            moonsVAO.addInstanceBuffer(QuadPrefab.quadVertexPositions2D, sizeof(float)*2, il);
             moonsVAO.finishBuilding();
         }
 
@@ -107,23 +111,15 @@ namespace RabbetGameEngine
             {
                 return;
             }
-            ditherTex.use();
 
             //drawing skybox
             skyVAO.bind();
+            ditherTex.use();
             skyboxShader.use();
             skyboxShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             skyboxShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
             GL.DepthRange(0.999999f, 1);
             GL.DrawElements(PrimitiveType.Triangles, skyboxModel.indices.Length, DrawElementsType.UnsignedInt, 0);
-            Renderer.totalDraws++;
-
-            //drawing sun
-            sunShader.use();
-            sunShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
-            sunShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
-            GL.DepthRange(0.9999940f, 0.999941f);
-            GL.DrawArrays(PrimitiveType.Points, 0, 1);
             Renderer.totalDraws++;
 
             //drawing moons
@@ -135,12 +131,18 @@ namespace RabbetGameEngine
                 moonsShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                 moonsShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
                 GL.DepthRange(0.9999900f, 0.999901f);
-                GL.DrawArrays(PrimitiveType.Points, 0, skyboxToDraw.totalMoons);
+                GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, skyboxToDraw.totalMoons);
                 Renderer.totalDraws++;
             }
-                //TODO: add glow effect to moons
-                //TODO: Fix stars and moon glow overlap problem
-                //TODO: Look into proper billboard quads for moons so they can go upside down and dont follow camera.(will require instancing)
+
+            //drawing horizon shroud
+            shroudVAO.bind();
+            horizonShroudShader.use();
+            horizonShroudShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+            horizonShroudShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
+            GL.DepthRange(0.9999800f, 0.999801f);
+            GL.DrawElements(PrimitiveType.Triangles, shroudModel.indices.Length, DrawElementsType.UnsignedInt, 0);
+            Renderer.totalDraws++;
 
             //drawing stars
             if (starsVAO != null)
@@ -156,15 +158,22 @@ namespace RabbetGameEngine
                 Renderer.totalDraws++;
             }
 
-
-            //drawing horizon shroud
-            shroudVAO.bind();
-            horizonShroudShader.use();
-            horizonShroudShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
-            horizonShroudShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
-            GL.DepthRange(0.9999800f, 0.999801f);
-            GL.DrawElements(PrimitiveType.Triangles, shroudModel.indices.Length, DrawElementsType.UnsignedInt, 0);
+            //drawing sun
+            sunShader.use();
+            ditherTex.use();
+            sunShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+            sunShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
+            GL.DepthRange(0.9999940f, 0.999941f);
+            GL.DrawArrays(PrimitiveType.Points, 0, 1);
             Renderer.totalDraws++;
+
+            
+                //TODO: add glow effect to moons
+                //TODO: Fix stars and moon glow overlap problem
+                //TODO: Look into proper billboard quads for moons so they can go upside down and dont follow camera.(will require instancing)
+
+
+
             GL.DepthRange(0, 1);
         }
 
@@ -204,7 +213,6 @@ namespace RabbetGameEngine
                 moonsVAO.bind();
                 moonsVAO.updateBuffer(0, moonBuffer, skyboxToDraw.totalMoons * Sprite3D.sizeInBytes);
                 moonsShader.use();
-                moonsShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
                 moonsShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
             }
         }
