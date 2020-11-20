@@ -97,16 +97,19 @@ namespace RabbetGameEngine
             float moonColorStrength = 0.072F;
             float maxMoonRadius = 0.075F;
             float minMoonRadius = 0.05F;
+            float spacing = 1.0F / (float)totalMoons * 0.2F;
             for (int i = 0; i < totalMoons; i++)
             {
+                float orbitScale = 1 - i * spacing;
                 moons[i] = new SkyMoon(
-                    new Vector3((0.9999F - (float)rand.NextDouble() * 0.9999F) + 0.0001F, (0.9999F - (float)rand.NextDouble() * 0.9999F) + 0.0001F, (0.9999F - (float)rand.NextDouble()*0.9999F) + 0.0001F).Normalized(),
-                    new Vector2((0.9999F - (float)rand.NextDouble() * 0.9999F) + 0.0001F, (0.9999F - (float)rand.NextDouble() * 0.9999F) + 0.0001F).Normalized(),
+                    new Vector3((0.9999F - (float)rand.NextDouble() * 0.9999F) + 0.0001F, (0.9999F - (float)rand.NextDouble() * 0.9999F) + 0.0001F, (0.9999F - (float)rand.NextDouble()*0.9999F) + 0.0001F).Normalized() * orbitScale,
+                    new Vector2((0.4999F - (float)rand.NextDouble() * 0.9999F) + 0.0001F, (0.4999F - (float)rand.NextDouble() * 0.9999F) + 0.0001F).Normalized(),
                     new Vector4(1.0F - (float)rand.NextDouble() * moonColorStrength, 1.0F - (float)rand.NextDouble() * moonColorStrength, 1.0F - (float)rand.NextDouble() * moonColorStrength, 1.0F),
                     (float)rand.NextDouble() * maxMoonRadius + minMoonRadius,
                     (float)rand.NextDouble() * 360.0F,
                     rand.Next(0, SkyMoon.totalMoonTextures),
-                    1/*rand.Next(5,15)*/);
+                    1/*rand.Next(5,15)*/,
+                    orbitScale);
             }
         }
         private void tickMoons()

@@ -17,6 +17,7 @@ namespace RabbetGameEngine
         private static Shader horizonShroudShader = null;
         private static Shader starsShader = null;
         private static Shader moonsShader = null;
+        private static Shader moonGlowShader = null;
         private static VertexArrayObject skyVAO = null;
         private static VertexArrayObject shroudVAO = null;
         private static VertexArrayObject starsVAO = null;
@@ -59,10 +60,21 @@ namespace RabbetGameEngine
             shroudVAO.finishBuilding();
 
             ShaderUtil.tryGetShader(ShaderUtil.skyboxName, out skyboxShader);
+            skyboxShader.use();
+            skyboxShader.setUniform1I("ditherTex", 1);
+
             ShaderUtil.tryGetShader(ShaderUtil.sunName, out sunShader);
+            sunShader.use();
+            sunShader.setUniform1I("ditherTex", 1);
+
             ShaderUtil.tryGetShader(ShaderUtil.skyboxShroudName, out horizonShroudShader);
             ShaderUtil.tryGetShader(ShaderUtil.starsName, out starsShader);
             ShaderUtil.tryGetShader(ShaderUtil.moonsName, out moonsShader);
+
+            ShaderUtil.tryGetShader(ShaderUtil.moonGlowName, out moonGlowShader);
+            moonGlowShader.use();
+            moonGlowShader.setUniform1I("ditherTex", 1);
+
             TextureUtil.tryGetTexture("dither", out ditherTex);
             TextureUtil.tryGetTexture("moons", out moonsTex);
             moonsTex.use();
@@ -94,6 +106,14 @@ namespace RabbetGameEngine
                 moonBuffer[i] = p.getMoons()[i].sprite;
             }
 
+            Vector2[] axies = new Vector2[p.totalMoons];
+
+            for (int i = 0; i < p.totalMoons; i++)
+            {
+                Vector2 dir = p.getMoons()[i].orbitDirection;
+                Vector2 axis = new Vector2(dir.Y, -dir.X);
+                axies[i] = axis;
+            }
             moonsVAO = new VertexArrayObject();
             moonsVAO.beginBuilding();
             VertexBufferLayout ml = new VertexBufferLayout();
@@ -101,6 +121,10 @@ namespace RabbetGameEngine
             ml.instancedData = true;
             moonsVAO.addBufferDynamic(p.totalMoons * Sprite3D.sizeInBytes, ml);
             moonsVAO.updateBuffer(0, moonBuffer, p.totalMoons * Sprite3D.sizeInBytes);
+            VertexBufferLayout al = new VertexBufferLayout();
+            al.add(VertexAttribPointerType.Float, 2);
+            al.instancedData = true;
+            moonsVAO.addBuffer(axies, sizeof(float) * 2, al);
             VertexBufferLayout il = new VertexBufferLayout();
             il.add(VertexAttribPointerType.Float, 2);
             moonsVAO.addInstanceBuffer(QuadPrefab.quadVertexPositions2D, sizeof(float)*2, il);
@@ -113,64 +137,65 @@ namespace RabbetGameEngine
             {
                 return;
             }
-
+            GL.ActiveTexture(TextureUnit.Texture1);
+            ditherTex.use();
+            GL.ActiveTexture(TextureUnit.Texture0);
+            Matrix4 proj = Renderer.projMatrix;
+            Matrix4 view = viewMatrix.ClearTranslation();
             //drawing skybox
             skyVAO.bind();
-            ditherTex.use();
             skyboxShader.use();
-            skyboxShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
-            skyboxShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
+            skyboxShader.setUniformMat4F("projectionMatrix", proj);
+            skyboxShader.setUniformMat4F("viewMatrix", view);
             GL.DepthRange(0.999999f, 1);
             GL.DrawElements(PrimitiveType.Triangles, skyboxModel.indices.Length, DrawElementsType.UnsignedInt, 0);
             Renderer.totalDraws++;
 
-            //drawing moons
-            if (moonsVAO != null)
-            {
-                moonsVAO.bind();
-                moonsTex.use();
-                moonsShader.use();
-                moonsShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
-                moonsShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
-                GL.DepthRange(0.9999900f, 0.999901f);
-                GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, skyboxToDraw.totalMoons);
-                Renderer.totalDraws++;
-            }
-
             //drawing horizon shroud
             shroudVAO.bind();
             horizonShroudShader.use();
-            horizonShroudShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
-            horizonShroudShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
-            GL.DepthRange(0.9999800f, 0.999801f);
+            horizonShroudShader.setUniformMat4F("projectionMatrix", proj);
+            horizonShroudShader.setUniformMat4F("viewMatrix", view);
+            GL.DepthRange(0.99998f, 0.99999f);
             GL.DrawElements(PrimitiveType.Triangles, shroudModel.indices.Length, DrawElementsType.UnsignedInt, 0);
             Renderer.totalDraws++;
 
+            //drawing moons
+            moonsVAO.bind();
+            moonsTex.use();
+            moonsShader.use();
+            moonsShader.setUniformMat4F("projectionMatrix", proj);
+            moonsShader.setUniformMat4F("viewMatrix", view);
+            GL.DepthRange(0.99998f, 0.999994f);
+            GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, skyboxToDraw.totalMoons);
+            Renderer.totalDraws++;
+
             //drawing stars
-            if (starsVAO != null)
-            {
-                starsVAO.bind();
-                starsShader.use();
-                starsShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
-                starsShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
-                GL.DepthRange(0.9999960f, 0.999961f);
-                GL.DrawArrays(PrimitiveType.Points, 0, skyboxToDraw.totalStars);
-                Renderer.totalDraws++;
-            }
+            starsVAO.bind();
+            starsShader.use();
+            starsShader.setUniformMat4F("projectionMatrix", proj);
+            starsShader.setUniformMat4F("viewMatrix", view);
+            GL.DepthRange(0.999996f, 0.999996f);
+            GL.DrawArrays(PrimitiveType.Points, 0, skyboxToDraw.totalStars);
+            Renderer.totalDraws++;
 
             //drawing sun
             sunShader.use();
-            ditherTex.use();
-            sunShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
-            sunShader.setUniformMat4F("viewMatrix", viewMatrix.ClearTranslation());
-            GL.DepthRange(0.9999940f, 0.999941f);
+            sunShader.setUniformMat4F("projectionMatrix", proj);
+            sunShader.setUniformMat4F("viewMatrix", view);
+            GL.DepthRange(0.999995f, 0.9999951f);
             GL.DrawArrays(PrimitiveType.Points, 0, 1);
             Renderer.totalDraws++;
 
-            
-                //TODO: add glow effect to moons
-                //TODO: Fix stars glow  and moon glow overlap problem
-
+            //drawing moon glow
+            moonsVAO.bind();
+            moonGlowShader.use();
+            moonGlowShader.setUniformMat4F("projectionMatrix", proj);
+            moonGlowShader.setUniformMat4F("viewMatrix", view);
+            GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, skyboxToDraw.totalMoons);
+            GL.DepthRange(0.999994f, 0.0999941f);
+            Renderer.totalDraws++;
+            //TODO: Fix stars glow  and moon glow overlap problem
             GL.DepthRange(0, 1);
         }
 
@@ -192,25 +217,24 @@ namespace RabbetGameEngine
             sunShader.setUniformVec3F("sunColor", skyboxToDraw.getSunColor());
             sunShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
 
-            if (starsVAO != null)
+            if (skyboxToDraw != null)
             {
                 starsShader.use();
                 starsShader.setUniformMat4F("modelMatrix", MathUtil.dirVectorToRotationNoFlip(skyboxToDraw.getSunDirection()));
                 starsShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
                 starsShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
-            }
-
-            if (moonsVAO != null)
-            {
+              
                 SkyMoon[] m = skyboxToDraw.getMoons();
                 for (int i = 0; i < skyboxToDraw.totalMoons; i++)
                 {
-                    moonBuffer[i] = m[i].sprite;
+                    moonBuffer[(skyboxToDraw.totalMoons-1) - i] = m[i].sprite;//reverse order to prevent alpha blending of overlapping moons
                 }
                 moonsVAO.bind();
                 moonsVAO.updateBuffer(0, moonBuffer, skyboxToDraw.totalMoons * Sprite3D.sizeInBytes);
                 moonsShader.use();
                 moonsShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
+                moonGlowShader.use();
+                moonGlowShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
             }
         }
 

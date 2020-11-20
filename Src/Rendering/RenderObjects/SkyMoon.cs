@@ -16,14 +16,16 @@ namespace RabbetGameEngine
         private float cyclePercent = 0;
         private float skyAngle = 0;
         private float angleOffset = 0;
-        public SkyMoon(Vector3 initialPos, Vector2 orbitDirectionXZ, Vector4 color, float radius, float angleOffset, int textureIndex, int cycleMinutes)
+        private float orbitScale = 0;
+        public SkyMoon(Vector3 initialPos, Vector2 orbitDirectionXZ, Vector4 color, float radius, float angleOffset, int textureIndex, int cycleMinutes, float orbitScale)
         {
+            this.orbitScale = orbitScale;
             this.orbitDirection = orbitDirectionXZ;
             this.angleOffset = angleOffset;
             skyDirection = initialPos;
             maxCycleTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(cycleMinutes * 60);
             sprite.position = initialPos;
-            sprite.scale = new Vector3(radius, 1, 1);
+            sprite.scale = new Vector3(radius, 1, 1) * orbitScale;
             sprite.color = color;
             int indNumWidthHeight = moonTextureSheetWidthHeight / moonTextureWidthHeight;
             float texFract = MathUtil.normalize(0, moonTextureSheetWidthHeight, moonTextureWidthHeight);
@@ -45,11 +47,12 @@ namespace RabbetGameEngine
             cyclePercent = MathUtil.normalizeClamped(0, maxCycleTicks, cycleTicks);
             skyAngle = MathUtil.radians(cyclePercent * 360.0F) + angleOffset;
             //TODO: Implement random orbits.
-            float rotX = MathF.Sin(skyAngle * orbitDirection.X);
+            float rotX = MathF.Cos(skyAngle);
             float rotY = MathF.Sin(skyAngle);
-            float rotZ = 0;//- MathF.Sin(skyAngle * orbitDirection.Y);
-            skyDirection = new Vector3(rotX, rotY, rotZ).Normalized();
-            sprite.position = skyDirection;
+            float rotZ = -MathF.Cos(skyAngle);
+           //skyDirection = new Vector3(rotX * orbitDirection.X, rotY, rotZ * orbitDirection.Y).Normalized();
+            skyDirection = new Vector3(MathF.Cos(skyAngle), MathF.Sin(skyAngle), 0).Normalized();
+            sprite.position = skyDirection * orbitScale;
         }
     }
 }

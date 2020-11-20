@@ -29,7 +29,7 @@ uniform vec3 skyAmbient;
 uniform vec3 skyHorizon;
 uniform vec3 fogColor;
 uniform vec3 sunDir;
-uniform sampler2D uTexture;
+uniform sampler2D ditherTex;
 void main()
 {
 	vec3 fragDir = normalize(worldSpacePos.xyz);
@@ -50,7 +50,7 @@ void main()
 		float sunDirDot = dot(vec3(0, 1, 0), sunDir);
 		color.rgb *= 1 - (fragDir.y * 1 - ((sunDirDot + 1 )* 0.5));
 		color.rgb *= 0.5;
-		color += vec4(texture2D(uTexture, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0/128.0));//dithering
+		color += vec4(texture2D(ditherTex, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0/128.0));//dithering
 		color.a = 1;
 	}
 }

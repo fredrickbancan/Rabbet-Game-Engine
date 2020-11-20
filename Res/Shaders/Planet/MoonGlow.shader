@@ -1,4 +1,4 @@
-﻿//This shader will be for a simple point sun
+﻿//This shader will be for gl_points on the moons to emulate moon glow
 #shader vertex
 #version 330 core
 layout(location = 0) in vec4 spritePos;
@@ -10,9 +10,9 @@ layout(location = 5) in vec2 corner;//instanced quad corner
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 out vec4 vColor;
-out vec2 uv;
 out vec2 coords;
 uniform vec3 sunDir;
+uniform vec2 viewPortSize;
 
 vec4 lookAtZeroRotationNoFlip(float rad)
 {
@@ -42,32 +42,28 @@ vec4 lookAtZeroRotationNoFlip(float rad)
 
 void main()
 {
-    coords = corner * 2.0;
-    uv = vec2(0, 0);
-    uv.x = corner.x < 0.0 ? spriteUVMinMax.x : spriteUVMinMax.z;
-    uv.y = corner.y < 0.0 ? -spriteUVMinMax.y : -spriteUVMinMax.w;
+	gl_Position = projectionMatrix * viewMatrix * lookAtZeroRotationNoFlip(spriteScale.x * 1.5);
+    coords = corner * 2;
     vColor = spriteColor;
     float d = 1 - (dot(sunDir, spritePos.xyz) + 1) * 0.5F;
-    vColor.a = (d * d) * 1.25F;
-	gl_Position = projectionMatrix * viewMatrix * lookAtZeroRotationNoFlip(spriteScale.x);
+    vColor.a = pow(d, 4);
 }
 
 #shader fragment
 #version 330 core
+
+in vec2 coords;
 out vec4 color;
 in vec4 vColor;
-in vec2 uv;
-in vec2 coords;
-uniform sampler2D uTexture;
-
+uniform sampler2D ditherTex;
 void main()
 {
-    float d = dot(coords, coords);
-
-    if (d >= 0.95)
+    float coordLength = dot(coords, coords);
+    if (coordLength > 0.72)
     {
         discard;
-	}
-	vec4 textureColor = texture(uTexture, uv) * vColor;
-	color = textureColor;
+    }
+    color = vColor;
+    color.a *= pow(sqrt(1.15 - coordLength * 0.5), 31);
+    color.a += texture2D(ditherTex, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0 / 128.0);//dithering
 }
