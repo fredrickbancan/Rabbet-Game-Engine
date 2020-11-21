@@ -170,8 +170,10 @@ namespace RabbetGameEngine
             GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, skyboxToDraw.totalMoons);
             Renderer.totalDraws++;
 
+            GL.DepthMask(false);
+
             //drawing stars
-            starsVAO.bind();
+            starsVAO.bind(); 
             starsShader.use();
             starsShader.setUniformMat4F("projectionMatrix", proj);
             starsShader.setUniformMat4F("viewMatrix", view);
@@ -195,7 +197,8 @@ namespace RabbetGameEngine
             GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, skyboxToDraw.totalMoons);
             GL.DepthRange(0.999994f, 0.0999941f);
             Renderer.totalDraws++;
-            //TODO: Fix stars glow  and moon glow overlap problem
+
+            GL.DepthMask(true);
             GL.DepthRange(0, 1);
         }
 
