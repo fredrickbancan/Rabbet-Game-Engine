@@ -19,7 +19,7 @@ vec4 lookAtZeroRotationNoFlip(float rad)
     vec4 endPos = vec4(corner.x * rad * 2, corner.y * rad * 2, 0, 0);
     mat4 result = mat4(0);
     vec3 dir = normalize(-spritePos.xyz);
-    vec3 up = vec3(axis.x, 0, -axis.y);
+    vec3 up = vec3(axis.x, 0, axis.y);
     vec3 xAxis = cross(up, dir);
     xAxis = normalize(xAxis);
     vec3 yAxis = cross(dir, xAxis);

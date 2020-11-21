@@ -73,11 +73,6 @@ namespace RabbetGameEngine
         /*Takes in 3 floats and a smooth factor. Smooths the 3 values with strength of smooth factor. Smooth factor of 0 does nothing, and 1 makes each value the average.*/
         public static void smooth3(ref float x, ref float y, ref float z, float factor)
         {
-            if (factor <= 0)
-                return;
-            if (factor > 1F)
-                factor = 1F;
-
             float avg = (x + y + z) / 3F;
             x = lerp(x, avg, factor);
             y = lerp(y, avg, factor);

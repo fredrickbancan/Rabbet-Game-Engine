@@ -11,8 +11,6 @@ using System.Linq;
 
 namespace RabbetGameEngine
 {
-    //TODO: Implement changing of sky colors for dusk and dawn.
-    //TODO: add moon with unsynced orbit from sun orbit.
     public class Planet
     {
         private CustomColor fogColor;
@@ -38,7 +36,7 @@ namespace RabbetGameEngine
         /// <summary>
         /// How many minutes a day night cycle will take
         /// </summary>
-        private int dayNightCycleMinutes = 5;
+        private int dayNightCycleMinutes = 3;
 
         /// <summary>
         /// Total number of ticks in a day night cycle from start to finish
@@ -69,11 +67,11 @@ namespace RabbetGameEngine
         private float fogEnd;
         private float drawDistance = 0;
         public Planet(long seed)
-        {//TODO: Change fog color to match horizon color
+        {
             random = Rand.CreateJavaRandom(seed);
             horizonColor = CustomColor.lightOrange;
-            horizonColorDawn = CustomColor.lightOrange;
-            horizonColorDusk = CustomColor.dusk;
+            horizonColorDawn = CustomColor.lightOrange.reduceVibrancy(-0.5F);
+            horizonColorDusk = CustomColor.dusk.reduceVibrancy(-0.5F);
             skyAmbientColor = CustomColor.darkBlue.copy().reduceVibrancy(0.5F);
             fogColor = CustomColor.lightGrey;
             skyColor = CustomColor.skyBlue;
@@ -82,7 +80,7 @@ namespace RabbetGameEngine
             sunColorDusk = CustomColor.flame;
             //dayNightCycleMinutes = rand.Next(15,61);
             totalDayNightTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(dayNightCycleMinutes * 60);
-            dayNightTicks = totalDayNightTicks / 4;
+            dayNightTicks =(int) ((float)(totalDayNightTicks / 4) * 2.8F);//setting to sunset
             setDrawDistanceAndFog(150.0F);
             buildMoons();
             buildStars();
@@ -162,7 +160,8 @@ namespace RabbetGameEngine
 
         public Vector3 getFogColor()
         {
-            return new Vector3();
+            //TODO: make fog color match horizon in direction player is looking.
+            return skyColor.mix(CustomColor.white, 0.8F).setBrightPercent(getGlobalBrightness()*0.8F).toNormalVec3();
         }
         public Vector3 getHorizonColor()
         { 
@@ -241,7 +240,7 @@ namespace RabbetGameEngine
             Renderer.addStaticDrawTriangles("ground", groundTextureName, batchedGround);
 
             //adding world colliders
-            this.addWorldAABB(new AABB(new Vector3(-1000, -2, -1000), new Vector3(1000, 0, 1000)));//AABB for ground
+            this.addWorldAABB(new AABB(new Vector3(-640, -2, -640), new Vector3(640, 0, 640)));//AABB for ground
             this.addWorldAABB(new AABB(new Vector3(-1, 0, -1), new Vector3(1, 1, 1)));//2x1x2 lump in middle of playground
         }
 

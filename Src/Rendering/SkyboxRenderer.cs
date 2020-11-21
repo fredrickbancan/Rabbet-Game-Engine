@@ -112,7 +112,7 @@ namespace RabbetGameEngine
             for (int i = 0; i < p.totalMoons; i++)
             {
                 Vector2 dir = m[i].orbitDirection;
-                Vector2 axis = new Vector2(dir.Y, -dir.X);
+                Vector2 axis = new Vector2(dir.Y, dir.X);
                 axies[p.totalMoons-1-i] = axis;
             }
             moonsVAO = new VertexArrayObject();
@@ -132,7 +132,6 @@ namespace RabbetGameEngine
             moonsVAO.finishBuilding();
         }
 
-        //TODO: Fix z fighting on moons
         public static void drawSkybox(Matrix4 viewMatrix)
         {
             if(skyboxToDraw == null)
