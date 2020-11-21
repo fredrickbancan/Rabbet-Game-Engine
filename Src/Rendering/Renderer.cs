@@ -38,6 +38,7 @@ namespace RabbetGameEngine
         spriteCylinder
     }
 
+    //TODO: Find cause of mysterious 1x1 screenspace quad with text texture behind skybox :/
     public static class Renderer
     {
         private static int privateTotalDrawCallCount;

@@ -101,18 +101,19 @@ namespace RabbetGameEngine
             }
 
             moonBuffer = new Sprite3D[p.totalMoons];
-            for(int i = 0; i < p.totalMoons; i++)
+            SkyMoon[] m = p.getMoons();
+            for (int i = 0; i < p.totalMoons; i++)
             {
-                moonBuffer[i] = p.getMoons()[i].sprite;
+                moonBuffer[(p.totalMoons - 1) - i] = m[i].sprite;//reverse order to prevent alpha blending of overlapping moons
             }
 
             Vector2[] axies = new Vector2[p.totalMoons];
 
             for (int i = 0; i < p.totalMoons; i++)
             {
-                Vector2 dir = p.getMoons()[i].orbitDirection;
+                Vector2 dir = m[i].orbitDirection;
                 Vector2 axis = new Vector2(dir.Y, -dir.X);
-                axies[i] = axis;
+                axies[p.totalMoons-1-i] = axis;
             }
             moonsVAO = new VertexArrayObject();
             moonsVAO.beginBuilding();
@@ -131,6 +132,7 @@ namespace RabbetGameEngine
             moonsVAO.finishBuilding();
         }
 
+        //TODO: Fix z fighting on moons
         public static void drawSkybox(Matrix4 viewMatrix)
         {
             if(skyboxToDraw == null)
@@ -156,7 +158,7 @@ namespace RabbetGameEngine
             horizonShroudShader.use();
             horizonShroudShader.setUniformMat4F("projectionMatrix", proj);
             horizonShroudShader.setUniformMat4F("viewMatrix", view);
-            GL.DepthRange(0.99998f, 0.99999f);
+            GL.DepthRange(0.99995f, 0.99995f);
             GL.DrawElements(PrimitiveType.Triangles, shroudModel.indices.Length, DrawElementsType.UnsignedInt, 0);
             Renderer.totalDraws++;
 
@@ -166,12 +168,12 @@ namespace RabbetGameEngine
             moonsShader.use();
             moonsShader.setUniformMat4F("projectionMatrix", proj);
             moonsShader.setUniformMat4F("viewMatrix", view);
-            GL.DepthRange(0.99998f, 0.999994f);
+            GL.DepthRange(0.99996f, 0.999995f);
             GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, skyboxToDraw.totalMoons);
             Renderer.totalDraws++;
 
             GL.DepthMask(false);
-
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);
             //drawing stars
             starsVAO.bind(); 
             starsShader.use();
@@ -197,7 +199,7 @@ namespace RabbetGameEngine
             GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, skyboxToDraw.totalMoons);
             GL.DepthRange(0.999994f, 0.0999941f);
             Renderer.totalDraws++;
-
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.DepthMask(true);
             GL.DepthRange(0, 1);
         }

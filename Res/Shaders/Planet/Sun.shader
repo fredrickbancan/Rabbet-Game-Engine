@@ -8,7 +8,7 @@ uniform vec3 sunPos;
 uniform vec2 viewPortSize;
 void main()
 {
-	float sunRadius = 2;
+	float sunRadius = 0.75;
 	gl_Position = projectionMatrix * viewMatrix * vec4(sunPos, 1);
 	gl_PointSize = viewPortSize.y * sunRadius;
 }
@@ -25,4 +25,5 @@ void main()
 	float fade = pow(sqrt(1.05 - coordLength), 32);
 	color = vec4(sunColor, fade);
 	color.a += texture2D(ditherTex, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0 / 128.0);//dithering
+	if (color.a <= 0.005) discard;
 }

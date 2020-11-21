@@ -37,19 +37,18 @@ void main()
 	if (fragDir.y > 0)
 	{
 		vec3 skyModified = skyTop;
-		skyModified = mix(skyAmbient, skyTop, (dot(sunDir, fragDir) + 1) * 0.5);
-
-		vec3 skyHorizonModified = skyHorizon;
-		float horizonSunDot = dot(sunDir.xz, fragDir.xz);
-
-		float ratio = 1 - (horizonSunDot + 1) * 0.5F;
-		ratio += fragDir.y * 0.75F;
-
-		color.rgb = mix(skyHorizonModified, skyModified, ratio);
-
 		float sunDirDot = dot(vec3(0, 1, 0), sunDir);
+		float fragDirDot = (dot(sunDir, fragDir) + 1) * 0.5;
+		skyModified = mix(skyAmbient, skyTop, fragDirDot * fragDirDot);
+
+		float horizonRatio = 1 - (fragDirDot + 1) * 0.5;
+		vec3 skyHorizonModified = mix(skyHorizon, skyModified, clamp(horizonRatio*2, 0, 1));
+		horizonRatio += fragDir.y;
+		horizonRatio += clamp(-sunDir.y, 0, 1) * 2;//make horizon color fade to nothing when sun goes over horizon
+		color.rgb = mix(skyHorizonModified, skyModified, clamp(horizonRatio,0,1));
+
 		color.rgb *= 1 - (fragDir.y * 1 - ((sunDirDot + 1 )* 0.5));
-		color.rgb *= 0.5;
+		color = 1.0 - exp(-1.0 * color);//"exposure"
 		color += vec4(texture2D(ditherTex, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0/128.0));//dithering
 		color.a = 1;
 	}

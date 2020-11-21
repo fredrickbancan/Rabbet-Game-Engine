@@ -47,6 +47,8 @@ void main()
     vColor = spriteColor;
     float d = 1 - (dot(sunDir, spritePos.xyz) + 1) * 0.5F;
     vColor.a = pow(d, 4);
+    float h = (sunDir.y + 1) * 0.5F;
+    vColor.a *= 1 - clamp(h * h * 2.0, 0, 1);
 }
 
 #shader fragment
@@ -59,11 +61,8 @@ uniform sampler2D ditherTex;
 void main()
 {
     float coordLength = dot(coords, coords);
-    if (coordLength > 0.72)
-    {
-        discard;
-    }
     color = vColor;
     color.a *= pow(sqrt(1.15 - coordLength * 0.5), 31);
     color.a += texture2D(ditherTex, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0 / 128.0);//dithering
+    if (color.a <= 0.005) discard;
 }

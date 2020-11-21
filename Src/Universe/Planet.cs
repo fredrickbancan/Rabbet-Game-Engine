@@ -38,7 +38,7 @@ namespace RabbetGameEngine
         /// <summary>
         /// How many minutes a day night cycle will take
         /// </summary>
-        private int dayNightCycleMinutes = 1;
+        private int dayNightCycleMinutes = 5;
 
         /// <summary>
         /// Total number of ticks in a day night cycle from start to finish
@@ -69,7 +69,7 @@ namespace RabbetGameEngine
         private float fogEnd;
         private float drawDistance = 0;
         public Planet(long seed)
-        {
+        {//TODO: Change fog color to match horizon color
             random = Rand.CreateJavaRandom(seed);
             horizonColor = CustomColor.lightOrange;
             horizonColorDawn = CustomColor.lightOrange;
@@ -80,7 +80,7 @@ namespace RabbetGameEngine
             sunColor = CustomColor.lightYellow;
             sunColorDawn = CustomColor.lightYellow;
             sunColorDusk = CustomColor.flame;
-            dayNightCycleMinutes = rand.Next(15,61);
+            //dayNightCycleMinutes = rand.Next(15,61);
             totalDayNightTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(dayNightCycleMinutes * 60);
             dayNightTicks = totalDayNightTicks / 4;
             setDrawDistanceAndFog(150.0F);
@@ -92,11 +92,11 @@ namespace RabbetGameEngine
 
         private void buildMoons()
         {
-            totalMoons = rand.Next(1, 101);
+            totalMoons = rand.Next(1, 4);
             moons = new SkyMoon[totalMoons];
             float moonColorStrength = 0.072F;
-            float maxMoonRadius = 0.075F;
-            float minMoonRadius = 0.05F;
+            float maxMoonRadius = 0.045F;
+            float minMoonRadius = 0.02F;
             float spacing = 1.0F / (float)totalMoons * 0.2F;
             for (int i = 0; i < totalMoons; i++)
             {
@@ -108,7 +108,7 @@ namespace RabbetGameEngine
                     (float)rand.NextDouble() * maxMoonRadius + minMoonRadius,
                     (float)rand.NextDouble() * 360.0F,
                     rand.Next(0, SkyMoon.totalMoonTextures),
-                    1/*rand.Next(5,15)*/,
+                    rand.Next(5,15),
                     orbitScale);
             }
         }
@@ -127,7 +127,7 @@ namespace RabbetGameEngine
 
         private void buildStars()//must be done before building skybox.
         {
-            totalStars = rand.Next(3000,3501);
+            totalStars = rand.Next(4000,4501);
             PointParticle[] points = new PointParticle[totalStars];
             float starColorStrength = 0.3072F;
             float maxStarRadius = 0.01F;
@@ -136,7 +136,7 @@ namespace RabbetGameEngine
                 Vector3 pos = new Vector3(0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble());
                 points[i] = new PointParticle(
                     pos.Normalized(),
-                    new Vector4(1.0F - (float)rand.NextDouble() * starColorStrength, 1.0F - (float)rand.NextDouble() * starColorStrength, 1.0F - (float)rand.NextDouble() * starColorStrength, 1.0F),
+                    new Vector4(1.0F - (float)rand.NextDouble() * starColorStrength, 1.0F - (float)rand.NextDouble() * starColorStrength, 1.0F - (float)rand.NextDouble() * starColorStrength, 1.0F - (float)rand.NextDouble() * (starColorStrength * 1.5F)),
                     (float)rand.NextDouble() * maxStarRadius + 0.0025F,
                     false
                     );
@@ -162,20 +162,20 @@ namespace RabbetGameEngine
 
         public Vector3 getFogColor()
         {
-            return fogColor.setBrightPercent(getGlobalBrightness()).toNormalVec3();
+            return new Vector3();
         }
         public Vector3 getHorizonColor()
         { 
-            return horizonColor.mix(CustomColor.white, MathUtil.normalizeClamped(0.5F, 0.75F, sunHeight * sunHeight)).setBrightPercent(MathHelper.Clamp(sunHeight * 2F, 0, 1)).toNormalVec3();
+            return horizonColor.mix(CustomColor.white, MathUtil.normalizeClamped(0.5F, 1, sunHeight * sunHeight * sunHeight)).setBrightPercent(MathHelper.Clamp(sunHeight * 4F, 0, 1)).toNormalVec3();
         }
         public Vector3 getSkyColor()
         {
-            return skyColor.setBrightPercent(sunHeight + (0.5F * 1 - sunHeight * 0.5F)).toNormalVec3();
+            return skyColor.setBrightPercent(MathHelper.Clamp(sunHeight * 1.5F,0,1)).toNormalVec3();
         }
 
         public Vector3 getSkyAmbientColor()
         {
-            return skyAmbientColor.mix(skyColor, MathUtil.normalizeClamped(0.5F, 0.75F, sunHeight * sunHeight)).setBrightPercent(1- sunHeight * sunHeight * 1.25F).toNormalVec3();
+            return skyAmbientColor.mix(skyColor, MathUtil.normalizeClamped(0.5F, 0.75F, sunHeight * sunHeight)).setBrightPercent(MathHelper.Clamp(sunHeight * sunHeight + ambientBrightness * 10, 0, 1)).toNormalVec3();
         }
         public Vector3 getSunDirection()
         {
@@ -192,7 +192,7 @@ namespace RabbetGameEngine
         /// </summary>
         public float getGlobalBrightness()
         {
-            return MathHelper.Clamp(MathF.Pow(sunHeight, 16) + ambientBrightness, 0, 1);
+            return MathHelper.Clamp(MathF.Pow(sunHeight, 4) + ambientBrightness, 0, 1);
         }
 
 
@@ -207,11 +207,7 @@ namespace RabbetGameEngine
         private void generateWorld()//creates the playground and world colliders
         {
             float groundHeight = 0;
-            float playgroundLength = 100;//"playground" is the term i am using for the playable area of the world
-            float playgroundWidth = 100;
-            float wallHeight = 20;
             Model[] unbatchedGroundQuads = new Model[4101];//all ground and wall quads, walls are divided into 4 quads each.
-            Model[] unbatchedWallQuads = new Model[16];
 
             //Generating ground quads
             for (int x = 0; x < 64; x++)
@@ -239,42 +235,13 @@ namespace RabbetGameEngine
             //posX face
             unbatchedGroundQuads[4100] = PlanePrefab.copyModel().scaleVerticesAndUV(new Vector3(1, 1, 2)).rotateVertices(new Vector3(0, 0, 90)).translateVertices(new Vector3(1f, 0.5F, 0)).setColor(new Vector4(0.65F, 0.65F, 0.65F, 1.0F));
 
-            //build negZ wall
-            for (int i = 0; i < 4; i++)
-            {
-                unbatchedWallQuads[i] = QuadPrefab.copyModel().scaleVertices(new Vector3(playgroundWidth / 4, wallHeight, 1)).scaleUV(new Vector2(playgroundWidth / (wallHeight * 4), 1)).translateVertices(new Vector3((-playgroundWidth / 2) + ((playgroundWidth / 4) / 2) + ((playgroundWidth / 4) * i), groundHeight + wallHeight / 2, -playgroundLength / 2)).setColor(new Vector4(0.7F, 0.7F, 0.7F, 1.0F));
-            }
-
-            //build posZ wall
-            for (int i = 0; i < 4; i++)
-            {
-                unbatchedWallQuads[4 + i] = QuadPrefab.copyModel().scaleVertices(new Vector3(playgroundWidth / 4, wallHeight, 1)).scaleUV(new Vector2(playgroundWidth / (wallHeight * 4), 1)).rotateVertices(new Vector3(0, 180, 0)).translateVertices(new Vector3((playgroundWidth / 2) - ((playgroundWidth / 4) / 2) - ((playgroundWidth / 4) * i), groundHeight + wallHeight / 2, playgroundLength / 2)).setColor(new Vector4(0.8F, 0.8F, 0.8F, 1.0F)); ;
-            }
-
-            //build negX wall
-            for (int i = 0; i < 4; i++)
-            {
-                unbatchedWallQuads[8 + i] = QuadPrefab.copyModel().scaleVertices(new Vector3(playgroundLength / 4, wallHeight, 1)).scaleUV(new Vector2(playgroundLength / (wallHeight * 4), 1)).rotateVertices(new Vector3(0, -90, 0)).translateVertices(new Vector3(-playgroundWidth / 2, groundHeight + wallHeight / 2, (-playgroundLength / 2) + ((playgroundLength / 4) / 2) + ((playgroundLength / 4) * i))).setColor(new Vector4(0.65F, 0.65F, 0.65F, 1.0F));
-            }
-
-            //build posX wall
-            for (int i = 0; i < 4; i++)
-            {
-                unbatchedWallQuads[12 + i] = QuadPrefab.copyModel().scaleVertices(new Vector3(playgroundLength / 4, wallHeight, 1)).scaleUV(new Vector2(playgroundLength / (wallHeight * 4), 1)).rotateVertices(new Vector3(0, 90, 0)).translateVertices(new Vector3(playgroundWidth / 2, groundHeight + wallHeight / 2, (playgroundLength / 2) - ((playgroundLength / 4) / 2) - ((playgroundLength / 4) * i))).setColor(new Vector4(0.9F, 0.9F, 0.9F, 1.0F));
-            }
 
             Model batchedGround = TriangleCombiner.combineData(unbatchedGroundQuads);
-            Model batchedWalls = TriangleCombiner.combineData(unbatchedWallQuads);
 
             Renderer.addStaticDrawTriangles("ground", groundTextureName, batchedGround);
-            Renderer.addStaticDrawTriangles("walls", wallTextureName, batchedWalls);
 
             //adding world colliders
-            this.addWorldAABB(new AABB(new Vector3(-(playgroundWidth * 0.5F), -2, -(playgroundLength * 0.5F)), new Vector3(playgroundWidth * 0.5F, 0, playgroundLength * 0.5F)));//AABB for ground
-            this.addWorldAABB(new AABB(new Vector3(-(playgroundWidth * 0.5F), 0, playgroundLength * 0.5F), new Vector3(playgroundWidth * 0.5F, wallHeight, playgroundLength * 0.5F + 2)));//AABB for pos Z wall
-            this.addWorldAABB(new AABB(new Vector3(-(playgroundWidth * 0.5F), 0, -(playgroundLength * 0.5F) - 2), new Vector3(playgroundWidth * 0.5F, wallHeight, -(playgroundLength * 0.5F))));//AABB for neg Z wall
-            this.addWorldAABB(new AABB(new Vector3(playgroundWidth * 0.5F, 0, -(playgroundLength * 0.5F)), new Vector3(playgroundWidth * 0.5F + 2, wallHeight, playgroundLength * 0.5F)));//AABB for pos X wall
-            this.addWorldAABB(new AABB(new Vector3(-(playgroundWidth * 0.5F) - 2, 0, -(playgroundLength * 0.5F)), new Vector3(-(playgroundWidth * 0.5F), wallHeight, playgroundLength * 0.5F)));//AABB for neg X wall
+            this.addWorldAABB(new AABB(new Vector3(-1000, -2, -1000), new Vector3(1000, 0, 1000)));//AABB for ground
             this.addWorldAABB(new AABB(new Vector3(-1, 0, -1), new Vector3(1, 1, 1)));//2x1x2 lump in middle of playground
         }
 
