@@ -72,8 +72,6 @@ namespace RabbetGameEngine
             ShaderUtil.tryGetShader(ShaderUtil.moonsName, out moonsShader);
 
             ShaderUtil.tryGetShader(ShaderUtil.moonGlowName, out moonGlowShader);
-            moonGlowShader.use();
-            moonGlowShader.setUniform1I("ditherTex", 1);
 
             TextureUtil.tryGetTexture("dither", out ditherTex);
             TextureUtil.tryGetTexture("moons", out moonsTex);

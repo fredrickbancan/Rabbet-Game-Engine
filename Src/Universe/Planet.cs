@@ -58,7 +58,6 @@ namespace RabbetGameEngine
         public List<Entity> projectiles = new List<Entity>();
         public List<VFXMovingText3D> debugLabelList = new List<VFXMovingText3D>();
         public List<AABB> worldColliders = new List<AABB>();//list of colliders with no parent, ie, walls.
-        private string wallTextureName = "leafywall";
         private string groundTextureName = "jungleground";
         private static readonly Vector3 fallPlaneRespawnPos = new Vector3(0, 128, 0);
         private static readonly float fallPlaneHeight = -10.0F;

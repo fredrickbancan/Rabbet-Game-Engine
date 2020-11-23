@@ -17,7 +17,9 @@ namespace RabbetGameEngine
                 if (strideFraction > 0) strideFraction = 4 - strideFraction;
                 byte[] RGBData = new byte[height * (width * 3 + strideFraction)];
                 GL.ReadPixels(0, 0, width, height, PixelFormat.Bgr, PixelType.UnsignedByte, RGBData);
-                savePNG(ResourceUtil.getScreenShotFileDir(Application.getAppTimeStamp() + ".png"), width, height, RGBData);
+                string n;
+                savePNG((n = ResourceUtil.getScreenShotFileDir(Application.getAppTimeStamp() + ".png")), width, height, RGBData);
+                Application.infoPrint("Saved screenshot to Screenshots folder, screenshot named: "  + n);
             }
             catch (Exception e)
             {

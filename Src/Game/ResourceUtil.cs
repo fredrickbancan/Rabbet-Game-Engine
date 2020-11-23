@@ -58,7 +58,7 @@ namespace RabbetGameEngine
 
         public static string getScreenShotFileDir(string imageName = "")
         {
-            return resDir + @"ScreenShots\" + imageName;
+            return workingDir + @"\ScreenShots\" + imageName;
         }
     }
 }

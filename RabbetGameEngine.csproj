@@ -14,208 +14,139 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
-    <OutputPath>$(SolutionDir)</OutputPath>
+    <OutputPath>Build\</OutputPath>
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
-    <OutputPath>C:\Users\disckord\Desktop\RabbetGameEngine workspace\Rabbet-Game-Engine\</OutputPath>
+    <OutputPath>Build\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
+    <OutputPath>Build\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
+    <OutputPath>Build\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
+    <OutputPath>Build\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
+    <OutputPath>Build\</OutputPath>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Res\ScreenShots\**" />
-    <EmbeddedResource Remove="Res\ScreenShots\**" />
-    <None Remove="Res\ScreenShots\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="Src\Application.cs" />
-    <Compile Include="Src\Game\CustomColor.cs" />
-    <Compile Include="Src\Game\Debugging\DebugInfo.cs" />
-    <Compile Include="Src\Game\Debugging\Profiler.cs" />
-    <Compile Include="Src\Game\GameInstance.cs" />
-    <Compile Include="Src\Game\GameSettings.cs" />
-    <Compile Include="Src\Game\GUIS\MainGUI.cs" />
-    <Compile Include="Src\Game\IconLoader.cs" />
-    <Compile Include="Src\Game\Input.cs" />
-    <Compile Include="Src\Game\MathUtil.cs" />
-    <Compile Include="Src\Game\PlayerController.cs" />
-    <Compile Include="Src\Game\ResourceUtil.cs" />
-    <Compile Include="Src\Game\ScreenShotter.cs" />
-    <Compile Include="Src\Game\TicksAndFrames.cs" />
-    <Compile Include="Src\Game\TickTimer.cs" />
-    <Compile Include="Src\Physics\AABB.cs" />
-    <Compile Include="Src\Physics\AxisAlignedRay.cs" />
-    <Compile Include="Src\Physics\CollisionHandler.cs" />
-    <Compile Include="Src\Physics\PositionalObject.cs" />
-    <Compile Include="Src\Physics\Ray.cs" />
-    <Compile Include="Src\Rendering\Camera.cs" />
-    <Compile Include="Src\Rendering\GUIComponents\GUICrosshair.cs" />
-    <Compile Include="Src\Rendering\GUIManager.cs" />
-    <Compile Include="Src\Rendering\HitboxRenderer.cs" />
-    <Compile Include="Src\Rendering\Models\EntityModels\EntityCactusModel.cs" />
-    <Compile Include="Src\Rendering\Models\EntityModels\EntityModel.cs" />
-    <Compile Include="Src\Rendering\Models\EntityModels\EntityTankProjectileModel.cs" />
-    <Compile Include="Src\Rendering\Models\MeshUtil.cs" />
-    <Compile Include="Src\Rendering\Models\Model.cs" />
-    <Compile Include="Src\Rendering\Models\OBJLoader.cs" />
-    <Compile Include="Src\Rendering\Models\PointCloudModel.cs" />
-    <Compile Include="Src\Rendering\Models\Prefabs\CubePrefab.cs" />
-    <Compile Include="Src\Rendering\Models\Prefabs\DefaultDebugModel.cs" />
-    <Compile Include="Src\Rendering\Models\Prefabs\PlanePrefab.cs" />
-    <Compile Include="Src\Rendering\Models\Prefabs\QuadPrefab.cs" />
-    <Compile Include="Src\Rendering\Renderer.cs" />
-    <Compile Include="Src\Rendering\RenderObjects\DrawCommand.cs" />
-    <Compile Include="Src\Rendering\RenderObjects\IndexBufferObject.cs" />
-    <Compile Include="Src\Rendering\RenderObjects\IndirectBufferObject.cs" />
-    <Compile Include="Src\Rendering\RenderObjects\InstanceBufferObject.cs" />
-    <Compile Include="Src\Rendering\RenderObjects\PointParticle.cs" />
-    <Compile Include="Src\Rendering\RenderObjects\Shader.cs" />
-    <Compile Include="Src\Rendering\RenderObjects\SkyMoon.cs" />
-    <Compile Include="Src\Rendering\RenderObjects\Sprite3D.cs" />
-    <Compile Include="Src\Rendering\RenderObjects\StaticRenderObject.cs" />
-    <Compile Include="Src\Rendering\RenderObjects\Texture.cs" />
-    <Compile Include="Src\Rendering\RenderObjects\Vertex.cs" />
-    <Compile Include="Src\Rendering\RenderObjects\VertexArrayObject.cs" />
-    <Compile Include="Src\Rendering\RenderObjects\VertexBufferElement.cs" />
-    <Compile Include="Src\Rendering\RenderObjects\VertexBufferLayout.cs" />
-    <Compile Include="Src\Rendering\RenderObjects\VertexBufferObject.cs" />
-    <Compile Include="Src\Rendering\ShaderUtil.cs" />
-    <Compile Include="Src\Rendering\SkyboxRenderer.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Batching\Batch.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Batching\BatchManager.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Batching\BatchUtil.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Batching\LineCombiner.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Batching\QuadCombiner.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Batching\TriangleCombiner.cs" />
-    <Compile Include="Src\Rendering\SubRendering\GUI\GUIScreen.cs" />
-    <Compile Include="Src\Rendering\SubRendering\GUI\GUIScreenComponent.cs" />
-    <Compile Include="Src\Rendering\SubRendering\GUI\GUITextPanel.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\Character.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\FontFace.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\TextModelBuilder2D.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Text\TextProcessing\TextModelBuilder3D.cs" />
-    <Compile Include="Src\Rendering\SubRendering\Text\TextUtil.cs" />
-    <Compile Include="Src\Rendering\TextureUtil.cs" />
-    <Compile Include="Src\Rendering\VFX\VFX.cs" />
-    <Compile Include="Src\Rendering\VFX\VFXLogoSprite3D.cs" />
-    <Compile Include="Src\Rendering\VFX\VFXMovingText3D.cs" />
-    <Compile Include="Src\Rendering\VFX\VFXPointCloud.cs" />
-    <Compile Include="Src\Rendering\VFX\VFXSinglePoint.cs" />
-    <Compile Include="Src\Rendering\VFX\VFXSnowParticle.cs" />
-    <Compile Include="Src\Rendering\VFX\VFXStaticText3D.cs" />
-    <Compile Include="Src\Rendering\VFX\VFXUtil.cs" />
-    <Compile Include="Src\Sound\PlayingSound.cs" />
-    <Compile Include="Src\Sound\Sound.cs" />
-    <Compile Include="Src\Sound\SoundManager.cs" />
-    <Compile Include="Src\Sound\SoundUtil.cs" />
-    <Compile Include="Src\Universe\Entity\Entity.cs" />
-    <Compile Include="Src\Universe\Entity\EntityCactus.cs" />
-    <Compile Include="Src\Universe\Entity\EntityLiving.cs" />
-    <Compile Include="Src\Universe\Entity\EntityPlayer.cs" />
-    <Compile Include="Src\Universe\Entity\Projectiles\EntityProjectile.cs" />
-    <Compile Include="Src\Universe\Entity\Projectiles\EntityTankProjectile.cs" />
-    <Compile Include="Src\Universe\Planet.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MedallionRandom" Version="1.1.0" />
-    <PackageReference Include="NVorbis" Version="0.10.1" />
-    <PackageReference Include="OpenAL-Soft" Version="1.16.0" />
-    <PackageReference Include="OpenTK" Version="4.2.0" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="App.config" />
-    <None Include="Photoshop\planets.psd" />
-    <None Include="Res\Font\Arial.fnt" />
-    <None Include="Res\Font\Arial.png" />
-    <None Include="Res\Font\Arial_Shadow.fnt" />
-    <None Include="Res\Font\Arial_Shadow.png" />
-    <None Include="Res\Font\Consolas.fnt" />
-    <None Include="Res\Font\Consolas.png" />
-    <None Include="Res\Font\Trebuchet.fnt" />
-    <None Include="Res\Font\Trebuchet.png" />
-    <None Include="Res\Icon\icon.png">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-    <None Include="Res\OBJ\Cactus.obj" />
-    <None Include="Res\OBJ\Plane.obj" />
-    <None Include="Res\OBJ\TankProjectile.obj" />
-    <None Include="Res\Shaders\GUI\GuiCutout.shader" />
-    <None Include="Res\Shaders\GUI\GuiText.shader" />
-    <None Include="Res\Shaders\Planet\MoonGlow.shader" />
-    <None Include="Res\Shaders\Planet\Stars.shader" />
-    <None Include="Res\Shaders\Planet\Lerp_F.shader" />
-    <None Include="Res\Shaders\Planet\Lerp_FT.shader" />
-    <None Include="Res\Shaders\Planet\Skybox.shader" />
-    <None Include="Res\Shaders\Planet\SkyboxShroud.shader" />
-    <None Include="Res\Shaders\Planet\StaticLines.shader" />
-    <None Include="Res\Shaders\Planet\Static_F.shader" />
-    <None Include="Res\Shaders\Planet\Static_FT.shader" />
-    <None Include="Res\Shaders\Planet\Moons.shader" />
-    <None Include="Res\Shaders\Planet\Sun.shader" />
-    <None Include="Res\Shaders\ReadMe.txt" />
-    <None Include="Res\Shaders\VFX\LerpISpheres_F.shader" />
-    <None Include="Res\Shaders\VFX\LerpISpheres_FT.shader" />
-    <None Include="Res\Shaders\VFX\LerpText3D_F.shader" />
-    <None Include="Res\Shaders\VFX\StaticISpheres_F.shader" />
-    <None Include="Res\Shaders\VFX\StaticISpheres_FT.shader" />
-    <None Include="Res\Shaders\VFX\StaticSpriteCylinder_F.shader" />
-    <None Include="Res\Shaders\VFX\StaticText3D_F.shader" />
-    <None Include="Res\Sounds\explosion.random1.ogg" />
-    <None Include="Res\Sounds\explosion.random2.ogg" />
-    <None Include="Res\Sounds\rain.ogg" />
-    <None Include="Res\Sounds\ReadMe.txt" />
-    <None Include="Res\Sounds\tankfire.ogg" />
-    <None Include="Res\Sounds\waterroll.ogg" />
-    <None Include="Res\Sounds\waterroll_large.ogg" />
-    <None Include="Res\Texture\aie.png" />
-    <None Include="Res\Texture\blanket.png" />
-    <None Include="Res\Texture\Camo.png" />
-    <None Include="Res\Texture\EntityCactus.png" />
-    <None Include="Res\Texture\Explosion.png" />
-    <None Include="Res\Texture\GUI\Crosshairs\CrosshairNormal.png" />
-    <None Include="Res\Texture\ice.png" />
-    <None Include="Res\Texture\jungleground.png" />
-    <None Include="Res\Texture\leafyrocks.png" />
-    <None Include="Res\Texture\leafywall.png" />
-    <None Include="Res\Texture\pillows.png" />
-    <None Include="Res\Texture\plasterwall.png" />
-    <None Include="Res\Texture\sand.png" />
-    <None Include="Res\Texture\Sky\moons.png" />
-    <None Include="Res\Texture\transparent.png" />
-    <None Include="Res\Texture\wood.png" />
-  </ItemGroup>
 
   <Target Name="CopyPackageAssembliesToSubFolder" AfterTargets="ResolveReferences">
     <ItemGroup>
       <ReferenceCopyLocalPaths Condition=" '%(ReferenceCopyLocalPaths.NuGetPackageId)' != '' " Update="%(ReferenceCopyLocalPaths)" DestinationSubDirectory="Libs\" />
     </ItemGroup>
   </Target>
+
+  <ItemGroup>
+    <Content Include="Build\Res\Font\Arial.png" />
+    <Content Include="Build\Res\Font\Arial_Shadow.png" />
+    <Content Include="Build\Res\Font\Consolas.png" />
+    <Content Include="Build\Res\Font\Trebuchet.png" />
+    <Content Include="Build\Res\Icon\icon.ico" />
+    <Content Include="Build\Res\Icon\icon.png" />
+    <Content Include="Build\Res\ScreenShots\RabbetGameEngine 0.1.1_indev 19-11-2020_00-02-30-92.png" />
+    <Content Include="Build\Res\ScreenShots\RabbetGameEngine 0.1.1_indev 19-11-2020_00-03-51-652.png" />
+    <Content Include="Build\Res\ScreenShots\RabbetGameEngine 0.1.1_indev 19-11-2020_00-13-50-298.png" />
+    <Content Include="Build\Res\ScreenShots\RabbetGameEngine 0.1.1_indev 19-11-2020_11-27-21-697.png" />
+    <Content Include="Build\Res\ScreenShots\RabbetGameEngine 0.1.1_indev 20-11-2020_18-26-06-322.png" />
+    <Content Include="Build\Res\ScreenShots\RabbetGameEngine 0.1.1_indev 20-11-2020_18-26-08-707.png" />
+    <Content Include="Build\Res\ScreenShots\RabbetGameEngine 0.1.1_indev 20-11-2020_18-27-11-871.png" />
+    <Content Include="Build\Res\ScreenShots\RabbetGameEngine 0.1.1_indev 21-11-2020_22-13-41-55.png" />
+    <Content Include="Build\Res\Shaders\ReadMe.txt" />
+    <Content Include="Build\Res\Sounds\ReadMe.txt" />
+    <Content Include="Build\Res\Texture\aie.png" />
+    <Content Include="Build\Res\Texture\blanket.png" />
+    <Content Include="Build\Res\Texture\Camo.png" />
+    <Content Include="Build\Res\Texture\EntityCactus.png" />
+    <Content Include="Build\Res\Texture\Explosion.png" />
+    <Content Include="Build\Res\Texture\GUI\Crosshairs\CrosshairNormal.png" />
+    <Content Include="Build\Res\Texture\ice.png" />
+    <Content Include="Build\Res\Texture\jungleground.png" />
+    <Content Include="Build\Res\Texture\leafyrocks.png" />
+    <Content Include="Build\Res\Texture\leafywall.png" />
+    <Content Include="Build\Res\Texture\pillows.png" />
+    <Content Include="Build\Res\Texture\plasterwall.png" />
+    <Content Include="Build\Res\Texture\sand.png" />
+    <Content Include="Build\Res\Texture\Sky\moons.png" />
+    <Content Include="Build\Res\Texture\transparent.png" />
+    <Content Include="Build\Res\Texture\wood.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Build\Libs\glfw3.dll" />
+    <None Include="Build\Libs\libglfw.3.dylib" />
+    <None Include="Build\Libs\libglfw.so.3.3" />
+    <None Include="Build\Libs\MedallionRandom.dll" />
+    <None Include="Build\Libs\Microsoft.Win32.SystemEvents.dll" />
+    <None Include="Build\Libs\NVorbis.dll" />
+    <None Include="Build\Libs\OpenTK.Compute.dll" />
+    <None Include="Build\Libs\OpenTK.Core.dll" />
+    <None Include="Build\Libs\OpenTK.Graphics.dll" />
+    <None Include="Build\Libs\OpenTK.Input.dll" />
+    <None Include="Build\Libs\OpenTK.Mathematics.dll" />
+    <None Include="Build\Libs\OpenTK.OpenAL.dll" />
+    <None Include="Build\Libs\OpenTK.Windowing.Common.dll" />
+    <None Include="Build\Libs\OpenTK.Windowing.Desktop.dll" />
+    <None Include="Build\Libs\OpenTK.Windowing.GraphicsLibraryFramework.dll" />
+    <None Include="Build\Libs\System.Drawing.Common.dll" />
+    <None Include="Build\Res\Font\Arial.fnt" />
+    <None Include="Build\Res\Font\Arial_Shadow.fnt" />
+    <None Include="Build\Res\Font\Consolas.fnt" />
+    <None Include="Build\Res\Font\Trebuchet.fnt" />
+    <None Include="Build\Res\OBJ\Cactus.obj" />
+    <None Include="Build\Res\OBJ\Plane.obj" />
+    <None Include="Build\Res\OBJ\TankProjectile.obj" />
+    <None Include="Build\Res\Shaders\GUI\GuiCutout.shader" />
+    <None Include="Build\Res\Shaders\GUI\GuiText.shader" />
+    <None Include="Build\Res\Shaders\Planet\Lerp_F.shader" />
+    <None Include="Build\Res\Shaders\Planet\Lerp_FT.shader" />
+    <None Include="Build\Res\Shaders\Planet\MoonGlow.shader" />
+    <None Include="Build\Res\Shaders\Planet\Moons.shader" />
+    <None Include="Build\Res\Shaders\Planet\Skybox.shader" />
+    <None Include="Build\Res\Shaders\Planet\SkyboxShroud.shader" />
+    <None Include="Build\Res\Shaders\Planet\Stars.shader" />
+    <None Include="Build\Res\Shaders\Planet\StaticLines.shader" />
+    <None Include="Build\Res\Shaders\Planet\Static_F.shader" />
+    <None Include="Build\Res\Shaders\Planet\Static_FT.shader" />
+    <None Include="Build\Res\Shaders\Planet\Sun.shader" />
+    <None Include="Build\Res\Shaders\VFX\LerpISpheres_F.shader" />
+    <None Include="Build\Res\Shaders\VFX\LerpISpheres_FT.shader" />
+    <None Include="Build\Res\Shaders\VFX\LerpText3D_F.shader" />
+    <None Include="Build\Res\Shaders\VFX\StaticISpheres_F.shader" />
+    <None Include="Build\Res\Shaders\VFX\StaticISpheres_FT.shader" />
+    <None Include="Build\Res\Shaders\VFX\StaticSpriteCylinder_F.shader" />
+    <None Include="Build\Res\Shaders\VFX\StaticText3D_F.shader" />
+    <None Include="Build\Res\Sounds\explosion.random1.ogg" />
+    <None Include="Build\Res\Sounds\explosion.random2.ogg" />
+    <None Include="Build\Res\Sounds\rain.ogg" />
+    <None Include="Build\Res\Sounds\tankfire.ogg" />
+    <None Include="Build\Res\Sounds\waterroll.ogg" />
+    <None Include="Build\Res\Sounds\waterroll_large.ogg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MedallionRandom" Version="1.1.0" />
+    <PackageReference Include="NVorbis" Version="0.10.1" />
+    <PackageReference Include="OpenAL-Soft" Version="1.16.0" />
+    <PackageReference Include="OpenTK" Version="4.3.0" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+  </ItemGroup>
 </Project>
 

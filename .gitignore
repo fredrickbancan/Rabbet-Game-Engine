@@ -32,7 +32,7 @@ bld/
 [Ll]ogs/
 Libs/
 obj/
-Res/ScreenShots/
+Build/ScreenShots/
 
 
 # Visual Studio 2015/2017 cache/options directory
