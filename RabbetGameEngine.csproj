@@ -48,12 +48,6 @@
     <OutputPath>Build\</OutputPath>
   </PropertyGroup>
 
-  <Target Name="CopyPackageAssembliesToSubFolder" AfterTargets="ResolveReferences">
-    <ItemGroup>
-      <ReferenceCopyLocalPaths Condition=" '%(ReferenceCopyLocalPaths.NuGetPackageId)' != '' " Update="%(ReferenceCopyLocalPaths)" DestinationSubDirectory="Libs\" />
-    </ItemGroup>
-  </Target>
-
   <ItemGroup>
     <Content Include="Build\Res\Font\Arial.png" />
     <Content Include="Build\Res\Font\Arial_Shadow.png" />
@@ -90,22 +84,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="Build\Libs\glfw3.dll" />
-    <None Include="Build\Libs\libglfw.3.dylib" />
-    <None Include="Build\Libs\libglfw.so.3.3" />
-    <None Include="Build\Libs\MedallionRandom.dll" />
-    <None Include="Build\Libs\Microsoft.Win32.SystemEvents.dll" />
-    <None Include="Build\Libs\NVorbis.dll" />
-    <None Include="Build\Libs\OpenTK.Compute.dll" />
-    <None Include="Build\Libs\OpenTK.Core.dll" />
-    <None Include="Build\Libs\OpenTK.Graphics.dll" />
-    <None Include="Build\Libs\OpenTK.Input.dll" />
-    <None Include="Build\Libs\OpenTK.Mathematics.dll" />
-    <None Include="Build\Libs\OpenTK.OpenAL.dll" />
-    <None Include="Build\Libs\OpenTK.Windowing.Common.dll" />
-    <None Include="Build\Libs\OpenTK.Windowing.Desktop.dll" />
-    <None Include="Build\Libs\OpenTK.Windowing.GraphicsLibraryFramework.dll" />
-    <None Include="Build\Libs\System.Drawing.Common.dll" />
     <None Include="Build\Res\Font\Arial.fnt" />
     <None Include="Build\Res\Font\Arial_Shadow.fnt" />
     <None Include="Build\Res\Font\Consolas.fnt" />
@@ -147,6 +125,12 @@
     <PackageReference Include="OpenAL-Soft" Version="1.16.0" />
     <PackageReference Include="OpenTK" Version="4.3.0" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="openal32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
 
