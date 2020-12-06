@@ -48,7 +48,7 @@ namespace RabbetGameEngine
         }
         public static string getOBJFileDir(string modelName = "")
         {
-            return resDir + @"OBJ\" + modelName;
+            return resDir + @"Models\" + modelName;
         }
 
         public static string getSoundFileDir(string soundName = "")

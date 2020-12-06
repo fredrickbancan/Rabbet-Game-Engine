@@ -73,7 +73,7 @@ namespace RabbetGameEngine
                 setDPIScale();
                 Renderer.init();
                 TicksAndFrames.init(30);
-                MainGUI.init();
+                GUIHud.init();
                 DebugInfo.init();
                 currentPlanet = new Planet(0xdeadbeef);
                 //create and spawn player in new world
@@ -192,7 +192,7 @@ namespace RabbetGameEngine
             }
             windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
             GUIManager.onTick();
-            MainGUI.onTick();
+            GUIHud.onTick();
             currentPlanet.onTick();
             Renderer.onTick();
             SoundManager.onTick();
@@ -215,13 +215,13 @@ namespace RabbetGameEngine
         /*Called when player lands direct hit on a cactus, TEMPORARY!*/
         public static void onDirectHit()
         {
-            MainGUI.onDirectHit();
+            GUIHud.onDirectHit();
         }
 
         /*Called when player lands air shot on a cactus, TEMPORARY!*/
         public static void onAirShot()
         {
-            MainGUI.onAirShot();
+            GUIHud.onAirShot();
         }
 
         public void pauseGame()

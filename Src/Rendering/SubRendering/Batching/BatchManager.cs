@@ -5,9 +5,7 @@ using System.Linq;
 
 namespace RabbetGameEngine.SubRendering
 {
-
-
-    /*Class for constructing*/
+    //TODO: Implement a limit for number of textures in a single batch, and implement ablility for batches to have multiple textures.
     public static class BatchManager
     {
         private static List<Batch> batches = new List<Batch>();

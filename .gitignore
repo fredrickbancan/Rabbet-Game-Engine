@@ -27,12 +27,10 @@ x86/
 [Aa][Rr][Mm]64/
 bld/
 [Bb]in/
-#[Oo]bj/
+[Bb]uild/
+[Oo]bj/
 [Ll]og/
 [Ll]ogs/
-Libs/
-obj/
-Build/ScreenShots/
 
 
 # Visual Studio 2015/2017 cache/options directory

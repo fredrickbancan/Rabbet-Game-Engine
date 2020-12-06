@@ -11,7 +11,7 @@ namespace RabbetGameEngine.Debugging
         /*Initialize the text panel for the debug info, can only be done if the mainGUI panel is created first*/
         public static void init()
         {
-            GUIManager.addTextPanelToGUI(MainGUI.mainGUIName, debugInfoTextPanelName, new GUITextPanel(new TextFormat(0.0F, 0.05F)
+            GUIManager.addTextPanelToGUI(GUIHud.guiHudName, debugInfoTextPanelName, new GUITextPanel(new TextFormat(0.0F, 0.05F)
                 .setLines(new string[]
                         {
                         ("press F3 to hide debug screen.")
@@ -30,8 +30,8 @@ namespace RabbetGameEngine.Debugging
                 float textBuildAverage = Profiler.getAverageForProfile("textBuild");
                 float soundsAverage = Profiler.getAverageForProfile("sounds");
                 float gameLoopAverage = Profiler.getAverageForProfile("Loop");
-                GUIManager.unHideTextPanelInGUI(MainGUI.mainGUIName, debugInfoTextPanelName);
-                GUIManager.getTextPanelFormatFromGUI(MainGUI.mainGUIName, debugInfoTextPanelName).setLines(
+                GUIManager.unHideTextPanelInGUI(GUIHud.guiHudName, debugInfoTextPanelName);
+                GUIManager.getTextPanelFormatFromGUI(GUIHud.guiHudName, debugInfoTextPanelName).setLines(
                        new string[]
                        {
                        /* ("X: " + GameInstance.get.thePlayer.getPosition().X.ToString("0.00")),
@@ -61,7 +61,7 @@ namespace RabbetGameEngine.Debugging
             }
             else
             {
-                GUIManager.hideTextPanelInGUI(MainGUI.mainGUIName, debugInfoTextPanelName);
+                GUIManager.hideTextPanelInGUI(GUIHud.guiHudName, debugInfoTextPanelName);
             }
         }
     }

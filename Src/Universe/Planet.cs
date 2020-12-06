@@ -36,7 +36,7 @@ namespace RabbetGameEngine
         /// <summary>
         /// How many minutes a day night cycle will take
         /// </summary>
-        private int dayNightCycleMinutes = 3;
+        private int dayNightCycleMinutes = 1;
 
         /// <summary>
         /// Total number of ticks in a day night cycle from start to finish

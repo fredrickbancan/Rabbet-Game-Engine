@@ -42,7 +42,7 @@ vec4 lookAtZeroRotationNoFlip(float rad)
 
 void main()
 {
-	gl_Position = projectionMatrix * viewMatrix * lookAtZeroRotationNoFlip(spriteScale.x * 1.5);
+	gl_Position = projectionMatrix * viewMatrix * lookAtZeroRotationNoFlip(spriteScale.x * 4);
     coords = corner * 2;
     vColor = spriteColor;
     float d = 1 - (dot(sunDir, spritePos.xyz) + 1) * 0.5F;
@@ -57,10 +57,11 @@ void main()
 in vec2 coords;
 out vec4 color;
 in vec4 vColor;
+uniform sampler2D ditherTex;
 void main()
 {
     float coordLength = dot(coords, coords);
     color = vColor;
-    color.a *= pow(sqrt(1.15 - coordLength * 0.5), 31);
-    if (color.a <= 0.005) discard;
+    color.a *= pow(0.9 - sqrt(coordLength ), 3);
+    color.a += texture2D(ditherTex, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0 / 128.0);//dithering
 }
