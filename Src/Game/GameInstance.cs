@@ -4,7 +4,6 @@ using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using RabbetGameEngine.Debugging;
-using RabbetGameEngine.GUI;
 using RabbetGameEngine.Sound;
 using RabbetGameEngine.Src.Game;
 using RabbetGameEngine.Text;
@@ -186,23 +185,40 @@ namespace RabbetGameEngine
         private void onTick()
         {
             Profiler.beginEndProfile("Loop");
+
             if(!doneOneTick)
             {
                 Renderer.beforeTick();
             }
+
             windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
-            GUIManager.onTick();
-            GUIHud.onTick();
             currentPlanet.onTick();
             Renderer.onTick();
             SoundManager.onTick();
-            Profiler.updateAverages();
+            Profiler.onTick();
+            GUIManager.onTick();
             Renderer.onTickEnd();
             Profiler.beginEndProfile("Loop");
 
-            doneOneTick = true;
+            if(!doneOneTick)
+            {
+                doRenderUpdate();
+            }
+
+            doneOneTick = true;//do last, ensures that certain functions are only called once per tick loop
         }
         
+        private void doRenderUpdate()
+        {
+            Profiler.beginEndProfile("renderUpdate");
+            GUIManager.requestRender();
+            if(currentPlanet!=null)
+            {
+                currentPlanet.onRenderUpdate();
+            }
+            Profiler.beginEndProfile("renderUpdate");
+        }
+
         public float getDrawDistance()
         {
             if(currentPlanet != null)

@@ -9,12 +9,6 @@ namespace RabbetGameEngine.SubRendering
     public static class BatchManager
     {
         private static List<Batch> batches = new List<Batch>();
-
-        /// <summary>
-        /// This boolean is to ensure that renders are not requested multiple times in one frame if the game is doing multiple onTick() calls to catch up.
-        /// </summary>
-        private static bool acceptingRequests = true;
-
         /// <summary>
         /// Should be called before any rendering requests. For instance, begining of each tick loop.
         /// </summary>
@@ -24,7 +18,6 @@ namespace RabbetGameEngine.SubRendering
             {
                 batches.ElementAt(i).beforeTick();
             }
-            acceptingRequests = true;
         }
 
         /// <summary>
@@ -32,7 +25,6 @@ namespace RabbetGameEngine.SubRendering
         /// </summary>
         public static void onTickEnd()
         {
-            if (!acceptingRequests) return;
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
@@ -48,7 +40,6 @@ namespace RabbetGameEngine.SubRendering
                 
                 batchAt.onTickEnd();
             }
-            acceptingRequests = false;
 
         }
 
@@ -58,7 +49,6 @@ namespace RabbetGameEngine.SubRendering
         /// </summary>
         public static void requestRender(RenderType type, Texture tex, Model theModel)
         {
-            if (!acceptingRequests) return;
             if (batches.Count < 1)
             {
                 batches.Add(new Batch(type, tex));
@@ -99,7 +89,6 @@ namespace RabbetGameEngine.SubRendering
         }
         public static void requestRender(PointCloudModel pParticleModel, bool transparency, bool lerp)
         {
-            if (!acceptingRequests) return;
             RenderType type;
             if(transparency)
             {
@@ -153,7 +142,6 @@ namespace RabbetGameEngine.SubRendering
 
         public static void requestRender(PointParticle pParticle, bool transparency)
         {
-            if (!acceptingRequests) return;
             RenderType type;
             if (transparency)
             {
@@ -193,7 +181,6 @@ namespace RabbetGameEngine.SubRendering
 
         public static void requestRender(PointParticle pParticle, PointParticle prevTickPParticle, bool transparency)
         {
-            if (!acceptingRequests) return;
             RenderType type;
             if (transparency)
             {
@@ -233,7 +220,6 @@ namespace RabbetGameEngine.SubRendering
 
         public static void requestRender(Sprite3D s, Texture tex)
         {
-            if (!acceptingRequests) return;
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);

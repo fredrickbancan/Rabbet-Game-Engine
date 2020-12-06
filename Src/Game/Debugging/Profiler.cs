@@ -57,7 +57,7 @@ namespace RabbetGameEngine.Debugging
             return -1;
         }
 
-        public static void updateAverages()
+        public static void onTick()
         {
             if (!GameSettings.debugScreen)
             {

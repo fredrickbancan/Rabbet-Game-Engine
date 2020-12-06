@@ -251,7 +251,37 @@ namespace RabbetGameEngine
             tickProjectiles();
             CollisionHandler.testProjectilesAgainstEntities(entities, projectiles);
             tickVFX();
+        }
 
+        public void onRenderUpdate()
+        {
+            foreach(Entity ent in entities.Values)
+            {
+                if(ent.getHasModel())
+                {
+                    ent.getEntityModel().sendRenderRequest();
+                }
+            }
+
+            foreach(Entity p in projectiles)
+            {
+                if (p.getHasModel())
+                {
+                    p.getEntityModel().sendRenderRequest();
+                }
+            }
+
+            foreach(VFX v in vfxList)
+            {
+                v.sendRenderRequest();
+            }
+
+            if(GameSettings.entityLabels)
+            foreach(VFXMovingText3D label in debugLabelList)
+            {
+                label.sendRenderRequest();
+            }
+            
             if (GameSettings.drawHitboxes)
             {
                 HitboxRenderer.addAllHitboxesToBeRendered(worldColliders, entities, vfxList);
@@ -319,7 +349,6 @@ namespace RabbetGameEngine
                 if (entAt.getHasModel())
                 {
                     entAt.getEntityModel().onTick();
-                    entAt.getEntityModel().sendRenderRequest();
                 }
             }
         }
@@ -364,10 +393,8 @@ namespace RabbetGameEngine
                 if(entAt.getHasModel())
                 {
                     entAt.getEntityModel().onTick();
-                    entAt.getEntityModel().sendRenderRequest();
                 }
             }
-
         }
 
         private void tickVFX()
@@ -394,33 +421,27 @@ namespace RabbetGameEngine
                     vfx.postTick();
                     CollisionHandler.tryToMoveObject(vfx, worldColliders);
                 }
-                vfx.sendRenderRequest();
             }
 
             if(GameSettings.entityLabels)
             {
                 for (int i = 0; i < debugLabelList.Count; i++)
                 {
-                    VFXMovingText3D vfx = debugLabelList.ElementAt(i);
-                    if (vfx == null)
+                    VFXMovingText3D label = debugLabelList.ElementAt(i);
+                    if (label == null)
                     {
-                        debugLabelList.Remove(vfx);
+                        debugLabelList.Remove(label);
                         i--;
                     }
-                    else if (!vfx.exists())
+                    else if (!label.exists())
                     {
                         debugLabelList.Remove(debugLabelList.ElementAt(i));
                         i--;
                     }
                     else
                     {
-                        vfx.preTick();
-                        vfx.onTick();
-                        vfx.postTick();
-                        CollisionHandler.tryToMoveObject(vfx, worldColliders);
+                        label.onTick();
                     }
-
-                    vfx.sendRenderRequest();
                 }
             }
         }

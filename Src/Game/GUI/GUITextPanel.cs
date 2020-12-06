@@ -82,17 +82,20 @@ namespace RabbetGameEngine
             Profiler.beginEndProfile("textBuild");
         }
 
-        public void hide()
+        public GUITextPanel hide()
         {
             hidden = true;
+            return this;
         }
-        public void unHide()
+        public GUITextPanel unHide()
         {
             hidden = false;
+            return this;
         }
-        public void setFont(FontFace font)
+        public GUITextPanel setFont(FontFace font)
         {
             format.font = font;
+            return this;
         }
 
         public string[] getLines()

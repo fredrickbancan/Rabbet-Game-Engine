@@ -2,7 +2,6 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using RabbetGameEngine.Debugging;
-using RabbetGameEngine.GUI;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.SubRendering;
 using System.Collections.Generic;
@@ -133,7 +132,6 @@ namespace RabbetGameEngine
             Profiler.beginEndProfile("batching");
             BatchManager.beforeTick();
             Profiler.beginEndProfile("batching");
-            HitboxRenderer.beforeTick();
         }
 
         public static void onTick()
@@ -143,11 +141,10 @@ namespace RabbetGameEngine
 
         public static void onTickEnd()
         {
-            Profiler.beginEndProfile("batching");
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, GameInstance.get.getDrawDistance());
+            Profiler.beginEndProfile("batching");
             BatchManager.onTickEnd();
             Profiler.beginEndProfile("batching");
-            HitboxRenderer.onTickEnd();
         }
 
         /*Called before all draw calls*/

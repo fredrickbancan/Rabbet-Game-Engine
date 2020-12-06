@@ -102,6 +102,44 @@ namespace RabbetGameEngine
                 return false;
             }
         }
+        public GUITextPanel getTextPanel(string name)
+        {
+            GUITextPanel result = null;
+            if (screenTextPanels.TryGetValue(name, out result))
+            {
+                return result;
+            }
+            else
+            {
+                Application.error("GUIScreen " + screenName + " could not find requested text panel to update: " + name);
+                return result;
+            }
+        }
+
+        public void hideTextPanel(string name)
+        {
+            GUITextPanel result = null;
+            if (screenTextPanels.TryGetValue(name, out result))
+            {
+                result.hide();
+            }
+            else
+            {
+                Application.error("GUIScreen " + screenName + " could not find requested text panel to update: " + name);
+            }
+        }
+        public void unHideTextPanel(string name)
+        {
+            GUITextPanel result = null;
+            if (screenTextPanels.TryGetValue(name, out result))
+            {
+                result.unHide();
+            }
+            else
+            {
+                Application.error("GUIScreen " + screenName + " could not find requested text panel to update: " + name);
+            }
+        }
 
         public void hideWholeGUIScreen()
         {
@@ -153,14 +191,12 @@ namespace RabbetGameEngine
             }
         }
 
-        public void onTick()
+        public virtual void onTick()
         {
             foreach (GUIComponent component in components.Values)
             {
                 component.onTick();
             }
-            requestTextRender();
-            requestGUIRender();
         }
 
         public void onWindowResize()
