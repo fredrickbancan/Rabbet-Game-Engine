@@ -2,6 +2,7 @@
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Text;
+using System.Collections.Generic;
 
 namespace RabbetGameEngine
 {
@@ -57,6 +58,8 @@ namespace RabbetGameEngine
     }
     public class GUITextPanel
     {
+        private List<string> lines;
+
         public Model[] models;
 
         public TextFormat format;
@@ -66,20 +69,20 @@ namespace RabbetGameEngine
         public GUITextPanel()//new gui text panel with default format
         {
             format = new TextFormat();
+            lines = new List<string>();
         }
 
         public GUITextPanel(TextFormat format)//new gui text panel with provided format
         {
             this.format = format;
+            lines = new List<string>();
         }
 
         public void build()
         {
-            Profiler.beginEndProfile("textBuild");
             format.panelPixelPos.X = format.panelPos.X * GameInstance.gameWindowWidth;
             format.panelPixelPos.Y = format.panelPos.Y * GameInstance.gameWindowHeight;
             this.models = TextModelBuilder2D.convertstringArrayToModelArray(format.lines, format.font, format.panelColour, format.panelPixelPos, format.fontSize * GameInstance.dpiScale, format.screenEdgePadding, format.alignment);
-            Profiler.beginEndProfile("textBuild");
         }
 
         public GUITextPanel hide()
@@ -98,20 +101,21 @@ namespace RabbetGameEngine
             return this;
         }
 
-        public string[] getLines()
+        public GUITextPanel clear()
         {
-            return format.lines;
+            lines.Clear();
+            return this;
         }
 
-        public void updateLines(string[] newLines)
+        public GUITextPanel addLine(string line)
         {
-            format.lines = newLines;
+            lines.Add(line);
+            return this;
         }
 
-        #region builderMethods
-        public GUITextPanel setAlign(TextAlign alignment)
+        public GUITextPanel pushLines()
         {
-            this.format.alignment = alignment;
+            format.lines = lines.ToArray();
             return this;
         }
         public GUITextPanel setLines(string[] lines)
@@ -119,21 +123,23 @@ namespace RabbetGameEngine
             format.lines = lines;
             return this;
         }
+
         public GUITextPanel setLine(string line)
         {
             format.lines = new string[] { line };
             return this;
         }
+
         public GUITextPanel setPanelColor(CustomColor color)
         {
             format.panelColour = color.toNormalVec4();
             return this;
         }
+
         public GUITextPanel setFontSize(float size)
         {
             format.fontSize = size;
             return this;
         }
-        #endregion builderMethods
     }
 }

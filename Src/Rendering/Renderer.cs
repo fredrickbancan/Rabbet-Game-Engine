@@ -13,6 +13,7 @@ namespace RabbetGameEngine
     {
         none,
         guiCutout,
+        guiTransparent,
         guiText,
 
         /// <summary>
@@ -95,45 +96,28 @@ namespace RabbetGameEngine
 
         public static void requestRender(RenderType type, Texture tex, Model mod)
         {
-            Profiler.beginEndProfile("batching");
             BatchManager.requestRender(type, tex, mod);
-            Profiler.beginEndProfile("batching");
         }
 
         public static void requestRender(PointCloudModel mod, bool transparency, bool lerp)
         {
-            Profiler.beginEndProfile("batching");
             BatchManager.requestRender(mod, transparency, lerp);
-            Profiler.beginEndProfile("batching");
         }
 
         public static void requestRender(PointParticle point, bool transparency)
         {
-            Profiler.beginEndProfile("batching");
             BatchManager.requestRender(point, transparency);
-            Profiler.beginEndProfile("batching");
         }
 
         public static void requestRender(Sprite3D s, Texture tex)
         {
-            Profiler.beginEndProfile("batching");
             BatchManager.requestRender(s, tex);
-            Profiler.beginEndProfile("batching");
         }
 
         public static void requestRender(PointParticle point, PointParticle prevTickPoint, bool transparency)
         {
-            Profiler.beginEndProfile("batching");
             BatchManager.requestRender(point, prevTickPoint, transparency);
-            Profiler.beginEndProfile("batching");
         }
-        public static void beforeTick()
-        {
-            Profiler.beginEndProfile("batching");
-            BatchManager.beforeTick();
-            Profiler.beginEndProfile("batching");
-        }
-
         public static void onTick()
         {
             SkyboxRenderer.onTick();
@@ -142,9 +126,18 @@ namespace RabbetGameEngine
         public static void onTickEnd()
         {
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, GameInstance.get.getDrawDistance());
-            Profiler.beginEndProfile("batching");
-            BatchManager.onTickEnd();
-            Profiler.beginEndProfile("batching");
+        }
+        public static void doRenderUpdate()
+        {
+            Profiler.beginEndProfile("renderUpdate");
+            BatchManager.preRenderUpdate();
+            GUIManager.requestRender();
+            if (GameInstance.get.currentPlanet != null)
+            {
+                GameInstance.get.currentPlanet.onRenderUpdate();
+            }
+            BatchManager.postRenderUpdate();
+            Profiler.beginEndProfile("renderUpdate");
         }
 
         /*Called before all draw calls*/

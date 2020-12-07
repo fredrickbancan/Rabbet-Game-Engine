@@ -9,28 +9,26 @@ namespace RabbetGameEngine.SubRendering
     public static class BatchManager
     {
         private static List<Batch> batches = new List<Batch>();
+
         /// <summary>
-        /// Should be called before any rendering requests. For instance, begining of each tick loop.
+        /// Should be called before any rendering requests.
         /// </summary>
-        public static void beforeTick()
+        public static void preRenderUpdate()
         {
             for (int i = 0; i < batches.Count; ++i)
             {
-                batches.ElementAt(i).beforeTick();
+                batches.ElementAt(i).reset();
             }
         }
 
-        /// <summary>
-        /// Should be called before rendering any batches. For instance, begining end of each tick loop.
-        /// </summary>
-        public static void onTickEnd()
+        public static void postRenderUpdate()
         {
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
 
                 //if a batch has not been used, then it needs to be removed.
-                if (!batchAt.hasBeenUsedInCurrentTick())
+                if (!batchAt.hasBeenUsedSinceLastUpdate())
                 {
                     batchAt.deleteVAO();
                     batches.Remove(batchAt);
@@ -38,7 +36,7 @@ namespace RabbetGameEngine.SubRendering
                     continue;
                 }
                 
-                batchAt.onTickEnd();
+                batchAt.postRenderUpdate();
             }
 
         }
@@ -67,7 +65,7 @@ namespace RabbetGameEngine.SubRendering
                 if(i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
                     //ensure that all opaque batches come before transparent ones in the list.
-                    if (type == RenderType.guiText)
+                    if (type == RenderType.guiText || type == RenderType.guiTransparent)
                     {
                         batches.Add(new Batch(type, tex));
                         BatchUtil.tryToFitInBatchModel(theModel, batches.ElementAt(i + 1));

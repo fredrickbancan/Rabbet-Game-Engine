@@ -10,11 +10,15 @@ namespace RabbetGameEngine
     //TODO: Impliment some sort of cross platform error screen to avoid crashes and properly shut down game.
     class Application
     {
-        private static Process process;
+        public static readonly string version = "0.1.2_indev";
+        public static readonly string applicationName = "RabbetGameEngine " + version;
+        private static long ramUsageBytes = 0L;
+
+        public static long ramUsageInBytes { get => ramUsageBytes; }
+
+        private static TickTimer ramUsageTimer;
         static void Main(string[] args)
         {
-            process = Process.GetCurrentProcess();   
-           
             try
             {
                 NativeWindowSettings w = new NativeWindowSettings();
@@ -24,26 +28,23 @@ namespace RabbetGameEngine
 
                 GameWindowSettings g = new GameWindowSettings();
                 GameInstance game = new GameInstance(g, w);
+                ramUsageTimer = new TickTimer(2.48F, true, false);
                 game.Run();
             }
             catch(Exception e)
             {
                 Application.error("Failed to run game, Exception: " + e.Message + "\nStack Trace: " + e.StackTrace);
             }
-            finally
-            {
-                process.Dispose();
-            }
+            
         }
-        public static readonly string version = "0.1.2_indev";
-        public static readonly string applicationName = "RabbetGameEngine " + version;
-
-        /// <summary>
-        /// returns the number of bytes of memory used by this application
-        /// </summary>
-        public static long getMemoryUsageBytes()
+        
+        public static void updateRamUsage()
         {
-            return (process = Process.GetCurrentProcess()).PrivateMemorySize64;
+            ramUsageTimer.update();
+            if(ramUsageTimer.triggered)
+            {
+                ramUsageBytes = (Process.GetCurrentProcess()).PrivateMemorySize64;
+            }
         }
 
         public static void checkGLErrors()

@@ -38,5 +38,5 @@ void main()
     float coordLength = length(centerVec);
     float fade = pow(sqrt(1.05 - coordLength), 32);
     fragColor = vec4(vColor.rgb, vColor.a * fade);
-    if (fragColor.a <= 0.1) discard;
+    if (fragColor.a <= 0.01) discard;
 }

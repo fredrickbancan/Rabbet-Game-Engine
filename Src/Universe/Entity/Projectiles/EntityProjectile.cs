@@ -38,14 +38,6 @@ namespace RabbetGameEngine
 
         public override void onCollideWithEntity(Entity ent)
         {
-            if (ent.getIsLiving())
-            {
-                if (!ent.getIsGrounded())
-                {
-                    GameInstance.onAirShot();
-                }
-                GameInstance.onDirectHit();
-            }
             base.onCollideWithEntity(ent);
             onCollide();
         }

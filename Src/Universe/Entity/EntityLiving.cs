@@ -74,7 +74,7 @@ namespace RabbetGameEngine
 
             moveByMovementVector();
 
-            interactTimer.doFunctionAtIntervalOnTick(interact, doingAction(Action.interact));
+            interactTimer.doFunctionAtIntervalOnUpdate(interact, doingAction(Action.interact));
         }
 
         /*When called, aligns vectors according to the entities state and rotations.*/

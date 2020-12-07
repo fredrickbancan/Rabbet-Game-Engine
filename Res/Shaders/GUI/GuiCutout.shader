@@ -1,4 +1,5 @@
-﻿//this shader is for rendering 2d quads with a color. the texture provided is only to assign alpha. any less than 1 alpha pixels will be discarded.
+﻿
+//this shader is for rendering 2d quads with a color. the texture provided is only to assign alpha. any less than 1 alpha pixels will be discarded.
 #shader vertex
 #version 330 core
 layout(location = 0) in vec4 position;

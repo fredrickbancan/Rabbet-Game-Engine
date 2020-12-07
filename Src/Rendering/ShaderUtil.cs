@@ -14,6 +14,7 @@ namespace RabbetGameEngine
         public static readonly string moonsName = "Moons";
         public static readonly string moonGlowName = "MoonGlow";
         public static readonly string guiCutoutName = "GuiCutout";
+        public static readonly string guiTransparentName = "GuiTransparent";
         public static readonly string text2DName = "GuiText";
         public static readonly string text3DName = "StaticText3D_F";
         public static readonly string lerpText3DName = "LerpText3D_F";

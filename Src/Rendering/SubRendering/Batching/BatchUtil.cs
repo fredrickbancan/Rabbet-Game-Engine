@@ -37,6 +37,21 @@ namespace RabbetGameEngine.SubRendering
                     vao.drawType = PrimitiveType.Triangles;
                     break;
 
+                case RenderType.guiTransparent:
+                    {
+                        ShaderUtil.tryGetShader(ShaderUtil.guiTransparentName, out theBatch.batchShader);
+                        theBatch.maxBufferSizeBytes /= 2;
+                        theBatch.vertices = new Vertex[Batch.initialArraySize];
+                        theBatch.indices = QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6);
+                        VertexBufferLayout lt = new VertexBufferLayout();
+                        Vertex.configureLayout(lt);
+                        vao.addBufferDynamic(Batch.initialArraySize * Vertex.vertexByteSize, lt);
+                        vao.addIndicesBufferDynamic(theBatch.indices.Length);
+                        vao.updateIndices(theBatch.indices, theBatch.indices.Length);
+                        vao.drawType = PrimitiveType.Triangles;
+                    }
+                    break;
+
                 case RenderType.guiText:
                     ShaderUtil.tryGetShader(ShaderUtil.text2DName, out theBatch.batchShader);
                     theBatch.maxBufferSizeBytes /= 2;
@@ -348,9 +363,7 @@ namespace RabbetGameEngine.SubRendering
             theBatch.hasBeenUsed = true;
         }
 
-        //For dynamic vertex objects, when submitting data, the residual un-updated data at the end of the buffer does not need to be cleared.
-        //use the submittedVerticesCount or something similar with drawElements(count) to only draw the submitted vertices and ignore the residual ones.
-        //This is faster than clearing the whole buffer each update.
+
         public static bool tryToFitInBatchModel(Model mod, Batch theBatch)
         {
             int n;
@@ -359,6 +372,31 @@ namespace RabbetGameEngine.SubRendering
             {
 
                 case RenderType.guiCutout:
+                    {
+                        n = theBatch.vertices.Length;
+                        if (!canFitOrResize(ref theBatch.vertices, mod.vertices.Length, theBatch.requestedVerticesCount, theBatch.maxVertexCount)) return false;
+                        int i = theBatch.indices.Length;
+                        if (canResizeQuadIndicesIfNeeded(ref theBatch.indices, theBatch.requestedVerticesCount + mod.vertices.Length, theBatch.maxIndiciesCount))
+                        {
+                            if (i != theBatch.indices.Length)
+                            {
+                                theBatch.VAO.resizeIndices(theBatch.indices.Length);
+                                theBatch.VAO.updateIndices(theBatch.indices, theBatch.indices.Length);
+                            }
+                        }
+                        else return false;
+
+                        if (theBatch.vertices.Length != n)
+                        {
+                            theBatch.VAO.resizeBuffer(0, theBatch.vertices.Length * Vertex.vertexByteSize);
+                        }
+
+                        Array.Copy(mod.vertices, 0, theBatch.vertices, theBatch.requestedVerticesCount, mod.vertices.Length);
+                        theBatch.requestedVerticesCount += mod.vertices.Length;
+                    }
+                    break;
+
+                case RenderType.guiTransparent:
                     {
                         n = theBatch.vertices.Length;
                         if (!canFitOrResize(ref theBatch.vertices, mod.vertices.Length, theBatch.requestedVerticesCount, theBatch.maxVertexCount)) return false;
@@ -486,13 +524,10 @@ namespace RabbetGameEngine.SubRendering
                     {
                         return false;
                     }
-                    break;
-
                 case RenderType.quads:
                     {
                         return false;
                     }
-                    break;
 
                 case RenderType.lines:
                     {
@@ -560,37 +595,31 @@ namespace RabbetGameEngine.SubRendering
                     {
                         return false;
                     }
-                    break;
 
                 case RenderType.lerpLines:
                     {
                         return false;
                     }
-                    break;
 
                 case RenderType.lerpTrianglesTransparent:
                     {
                         return false;
                     }
-                    break;
 
                 case RenderType.lerpQuadsTransparent:
                     {
                         return false;
                     }
-                    break;
 
                 case RenderType.trianglesTransparent:
                     {
                         return false;
                     }
-                    break;
 
                 case RenderType.quadsTransparent:
                     {
                         return false;
                     }
-                    break;
             }
             return true;
         }
@@ -813,6 +842,10 @@ namespace RabbetGameEngine.SubRendering
                     theBatch.VAO.updateBuffer(0, theBatch.vertices, theBatch.requestedVerticesCount * Vertex.vertexByteSize);
                     return;
 
+                case RenderType.guiTransparent:
+                    theBatch.VAO.updateBuffer(0, theBatch.vertices, theBatch.requestedVerticesCount * Vertex.vertexByteSize);
+                    return;
+
                 case RenderType.guiText:
                     theBatch.VAO.updateBuffer(0, theBatch.vertices, theBatch.requestedVerticesCount * Vertex.vertexByteSize);
                     return;
@@ -904,16 +937,25 @@ namespace RabbetGameEngine.SubRendering
             {
                 case RenderType.none:
                     break;
-
+                    //TODO: give GUI elements depth values depending on their layering order, and make GUI transparent components sorted!
+                    //GUI elements should have a depth between 0 and 0.005.
+                    //For example: GL.DepthRange(0, theBatch.guiDepth)
                 case RenderType.guiCutout:
                     theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
-                    GL.DepthRange(0, 0.00001F);
+                    GL.DepthRange(0, 0.005F);
+                    GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedVerticesCount + (theBatch.requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
+                    GL.DepthRange(0, 1);
+                    break;
+
+                case RenderType.guiTransparent:
+                    theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
+                    GL.DepthRange(0, 0.005F);
                     GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedVerticesCount + (theBatch.requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
                     GL.DepthRange(0, 1);
                     break;
 
                 case RenderType.guiText:
-                    GL.DepthRange(0,0.00001F);
+                    GL.DepthRange(0,0.005F);
                     GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedVerticesCount + (theBatch.requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
                     GL.DepthRange(0,1);
                     break;

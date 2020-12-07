@@ -14,7 +14,6 @@ namespace RabbetGameEngine
         private static double msPerTick;
         private static long applicationTime; //last updated UTC time of application. When ticking game, needs to be ticked untill application catches up with real time.
         private static double percentToNextTick; //a decimal value between 0 and 1 which can be used as a percentage of progress towards next tick, usefull for interpolation.
-        private static bool paused = false; //true when game is paused
         private static int frames;
         private static int framesPerSec;
         private static double timer;
@@ -54,14 +53,6 @@ namespace RabbetGameEngine
         /// <param name="onTickFunc">Reference to the onTick() function to be called</param>
         public static void doOnTickUntillRealtimeSync(System.Action onTickFunc)
         {
-            if(paused)
-            {
-                while ((applicationTime + msPerTick) < getRealTimeMills())
-                {
-                    applicationTime += (long)msPerTick;
-                }
-                return;
-            }
             while((applicationTime + msPerTick) < getRealTimeMills())
             {
                 onTickFunc();
@@ -73,16 +64,6 @@ namespace RabbetGameEngine
                 }
             }
             percentToNextTick = (double)(getRealTimeMills() - applicationTime) / msPerTick;
-        }
-
-        public static void pause()
-        {
-            paused = true;
-        }
-
-        public static void unPause()
-        {
-            paused = false;
         }
 
         public static float getNumOfTicksForSeconds(float seconds)

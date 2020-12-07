@@ -5,7 +5,6 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Sound;
-using RabbetGameEngine.Src.Game;
 using RabbetGameEngine.Text;
 using RabbetGameEngine.VisualEffects;
 using System;
@@ -28,6 +27,7 @@ namespace RabbetGameEngine
         private static int screenHeight;
         private static Vector2 windowCenter;
         private static float dpiY;
+        private static bool gamePaused = false;
         public EntityPlayer thePlayer;
         public Planet currentPlanet;
 
@@ -39,12 +39,13 @@ namespace RabbetGameEngine
         public unsafe GameInstance(GameWindowSettings gameWindowSettings, NativeWindowSettings windowSettings) : base(gameWindowSettings, windowSettings)
         {
             GameInstance.instance = this;
+            TicksAndFrames.init(30);
             Title = Application.applicationName;
             int iconWidth, iconHeight;
             byte[] data;
             IconLoader.getIcon("icon", out iconWidth, out iconHeight, out data);
             Icon = new WindowIcon(new OpenTK.Windowing.Common.Input.Image[] { new OpenTK.Windowing.Common.Input.Image(iconWidth, iconHeight, data) });
-
+            
             OpenTK.Windowing.Common.MonitorHandle m = CurrentMonitor;
             
             VideoMode mode = *GLFW.GetVideoMode(m.ToUnsafePtr<OpenTK.Windowing.GraphicsLibraryFramework.Monitor>());
@@ -61,6 +62,7 @@ namespace RabbetGameEngine
         
         protected override void OnLoad()
         {
+                Application.infoPrint("loading.");
             try
             {
                 GameInstance.privateRand = new Random();
@@ -71,15 +73,13 @@ namespace RabbetGameEngine
                 windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
                 setDPIScale();
                 Renderer.init();
-                TicksAndFrames.init(30);
-                GUIHud.init();
-                DebugInfo.init();
+                GUIManager.addPersistentGUI(new GUIHud());
                 currentPlanet = new Planet(0xdeadbeef);
                 //create and spawn player in new world
                 thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 35; i++)
                 {
-                   currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(0, 10, 0)));
+                   currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(-privateRand.Next(-26, 27), 2.5F, -privateRand.Next(-26, 27))));
                 }
                 currentPlanet.spawnEntityInWorld(thePlayer);
 
@@ -88,12 +88,13 @@ namespace RabbetGameEngine
                 currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll", GameSettings.defaultFont, "waterroll.ogg, 50% volume", new Vector3(16,2.5F,16), 5.0F, CustomColor.white));
                 SoundManager.playSoundLoopingAt("waterroll_large", new Vector3(-16, 1, -16), 1.0F);
                 currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", GameSettings.defaultFont, "waterroll_large.ogg, 100% volume", new Vector3(-16,2.5F,-16), 5.0F, CustomColor.white));
-                for(int i = 0; i < 500; i++)
+                for(int i = 0; i < 5000; i++)
                 {
                     currentPlanet.spawnVFXInWorld(new VFXLogoSprite3D(new Vector3(-privateRand.Next(-26, 27), 2.5F, -privateRand.Next(-26, 27)), new Vector2(5, 5)));
                 }
 
                 Input.setCursorHiddenAndGrabbed(true);
+                Application.infoPrint("Initialized.");
             }
             catch(Exception e)
             {
@@ -141,6 +142,12 @@ namespace RabbetGameEngine
             {
                 doneOneTick = false;
                 TicksAndFrames.doOnTickUntillRealtimeSync(onTick);
+                if(doneOneTick)
+                {
+                    Application.updateRamUsage();
+                    Renderer.doRenderUpdate();
+                    GUIManager.doUpdate();
+                }
             }
             catch(Exception e)
             {
@@ -173,11 +180,8 @@ namespace RabbetGameEngine
 
         protected override void OnFocusedChanged(FocusedChangedEventArgs e)
         {
-            if (thePlayer != null && !thePlayer.paused)
-            {
-                //pausing the game if the window focus changes
-                pauseGame();
-            }
+            //pausing the game if the window focus changes
+            pauseGame();
             base.OnFocusedChanged(e);
         }
 
@@ -185,38 +189,15 @@ namespace RabbetGameEngine
         private void onTick()
         {
             Profiler.beginEndProfile("Loop");
-
-            if(!doneOneTick)
-            {
-                Renderer.beforeTick();
-            }
-
             windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
             currentPlanet.onTick();
             Renderer.onTick();
             SoundManager.onTick();
             Profiler.onTick();
-            GUIManager.onTick();
             Renderer.onTickEnd();
             Profiler.beginEndProfile("Loop");
 
-            if(!doneOneTick)
-            {
-                doRenderUpdate();
-            }
-
             doneOneTick = true;//do last, ensures that certain functions are only called once per tick loop
-        }
-        
-        private void doRenderUpdate()
-        {
-            Profiler.beginEndProfile("renderUpdate");
-            GUIManager.requestRender();
-            if(currentPlanet!=null)
-            {
-                currentPlanet.onRenderUpdate();
-            }
-            Profiler.beginEndProfile("renderUpdate");
         }
 
         public float getDrawDistance()
@@ -228,22 +209,16 @@ namespace RabbetGameEngine
             return 1000.0F;
         }
 
-        /*Called when player lands direct hit on a cactus, TEMPORARY!*/
-        public static void onDirectHit()
-        {
-            GUIHud.onDirectHit();
-        }
-
-        /*Called when player lands air shot on a cactus, TEMPORARY!*/
-        public static void onAirShot()
-        {
-            GUIHud.onAirShot();
-        }
-
         public void pauseGame()
         {
-            thePlayer.togglePause();
-            Input.setCursorHiddenAndGrabbed(!thePlayer.paused);
+            Input.setCursorHiddenAndGrabbed(false);
+            gamePaused = true;
+        }
+
+        public void unPauseGame()
+        {
+            Input.setCursorHiddenAndGrabbed(true);
+            gamePaused = false;
         }
 
         private void setDPIScale()
@@ -257,6 +232,8 @@ namespace RabbetGameEngine
         public static float aspectRatio { get => (float)windowWidth / (float)windowHeight; }
         public static float dpiScale { get => (float)windowHeight / dpiY; }
         public static Random rand { get => privateRand; }
+
+        public static bool paused { get => gamePaused; }
         public static GameInstance get { get => instance; }
     }
 }

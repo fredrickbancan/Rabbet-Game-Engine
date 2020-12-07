@@ -28,10 +28,12 @@
             currentTicks = triggerOnResume ? activationTicks : currentTicks;
         }
 
-        /*should be called every tick BEFORE any dependant code. returns true if timer is triggered.
-          do not call onTick() with doFunctionAtIntervalIfTrueOnTick() on the same timer. This will cause a 
-          double update.*/
-        public bool onTick()
+        /// <summary>
+        /// should be called every tick BEFORE any dependant code. returns true if timer is triggered.
+        /// do not call onTick() with doFunctionAtIntervalIfTrueOnTick() on the same timer.This will cause a
+        /// double update.
+        /// </summary>
+        public bool update()
         {
             if (!running)
             {
@@ -47,13 +49,14 @@
             }
             return activated;
         }
+        /// <summary>
+        ///  should be called instead of update() with a pointer to a function to be called.
+        ///  This will cause the function to be called every time interval passing, as long as 
+        ///  the determinator parameter is true. The provided function will never be called in
+        ///  a shorter interval than the set interval of this tick timer.
+        /// </summary>
 
-        /*should be called instead of onTick() with a pointer to a function to be called.
-          This will cause the function to be called every time interval passing, as long as 
-          the determinator parameter is true. The provided function will never be called in
-          a shorter interval than the set interval of this tick timer. 
-          Returns: true if the function was called.*/
-        public bool doFunctionAtIntervalOnTick(System.Action function, bool determinator = true)
+        public bool doFunctionAtIntervalOnUpdate(System.Action function, bool determinator = true)
         {
             if (!running && !determinator)//do nothing if timer not running and determinator is false
             {

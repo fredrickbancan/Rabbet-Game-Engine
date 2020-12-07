@@ -27,7 +27,7 @@ namespace RabbetGameEngine
             heightPixels = height;
         }
 
-        public virtual void onTick()
+        public virtual void onUpdate()
         {
 
         }

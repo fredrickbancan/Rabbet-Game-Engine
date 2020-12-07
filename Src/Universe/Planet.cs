@@ -1,5 +1,6 @@
 ﻿using Medallion;
 using OpenTK.Mathematics;
+using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Physics;
 using RabbetGameEngine.Sound;
@@ -80,7 +81,7 @@ namespace RabbetGameEngine
             //dayNightCycleMinutes = rand.Next(15,61);
             totalDayNightTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(dayNightCycleMinutes * 60);
             dayNightTicks =(int) ((float)(totalDayNightTicks / 4) * 2.8F);//setting to sunset
-            setDrawDistanceAndFog(150.0F);
+            setDrawDistanceAndFog(1500.0F);
             buildMoons();
             buildStars();
             SkyboxRenderer.setSkyboxToDraw(this);
@@ -250,7 +251,9 @@ namespace RabbetGameEngine
             tickEntities();
             tickProjectiles();
             CollisionHandler.testProjectilesAgainstEntities(entities, projectiles);
+            Profiler.beginEndProfile("aux");
             tickVFX();
+            Profiler.beginEndProfile("aux");
         }
 
         public void onRenderUpdate()
@@ -402,23 +405,18 @@ namespace RabbetGameEngine
             for (int i = 0; i < vfxList.Count; i++)
             {
                 VFX vfx = vfxList.ElementAt(i);
-                if (vfx == null)
+                if (!vfx.exists())
                 {
                     vfxList.RemoveAt(i);
                     i--;
                     continue;
                 }
-                else if (!vfx.exists())
-                {
-                    vfxList.RemoveAt(i);
-                    i--;
-                    continue;
-                }
-                else
+                if (vfx.isTickable())
                 {
                     vfx.preTick();
                     vfx.onTick();
                     vfx.postTick();
+                    if(vfx.isMovable())
                     CollisionHandler.tryToMoveObject(vfx, worldColliders);
                 }
             }

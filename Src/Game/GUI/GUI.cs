@@ -14,19 +14,19 @@ namespace RabbetGameEngine
         private Texture fontTexture;
         private bool wholeScreenHidden = false;
         private uint maxCharCount;
-        public string screenName = "";
+        public string guiName = "";
 
-        public GUI(string screenName, string textFont, uint maxCharCount = 1024)
+        public GUI(string guiName, string textFont, uint maxCharCount = 1024)
         {
             if(!TextUtil.tryGetFont(textFont, out screenFont))
             {
-                Application.error("GUIScreen " + screenName + " could not load its provided font: " + textFont + ", it will have a null font!");
+                Application.error("GUIScreen " + guiName + " could not load its provided font: " + textFont + ", it will have a null font!");
             }
             if(!TextureUtil.tryGetTexture(textFont, out fontTexture))
             {
-                Application.error("GUIScreen " + screenName + " could not a texture for its provided font: " + textFont + ", it will have a null font texture!");
+                Application.error("GUIScreen " + guiName + " could not a texture for its provided font: " + textFont + ", it will have a null font texture!");
             }
-            this.screenName = screenName;
+            this.guiName = guiName;
             this.maxCharCount = maxCharCount;
         }
         public void requestGUIRender()
@@ -49,7 +49,7 @@ namespace RabbetGameEngine
             }
         }
 
-        public void buildText()
+        public void buildAllText()
         {
             foreach (GUITextPanel panel in screenTextPanels.Values)
             {
@@ -97,7 +97,7 @@ namespace RabbetGameEngine
             }
             else
             {
-                Application.error("GUIScreen " + screenName + " could not find requested text panel to update: " + name);
+                Application.error("GUIScreen " + guiName + " could not find requested text panel to update: " + name);
                 foundPanel = null;
                 return false;
             }
@@ -111,7 +111,7 @@ namespace RabbetGameEngine
             }
             else
             {
-                Application.error("GUIScreen " + screenName + " could not find requested text panel to update: " + name);
+                Application.error("GUIScreen " + guiName + " could not find requested text panel to update: " + name);
                 return result;
             }
         }
@@ -125,7 +125,7 @@ namespace RabbetGameEngine
             }
             else
             {
-                Application.error("GUIScreen " + screenName + " could not find requested text panel to update: " + name);
+                Application.error("GUIScreen " + guiName + " could not find requested text panel to update: " + name);
             }
         }
         public void unHideTextPanel(string name)
@@ -137,7 +137,7 @@ namespace RabbetGameEngine
             }
             else
             {
-                Application.error("GUIScreen " + screenName + " could not find requested text panel to update: " + name);
+                Application.error("GUIScreen " + guiName + " could not find requested text panel to update: " + name);
             }
         }
 
@@ -183,19 +183,19 @@ namespace RabbetGameEngine
             if (screenTextPanels.TryGetValue(name, out GUITextPanel panel))
             {
                 screenTextPanels.Remove(name);
-                buildText();
+                buildAllText();
             }
             else
             {
-                Application.warn("GUIScreen " + screenName + " Could not remove requested text panel: " +  name);
+                Application.warn("GUIScreen " + guiName + " Could not remove requested text panel: " +  name);
             }
         }
 
-        public virtual void onTick()
+        public virtual void onUpdate()
         {
             foreach (GUIComponent component in components.Values)
             {
-                component.onTick();
+                component.onUpdate();
             }
         }
 
@@ -207,7 +207,7 @@ namespace RabbetGameEngine
                 {
                     component.onWindowResize();
                 }
-                buildText();
+                buildAllText();
             }
         }
 

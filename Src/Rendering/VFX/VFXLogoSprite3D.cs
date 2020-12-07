@@ -2,7 +2,6 @@
 
 namespace RabbetGameEngine.VisualEffects
 {
-    //temporary class
     public class VFXLogoSprite3D : VFX
     {
         public Vector2 spriteSize;
@@ -11,6 +10,8 @@ namespace RabbetGameEngine.VisualEffects
         {
             spriteSize = size;
             sprite = new Sprite3D(pos, CustomColor.white.toNormalVec4(), new Vector3(size.X, size.Y, 1.0F), new Vector4(0, 0, 1, 1));
+            tickable = false;
+            movable = false;
         }
         public override void sendRenderRequest()
         {

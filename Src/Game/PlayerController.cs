@@ -12,25 +12,19 @@ namespace RabbetGameEngine
         /*Called every tick from Input.cs if a key is being pressed. for detecting player input*/
         public static void updateInput(KeyboardState keyboard)
         {
-            if (!GameInstance.get.thePlayer.paused)
-            {
-                currentKeyboardState = keyboard;
-                checkAndAddAction(Keys.W, Action.fowards);
-                checkAndAddAction(Keys.S, Action.backwards);
-                checkAndAddAction(Keys.A, Action.strafeLeft);
-                checkAndAddAction(Keys.D, Action.strafeRight);
-                checkAndAddAction(Keys.Space, Action.jump);
-                checkAndAddAction(Keys.F, Action.interact);
-            }
+            currentKeyboardState = keyboard;
+            checkAndAddAction(Keys.W, Action.fowards);
+            checkAndAddAction(Keys.S, Action.backwards);
+            checkAndAddAction(Keys.A, Action.strafeLeft);
+            checkAndAddAction(Keys.D, Action.strafeRight);
+            checkAndAddAction(Keys.Space, Action.jump);
+            checkAndAddAction(Keys.F, Action.interact);
         }
 
         public static void updateMouseButtonInput(MouseState mouse)
         {
-            if (!GameInstance.get.thePlayer.paused)
-            {
-                currentMouseState = mouse;
-                checkAndAddAction(MouseButton.Left, Action.attack);
-            }
+            currentMouseState = mouse;
+            checkAndAddAction(MouseButton.Left, Action.attack);
         }
 
         /*Called if a new key is being pressed in a tick. Will only call for one tick if it is the same key.
@@ -39,7 +33,16 @@ namespace RabbetGameEngine
         {
             if(Input.singleKeyPress(Keys.E))
             {
-                GameInstance.get.pauseGame();
+                if(GameInstance.paused)
+                {
+                    GameInstance.get.unPauseGame();
+                    GUIManager.closeCurrentGUI();
+                }
+                else
+                {
+                    GameInstance.get.pauseGame();
+                    GUIManager.openGUI(new GUIPauseMenu());
+                }
             }
 
             if (Input.singleKeyPress(Keys.V))

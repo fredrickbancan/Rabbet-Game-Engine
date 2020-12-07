@@ -11,7 +11,6 @@ namespace RabbetGameEngine
         
         private string playerName;
         private Camera camera;
-        public bool paused = false;
         public bool debugScreenOn = false;
 
         public static readonly Vector3 eyeOffset = new Vector3(0.0F, 0.62F, 0.0F);
@@ -34,8 +33,6 @@ namespace RabbetGameEngine
 
         public override void onTick()
         {
-            if (!paused)
-            {
                 base.onTick();
                 if(doingAction(Action.attack))
                 {
@@ -43,7 +40,6 @@ namespace RabbetGameEngine
                     VFXUtil.doSmallBangEffect(currentPlanet, (getEyePosition() + new Vector3(0, -0.55F, 0)) + camera.getFrontVector());
                     SoundManager.playSound("tankfire", 1.0F, 1.0F - (float)GameInstance.rand.NextDouble() * 0.2F);
                 }
-            }
             camera.onTick();
         }
 
@@ -60,10 +56,7 @@ namespace RabbetGameEngine
         /*Called before game renders, each frame.*/
         public void onCameraUpdate()
         {
-            if (!paused)
-            {
-                this.camera.onUpdate();
-            }
+            this.camera.onUpdate();
         }
 
         public string getName()
@@ -71,19 +64,6 @@ namespace RabbetGameEngine
             return this.playerName;
         }
 
-        public void togglePause()
-        {
-            if(!paused)
-            {
-                paused = true;
-                TicksAndFrames.pause();
-            }
-            else
-            {
-                paused = false;
-                TicksAndFrames.unPause();
-            }
-        }
         public Matrix4 getViewMatrix()
         {
             return camera.getViewMatrix();

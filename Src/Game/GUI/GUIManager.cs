@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using RabbetGameEngine.Debugging;
+using System.Collections.Generic;
 
 namespace RabbetGameEngine
 {
@@ -7,29 +8,30 @@ namespace RabbetGameEngine
         /// <summary>
         /// stack of gui's opened one after the other
         /// </summary>
-        private static Stack<GUI> guiStack;
+        private static Stack<GUI> guiStack = new Stack<GUI>();
 
         /// <summary>
-        /// A single GUI which stays open persistently
+        /// List of GUIs which persistently stay open on top of each other, e.g, a HUD and debug info
         /// </summary>
-        private static GUI persistentGUI;
+        private static Dictionary<string, GUI> persistentGUIs = new Dictionary<string, GUI>();
 
         /// <summary>
         /// The currently displayed GUI from the stack, if any.
         /// </summary>
         private static GUI currentDisplayedGUI;
 
-        public static void onTick()
+        public static void doUpdate()
         {
-            if(persistentGUI != null)
-            {
-                persistentGUI.onTick();
-            }
-
+            Profiler.beginEndProfile("guiUpdate");
             if(currentDisplayedGUI != null)
             {
-                currentDisplayedGUI.onTick();
+                currentDisplayedGUI.onUpdate();
             }
+            foreach (GUI g in persistentGUIs.Values)
+            {
+                g.onUpdate();
+            }
+            Profiler.beginEndProfile("guiUpdate");
         }
 
         public static void onWindowResize()
@@ -38,10 +40,9 @@ namespace RabbetGameEngine
             {
                 currentDisplayedGUI.onWindowResize();
             }
-
-            if (persistentGUI != null)
+            foreach (GUI g in persistentGUIs.Values)
             {
-                persistentGUI.onWindowResize();
+                g.onWindowResize();
             }
         }
 
@@ -53,10 +54,37 @@ namespace RabbetGameEngine
                 currentDisplayedGUI.requestTextRender();
             }
 
-            if (persistentGUI != null)
+            foreach(GUI g in persistentGUIs.Values)
             {
-                persistentGUI.requestGUIRender();
-                persistentGUI.requestTextRender();
+                g.requestGUIRender();
+                g.requestTextRender();
+            }
+        }
+
+        public static void openGUI(GUI g)
+        {
+            guiStack.Push(g);
+            currentDisplayedGUI = g;
+        }
+
+        public static void closeCurrentGUI()
+        {
+            if(guiStack.TryPop(out _))
+            {
+                currentDisplayedGUI = guiStack.Count > 0 ? guiStack.Peek() : null;
+            }
+        }
+
+        public static void addPersistentGUI(GUI g)
+        {
+            persistentGUIs.Add(g.guiName, g);
+        }
+
+        public static void removePersistentGUI(string guiName)
+        {
+            if(!persistentGUIs.Remove(guiName))
+            {
+                Application.warn("GUIManager could not remove the requested gui named " + guiName);
             }
         }
     }

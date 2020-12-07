@@ -126,7 +126,7 @@ namespace RabbetGameEngine.SubRendering
             drawCommands[requestedObjectItterator] = new DrawCommand((uint)(objIndCount), (uint)(1), (uint)(requestedIndicesCount), (uint)(requestedVerticesCount), (uint)(requestedObjectItterator));
         }
 
-        public void beforeTick()
+        public void reset()
         {
             requestedVerticesCount = 0;
             requestedIndicesCount = 0;
@@ -137,10 +137,7 @@ namespace RabbetGameEngine.SubRendering
             spriteItterator = 0;
         }
 
-        /// <summary>
-        /// After each tick, all the batches must submit their updated render data to the GPU to prepare for all draw calls.
-        /// </summary>
-        public void onTickEnd()
+        public void postRenderUpdate()
         {
             BatchUtil.updateBuffers(this);
             hasBeenUsed = false;
@@ -171,7 +168,7 @@ namespace RabbetGameEngine.SubRendering
             this.VAO = vao;
         }
 
-        public bool hasBeenUsedInCurrentTick()
+        public bool hasBeenUsedSinceLastUpdate()
         {
             return hasBeenUsed;
         }

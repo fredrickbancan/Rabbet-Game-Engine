@@ -21,9 +21,10 @@ namespace RabbetGameEngine.VisualEffects
         protected int ticksExisted;
         protected Model vfxModel;
         protected bool hasModel;
+        protected bool tickable = true;
+        protected bool movable = true;
         protected Texture vfxTexture;
         protected bool removalFlag = false;// true if this entity should be removed in the next tick
-        protected bool shouldDeleteModel = false;// true if this vfx is using a model loaded from file. If so, it should NOT be deleted!
         protected RenderType renderType;
         public string vfxName = "";
         public VFX(Vector3 pos, float initialScale,  string textureName, Model baseModel, float maxExistingSeconds = 1, RenderType type = RenderType.triangles) : base(pos)
@@ -120,6 +121,16 @@ namespace RabbetGameEngine.VisualEffects
         public virtual bool exists()
         {
             return !removalFlag;
+        }
+
+        public bool isTickable()
+        {
+            return tickable;
+        }
+
+        public bool isMovable()
+        {
+            return movable;
         }
     }
 }

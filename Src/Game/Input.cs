@@ -65,6 +65,14 @@ namespace RabbetGameEngine
                 if (singleKeyPress(Keys.F3))
                 {
                     toggleBoolean(ref GameSettings.debugScreen);
+                    if(GameSettings.debugScreen)
+                    {
+                        GUIManager.addPersistentGUI(new GUIDebugInfo());
+                    }
+                    else
+                    {
+                        GUIManager.removePersistentGUI("debugInfo");
+                    }
                 }
 
                 if (singleKeyPress(Keys.F4))

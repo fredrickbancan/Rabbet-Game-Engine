@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
-namespace RabbetGameEngine.Src.Game
+namespace RabbetGameEngine
 {
     public static class IconLoader
     {
