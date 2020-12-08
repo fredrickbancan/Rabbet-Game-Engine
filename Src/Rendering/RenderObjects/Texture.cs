@@ -17,6 +17,10 @@ namespace RabbetGameEngine
             {
                 id = loadDitheringTexture();
             }
+            else if(path == "white")
+            {
+                id = loadWhiteTexture();
+            }
             else if (path != "none")
             {
                 if (!enableFiltering)
@@ -73,7 +77,38 @@ namespace RabbetGameEngine
                 GL.BindTexture(TextureTarget.Texture2D, id);
         }
         
-        public int loadDitheringTexture()
+        private int loadWhiteTexture()
+        {
+            Bitmap bitmap = new Bitmap(4, 4);//creating default error texture
+            width = 4;
+            height = 4;
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {//exlusive or
+                    bitmap.SetPixel(i, j, Color.White);//creating black and magenta checker board
+                }
+            }
+
+            int tex;
+            GL.Hint(HintTarget.PerspectiveCorrectionHint, HintMode.Fastest);
+
+            GL.GenTextures(1, out tex);
+            GL.BindTexture(TextureTarget.Texture2D, tex);
+
+            BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+            bitmap.UnlockBits(data);
+
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            return tex;
+        }
+
+        private int loadDitheringTexture()
         {
              byte[] pattern = new byte[]{
               0, 32,  8, 40,  2, 34, 10, 42,   /* 8x8 Bayer ordered dithering  */

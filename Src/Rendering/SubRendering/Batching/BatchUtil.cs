@@ -29,6 +29,7 @@ namespace RabbetGameEngine.SubRendering
                     theBatch.maxBufferSizeBytes /= 2;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.indices = QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6);
+                    theBatch.transparentGUI = true;
                     VertexBufferLayout l = new VertexBufferLayout();
                     Vertex.configureLayout(l);
                     vao.addBufferDynamic(Batch.initialArraySize * Vertex.vertexByteSize, l);
@@ -43,6 +44,7 @@ namespace RabbetGameEngine.SubRendering
                         theBatch.maxBufferSizeBytes /= 2;
                         theBatch.vertices = new Vertex[Batch.initialArraySize];
                         theBatch.indices = QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6);
+                        theBatch.transparentGUI = true;
                         VertexBufferLayout lt = new VertexBufferLayout();
                         Vertex.configureLayout(lt);
                         vao.addBufferDynamic(Batch.initialArraySize * Vertex.vertexByteSize, lt);
@@ -57,6 +59,7 @@ namespace RabbetGameEngine.SubRendering
                     theBatch.maxBufferSizeBytes /= 2;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.indices = QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6);
+                    theBatch.transparentGUI = true;
                     VertexBufferLayout l1 = new VertexBufferLayout();
                     Vertex.configureLayout(l1);
                     vao.addBufferDynamic(Batch.initialArraySize * Vertex.vertexByteSize, l1);
@@ -937,27 +940,31 @@ namespace RabbetGameEngine.SubRendering
             {
                 case RenderType.none:
                     break;
-                    //TODO: give GUI elements depth values depending on their layering order, and make GUI transparent components sorted!
-                    //GUI elements should have a depth between 0 and 0.005.
-                    //For example: GL.DepthRange(0, theBatch.guiDepth)
+
                 case RenderType.guiCutout:
                     theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
+                    GL.DepthMask(false);
                     GL.DepthRange(0, 0.005F);
                     GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedVerticesCount + (theBatch.requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
                     GL.DepthRange(0, 1);
+                    GL.DepthMask(true);
                     break;
 
                 case RenderType.guiTransparent:
                     theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
+                    GL.DepthMask(false);
                     GL.DepthRange(0, 0.005F);
                     GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedVerticesCount + (theBatch.requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
                     GL.DepthRange(0, 1);
+                    GL.DepthMask(true);
                     break;
 
                 case RenderType.guiText:
+                    GL.DepthMask(false);
                     GL.DepthRange(0,0.005F);
                     GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedVerticesCount + (theBatch.requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
                     GL.DepthRange(0,1);
+                    GL.DepthMask(true);
                     break;
 
                 case RenderType.text3D:

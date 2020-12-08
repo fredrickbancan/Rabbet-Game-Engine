@@ -84,8 +84,11 @@ namespace RabbetGameEngine.SubRendering
         public Texture batchTex;
         public Shader batchShader;
 
-        public Batch(RenderType type, Texture tex)
+        public int renderLayer = 0;
+
+        public Batch(RenderType type, Texture tex, int renderLayer = 0)
         {
+            this.renderLayer = renderLayer;
             batchType = type;
             batchTex = tex;
             BatchUtil.buildBatch(this);

@@ -144,9 +144,12 @@ namespace RabbetGameEngine
                 TicksAndFrames.doOnTickUntillRealtimeSync(onTick);
                 if(doneOneTick)
                 {
+                    //This area will be called at MAXIMUM of the tick rate. Meaning it will not be called multiple times in a laggy situation.
+                    //It is called after the ticks are looped.
                     Application.updateRamUsage();
                     Renderer.doRenderUpdate();
                     GUIManager.doUpdate();
+                    SoundManager.onUpdate();
                 }
             }
             catch(Exception e)
@@ -192,7 +195,6 @@ namespace RabbetGameEngine
             windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
             currentPlanet.onTick();
             Renderer.onTick();
-            SoundManager.onTick();
             Profiler.onTick();
             Renderer.onTickEnd();
             Profiler.beginEndProfile("Loop");
@@ -209,6 +211,7 @@ namespace RabbetGameEngine
             return 1000.0F;
         }
 
+        //TODO: Implement proper pausing of game, while keeping certain things running such as U.I and sound.
         public void pauseGame()
         {
             Input.setCursorHiddenAndGrabbed(false);

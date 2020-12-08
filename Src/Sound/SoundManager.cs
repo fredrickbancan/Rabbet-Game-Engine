@@ -100,7 +100,7 @@ namespace RabbetGameEngine.Sound
             if (!initialized) return;
 
         }
-        public static void onTick()
+        public static void onUpdate()
         {
             if (!initialized) return;
 

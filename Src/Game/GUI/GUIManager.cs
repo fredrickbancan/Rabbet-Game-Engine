@@ -48,17 +48,17 @@ namespace RabbetGameEngine
 
         public static void requestRender()
         {
+            foreach(GUI g in persistentGUIs.Values)
+            {
+                g.requestGUIRender();
+                g.requestTextRender();
+            }
             if (currentDisplayedGUI != null)
             {
                 currentDisplayedGUI.requestGUIRender();
                 currentDisplayedGUI.requestTextRender();
             }
 
-            foreach(GUI g in persistentGUIs.Values)
-            {
-                g.requestGUIRender();
-                g.requestTextRender();
-            }
         }
 
         public static void openGUI(GUI g)

@@ -4,27 +4,36 @@ namespace RabbetGameEngine
 {
     public class GUIComponent
     {
-        private float widthPixels, heightPixels;
-        protected Vector2 screenPosAbsolute;
+        protected Vector2 screenPos;
+        protected Vector2 screenPixelPos;
+        protected Vector2 size;
+        protected Vector2 screenPixelSize;
         protected bool hidden = false;
+
+        /// <summary>
+        /// If this bool is true, size of this component will in pixels will be a percentage of the window HEIGHT,
+        /// Otherwise, it will be a percentage of window HEIGHT AND WIDTH.
+        /// </summary>
+        protected bool dpiRelativeSize = true;
+
         protected string name = "";
         protected Texture componentTexture = null;
         protected Model componentQuadModel = null;
         protected Matrix4 translationAndScale = Matrix4.Identity;
 
-        public GUIComponent(Vector2 screenPos/*position where 0 is top left and 1 is bottom right*/)
+        public GUIComponent(Vector2 screenPos)
         {
-            screenPos.Y = 1F - screenPos.Y;//flips y to make it start from top left.
-            this.screenPosAbsolute = screenPos;
+            screenPos.Y = 1 - screenPos.Y;
+            this.screenPos = screenPos - new Vector2(0.5F, 0.5F);
         }
 
         /// <summary>
-        /// Sets the size of this component in pixels
+        /// Sets the size of this component in precentage of window height
         /// </summary>
-        protected virtual void setSizePixels(float width, float height)
+        protected virtual void setSize(float width, float height, bool dpiRelative = true)
         {
-            widthPixels = width;
-            heightPixels = height;
+            size = new Vector2(width, height);
+            dpiRelativeSize = dpiRelative;
         }
 
         public virtual void onUpdate()
@@ -49,7 +58,9 @@ namespace RabbetGameEngine
 
         protected virtual void scaleAndTranslate()
         {
-            translationAndScale = Matrix4.CreateScale((GameInstance.dpiScale * widthPixels) * 0.07F, (GameInstance.dpiScale * heightPixels) * 0.07F, 1) *  Matrix4.CreateTranslation(screenPosAbsolute.X - 0.01F,  screenPosAbsolute.Y, -0.2F);
+            screenPixelPos = new Vector2(screenPos.X * GameInstance.gameWindowWidth, screenPos.Y * GameInstance.gameWindowHeight);
+            screenPixelSize = new Vector2(size.X * (dpiRelativeSize ? GameInstance.gameWindowHeight : GameInstance.gameWindowWidth), size.Y * GameInstance.gameWindowHeight);
+            translationAndScale = Matrix4.CreateScale(screenPixelSize.X, screenPixelSize.Y, 1) *  Matrix4.CreateTranslation(screenPixelPos.X, screenPixelPos.Y, -0.2F);
         }
 
         public virtual void setHide(bool flag)
@@ -59,7 +70,7 @@ namespace RabbetGameEngine
 
         public virtual Vector2 getScreenPos()
         {
-            return screenPosAbsolute;
+            return screenPos;
         }
 
         public virtual void requestRender()

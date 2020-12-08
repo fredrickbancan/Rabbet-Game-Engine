@@ -1,4 +1,5 @@
 ﻿using RabbetGameEngine.Models;
+using RabbetGameEngine.Sound;
 using RabbetGameEngine.Text;
 using System.Collections.Generic;
 
@@ -44,7 +45,7 @@ namespace RabbetGameEngine
                 if (!panel.hidden)
                     foreach (Model mod in panel.models)
                     {
-                        Renderer.requestRender(RenderType.guiText, fontTexture, mod);
+                        Renderer.requestRender(RenderType.guiText, fontTexture, mod, panel.renderLayer);
                     }
             }
         }
@@ -214,6 +215,19 @@ namespace RabbetGameEngine
         public bool isFontNull()
         {
             return this.screenFont == null;
+        }
+
+        protected void defaultOnButtonHoverEnter()
+        {
+            SoundManager.playSound("buttonhover");
+        }
+
+        protected void defaultOnButtonHoverExit()
+        {
+        }
+        protected void defaultOnButtonClick()
+        {
+            SoundManager.playSound("buttonclick");
         }
     }
 }

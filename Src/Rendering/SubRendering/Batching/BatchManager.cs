@@ -45,11 +45,11 @@ namespace RabbetGameEngine.SubRendering
         /// Can be called to request that the provided data be added to the appropriate existing batch
         /// or, if said batch does not exist or is full, creates and adds a new batch.
         /// </summary>
-        public static void requestRender(RenderType type, Texture tex, Model theModel)
+        public static void requestRender(RenderType type, Texture tex, Model theModel, int renderLayer)
         {
             if (batches.Count < 1)
             {
-                batches.Add(new Batch(type, tex));
+                batches.Add(new Batch(type, tex, renderLayer));
                 BatchUtil.tryToFitInBatchModel(theModel, batches.ElementAt(0));
                 return;
             }
@@ -57,7 +57,7 @@ namespace RabbetGameEngine.SubRendering
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
-                if(batchAt.getRenderType() == type && batchAt.getBatchtexture() == tex &&  BatchUtil.tryToFitInBatchModel(theModel, batchAt))
+                if(batchAt.getRenderType() == type && renderLayer == batchAt.renderLayer && batchAt.getBatchtexture() == tex &&  BatchUtil.tryToFitInBatchModel(theModel, batchAt))
                 {
                     return;//successfull batch adding
                 }
@@ -65,18 +65,21 @@ namespace RabbetGameEngine.SubRendering
                 if(i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
                     //ensure that all opaque batches come before transparent ones in the list.
+
+                    //Transparent GUI compenents should be the absolute last things to be rendered.
                     if (type == RenderType.guiText || type == RenderType.guiTransparent)
                     {
-                        batches.Add(new Batch(type, tex));
+                        batches.Add(new Batch(type, tex, renderLayer));
                         BatchUtil.tryToFitInBatchModel(theModel, batches.ElementAt(i + 1));
                     }
+                    //Transparent world geometry should come after opaque geometry and before Gui
                     else if (type == RenderType.lerpTrianglesTransparent || type == RenderType.trianglesTransparent)
                     {
-                        insertTransparentNonGUIBatch(new Batch(type, tex), theModel);
+                        insertTransparentNonGUIBatch(new Batch(type, tex, renderLayer), theModel);
                     }
                     else
                     {
-                        batches.Insert(0, new Batch(type, tex));
+                        batches.Insert(0, new Batch(type, tex, renderLayer));
                         BatchUtil.tryToFitInBatchModel(theModel, batches.ElementAt(0));
                     }
                     

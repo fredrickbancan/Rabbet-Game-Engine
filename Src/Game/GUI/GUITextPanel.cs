@@ -1,11 +1,11 @@
 ﻿using OpenTK.Mathematics;
-using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Text;
 using System.Collections.Generic;
 
 namespace RabbetGameEngine
 {
+    //TODO: Remove textformat subclass as it is unecessary. Merge all functionality into GUITextPanel
     public class TextFormat// a simle class for submitting format options for a text panel
     {
         public Vector2 panelPos = Vector2.Zero; // position of the top left corner of this panel
@@ -66,14 +66,20 @@ namespace RabbetGameEngine
 
         public bool hidden = false;
 
+        /// <summary>
+        /// Text with smaller renderlayer will be rendered first.
+        /// </summary>
+        public int renderLayer;
+
         public GUITextPanel()//new gui text panel with default format
         {
             format = new TextFormat();
             lines = new List<string>();
         }
 
-        public GUITextPanel(TextFormat format)//new gui text panel with provided format
+        public GUITextPanel(TextFormat format, int renderLayer = 0)//new gui text panel with provided format
         {
+            this.renderLayer = renderLayer;
             this.format = format;
             lines = new List<string>();
         }

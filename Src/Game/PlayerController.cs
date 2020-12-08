@@ -31,19 +31,6 @@ namespace RabbetGameEngine
           usefull for input such as opening menus, attacking, jumping, things that only need one key press.*/
         public static void updateSinglePressInput(KeyboardState keyboard)
         {
-            if(Input.singleKeyPress(Keys.E))
-            {
-                if(GameInstance.paused)
-                {
-                    GameInstance.get.unPauseGame();
-                    GUIManager.closeCurrentGUI();
-                }
-                else
-                {
-                    GameInstance.get.pauseGame();
-                    GUIManager.openGUI(new GUIPauseMenu());
-                }
-            }
 
             if (Input.singleKeyPress(Keys.V))
             {

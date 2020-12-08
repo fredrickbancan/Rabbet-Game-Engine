@@ -46,9 +46,18 @@ namespace RabbetGameEngine
             /*Only update keyboard input if the game window is focused, and if any key is being pressed.*/
             if (GameInstance.get.IsFocused && keyboardState.IsAnyKeyDown)
             {
-                if (singleKeyPress(Keys.Escape))
+                if (Input.singleKeyPress(Keys.Escape))
                 {
-                    GameInstance.get.Close();
+                    if (GameInstance.paused)
+                    {
+                        GameInstance.get.unPauseGame();
+                        GUIManager.closeCurrentGUI();
+                    }
+                    else
+                    {
+                        GameInstance.get.pauseGame();
+                        GUIManager.openGUI(new GUIPauseMenu());
+                    }
                 }
 
                 if (singleKeyPress(Keys.F1))
@@ -137,6 +146,11 @@ namespace RabbetGameEngine
             {
                 mouseDelta = Vector2.Zero;
             }
+        }
+
+        public static bool mouseleftButtonDown()
+        {
+            return mouseState.IsButtonDown(MouseButton.Left);
         }
 
         public static Vector2 getMouseDelta()

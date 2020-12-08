@@ -94,9 +94,9 @@ namespace RabbetGameEngine
             
         }
 
-        public static void requestRender(RenderType type, Texture tex, Model mod)
+        public static void requestRender(RenderType type, Texture tex, Model mod, int renderLayer = 0)
         {
-            BatchManager.requestRender(type, tex, mod);
+            BatchManager.requestRender(type, tex, mod, renderLayer);
         }
 
         public static void requestRender(PointCloudModel mod, bool transparency, bool lerp)
