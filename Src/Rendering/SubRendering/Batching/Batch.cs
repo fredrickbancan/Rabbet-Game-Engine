@@ -26,11 +26,6 @@ namespace RabbetGameEngine.SubRendering
 
         public bool hasBeenUsed = false;
 
-        /// <summary>
-        /// true if this batch should be rendered last.
-        /// </summary>
-        public bool transparentGUI = false;
-
         public VertexArrayObject VAO;
         public Vertex[] vertices;
         public uint[] indices;

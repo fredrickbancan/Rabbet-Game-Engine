@@ -89,7 +89,7 @@ namespace RabbetGameEngine
                     toggleBoolean(ref GameSettings.fullscreen);
                     Renderer.onToggleFullscreen();
                 }
-                if (singleKeyPress(Keys.F5))
+                if (singleKeyPress(Keys.F5))//TODO: Move to playercontroller
                 {
                     toggleBoolean(ref GameSettings.noclip);
                 }

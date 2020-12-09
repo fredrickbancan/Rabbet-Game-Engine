@@ -25,7 +25,6 @@ namespace RabbetGameEngine
                 w.StartFocused = true;
                 w.StartVisible = true;
                 w.Profile = ContextProfile.Core;
-
                 GameWindowSettings g = new GameWindowSettings();
                 GameInstance game = new GameInstance(g, w);
                 ramUsageTimer = new TickTimer(2.48F, true, false);

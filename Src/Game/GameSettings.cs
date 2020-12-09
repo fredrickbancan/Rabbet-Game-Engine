@@ -6,6 +6,7 @@ namespace RabbetGameEngine
     static class GameSettings
     {
         public static float fov = 80; //fov of player camera
+        public static float barrelDistortionStrength = 0.5F;
         public static float mouseSensitivity = 0.08F;
 
         /// <summary>

@@ -47,6 +47,7 @@ namespace RabbetGameEngine
                 t.addLine("Sounds: " + SoundManager.getPlayingSoundsCount());
                 t.addLine("Draw Calls: " + Renderer.totalDraws);
                 t.addLine("Batches: " + BatchManager.batchCount);
+                t.addLine("Resolution: " + Renderer.viewPortSize.X + "X" + Renderer.viewPortSize.Y);
                 t.addLine("Used memory: " + (Application.ramUsageInBytes / 1000000L).ToString() + "MB");
                 t.pushLines();
                 t.build();

@@ -24,7 +24,7 @@ namespace RabbetGameEngine
             quitButton.setHoverColor(CustomColor.black.setAlphaF(0.5F));
             addGuiComponent("quitButton", quitButton);
 
-
+            //TODO: Make buttons text part of the button class.
 
             GUITextPanel t = new GUITextPanel(new TextFormat(0.5F, 0.45F - 0.015F).setAlign(Text.TextAlign.CENTER).setLine("Quit Game"), 1);
             addTextPanel("quitButtonText", t);

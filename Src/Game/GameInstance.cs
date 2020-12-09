@@ -54,7 +54,6 @@ namespace RabbetGameEngine
             int hw = screenWidth / 2;
             int hh = screenHeight / 2;
             ClientRectangle = new Box2i(hw - hw / 2, hh - hh / 2, hw + hw / 2, hh + hh / 2);
-
             GameInstance.windowWidth = this.ClientRectangle.Size.X;
             GameInstance.windowHeight = this.ClientRectangle.Size.Y;
             Context.MakeCurrent();
@@ -160,7 +159,6 @@ namespace RabbetGameEngine
             SoundManager.onFrame();
             thePlayer.onCameraUpdate();//do this before calling on tick to prepare camera variables
             currentPlanet.onFrame();//should be called before rendering world since this may prepare certain elements for a frame perfect render
-            Renderer.onFrame();
             Renderer.renderAll();
         }
 
@@ -192,6 +190,7 @@ namespace RabbetGameEngine
         private void onTick()
         {
             Profiler.beginEndProfile("Loop");
+            if(Bounds.Size.X > 0 && Bounds.Size.Y > 0)
             windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
             currentPlanet.onTick();
             Renderer.onTick();
@@ -235,6 +234,9 @@ namespace RabbetGameEngine
         public static float aspectRatio { get => (float)windowWidth / (float)windowHeight; }
         public static float dpiScale { get => (float)windowHeight / dpiY; }
         public static Random rand { get => privateRand; }
+
+        public static int realScreenWidth { get => screenWidth; }
+        public static int realScreenHeight { get => screenHeight; }
 
         public static bool paused { get => gamePaused; }
         public static GameInstance get { get => instance; }

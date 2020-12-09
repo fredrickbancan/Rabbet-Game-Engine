@@ -7,7 +7,6 @@ namespace RabbetGameEngine
 {
     public static class SkyboxRenderer
     {
-        private static Texture ditherTex = null;
         private static Texture moonsTex = null;
         private static Planet skyboxToDraw = null;
         private static Model skyboxModel = null;
@@ -61,11 +60,9 @@ namespace RabbetGameEngine
 
             ShaderUtil.tryGetShader(ShaderUtil.skyboxName, out skyboxShader);
             skyboxShader.use();
-            skyboxShader.setUniform1I("ditherTex", 1);
 
             ShaderUtil.tryGetShader(ShaderUtil.sunName, out sunShader);
             sunShader.use();
-            sunShader.setUniform1I("ditherTex", 1);
 
             ShaderUtil.tryGetShader(ShaderUtil.skyboxShroudName, out horizonShroudShader);
             ShaderUtil.tryGetShader(ShaderUtil.starsName, out starsShader);
@@ -73,9 +70,6 @@ namespace RabbetGameEngine
 
             ShaderUtil.tryGetShader(ShaderUtil.moonGlowName, out moonGlowShader);
             moonGlowShader.use();
-            moonGlowShader.setUniform1I("ditherTex", 1);
-
-            TextureUtil.tryGetTexture("dither", out ditherTex);
             TextureUtil.tryGetTexture("moons", out moonsTex);
             moonsTex.use();
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
@@ -138,9 +132,6 @@ namespace RabbetGameEngine
             {
                 return;
             }
-            GL.ActiveTexture(TextureUnit.Texture1);
-            ditherTex.use();
-            GL.ActiveTexture(TextureUnit.Texture0);
             Matrix4 proj = Renderer.projMatrix;
             Matrix4 view = viewMatrix.ClearTranslation();
             //drawing skybox

@@ -57,11 +57,9 @@ void main()
 in vec2 coords;
 out vec4 color;
 in vec4 vColor;
-uniform sampler2D ditherTex;
 void main()
 {
     float coordLength = dot(coords, coords);
     color = vColor;
     color.a *= pow(0.9 - sqrt(coordLength ), 3);
-    color.a += texture2D(ditherTex, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0 / 128.0);//dithering
 }

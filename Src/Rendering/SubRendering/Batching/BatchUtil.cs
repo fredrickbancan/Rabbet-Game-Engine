@@ -29,7 +29,6 @@ namespace RabbetGameEngine.SubRendering
                     theBatch.maxBufferSizeBytes /= 2;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.indices = QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6);
-                    theBatch.transparentGUI = true;
                     VertexBufferLayout l = new VertexBufferLayout();
                     Vertex.configureLayout(l);
                     vao.addBufferDynamic(Batch.initialArraySize * Vertex.vertexByteSize, l);
@@ -44,7 +43,6 @@ namespace RabbetGameEngine.SubRendering
                         theBatch.maxBufferSizeBytes /= 2;
                         theBatch.vertices = new Vertex[Batch.initialArraySize];
                         theBatch.indices = QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6);
-                        theBatch.transparentGUI = true;
                         VertexBufferLayout lt = new VertexBufferLayout();
                         Vertex.configureLayout(lt);
                         vao.addBufferDynamic(Batch.initialArraySize * Vertex.vertexByteSize, lt);
@@ -59,7 +57,6 @@ namespace RabbetGameEngine.SubRendering
                     theBatch.maxBufferSizeBytes /= 2;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.indices = QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6);
-                    theBatch.transparentGUI = true;
                     VertexBufferLayout l1 = new VertexBufferLayout();
                     Vertex.configureLayout(l1);
                     vao.addBufferDynamic(Batch.initialArraySize * Vertex.vertexByteSize, l1);
@@ -999,7 +996,7 @@ namespace RabbetGameEngine.SubRendering
                     break;
 
                 case RenderType.lerpISpheres:
-                    theBatch.batchShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
+                    theBatch.batchShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
                     theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
                     GL.DrawArrays(PrimitiveType.Points, 0, theBatch.pointsItterator / 2);
                     break;
@@ -1020,7 +1017,7 @@ namespace RabbetGameEngine.SubRendering
                     break;
 
                 case RenderType.lerpISpheresTransparent:
-                    theBatch.batchShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
+                    theBatch.batchShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
                     theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
                     GL.DrawArrays(PrimitiveType.Points, 0, theBatch.pointsItterator/2);
                     break;

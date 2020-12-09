@@ -12,38 +12,40 @@ namespace RabbetGameEngine
     public enum RenderType
     {
         none,
+        MARKER_GUI_START,
         guiCutout,
+        MARKER_TRANSPARENT_START,
+        guiText, 
         guiTransparent,
-        guiText,
-
-        /// <summary>
-        /// text3D objects should be built relative to 0,0,0. And then a position vector should be sent to the GPU for the position of the text in real world.
-        /// </summary>
-        text3D,
-        lerpText3D,
-        triangles,
-        quads,
-        lines,
-        iSpheres,
+        MARKER_GUI_END,
         iSpheresTransparent,
+        trianglesTransparent,
+        quadsTransparent,
+        MARKER_LERP_START,
+        lerpISpheresTransparent,
+        lerpTrianglesTransparent,
+        lerpQuadsTransparent,
+        MARKER_TRANSPARENT_END,
+        lerpText3D,
         lerpISpheres,
         lerpTriangles,
         lerpQuads,
         lerpLines,
-        lerpISpheresTransparent,
-        lerpTrianglesTransparent,
-        lerpQuadsTransparent,
-        trianglesTransparent,
-        quadsTransparent,
+        MARKER_LERP_END,
+        text3D,
+        triangles,
+        quads,
+        lines,
+        iSpheres,
         spriteCylinder
     }
-
-    //TODO: Find cause of mysterious 1x1 screenspace quad with text texture behind skybox :/
+    //TODO: implement optional fisheye distortion to solve large fov scaling issues, and optional full screen dithering if banding becomes an issue.
     public static class Renderer
     {
         private static int privateTotalDrawCallCount;
         private static Matrix4 projectionMatrix;
         private static Matrix4 orthographicMatrix;
+        private static bool useFrameBuffer = true;
        
         /// <summary>
         /// A list of all requested static renders
@@ -70,13 +72,14 @@ namespace RabbetGameEngine
             GL.Enable(EnableCap.ProgramPointSize);
             GL.Enable(EnableCap.VertexProgramPointSize);
             GL.Enable(EnableCap.Blend);
+            GL.Enable(EnableCap.Multisample);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.LineWidth(1);
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, GameSettings.maxDrawDistance);
             orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1.0F);
             staticDraws = new Dictionary<string, StaticRenderObject>();
             SkyboxRenderer.init();
-
+            FrameBuffer.init();
         }
 
         /*Called each time the game window is resized*/
@@ -86,12 +89,7 @@ namespace RabbetGameEngine
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
             orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1.0F);
             GUIManager.onWindowResize();
-        }
-
-        /*called once per frame*/
-        public static void onFrame()
-        {
-            
+            FrameBuffer.onResize();
         }
 
         public static void requestRender(RenderType type, Texture tex, Model mod, int renderLayer = 0)
@@ -143,6 +141,8 @@ namespace RabbetGameEngine
         /*Called before all draw calls*/
         private static void preRender()
         {
+            if(useFrameBuffer)
+            FrameBuffer.prepareToRenderToOffScreenTexture();
             GL.Clear(ClearBufferMask.DepthBufferBit);
             privateTotalDrawCallCount = 0;
         }
@@ -152,7 +152,9 @@ namespace RabbetGameEngine
             preRender();
             SkyboxRenderer.drawSkybox(GameInstance.get.thePlayer.getViewMatrix());
             drawAllStaticRenderObjects();
-            BatchManager.drawAll(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
+            BatchManager.drawAllWorld(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
+            if(!useFrameBuffer)
+            BatchManager.drawAllGUI(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
             postRender();
         }
         
@@ -160,6 +162,11 @@ namespace RabbetGameEngine
         private static void postRender()
         {
             GameInstance.get.SwapBuffers();
+            if(useFrameBuffer)
+            {
+                FrameBuffer.renderOffScreenTexture();
+                BatchManager.drawAllGUI(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
+            }
         }
 
         public static void addStaticDrawTriangles(string name, string textureName, Model data)
@@ -239,6 +246,8 @@ namespace RabbetGameEngine
         public static int totalDraws { get { return privateTotalDrawCallCount; } set { privateTotalDrawCallCount = value; } }
         public static Matrix4 orthoMatrix { get => orthographicMatrix; }
         public static Vector3 camPos { get => GameInstance.get.thePlayer.getLerpEyePos(); }
+
+        public static Vector2 viewPortSize { get => useFrameBuffer ? FrameBuffer.size : new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight);}
 
     }
 }
