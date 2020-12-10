@@ -17,7 +17,7 @@ namespace RabbetGameEngine.VisualEffects
         /// <summary>
         /// A vfx which is text in 3d space. Can move however does not have interpolation.
         /// </summary>
-        public VFXMovingText3D(PositionalObject parent, string name, string font, string content, Vector3 offset, float textSize, CustomColor color) : base(parent.getPosition(), textSize, font, null, 0, RenderType.lerpText3D)
+        public VFXMovingText3D(PositionalObject parent, string name, string font, string content, Vector3 offset, float textSize, Color color) : base(parent.getPosition(), textSize, font, null, 0, RenderType.lerpText3D)
         {
             TextUtil.tryGetFont(font, out this.font);
             this.setVFXName(name);

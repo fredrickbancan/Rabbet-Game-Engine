@@ -9,7 +9,7 @@ namespace RabbetGameEngine.VisualEffects
         public VFXLogoSprite3D(Vector3 pos, Vector2 size) : base(pos, 1.0F, "icon", null, 10000, RenderType.spriteCylinder)
         {
             spriteSize = size;
-            sprite = new Sprite3D(pos, CustomColor.white.toNormalVec4(), new Vector3(size.X, size.Y, 1.0F), new Vector4(0, 0, 1, 1));
+            sprite = new Sprite3D(pos, Color.white.toNormalVec4(), new Vector3(size.X, size.Y, 1.0F), new Vector4(0, 0, 1, 1));
             tickable = false;
             movable = false;
         }

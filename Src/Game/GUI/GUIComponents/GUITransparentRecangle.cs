@@ -3,14 +3,13 @@ using RabbetGameEngine.Models;
 
 namespace RabbetGameEngine
 {
-    public class GUITransparentOverlay : GUIComponent
+    public class GUITransparentRecangle : GUIComponent
     {
-        public GUITransparentOverlay(Color color, float alpha, int renderLayer = 0) : base(new Vector2(0, 0.5F), renderLayer)
+        public GUITransparentRecangle(Vector2 pos, Vector2 size, Color color, ComponentAlignment alignment, int renderLayer = 0, string texture = "white") : base(pos)
         {
-            alignment = ComponentAlignment.CENTER;
-            setModel(QuadPrefab.copyModel().setColor(color.toNormalVec4() * new Vector4(1,1,1,alpha)));
-            setSize(1.0F, 1.0F, false);
-            componentTexture = TextureUtil.getTexture("white");
+            setModel(QuadPrefab.copyModel().setColor(color.toNormalVec4()));
+            setSize(size.X, size.Y, true);
+            componentTexture = TextureUtil.getTexture(texture);
             scaleAndTranslate();
         }
 

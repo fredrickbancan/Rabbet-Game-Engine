@@ -1,6 +1,5 @@
 ﻿using Medallion;
 using OpenTK.Mathematics;
-using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Physics;
 using RabbetGameEngine.Sound;
@@ -14,15 +13,15 @@ namespace RabbetGameEngine
 {
     public class Planet
     {
-        private CustomColor fogColor;
-        private CustomColor horizonColor;
-        private CustomColor horizonColorDawn;
-        private CustomColor horizonColorDusk;
-        private CustomColor skyColor;
-        private CustomColor skyAmbientColor;
-        private CustomColor sunColor;
-        private CustomColor sunColorDawn;
-        private CustomColor sunColorDusk;
+        private Color fogColor;
+        private Color horizonColor;
+        private Color horizonColorDawn;
+        private Color horizonColorDusk;
+        private Color skyColor;
+        private Color skyAmbientColor;
+        private Color sunColor;
+        private Color sunColorDawn;
+        private Color sunColorDusk;
         private Vector3 sunDirection;
         private float sunAngle = 0;
         private float ambientBrightness = 0.05F;
@@ -59,7 +58,7 @@ namespace RabbetGameEngine
         public List<Entity> projectiles = new List<Entity>();
         public List<VFXMovingText3D> debugLabelList = new List<VFXMovingText3D>();
         public List<AABB> worldColliders = new List<AABB>();//list of colliders with no parent, ie, walls.
-        private string groundTextureName = "jungleground";
+        private string groundTextureName = "sand";   
         private static readonly Vector3 fallPlaneRespawnPos = new Vector3(0, 128, 0);
         private static readonly float fallPlaneHeight = -10.0F;
         private Random random;
@@ -69,15 +68,15 @@ namespace RabbetGameEngine
         public Planet(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
-            horizonColor = CustomColor.lightOrange;
-            horizonColorDawn = CustomColor.lightOrange.reduceVibrancy(-0.5F);
-            horizonColorDusk = CustomColor.dusk.reduceVibrancy(-0.5F);
-            skyAmbientColor = CustomColor.darkBlue.copy().reduceVibrancy(0.5F);
-            fogColor = CustomColor.lightGrey;
-            skyColor = CustomColor.skyBlue;
-            sunColor = CustomColor.lightYellow;
-            sunColorDawn = CustomColor.lightYellow;
-            sunColorDusk = CustomColor.flame;
+            horizonColor = Color.lightOrange;
+            horizonColorDawn = Color.lightOrange.reduceVibrancy(-0.5F);
+            horizonColorDusk = Color.dusk.reduceVibrancy(-0.5F);
+            skyAmbientColor = Color.darkBlue.copy().reduceVibrancy(0.5F);
+            fogColor = Color.lightGrey;
+            skyColor = Color.skyBlue;
+            sunColor = Color.lightYellow;
+            sunColorDawn = Color.lightYellow;
+            sunColorDusk = Color.flame;
             //dayNightCycleMinutes = rand.Next(15,61);
             totalDayNightTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(dayNightCycleMinutes * 60);
             dayNightTicks =(int) ((float)(totalDayNightTicks / 4) * 2.8F);//setting to sunset
@@ -161,11 +160,11 @@ namespace RabbetGameEngine
         public Vector3 getFogColor()
         {
             //TODO: make fog color match horizon in direction player is looking.
-            return skyColor.mix(CustomColor.white, 0.8F).setBrightPercent(getGlobalBrightness()*0.8F).toNormalVec3();
+            return skyColor.mix(Color.white, 0.8F).setBrightPercent(getGlobalBrightness()*0.8F).toNormalVec3();
         }
         public Vector3 getHorizonColor()
         { 
-            return horizonColor.mix(CustomColor.white, MathUtil.normalizeClamped(0.5F, 1, sunHeight * sunHeight * sunHeight)).setBrightPercent(MathHelper.Clamp(sunHeight * 4F, 0, 1)).toNormalVec3();
+            return horizonColor.mix(Color.white, MathUtil.normalizeClamped(0.5F, 1, sunHeight * sunHeight * sunHeight)).setBrightPercent(MathHelper.Clamp(sunHeight * 4F, 0, 1)).toNormalVec3();
         }
         public Vector3 getSkyColor()
         {
@@ -251,9 +250,7 @@ namespace RabbetGameEngine
             tickEntities();
             tickProjectiles();
             CollisionHandler.testProjectilesAgainstEntities(entities, projectiles);
-            Profiler.beginEndProfile("aux");
             tickVFX();
-            Profiler.beginEndProfile("aux");
         }
 
         public void onRenderUpdate()
@@ -474,6 +471,7 @@ namespace RabbetGameEngine
 
         private void setDrawDistanceAndFog(float dist)
         {
+            //TODO: Properly configure to hide clip plane at different draw distances
             drawDistance = Math.Clamp(dist, 0, GameSettings.maxDrawDistance);
             fogStart = drawDistance / 16;
             fogEnd = drawDistance - 1.0F;
@@ -505,7 +503,7 @@ namespace RabbetGameEngine
                 entities.Add(entityIDItterator++, theEntity);
                 if (GameSettings.entityLabels)
                 {
-                    addDebugLabel(new VFXMovingText3D(theEntity, "debugLabel", "Arial_Shadow", "Entity: " + (entityIDItterator - 1).ToString(), new Vector3(0, 1, 0), 2.0F, CustomColor.white));
+                    addDebugLabel(new VFXMovingText3D(theEntity, "debugLabel", "Arial_Shadow", "Entity: " + (entityIDItterator - 1).ToString(), new Vector3(0, 1, 0), 2.0F, Color.white));
                 }
             }
         }

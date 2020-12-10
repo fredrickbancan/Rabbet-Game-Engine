@@ -25,7 +25,7 @@ namespace RabbetGameEngine.Models
         }
 
         /*sets all point colors to this color*/
-        public PointCloudModel setColor(CustomColor color)
+        public PointCloudModel setColor(Color color)
         {
             hasChangedSinceLastUpdate = true;
             return this.setColor(color.toNormalVec4());

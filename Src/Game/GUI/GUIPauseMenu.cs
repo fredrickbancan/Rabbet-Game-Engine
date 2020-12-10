@@ -5,31 +5,35 @@ namespace RabbetGameEngine
     public class GUIPauseMenu : GUI
     {
         GUIButton quitButton;
+        GUIButton settingsButton;
         GUIButton resumeButton;
         public GUIPauseMenu() : base("pauseMenu", "Arial_Shadow")
         {
-            addGuiComponent("background", new GUITransparentOverlay(CustomColor.black, 0.5F));
+            addGuiComponent("background", new GUITransparentOverlay(Color.black, 0.7F));
+            addGuiComponent("titleBack", new GUITransparentRecangle(new Vector2(0, 0.5F), new Vector2(0.4F, 0.4F), Color.black.setAlphaF(0.7F), ComponentAlignment.CENTER, 1));
+            addTextPanel("title", new GUITextPanel(new Vector2(0, 0.35F), ComponentAlignment.CENTER, 1).addLine("Game Paused").setFontSize(0.4F).setPanelColor(Color.white));
 
-            resumeButton = new GUIButton(new Vector2(0.0F, 0.4F), new Vector2(0.2F, 0.05F), CustomColor.grey.setAlphaF(0.7F), "white", ButtonAlignment.CENTER);
+
+            resumeButton = new GUIButton(new Vector2(0.0F, 0.5F), new Vector2(0.2F, 0.05F), Color.grey.setAlphaF(0.7F), "Resume Game", screenFont, ComponentAlignment.CENTER, 1);
             resumeButton.addClickListener(onResumeButtonClick);
             resumeButton.addHoverEnterListener(defaultOnButtonHoverEnter);
             resumeButton.addHoverExitListener(defaultOnButtonHoverExit);
-            resumeButton.setHoverColor(CustomColor.black.setAlphaF(0.5F));
+            resumeButton.setHoverColor(Color.black.setAlphaF(0.5F));
             addGuiComponent("resumeButton", resumeButton);
 
-            quitButton = new GUIButton(new Vector2(0.0F, 0.45F), new Vector2(0.2F, 0.05F), CustomColor.grey.setAlphaF(0.7F), "white", ButtonAlignment.CENTER);
+            settingsButton = new GUIButton(new Vector2(0.0F, 0.55F), new Vector2(0.2F, 0.05F), Color.grey.setAlphaF(0.7F), "Settings", screenFont, ComponentAlignment.CENTER, 1);
+            settingsButton.addClickListener(onSettingsButtonClick);
+            settingsButton.addHoverEnterListener(defaultOnButtonHoverEnter);
+            settingsButton.addHoverExitListener(defaultOnButtonHoverExit);
+            settingsButton.setHoverColor(Color.black.setAlphaF(0.5F));
+            addGuiComponent("settingsButton", settingsButton);
+
+            quitButton = new GUIButton(new Vector2(0.0F, 0.6F), new Vector2(0.2F, 0.05F), Color.grey.setAlphaF(0.7F), "Quit Game", screenFont, ComponentAlignment.CENTER, 1);
             quitButton.addClickListener(onQuitButtonClick);
             quitButton.addHoverEnterListener(defaultOnButtonHoverEnter);
             quitButton.addHoverExitListener(defaultOnButtonHoverExit);
-            quitButton.setHoverColor(CustomColor.black.setAlphaF(0.5F));
+            quitButton.setHoverColor(Color.black.setAlphaF(0.5F));
             addGuiComponent("quitButton", quitButton);
-
-            //TODO: Make buttons text part of the button class.
-
-            GUITextPanel t = new GUITextPanel(new TextFormat(0.5F, 0.45F - 0.015F).setAlign(Text.TextAlign.CENTER).setLine("Quit Game"), 1);
-            addTextPanel("quitButtonText", t);
-            GUITextPanel t2 = new GUITextPanel(new TextFormat(0.5F, 0.4F - 0.015F).setAlign(Text.TextAlign.CENTER).setLine("Resume Game"), 1);
-            addTextPanel("resumeButtonText", t2);
         }
 
         private void onQuitButtonClick()
@@ -41,8 +45,12 @@ namespace RabbetGameEngine
         private void onResumeButtonClick()
         {
             defaultOnButtonClick();
-            GameInstance.get.unPauseGame();
             GUIManager.closeCurrentGUI();
+        }
+        private void onSettingsButtonClick()
+        {
+            defaultOnButtonClick();
+            GUIManager.openGUI(new GUISettingsMenu());
         }
     }
 }

@@ -5,64 +5,18 @@ using System.Collections.Generic;
 
 namespace RabbetGameEngine
 {
-    //TODO: Remove textformat subclass as it is unecessary. Merge all functionality into GUITextPanel
-    public class TextFormat// a simle class for submitting format options for a text panel
-    {
-        public Vector2 panelPos = Vector2.Zero; // position of the top left corner of this panel
-        public Vector2 panelPixelPos = Vector2.Zero; // position of the top left corner of this panel
-        public Vector4 panelColour = CustomColor.white.toNormalVec4();
-        public TextAlign alignment = TextAlign.LEFT;
-        public int screenEdgePadding = TextUtil.defaultScreenEdgePadding;
-        public string[] lines = new string[] { "Sample Text" };
-        public float fontSize = TextUtil.defaultFontSize;
-        public FontFace font = null;
-
-        public TextFormat()
-        {
-
-        }
-
-        public TextFormat(float xPosFromLeft, float yPosFromTop)
-        {
-            panelPos = new Vector2(xPosFromLeft, yPosFromTop);
-        }
-
-        #region builderMethods
-        public TextFormat setLines(string[] lines)
-        {
-            this.lines = lines;
-            return this;
-        }
-        public TextFormat setAlign(TextAlign alignment)
-        {
-            this.alignment = alignment;
-            return this;
-        }
-        public TextFormat setLine(string line)
-        {
-            lines = new string[] { line };
-            return this;
-        }
-        public TextFormat setPanelColor(CustomColor color)
-        {
-            panelColour = color.toNormalVec4();
-            return this;
-        }
-        public TextFormat setFontSize(float size)
-        {
-            fontSize = size;
-            return this;
-        }
-        #endregion builderMethods
-
-    }
     public class GUITextPanel
     {
-        private List<string> lines;
+        public Vector2 panelPos; 
+        Vector2 panelPixelPos;
+        public Vector4 panelColour = Color.white.toNormalVec4();
+        public ComponentAlignment alignment = ComponentAlignment.LEFT;
+        public int screenEdgePadding = TextUtil.defaultScreenEdgePadding;
+        public float fontSize = 0.2F;
+        public FontFace font = null;
+        public List<string> lines;
 
         public Model[] models;
-
-        public TextFormat format;
 
         public bool hidden = false;
 
@@ -71,24 +25,40 @@ namespace RabbetGameEngine
         /// </summary>
         public int renderLayer;
 
-        public GUITextPanel()//new gui text panel with default format
-        {
-            format = new TextFormat();
-            lines = new List<string>();
-        }
+        private Vector3 pixelTranslation;
 
-        public GUITextPanel(TextFormat format, int renderLayer = 0)//new gui text panel with provided format
+        public GUITextPanel(Vector2 panelPos, ComponentAlignment alignment, int renderLayer = 0)//new gui text panel with default format
         {
-            this.renderLayer = renderLayer;
-            this.format = format;
             lines = new List<string>();
+            this.alignment = alignment;
+            panelPos.Y = 1 - panelPos.Y;
+            this.panelPos = panelPos - new Vector2(0.5F, 0.5F);
+            this.renderLayer = renderLayer;
         }
 
         public void build()
         {
-            format.panelPixelPos.X = format.panelPos.X * GameInstance.gameWindowWidth;
-            format.panelPixelPos.Y = format.panelPos.Y * GameInstance.gameWindowHeight;
-            this.models = TextModelBuilder2D.convertstringArrayToModelArray(format.lines, format.font, format.panelColour, format.panelPixelPos, format.fontSize * GameInstance.dpiScale, format.screenEdgePadding, format.alignment);
+            correctPosition();
+            this.models = TextModelBuilder2D.convertstringArrayToModelArray(lines.ToArray(), font, panelColour, pixelTranslation, fontSize, alignment);
+        }
+
+        private void correctPosition()
+        {
+            float halfWindowWidth = GameInstance.gameWindowWidth * 0.5F;
+            panelPixelPos = new Vector2(panelPos.X * GameInstance.gameWindowWidth, panelPos.Y * GameInstance.gameWindowHeight);
+            switch (alignment)
+            {
+                case ComponentAlignment.CENTER:
+                    panelPixelPos.X += halfWindowWidth;
+                    break;
+                case ComponentAlignment.LEFT:
+                    panelPixelPos.X += screenEdgePadding;
+                    break;
+                case ComponentAlignment.RIGHT:
+                    panelPixelPos.X = halfWindowWidth - (panelPixelPos.X + halfWindowWidth + screenEdgePadding);
+                    break;
+            }
+            pixelTranslation = new Vector3(panelPixelPos.X, panelPixelPos.Y, -0.2F);
         }
 
         public GUITextPanel hide()
@@ -103,7 +73,7 @@ namespace RabbetGameEngine
         }
         public GUITextPanel setFont(FontFace font)
         {
-            format.font = font;
+            this.font = font;
             return this;
         }
 
@@ -119,33 +89,35 @@ namespace RabbetGameEngine
             return this;
         }
 
-        public GUITextPanel pushLines()
+        public GUITextPanel setPanelColor(Color color)
         {
-            format.lines = lines.ToArray();
-            return this;
-        }
-        public GUITextPanel setLines(string[] lines)
-        {
-            format.lines = lines;
+            panelColour = color.toNormalVec4();
             return this;
         }
 
-        public GUITextPanel setLine(string line)
-        {
-            format.lines = new string[] { line };
-            return this;
-        }
-
-        public GUITextPanel setPanelColor(CustomColor color)
-        {
-            format.panelColour = color.toNormalVec4();
-            return this;
-        }
-
+        /// <summary>
+        /// Sets the size of the font in this panel, each pixel in the font will be scaled up by size supplied
+        /// </summary>
         public GUITextPanel setFontSize(float size)
         {
-            format.fontSize = size;
+            fontSize = size;
             return this;
+        }
+        public GUITextPanel setAlign(ComponentAlignment alignment)
+        {
+            this.alignment = alignment;
+            return this;
+        }
+
+        public void requestRender()
+        {
+            if(!hidden)
+            {
+                for(int i = 0; i < models.Length; i++)
+                {
+                    Renderer.requestRender(RenderType.guiText, font.texture, models[i], renderLayer);
+                }
+            }
         }
     }
 }

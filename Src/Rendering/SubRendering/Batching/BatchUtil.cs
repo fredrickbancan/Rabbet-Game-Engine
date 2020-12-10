@@ -957,6 +957,7 @@ namespace RabbetGameEngine.SubRendering
                     break;
 
                 case RenderType.guiText:
+                    theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
                     GL.DepthMask(false);
                     GL.DepthRange(0,0.005F);
                     GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedVerticesCount + (theBatch.requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);

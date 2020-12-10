@@ -3,6 +3,12 @@ using System.Collections.Generic;
 
 namespace RabbetGameEngine
 {
+    public enum ComponentAlignment
+    {
+        LEFT,
+        CENTER,
+        RIGHT
+    }
     public static class GUIManager//TODO: Change to handle GUI's as objects.
     {
         /// <summary>
@@ -18,7 +24,7 @@ namespace RabbetGameEngine
         /// <summary>
         /// The currently displayed GUI from the stack, if any.
         /// </summary>
-        private static GUI currentDisplayedGUI;
+        private static GUI currentDisplayedGUI = null;
 
         public static void doUpdate()
         {
@@ -26,6 +32,11 @@ namespace RabbetGameEngine
             if(currentDisplayedGUI != null)
             {
                 currentDisplayedGUI.onUpdate();
+                GameInstance.get.pauseGame();
+            }
+            else
+            {
+                GameInstance.get.unPauseGame();
             }
             foreach (GUI g in persistentGUIs.Values)
             {

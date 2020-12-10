@@ -13,13 +13,13 @@ namespace RabbetGameEngine.VisualEffects
         private static List<PointCloudModel > debugPointClouds = new List<PointCloudModel>();
         public static void doExplosionEffect(Planet planet, Vector3 location, float radius, float pitch = 0, float yaw = -90, float roll = 0)
         {
-            VFXPointCloud smoke = new VFXPointCloud(location, CustomColor.darkGrey, true, false, 4F, 0.15F, 0.8F);
+            VFXPointCloud smoke = new VFXPointCloud(location, Color.darkGrey, true, false, 4F, 0.15F, 0.8F);
 
-            VFXPointCloud sparks = new VFXPointCloud(location, CustomColor.orange,  false, false, 0.75F, 0.05F, 1);
+            VFXPointCloud sparks = new VFXPointCloud(location, Color.orange,  false, false, 0.75F, 0.05F, 1);
 
-            VFXPointCloud explosion1 = new VFXPointCloud(location, CustomColor.flame, false, false, 0.2F, 0.125F, 1);
+            VFXPointCloud explosion1 = new VFXPointCloud(location, Color.flame, false, false, 0.2F, 0.125F, 1);
 
-            VFXPointCloud explosion2 = new VFXPointCloud(location, CustomColor.ember,  false, true, 0.125F, 0.15F, 1);
+            VFXPointCloud explosion2 = new VFXPointCloud(location, Color.ember,  false, true, 0.125F, 0.15F, 1);
 
             smoke.constructRandomPointCloudModel((32 - (int)radius / 2) + (int)(radius / 2 * radius / 2), radius / 16, true);
             sparks.constructRandomPointCloudModel((16 - (int)radius / 4) + (int)(radius / 4 * radius / 4), radius / 16, true);
@@ -46,7 +46,7 @@ namespace RabbetGameEngine.VisualEffects
 
         public static void doSmallSmokePuffEffect(Planet planet, Vector3 location)
         {
-            VFXPointCloud smoke = new VFXPointCloud(location, CustomColor.darkGrey, true, false, 2F, 0.05F, 0.7F);
+            VFXPointCloud smoke = new VFXPointCloud(location, Color.darkGrey, true, false, 2F, 0.05F, 0.7F);
             smoke.constructRandomPointCloudModel(7, 0.05F, true);
             smoke.setYAccel(0.001572F);
             smoke.setExpansionResistance(0.2572F);
@@ -56,12 +56,12 @@ namespace RabbetGameEngine.VisualEffects
 
         public static void doSmallBangEffect(Planet planet, Vector3 location)
         {
-            VFXPointCloud bang = new VFXPointCloud(location, CustomColor.flame, false, false, 0.075F, 0.0375F, 1);
+            VFXPointCloud bang = new VFXPointCloud(location, Color.flame, false, false, 0.075F, 0.0375F, 1);
             bang.constructRandomPointCloudModel(7, 0.15F, false);
             bang.setExpansionResistance(0.5F);
             bang.setExpansionVelocity(3F);
             bang.setYAccel(0.004572F);
-            VFXPointCloud bang2 = new VFXPointCloud(location, CustomColor.ember, false, true, 0.075F, 0.0375F, 1);
+            VFXPointCloud bang2 = new VFXPointCloud(location, Color.ember, false, true, 0.075F, 0.0375F, 1);
             bang2.constructRandomPointCloudModel(7, 0.075F, true);
             bang2.setExpansionResistance(0.7F);
             bang2.setExpansionVelocity(3F);
@@ -73,7 +73,7 @@ namespace RabbetGameEngine.VisualEffects
 
         public static void doDebugSmokeEffect(Planet planet)
         {
-            VFXPointCloud smoke = new VFXPointCloud(new Vector3(0, 2F, 0), CustomColor.darkGrey, true, false, 4F, 0.5F, 0.7F);
+            VFXPointCloud smoke = new VFXPointCloud(new Vector3(0, 2F, 0), Color.darkGrey, true, false, 4F, 0.5F, 0.7F);
             smoke.constructRandomPointCloudModel(15, 0.5F, true);
             smoke.setExpansionResistance(0.05F);
             smoke.setExpansionVelocity(0.5F);
@@ -89,7 +89,7 @@ namespace RabbetGameEngine.VisualEffects
                 {
                     points[j].pos = new Vector3(j / 64 * diam / 2, (float)i * diam / 2, j % 64 * diam / 2);
                     points[j].radius = diam / 2;
-                    points[j].color = CustomColor.darkGrey.toNormalVec4() * (1.0F - (float)GameInstance.rand.NextDouble() * 0.2F);
+                    points[j].color = Color.darkGrey.toNormalVec4() * (1.0F - (float)GameInstance.rand.NextDouble() * 0.2F);
                     points[j].aoc = 0.0F;
                 }
                 debugPointClouds.Add(new PointCloudModel(points, null));

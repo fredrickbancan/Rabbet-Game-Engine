@@ -63,6 +63,7 @@ namespace RabbetGameEngine
                     break;
                 }
             }
+            if(!GameInstance.paused)
             percentToNextTick = (double)(getRealTimeMills() - applicationTime) / msPerTick;
         }
 

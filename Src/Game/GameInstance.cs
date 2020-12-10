@@ -13,6 +13,7 @@ using System.Drawing;
 
 namespace RabbetGameEngine
 {
+    //TODO: Implement functions which are only called when game settings change. This will help optimize certain code, for example uniforms which only need to change when settings change.
 
     /*This class is the main game class. It contains all the execution code for rendering, logic loops and loading.*/
     public class GameInstance : GameWindow
@@ -67,11 +68,11 @@ namespace RabbetGameEngine
                 GameInstance.privateRand = new Random();
                 ResourceUtil.init();
                 GameSettings.loadSettings();
+                Renderer.init();
                 TextUtil.loadAllFoundTextFiles();
                 SoundManager.init();
                 windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
                 setDPIScale();
-                Renderer.init();
                 GUIManager.addPersistentGUI(new GUIHud());
                 currentPlanet = new Planet(0xdeadbeef);
                 //create and spawn player in new world
@@ -84,9 +85,9 @@ namespace RabbetGameEngine
 
                 //temp sound examples
                 SoundManager.playSoundLoopingAt("waterroll", new Vector3(16, 1, 16), 0.5F);
-                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll", GameSettings.defaultFont, "waterroll.ogg, 50% volume", new Vector3(16,2.5F,16), 5.0F, CustomColor.white));
+                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll", GameSettings.defaultFont, "waterroll.ogg, 50% volume", new Vector3(16,2.5F,16), 5.0F, Color.white));
                 SoundManager.playSoundLoopingAt("waterroll_large", new Vector3(-16, 1, -16), 1.0F);
-                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", GameSettings.defaultFont, "waterroll_large.ogg, 100% volume", new Vector3(-16,2.5F,-16), 5.0F, CustomColor.white));
+                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", GameSettings.defaultFont, "waterroll_large.ogg, 100% volume", new Vector3(-16,2.5F,-16), 5.0F, Color.white));
                 for(int i = 0; i < 5000; i++)
                 {
                     currentPlanet.spawnVFXInWorld(new VFXLogoSprite3D(new Vector3(-privateRand.Next(-26, 27), 2.5F, -privateRand.Next(-26, 27)), new Vector2(5, 5)));
@@ -116,7 +117,7 @@ namespace RabbetGameEngine
             {
                 foreach(KeyValuePair<int, Entity> e in currentPlanet.entities)
                 {
-                    currentPlanet.addDebugLabel(new VFXMovingText3D(e.Value, entityLabelName, GameSettings.defaultFont, "Entity: " +  e.Key.ToString(), new Vector3(0,1,0), 2.0F, CustomColor.white));
+                    currentPlanet.addDebugLabel(new VFXMovingText3D(e.Value, entityLabelName, GameSettings.defaultFont, "Entity: " +  e.Key.ToString(), new Vector3(0,1,0), 2.0F, Color.white));
                 }
             }
             else
@@ -192,6 +193,7 @@ namespace RabbetGameEngine
             Profiler.beginEndProfile("Loop");
             if(Bounds.Size.X > 0 && Bounds.Size.Y > 0)
             windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
+            if(!gamePaused)
             currentPlanet.onTick();
             Renderer.onTick();
             Profiler.onTick();
@@ -213,13 +215,15 @@ namespace RabbetGameEngine
         //TODO: Implement proper pausing of game, while keeping certain things running such as U.I and sound.
         public void pauseGame()
         {
-            Input.setCursorHiddenAndGrabbed(false);
+            if (!gamePaused)
+                Input.setCursorHiddenAndGrabbed(false);
             gamePaused = true;
         }
 
         public void unPauseGame()
         {
-            Input.setCursorHiddenAndGrabbed(true);
+            if(gamePaused)
+                Input.setCursorHiddenAndGrabbed(true);
             gamePaused = false;
         }
 

@@ -47,7 +47,7 @@ namespace RabbetGameEngine
             {
                 for(int j = 0; j < res; j++)
                 {//exlusive or
-                    bitmap.SetPixel(i, j, i % 2 == 0 ^ j % 2 != 0 ? Color.Magenta : Color.Black);//creating black and magenta checker board
+                    bitmap.SetPixel(i, j, i % 2 == 0 ^ j % 2 != 0 ? System.Drawing.Color.Magenta : System.Drawing.Color.Black);//creating black and magenta checker board
                 }
             }
 
@@ -86,7 +86,7 @@ namespace RabbetGameEngine
             {
                 for (int j = 0; j < 4; j++)
                 {//exlusive or
-                    bitmap.SetPixel(i, j, Color.White);//creating black and magenta checker board
+                    bitmap.SetPixel(i, j, System.Drawing.Color.White);//creating black and magenta checker board
                 }
             }
 
@@ -152,7 +152,7 @@ namespace RabbetGameEngine
                 {
                     for (int j = 0; j < 16; j++)
                     {//exlusive or
-                        bitmap.SetPixel(i, j, i % 2 == 0 ^ j % 2 != 0 ? Color.Magenta : Color.Black);//creating black and magenta checker board
+                        bitmap.SetPixel(i, j, i % 2 == 0 ^ j % 2 != 0 ? System.Drawing.Color.Magenta : System.Drawing.Color.Black);//creating black and magenta checker board
                     }
                 }
             }

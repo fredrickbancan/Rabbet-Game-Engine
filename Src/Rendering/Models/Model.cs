@@ -21,7 +21,7 @@ namespace RabbetGameEngine.Models
         }
 
         /*sets all vertex colors to this color*/
-        public Model setColor(CustomColor color)
+        public Model setColor(Color color)
         {
             return this.setColor(color.toNormalVec4());
         }

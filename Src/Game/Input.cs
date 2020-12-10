@@ -50,12 +50,10 @@ namespace RabbetGameEngine
                 {
                     if (GameInstance.paused)
                     {
-                        GameInstance.get.unPauseGame();
                         GUIManager.closeCurrentGUI();
                     }
                     else
                     {
-                        GameInstance.get.pauseGame();
                         GUIManager.openGUI(new GUIPauseMenu());
                     }
                 }

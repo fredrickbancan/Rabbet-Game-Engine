@@ -1,6 +1,8 @@
-﻿using RabbetGameEngine.Debugging;
+﻿using OpenTK.Mathematics;
+using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Sound;
 using RabbetGameEngine.SubRendering;
+using RabbetGameEngine.Text;
 
 namespace RabbetGameEngine
 {
@@ -8,7 +10,7 @@ namespace RabbetGameEngine
     {
         public GUIDebugInfo() : base("debugInfo", "Arial_Shadow")
         {
-            addTextPanel("info", new GUITextPanel(new TextFormat(0.0F, 0.05F).setPanelColor(CustomColor.lightGrey)));
+            addTextPanel("info", new GUITextPanel(new Vector2(0, 0.07F), ComponentAlignment.LEFT).setPanelColor(Color.lightGrey));
         }
         
         public override void onUpdate()
@@ -49,7 +51,6 @@ namespace RabbetGameEngine
                 t.addLine("Batches: " + BatchManager.batchCount);
                 t.addLine("Resolution: " + Renderer.viewPortSize.X + "X" + Renderer.viewPortSize.Y);
                 t.addLine("Used memory: " + (Application.ramUsageInBytes / 1000000L).ToString() + "MB");
-                t.pushLines();
                 t.build();
 
             }

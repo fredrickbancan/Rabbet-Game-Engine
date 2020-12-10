@@ -129,7 +129,7 @@ namespace RabbetGameEngine.Models
 
                 for (int i = 0; i < positions.Count; i++)
                 {
-                    vertexResult.Add(new Vertex(positions.ElementAt(i), CustomColor.white.toNormalVec4(), orderedUVs[i]));
+                    vertexResult.Add(new Vertex(positions.ElementAt(i), Color.white.toNormalVec4(), orderedUVs[i]));
                 }
                 successfullyLoaded = true;//do last, to make sure there is not mistake with any lines starting with f triggering a new face processing method call
             }

@@ -7,7 +7,7 @@ namespace RabbetGameEngine.VisualEffects
     public class VFXPointCloud : VFX
     {
         protected PointCloudModel cloudModel;
-        protected CustomColor pointColor;
+        protected Color pointColor;
         protected float pointRadius;
         protected bool pointAmbientOcclusion = false;//if ambient occlusion is true, the point will be rendered with a spherical ambient occlusion giving the illusion of a sphere instead of a 2d circular point
         protected float colorAlpha;
@@ -15,7 +15,7 @@ namespace RabbetGameEngine.VisualEffects
         protected Matrix4 prevTickModelMatrix = Matrix4.Identity;
         protected bool transparency = false;
 
-        public VFXPointCloud(Vector3 pos, CustomColor color, bool transparency, bool ambientOcclusion, float maxExistingSeconds, float radius, float alpha) : base(pos, 1.0F, "none", null, maxExistingSeconds, transparency ? RenderType.lerpISpheresTransparent : RenderType.lerpISpheres)
+        public VFXPointCloud(Vector3 pos, Color color, bool transparency, bool ambientOcclusion, float maxExistingSeconds, float radius, float alpha) : base(pos, 1.0F, "none", null, maxExistingSeconds, transparency ? RenderType.lerpISpheresTransparent : RenderType.lerpISpheres)
         {
             this.transparency = transparency;
             if(!transparency)

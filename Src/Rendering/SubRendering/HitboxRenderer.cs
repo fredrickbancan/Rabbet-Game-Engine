@@ -11,7 +11,7 @@ namespace RabbetGameEngine
         private static Model aabbModelPrefab;
         static HitboxRenderer()
         {
-            aabbModelPrefab = new Model(CubePrefab.cubeVertices, LineCombiner.getIndicesForLineQuadCount(6)).setColor(CustomColor.magenta);
+            aabbModelPrefab = new Model(CubePrefab.cubeVertices, LineCombiner.getIndicesForLineQuadCount(6)).setColor(Color.magenta);
         }
         /// <summary>
         /// called on tick. Adds all of the provided colliders to a list of hitboxes to be dynamically batched and drawn.
@@ -46,9 +46,9 @@ namespace RabbetGameEngine
             PointParticle pParticle = new PointParticle(pos, new Vector4(0.15F, 0.15F, 0.15F, 1), 0.025F, true);
             Renderer.requestRender(pParticle, false);
 
-            Vector4 redColor = CustomColor.red.toNormalVec4();
-            Vector4 greenColor = CustomColor.green.toNormalVec4();
-            Vector4 blueColor = CustomColor.blue.toNormalVec4();
+            Vector4 redColor = Color.red.toNormalVec4();
+            Vector4 greenColor = Color.green.toNormalVec4();
+            Vector4 blueColor = Color.blue.toNormalVec4();
 
             Vertex[] lineVerts = new Vertex[]
             {

@@ -1,4 +1,5 @@
-﻿using RabbetGameEngine.Text;
+﻿using OpenTK.Mathematics;
+using RabbetGameEngine.Text;
 
 namespace RabbetGameEngine
 {
@@ -6,10 +7,10 @@ namespace RabbetGameEngine
     {
         public GUIHud() : base("hud", "Arial_Shadow")
         {
-            addTextPanel("flying", new GUITextPanel(new TextFormat().setAlign(TextAlign.RIGHT).setLine("Flying: OFF").setPanelColor(CustomColor.darkRed)));
-            addTextPanel("noclip", new GUITextPanel(new TextFormat(0, 0.03F).setAlign(TextAlign.RIGHT).setLine("Noclip: OFF").setPanelColor(CustomColor.darkRed)));
-            addTextPanel("label", new GUITextPanel(new TextFormat(0, 0.97F).setLine(Application.applicationName).setPanelColor(CustomColor.black)));
-            addTextPanel("fps", new GUITextPanel(new TextFormat().setLine("0")));
+            addTextPanel("flying", new GUITextPanel(new Vector2(0,0.04F), ComponentAlignment.RIGHT).addLine("Flying: OFF").setPanelColor(Color.darkRed));
+            addTextPanel("noclip", new GUITextPanel(new Vector2(0, 0.07F), ComponentAlignment.RIGHT).addLine("Noclip: OFF").setPanelColor(Color.darkRed));
+            addTextPanel("label", new GUITextPanel(new Vector2(0, 1.0115F), ComponentAlignment.LEFT).addLine(Application.applicationName).setPanelColor(Color.black));
+            addTextPanel("fps", new GUITextPanel(new Vector2(0, 0.04F), ComponentAlignment.LEFT).addLine("0"));
             addGuiComponent("crosshair", new GUICrosshair());
         }
 
@@ -19,20 +20,20 @@ namespace RabbetGameEngine
             displayFps();
             if (GameInstance.get.thePlayer.getIsFlying())
             {
-               getTextPanel("flying").setPanelColor(CustomColor.green).setLine("Flying: ON");
+               getTextPanel("flying").setPanelColor(Color.green).clear().addLine("Flying: ON");
             }
             else
             {
-                getTextPanel("flying").setPanelColor(CustomColor.darkRed).setLine("Flying: OFF");
+                getTextPanel("flying").setPanelColor(Color.darkRed).clear().addLine("Flying: OFF");
             }
 
             if (GameSettings.noclip)
             {
-                getTextPanel("noclip").setPanelColor(CustomColor.green).setLine("Noclip: ON");
+                getTextPanel("noclip").setPanelColor(Color.green).clear().addLine("Noclip: ON");
             }
             else
             {
-                getTextPanel("noclip").setPanelColor(CustomColor.darkRed).setLine("Noclip: OFF");
+                getTextPanel("noclip").setPanelColor(Color.darkRed).clear().addLine("Noclip: OFF");
             }
             buildAllText();//do last, applies any changes to the text on screen.
         }
@@ -45,15 +46,15 @@ namespace RabbetGameEngine
                 string fpsstring = TicksAndFrames.fps.ToString();
                 if (TicksAndFrames.fps < 75)
                 {
-                    getTextPanel("fps").setLine(fpsstring).setPanelColor(CustomColor.red);
+                    getTextPanel("fps").clear().addLine(fpsstring).setPanelColor(Color.red);
                 }
                 else if (TicksAndFrames.fps < 120)
                 {
-                    getTextPanel("fps").setLine(fpsstring).setPanelColor(CustomColor.yellow);
+                    getTextPanel("fps").clear().addLine(fpsstring).setPanelColor(Color.yellow);
                 }
                 else
                 {
-                    getTextPanel("fps").setLine(fpsstring).setPanelColor(CustomColor.green);
+                    getTextPanel("fps").clear().addLine(fpsstring).setPanelColor(Color.green);
                 }
             }
             else

@@ -11,8 +11,7 @@ namespace RabbetGameEngine
         private Dictionary<string, GUITextPanel> screenTextPanels = new Dictionary<string, GUITextPanel>();
         private int preHideWindowWidth;
         private int preHideWindowHeight;
-        private FontFace screenFont;
-        private Texture fontTexture;
+        protected FontFace screenFont;
         private bool wholeScreenHidden = false;
         private uint maxCharCount;
         public string guiName = "";
@@ -22,10 +21,6 @@ namespace RabbetGameEngine
             if(!TextUtil.tryGetFont(textFont, out screenFont))
             {
                 Application.error("GUIScreen " + guiName + " could not load its provided font: " + textFont + ", it will have a null font!");
-            }
-            if(!TextureUtil.tryGetTexture(textFont, out fontTexture))
-            {
-                Application.error("GUIScreen " + guiName + " could not a texture for its provided font: " + textFont + ", it will have a null font texture!");
             }
             this.guiName = guiName;
             this.maxCharCount = maxCharCount;
@@ -42,11 +37,7 @@ namespace RabbetGameEngine
         {
             foreach (GUITextPanel panel in screenTextPanels.Values)
             {
-                if (!panel.hidden)
-                    foreach (Model mod in panel.models)
-                    {
-                        Renderer.requestRender(RenderType.guiText, fontTexture, mod, panel.renderLayer);
-                    }
+                panel.requestRender();
             }
         }
 

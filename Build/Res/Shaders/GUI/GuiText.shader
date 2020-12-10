@@ -6,10 +6,11 @@ layout(location = 2) in vec2 texCoord;
 
 out vec4 vColor;
 out vec2 fTexCoord;
+uniform mat4 orthoMatrix;
 
 void main()
 {
-	gl_Position = position;
+	gl_Position = orthoMatrix * position;
 	vColor = vertexColor;
 	fTexCoord = texCoord;
 }

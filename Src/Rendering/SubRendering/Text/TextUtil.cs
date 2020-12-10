@@ -3,12 +3,9 @@ using System.IO;
 
 namespace RabbetGameEngine.Text
 {
-    //enum for text alignment choices
-    public enum TextAlign { LEFT, CENTER, RIGHT };
     public static class TextUtil
     {
         public static readonly string textShaderName = "GuiText";
-        public static readonly float defaultFontSize = 0.02F;
         public static readonly int defaultScreenEdgePadding = 5; //5 pixels
 
         private static Dictionary<string, FontFace> fonts = new Dictionary<string, FontFace>();

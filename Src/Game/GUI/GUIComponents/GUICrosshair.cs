@@ -9,16 +9,16 @@ namespace RabbetGameEngine
     public class GUICrosshair : GUIComponent
     {
         private string crosshairTextureName;
-        private CustomColor crosshairColor = CustomColor.black;
+        private Color crosshairColor = Color.black;
 
-        public GUICrosshair(CustomColor color, float crosshairSize = 0.05F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0.5F, 0.5F))
+        public GUICrosshair(Color color, float crosshairSize = 0.05F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0,0.5F))
         {
             crosshairColor = color;
             setCrosshairTextureAndSize(crosshairType, crosshairSize);
             setModel(QuadPrefab.copyModel().setColor(crosshairColor));
         }
 
-        public GUICrosshair(float crosshairSize = 0.05F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0.5F, 0.5F))
+        public GUICrosshair(float crosshairSize = 0.05F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0, 0.5F))
         {
             setCrosshairTextureAndSize(crosshairType, crosshairSize);
             setModel(QuadPrefab.copyModel().setColor(crosshairColor));

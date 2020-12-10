@@ -26,6 +26,7 @@ namespace RabbetGameEngine.Text
         private Dictionary<byte, Character> finalFontData = new Dictionary<byte, Character>();
         private Dictionary<string, string> lineData = new Dictionary<string, string>();
         private StreamReader reader;
+        private Texture fontTexture;
         public FontFace(string fontName)
         {
             debugDir = ResourceUtil.getFontFileDir(fontName + ".fnt");
@@ -47,6 +48,10 @@ namespace RabbetGameEngine.Text
                 loadCharacterData();
             }
             reader.Close();
+            if(!TextureUtil.tryGetTexture(fontName, out fontTexture))
+            {
+                Application.error("Could not find texture for font named " + fontName);
+            }
         }
 
         private void loadPaddingAndSize()
@@ -233,6 +238,8 @@ namespace RabbetGameEngine.Text
         {
             return fontName;
         }
+
+        public Texture texture { get => fontTexture; }
 
     }
 }
