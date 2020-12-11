@@ -10,7 +10,7 @@ namespace RabbetGameEngine
         public GUIPauseMenu() : base("pauseMenu", "Arial_Shadow")
         {
             addGuiComponent("background", new GUITransparentOverlay(Color.black, 0.7F));
-            addGuiComponent("titleBack", new GUITransparentRecangle(new Vector2(0, 0.5F), new Vector2(0.4F, 0.4F), Color.black.setAlphaF(0.7F), ComponentAlignment.CENTER, 1));
+            addGuiComponent("titleBack", new GUITransparentRecangle(new Vector2(0, 0.5F), new Vector2(0.4F, 0.4F), Color.black.setAlphaF(0.7F), ComponentAlignment.CENTER, 1, false));
             addTextPanel("title", new GUITextPanel(new Vector2(0, 0.35F), ComponentAlignment.CENTER, 1).addLine("Game Paused").setFontSize(0.4F).setPanelColor(Color.white));
 
 
@@ -44,7 +44,6 @@ namespace RabbetGameEngine
 
         private void onResumeButtonClick()
         {
-            defaultOnButtonClick();
             GUIManager.closeCurrentGUI();
         }
         private void onSettingsButtonClick()

@@ -11,7 +11,7 @@ namespace RabbetGameEngine
             setModel(QuadPrefab.copyModel().setColor(color.toNormalVec4() * new Vector4(1,1,1,alpha)));
             setSize(1.0F, 1.0F, false);
             componentTexture = TextureUtil.getTexture("white");
-            scaleAndTranslate();
+            updateRenderData();
         }
 
         public override void requestRender()

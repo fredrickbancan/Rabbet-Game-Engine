@@ -39,7 +39,7 @@ namespace RabbetGameEngine
             }
 
             setSize(crosshairSize, crosshairSize);
-            scaleAndTranslate();
+            updateRenderData();
         }
 
         public override void requestRender()

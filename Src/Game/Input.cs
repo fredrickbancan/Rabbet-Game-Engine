@@ -151,7 +151,7 @@ namespace RabbetGameEngine
             return mouseState.IsButtonDown(MouseButton.Left);
         }
 
-        public static Vector2 getMouseDelta()
+        public static Vector2 getGrabbedMouseDelta()
         {
             return mouseDelta;
         }

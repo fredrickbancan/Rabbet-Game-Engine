@@ -1,4 +1,5 @@
 ﻿using RabbetGameEngine.Debugging;
+using RabbetGameEngine.Sound;
 using System.Collections.Generic;
 
 namespace RabbetGameEngine
@@ -26,6 +27,18 @@ namespace RabbetGameEngine
         /// </summary>
         private static GUI currentDisplayedGUI = null;
 
+        public static void onFrame()
+        {
+            if (currentDisplayedGUI != null)
+            {
+                currentDisplayedGUI.onFrame();
+            }
+            foreach (GUI g in persistentGUIs.Values)
+            {
+                g.onFrame();
+            }
+        }
+
         public static void doUpdate()
         {
             Profiler.beginEndProfile("guiUpdate");
@@ -49,7 +62,8 @@ namespace RabbetGameEngine
         {
             if(currentDisplayedGUI != null)
             {
-                currentDisplayedGUI.onWindowResize();
+                foreach(GUI g in guiStack)
+                    g.onWindowResize();
             }
             foreach (GUI g in persistentGUIs.Values)
             {
@@ -82,6 +96,7 @@ namespace RabbetGameEngine
         {
             if(guiStack.TryPop(out _))
             {
+                SoundManager.playSound("buttonclick");
                 currentDisplayedGUI = guiStack.Count > 0 ? guiStack.Peek() : null;
             }
         }
@@ -98,5 +113,18 @@ namespace RabbetGameEngine
                 Application.warn("GUIManager could not remove the requested gui named " + guiName);
             }
         }
+
+        public static void loadSliderValueFromSetting(GUIValueSlider gvs, Setting s)
+        {
+            if(gvs.isInteger)
+            {
+                gvs.sliderPos = MathUtil.normalizeClamped(s.minIntVal, s.maxIntVal, s.intValue);
+            }
+            else
+            {
+                gvs.sliderPos = MathUtil.normalizeClamped(s.minFloatVal, s.maxFloatVal, s.floatValue);
+            }
+        }
+
     }
 }

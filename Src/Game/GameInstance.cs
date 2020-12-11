@@ -151,6 +151,7 @@ namespace RabbetGameEngine
                     GUIManager.doUpdate();
                     SoundManager.onUpdate();
                 }
+                GUIManager.onFrame();
             }
             catch(Exception e)
             {

@@ -472,7 +472,7 @@ namespace RabbetGameEngine
         private void setDrawDistanceAndFog(float dist)
         {
             //TODO: Properly configure to hide clip plane at different draw distances
-            drawDistance = Math.Clamp(dist, 0, GameSettings.maxDrawDistance);
+            drawDistance = Math.Clamp(dist, 0, GameSettings.defaultMaxDrawDistance);
             fogStart = drawDistance / 16;
             fogEnd = drawDistance - 1.0F;
         }

@@ -74,7 +74,7 @@ namespace RabbetGameEngine
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.LineWidth(1);
-            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, GameSettings.maxDrawDistance);
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.defaultFov), GameInstance.aspectRatio, 0.1F, GameSettings.defaultMaxDrawDistance);
             orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1.0F);
             staticDraws = new Dictionary<string, StaticRenderObject>();
             SkyboxRenderer.init();
@@ -85,7 +85,7 @@ namespace RabbetGameEngine
         public static void onResize()
         {
             GL.Viewport(GameInstance.get.getGameWindowSize());
-            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, 1000.0F);
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.defaultFov), GameInstance.aspectRatio, 0.1F, 1000.0F);
             orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1.0F);
             GUIManager.onWindowResize();
             FrameBuffer.onResize();
@@ -122,7 +122,7 @@ namespace RabbetGameEngine
 
         public static void onTickEnd()
         {
-            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov), GameInstance.aspectRatio, 0.1F, GameInstance.get.getDrawDistance());
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.defaultFov), GameInstance.aspectRatio, 0.1F, GameInstance.get.getDrawDistance());
         }
         public static void doRenderUpdate()
         {

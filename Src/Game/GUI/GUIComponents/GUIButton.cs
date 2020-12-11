@@ -7,9 +7,11 @@ namespace RabbetGameEngine
 {
     public class GUIButton : GUIComponent
     {
+        protected Color titleColor = Color.white;
+        protected Color titleHoverColor = Color.darkYellow;
         protected Color color;
         protected Color hoverColor;
-        protected bool isHovered = false;
+        public bool isHovered = false;
         protected bool isPressed = false;
         /// <summary>
         /// True if the cursor was already down when it entered this button.
@@ -22,6 +24,7 @@ namespace RabbetGameEngine
         protected Model titleTextModel;
         protected FontFace titleFont;
         protected float fontSize = 0.2F;
+        protected bool disabled = false;
 
         /// <summary>
         /// Min and Max bounds of this button in screen coordinates (minX, maxX, minY, maxY)
@@ -33,33 +36,21 @@ namespace RabbetGameEngine
             this.color = color;
             componentTexture = TextureUtil.getTexture(textureName);
             alignment = align;
-            setSize(size.X, size.Y);
+            setSize(size.X, size.Y, false);
             setModel(QuadPrefab.copyModel());
             titleFont = font;
-            scaleAndTranslate();
+            updateRenderData();
         }
 
-        protected override void scaleAndTranslate()
+        public override void updateRenderData()
         {
+            base.updateRenderData();
             float halfWindowWidth = GameInstance.gameWindowWidth * 0.5F;
             float halfWindowHeight = GameInstance.gameWindowHeight * 0.5F;
-            screenPixelSize = new Vector2(size.X *  GameInstance.gameWindowHeight, size.Y * GameInstance.gameWindowHeight);
-            screenPixelPos = new Vector2(screenPos.X * GameInstance.gameWindowWidth, screenPos.Y * GameInstance.gameWindowHeight);
-            switch(alignment)
-            {
-                case ComponentAlignment.CENTER:
-                    screenPixelPos.X += halfWindowWidth;
-                    break;
-                case ComponentAlignment.LEFT:
-                    screenPixelPos.X += screenPixelSize.X * 0.5F;
-                    break;
-                case ComponentAlignment.RIGHT:
-                    screenPixelPos.X = halfWindowWidth - (screenPixelPos.X + halfWindowWidth + screenPixelSize.X * 0.5F);
-                    break;
-            }
-            translationAndScale = Matrix4.CreateScale(screenPixelSize.X, screenPixelSize.Y, 1) * Matrix4.CreateTranslation(screenPixelPos.X, screenPixelPos.Y, -0.2F);
             pixelBounds = new Vector4(screenPixelPos.X + halfWindowWidth - screenPixelSize.X * 0.5F, screenPixelPos.X + halfWindowWidth + screenPixelSize.X * 0.5F, halfWindowHeight - screenPixelPos.Y - screenPixelSize.Y * 0.5F, halfWindowHeight - screenPixelPos.Y + screenPixelSize.Y * 0.5F);
-            titleTextModel = new Model(TextModelBuilder2D.convertstringToVertexArray(title, titleFont, Color.white.toNormalVec4(), new Vector3(screenPixelPos.X, screenPixelPos.Y, -0.2F), fontSize, ComponentAlignment.CENTER, 0), null);
+            
+            if(title != null && titleFont != null)
+            titleTextModel = new Model(TextModelBuilder2D.convertstringToVertexArray(title, titleFont, titleColor.toNormalVec4(), new Vector3(screenPixelPos.X, screenPixelPos.Y, -0.2F), fontSize, ComponentAlignment.CENTER, 0), null);
         }
 
         public GUIButton setFontSize(float s)
@@ -73,6 +64,7 @@ namespace RabbetGameEngine
             base.onUpdate();
 
             if (hidden) return;
+            if (disabled) return;
             bool wasPreviouslyHovered = isHovered;
             Vector2 mPos = GameInstance.get.MousePosition;
             isHovered = mPos.X >= pixelBounds.X && mPos.X <= pixelBounds.Y && mPos.Y >= pixelBounds.Z && mPos.Y <= pixelBounds.W;
@@ -155,17 +147,38 @@ namespace RabbetGameEngine
             hoverExitListeners.Add(a);
         }
 
-        public void setHoverColor(Color color)
+        public GUIButton setHoverColor(Color color)
         {
             hoverColor = color;
+            return this;
+        }
+        public GUIButton setColor(Color color)
+        {
+            this.color = color;
+            return this;
+        }
+
+        public GUIButton disable()
+        {
+            disabled = true;
+            titleTextModel.setColor(Color.darkGrey.toNormalVec4());
+            return this;
+        }
+        public GUIButton enable()
+        {
+            disabled = false;
+            titleTextModel.setColor(titleColor.toNormalVec4());
+            return this;
         }
 
         public override void requestRender()
         {
             if(!hidden)
             {
-                Renderer.requestRender(RenderType.guiTransparent, componentTexture, componentQuadModel.copyModel().setColor(isHovered ? hoverColor.toNormalVec4() : color.toNormalVec4()).transformVertices(translationAndScale), renderLayer-1);
-                Renderer.requestRender(RenderType.guiText, titleFont.texture, titleTextModel, renderLayer);
+                Renderer.requestRender(RenderType.guiTransparent, componentTexture, componentQuadModel.copyModel().setColor(isHovered || disabled ? hoverColor.toNormalVec4() : color.toNormalVec4()).transformVertices(translationAndScale), renderLayer-1);
+               
+                if (title != null && titleFont != null)
+                    Renderer.requestRender(RenderType.guiText, titleFont.texture, titleTextModel, renderLayer);
             }
         }
     }

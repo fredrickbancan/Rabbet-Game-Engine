@@ -69,8 +69,8 @@ namespace RabbetGameEngine
 
         private void updateRotations()
         {
-            pitch -= Input.getMouseDelta().Y * GameSettings.mouseSensitivity;
-            yaw += Input.getMouseDelta().X * GameSettings.mouseSensitivity;
+            pitch -= Input.getGrabbedMouseDelta().Y * GameSettings.defaultMouseSensitivity;
+            yaw += Input.getGrabbedMouseDelta().X * GameSettings.defaultMouseSensitivity;
         }
         public Matrix4 getViewMatrix()
         {

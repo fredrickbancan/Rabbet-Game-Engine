@@ -1,5 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using RabbetGameEngine.Text;
 
 namespace RabbetGameEngine
 {
@@ -7,10 +6,10 @@ namespace RabbetGameEngine
     {
         public GUIHud() : base("hud", "Arial_Shadow")
         {
-            addTextPanel("flying", new GUITextPanel(new Vector2(0,0.04F), ComponentAlignment.RIGHT).addLine("Flying: OFF").setPanelColor(Color.darkRed));
-            addTextPanel("noclip", new GUITextPanel(new Vector2(0, 0.07F), ComponentAlignment.RIGHT).addLine("Noclip: OFF").setPanelColor(Color.darkRed));
-            addTextPanel("label", new GUITextPanel(new Vector2(0, 1.0115F), ComponentAlignment.LEFT).addLine(Application.applicationName).setPanelColor(Color.black));
-            addTextPanel("fps", new GUITextPanel(new Vector2(0, 0.04F), ComponentAlignment.LEFT).addLine("0"));
+            addTextPanel("flying", new GUITextPanel(new Vector2(0,0.015F), ComponentAlignment.RIGHT).addLine("Flying: OFF").setPanelColor(Color.darkRed));
+            addTextPanel("noclip", new GUITextPanel(new Vector2(0, 0.04F), ComponentAlignment.RIGHT).addLine("Noclip: OFF").setPanelColor(Color.darkRed));
+            addTextPanel("label", new GUITextPanel(new Vector2(0, 0.985F), ComponentAlignment.LEFT).addLine(Application.applicationName).setPanelColor(Color.black));
+            addTextPanel("fps", new GUITextPanel(new Vector2(0, 0.015F), ComponentAlignment.LEFT).addLine("0"));
             addGuiComponent("crosshair", new GUICrosshair());
         }
 

@@ -3,6 +3,7 @@ using RabbetGameEngine.Models;
 using System.Text;
 namespace RabbetGameEngine.Text
 {
+    //TODO: Add option parameters for non - dpi relative text (text which scales with width AND height)
     public static class TextModelBuilder2D
     {
         private static readonly byte spaceAscii = 32;

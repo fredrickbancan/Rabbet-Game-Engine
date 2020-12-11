@@ -32,10 +32,20 @@ namespace RabbetGameEngine
         /// <summary>
         /// Sets the size of this component in precentage of window height
         /// </summary>
-        protected virtual void setSize(float width, float height, bool dpiRelative = true)
+        public virtual void setSize(float width, float height, bool dpiRelative = true)
         {
             size = new Vector2(width, height);
             dpiRelativeSize = dpiRelative;
+        }
+
+        public virtual void setPos(Vector2 p)
+        {
+            screenPos = p;
+        }
+
+        public virtual void onFrame()
+        {
+
         }
 
         public virtual void onUpdate()
@@ -55,10 +65,10 @@ namespace RabbetGameEngine
 
         public virtual void onWindowResize()
         {
-            scaleAndTranslate();
+            updateRenderData();
         }
 
-        protected virtual void scaleAndTranslate()
+        public virtual void updateRenderData()
         {
             float halfWindowWidth = GameInstance.gameWindowWidth * 0.5F;
             screenPixelSize = new Vector2(size.X * (dpiRelativeSize ? GameInstance.gameWindowHeight : GameInstance.gameWindowWidth), size.Y * GameInstance.gameWindowHeight);
@@ -86,6 +96,11 @@ namespace RabbetGameEngine
         public virtual Vector2 getScreenPos()
         {
             return screenPos;
+        }
+
+        public Vector2 getPixelSize()
+        {
+            return screenPixelSize;
         }
 
         public virtual void requestRender()

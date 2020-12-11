@@ -119,9 +119,10 @@ namespace RabbetGameEngine
             screenQuadShader.setUniformVec3F("cameraFrontVec", GameInstance.get.thePlayer.getCamera().getFrontVector());
             if (GameInstance.gameWindowWidth > 0 && GameInstance.gameWindowHeight > 0)
                 screenQuadShader.setUniform1F("aspectRatio", GameInstance.gameWindowWidth / GameInstance.gameWindowHeight);
-            screenQuadShader.setUniform1F("height", MathF.Tan(MathUtil.radians(GameSettings.fov) / 2.0F)); 
+            screenQuadShader.setUniform1F("height", MathF.Tan(MathUtil.radians(GameSettings.defaultFov) / 2.0F)); 
             screenQuadShader.setUniform1F("barrelDistortion", GameSettings.barrelDistortionStrength); 
             screenQuadShader.setUniform1F("cylRatio", GameSettings.barrelDistortionCylRatio); 
+            screenQuadShader.setUniform1F("brightness", GameSettings.defaultBrightness); 
             GL.ActiveTexture(TextureUnit.Texture1);
             ditherTex.use();
             GL.ActiveTexture(TextureUnit.Texture0);

@@ -1,5 +1,4 @@
-﻿using RabbetGameEngine.Models;
-using RabbetGameEngine.Sound;
+﻿using RabbetGameEngine.Sound;
 using RabbetGameEngine.Text;
 using System.Collections.Generic;
 
@@ -188,6 +187,14 @@ namespace RabbetGameEngine
             foreach (GUIComponent component in components.Values)
             {
                 component.onUpdate();
+            }
+        }
+
+        public virtual void onFrame()
+        {
+            foreach (GUIComponent component in components.Values)
+            {
+                component.onFrame();
             }
         }
 
