@@ -1,5 +1,4 @@
-﻿using OpenTK.Mathematics;
-using RabbetGameEngine.Models;
+﻿using RabbetGameEngine.Models;
 namespace RabbetGameEngine
 {
     public enum CrosshairType
@@ -11,15 +10,17 @@ namespace RabbetGameEngine
         private string crosshairTextureName;
         private Color crosshairColor = Color.black;
 
-        public GUICrosshair(Color color, float crosshairSize = 0.05F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0,0.5F))
+        public GUICrosshair(Color color, float crosshairSize = 0.05F, CrosshairType crosshairType = CrosshairType.normal) : base(0,0)
         {
+            anchor = ComponentAnchor.CENTER;
             crosshairColor = color;
             setCrosshairTextureAndSize(crosshairType, crosshairSize);
             setModel(QuadPrefab.copyModel().setColor(crosshairColor));
         }
 
-        public GUICrosshair(float crosshairSize = 0.05F, CrosshairType crosshairType = CrosshairType.normal) : base(new Vector2(0, 0.5F))
+        public GUICrosshair(float crosshairSize = 0.05F, CrosshairType crosshairType = CrosshairType.normal) : base(0,0)
         {
+            anchor = ComponentAnchor.CENTER;
             setCrosshairTextureAndSize(crosshairType, crosshairSize);
             setModel(QuadPrefab.copyModel().setColor(crosshairColor));
         }
@@ -39,7 +40,6 @@ namespace RabbetGameEngine
             }
 
             setSize(crosshairSize, crosshairSize);
-            updateRenderData();
         }
 
         public override void requestRender()

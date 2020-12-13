@@ -8,6 +8,7 @@ namespace RabbetGameEngine
     public class GUIButton : GUIComponent
     {
         protected Color titleColor = Color.white;
+        protected Color currentTitleColor;
         protected Color titleHoverColor = Color.darkYellow;
         protected Color color;
         protected Color hoverColor;
@@ -21,25 +22,27 @@ namespace RabbetGameEngine
         protected List<System.Action> hoverEnterListeners = new List<System.Action>();
         protected List<System.Action> hoverExitListeners = new List<System.Action>();
         protected string title;
-        protected Model titleTextModel;
+        protected Model titleTextModel = null;
         protected FontFace titleFont;
         protected float fontSize = 0.2F;
         protected bool disabled = false;
 
         /// <summary>
-        /// Min and Max bounds of this button in screen coordinates (minX, maxX, minY, maxY)
+        /// Min and Max bounds of this button in window coordinates (minX, maxX, minY, maxY)
         /// </summary>
         protected Vector4 pixelBounds;
-        public GUIButton(Vector2 pos, Vector2 size, Color color, string title, FontFace font, ComponentAlignment align = ComponentAlignment.LEFT, int renderLayer = 0, string textureName = "white") : base(pos, renderLayer)
+        public GUIButton(float posX, float posY, float sizeX, float sizeY, Color color, string title, FontFace font, ComponentAnchor align = ComponentAnchor.CENTER_LEFT, int renderLayer = 0, string textureName = "white") : base(posX, posY, renderLayer)
         {
             this.title = title;
             this.color = color;
             componentTexture = TextureUtil.getTexture(textureName);
-            alignment = align;
-            setSize(size.X, size.Y, false);
+            anchor = align;
+            setSize(sizeX, sizeY, true);
             setModel(QuadPrefab.copyModel());
             titleFont = font;
-            updateRenderData();
+            currentTitleColor = titleColor;
+            if (title != null && titleFont != null)
+                titleTextModel = TextModelBuilder2D.convertStringToModel(title, titleFont, currentTitleColor.toNormalVec4(), new Vector3(screenPixelPos.X, screenPixelPos.Y, -0.2F), fontSize, ComponentAnchor.CENTER);
         }
 
         public override void updateRenderData()
@@ -50,7 +53,7 @@ namespace RabbetGameEngine
             pixelBounds = new Vector4(screenPixelPos.X + halfWindowWidth - screenPixelSize.X * 0.5F, screenPixelPos.X + halfWindowWidth + screenPixelSize.X * 0.5F, halfWindowHeight - screenPixelPos.Y - screenPixelSize.Y * 0.5F, halfWindowHeight - screenPixelPos.Y + screenPixelSize.Y * 0.5F);
             
             if(title != null && titleFont != null)
-            titleTextModel = new Model(TextModelBuilder2D.convertstringToVertexArray(title, titleFont, titleColor.toNormalVec4(), new Vector3(screenPixelPos.X, screenPixelPos.Y, -0.2F), fontSize, ComponentAlignment.CENTER, 0), null);
+            titleTextModel = TextModelBuilder2D.convertStringToModel(title, titleFont, currentTitleColor.toNormalVec4(), new Vector3(screenPixelPos.X, screenPixelPos.Y, -0.2F), fontSize, ComponentAnchor.CENTER);
         }
 
         public GUIButton setFontSize(float s)
@@ -161,13 +164,15 @@ namespace RabbetGameEngine
         public GUIButton disable()
         {
             disabled = true;
-            titleTextModel.setColor(Color.darkGrey.toNormalVec4());
+            currentTitleColor = Color.darkGrey;
+                titleTextModel.setColor(currentTitleColor.toNormalVec4());
             return this;
         }
         public GUIButton enable()
         {
             disabled = false;
-            titleTextModel.setColor(titleColor.toNormalVec4());
+            currentTitleColor = titleColor;
+            titleTextModel.setColor(currentTitleColor.toNormalVec4());
             return this;
         }
 

@@ -73,9 +73,8 @@ namespace RabbetGameEngine
             GL.Enable(EnableCap.VertexProgramPointSize);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            GL.LineWidth(1);
-            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.defaultFov), GameInstance.aspectRatio, 0.1F, GameSettings.defaultMaxDrawDistance);
-            orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1.0F);
+            GL.LineWidth(GameInstance.realScreenHeight / 1500 + 1);
+            onResize();
             staticDraws = new Dictionary<string, StaticRenderObject>();
             SkyboxRenderer.init();
             FrameBuffer.init();
@@ -86,7 +85,7 @@ namespace RabbetGameEngine
         {
             GL.Viewport(GameInstance.get.getGameWindowSize());
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.defaultFov), GameInstance.aspectRatio, 0.1F, 1000.0F);
-            orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 1.0F);
+            orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 100.0F);
             GUIManager.onWindowResize();
             FrameBuffer.onResize();
         }
@@ -124,17 +123,22 @@ namespace RabbetGameEngine
         {
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.defaultFov), GameInstance.aspectRatio, 0.1F, GameInstance.get.getDrawDistance());
         }
-        public static void doRenderUpdate()
+        public static void doWorldRenderUpdate()
         {
             Profiler.beginEndProfile("renderUpdate");
-            BatchManager.preRenderUpdate();
-            GUIManager.requestRender();
+            BatchManager.preWorldRenderUpdate();
             if (GameInstance.get.currentPlanet != null)
             {
                 GameInstance.get.currentPlanet.onRenderUpdate();
             }
-            BatchManager.postRenderUpdate();
+            BatchManager.postWorldRenderUpdate();
             Profiler.beginEndProfile("renderUpdate");
+        }
+        public static void doGUIRenderUpdate()
+        { 
+            BatchManager.preGUIRenderUpdate();
+            GUIManager.requestRender();
+            BatchManager.postGUIRenderUpdate();
         }
 
         /*Called before all draw calls*/

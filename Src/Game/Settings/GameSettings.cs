@@ -11,16 +11,17 @@ namespace RabbetGameEngine
         public static bool controlsChanged = false;
         public static bool bindingsChanged = false;
         public static float defaultFov = 80; //fov of player camera
-        public static float barrelDistortionStrength = defaultFov * 0.01F;
+        public static float barrelDistortionStrength = defaultFov * 0.00F;
         public static float barrelDistortionCylRatio = 2.0F;
 
         public static float defaultBrightness = 1.0F;
+        public static float ditherScale = 1.0F;
         public static float defaultMouseSensitivity = 0.08F;
 
         /// <summary>
         /// This setting MUST be between 0 and 1
         /// </summary>
-        public static float defaultMasterVolume = 1F;
+        public static float defaultMasterVolume = 0.2F;
 
         public static string defaultFont = "Arial_Shadow";
 

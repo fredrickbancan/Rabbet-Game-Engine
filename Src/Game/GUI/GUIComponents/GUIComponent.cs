@@ -4,7 +4,7 @@ namespace RabbetGameEngine
 {
     public class GUIComponent
     {
-        protected ComponentAlignment alignment = ComponentAlignment.CENTER;
+        protected ComponentAnchor anchor = ComponentAnchor.CENTER;
         protected Vector2 screenPos;
         protected Vector2 screenPixelPos;
         protected Vector2 size;
@@ -22,11 +22,10 @@ namespace RabbetGameEngine
         protected Model componentQuadModel = null;
         protected Matrix4 translationAndScale = Matrix4.Identity;
         protected int renderLayer;
-        public GUIComponent(Vector2 screenPos, int renderLayer = 0)
+        public GUIComponent(float posX, float posY, int renderLayer = 0)
         {
+            screenPos = new Vector2(posX, posY);
             this.renderLayer = renderLayer;
-            screenPos.Y = 1 - screenPos.Y;
-            this.screenPos = screenPos - new Vector2(0.5F, 0.5F);
         }
 
         /// <summary>
@@ -70,21 +69,51 @@ namespace RabbetGameEngine
 
         public virtual void updateRenderData()
         {
+            float posScale = MathUtil.normalize(0, GUIManager.guiMapRes.Y, GameInstance.gameWindowHeight);
             float halfWindowWidth = GameInstance.gameWindowWidth * 0.5F;
+            float halfWindowHeight = GameInstance.gameWindowHeight * 0.5F;
             screenPixelSize = new Vector2(size.X * (dpiRelativeSize ? GameInstance.gameWindowHeight : GameInstance.gameWindowWidth), size.Y * GameInstance.gameWindowHeight);
-            screenPixelPos = new Vector2(screenPos.X * GameInstance.gameWindowWidth, screenPos.Y * GameInstance.gameWindowHeight);
-            switch (alignment)
+           
+            switch (anchor)
             {
-                case ComponentAlignment.CENTER:
-                    screenPixelPos.X += halfWindowWidth;
+                case ComponentAnchor.CENTER:
+                    screenPixelPos.X = screenPos.X * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowWidth);
+                    screenPixelPos.Y = screenPos.Y * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowHeight);
                     break;
-                case ComponentAlignment.LEFT:
-                    screenPixelPos.X += screenPixelSize.X * 0.5F;
+                case ComponentAnchor.CENTER_LEFT:
+                    screenPixelPos.Y = screenPos.Y * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowHeight);
+                    screenPixelPos.X = (screenPixelSize.X * 0.5F - halfWindowWidth) + screenPos.X * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowWidth);
                     break;
-                case ComponentAlignment.RIGHT:
-                    screenPixelPos.X = halfWindowWidth - (screenPixelPos.X + halfWindowWidth + screenPixelSize.X * 0.5F);
+                case ComponentAnchor.CENTER_RIGHT:
+                    screenPixelPos.Y = screenPos.Y * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowHeight);
+                    screenPixelPos.X = (halfWindowWidth - screenPixelSize.X * 0.5F) + screenPos.X * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowWidth);
+                    break;
+                case ComponentAnchor.CENTER_BOTTOM:
+                    screenPixelPos.X = screenPos.X * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowWidth);
+                    screenPixelPos.Y = (screenPixelSize.Y * 0.5F - halfWindowHeight) + screenPos.Y * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowHeight);
+                    break;
+                case ComponentAnchor.CENTER_TOP:
+                    screenPixelPos.X = screenPos.X * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowWidth);
+                    screenPixelPos.Y = (halfWindowHeight - screenPixelSize.Y * 0.5F) + screenPos.Y * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowHeight);
+                    break;
+                case ComponentAnchor.TOP_LEFT:
+                    screenPixelPos.Y = (halfWindowHeight - screenPixelSize.Y * 0.5F) + screenPos.Y * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowHeight);
+                    screenPixelPos.X = (screenPixelSize.X * 0.5F - halfWindowWidth) + screenPos.X * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowWidth);
+                    break;
+                case ComponentAnchor.TOP_RIGHT:
+                    screenPixelPos.X = (halfWindowWidth - screenPixelSize.X * 0.5F) + screenPos.X * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowWidth);
+                    screenPixelPos.Y = (halfWindowHeight - screenPixelSize.Y * 0.5F) + screenPos.Y * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowHeight);
+                    break;
+                case ComponentAnchor.BOTTOM_LEFT:
+                    screenPixelPos.Y = (screenPixelSize.Y * 0.5F - halfWindowHeight) + screenPos.Y * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowHeight);
+                    screenPixelPos.X = (screenPixelSize.X * 0.5F - halfWindowWidth) + screenPos.X * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowWidth);
+                    break;
+                case ComponentAnchor.BOTTOM_RIGHT:
+                    screenPixelPos.X = (halfWindowWidth - screenPixelSize.X * 0.5F) + screenPos.X * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowWidth);
+                    screenPixelPos.Y = (screenPixelSize.Y * 0.5F - halfWindowHeight) + screenPos.Y * (dpiRelativeSize ? GUIManager.guiMapRes.Y * posScale : GameInstance.gameWindowHeight);
                     break;
             }
+
             translationAndScale = Matrix4.CreateScale(screenPixelSize.X, screenPixelSize.Y, 1) *  Matrix4.CreateTranslation(screenPixelPos.X, screenPixelPos.Y, -0.2F);
         }
 

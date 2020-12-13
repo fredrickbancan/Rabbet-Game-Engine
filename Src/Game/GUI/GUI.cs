@@ -7,17 +7,14 @@ namespace RabbetGameEngine
     public class GUI
     {
         private Dictionary<string, GUIComponent> components = new Dictionary<string, GUIComponent>();//all of the gui related components in this GUI, such as crosshairs, health bars, menus ect. Each component can be individually hidden, changed or removed.
-        private Dictionary<string, GUITextPanel> screenTextPanels = new Dictionary<string, GUITextPanel>();
-        private int preHideWindowWidth;
-        private int preHideWindowHeight;
-        protected FontFace screenFont;
+        protected FontFace guiFont;
         private bool wholeScreenHidden = false;
         private uint maxCharCount;
         public string guiName = "";
 
         public GUI(string guiName, string textFont, uint maxCharCount = 1024)
         {
-            if(!TextUtil.tryGetFont(textFont, out screenFont))
+            if(!TextUtil.tryGetFont(textFont, out guiFont))
             {
                 Application.error("GUIScreen " + guiName + " could not load its provided font: " + textFont + ", it will have a null font!");
             }
@@ -31,23 +28,6 @@ namespace RabbetGameEngine
                 comp.requestRender();
             }
         }
-
-        public void requestTextRender()
-        {
-            foreach (GUITextPanel panel in screenTextPanels.Values)
-            {
-                panel.requestRender();
-            }
-        }
-
-        public void buildAllText()
-        {
-            foreach (GUITextPanel panel in screenTextPanels.Values)
-            {
-                panel.build();
-            }
-        }
-
         /// <summary>
         ///  Add new or change already existing gui component
         /// </summary>
@@ -60,92 +40,7 @@ namespace RabbetGameEngine
 
             components.Add(name, component);
             component.setName(name);
-        }
-
-        /// <summary>
-        ///  Add new text panel, or override existing one, Do not use this to update existing panels, use updateTextPanel() instead
-        /// </summary>
-        public void addTextPanel(string name, GUITextPanel textPanel)
-        {
-            if (screenTextPanels.TryGetValue(name, out GUITextPanel panel))
-            {
-                screenTextPanels.Remove(name);//If theres already the text panel, override it
-            }
-            else
-            {
-                textPanel.setFont(this.screenFont);
-                textPanel.build();
-                screenTextPanels.Add(name, textPanel);
-            }
-        }
-
-        public bool getTextPanel(string name, out GUITextPanel foundPanel)
-        {
-            if (screenTextPanels.TryGetValue(name, out GUITextPanel result))
-            {
-                foundPanel = result;
-                return true;
-            }
-            else
-            {
-                Application.error("GUIScreen " + guiName + " could not find requested text panel to update: " + name);
-                foundPanel = null;
-                return false;
-            }
-        }
-        public GUITextPanel getTextPanel(string name)
-        {
-            GUITextPanel result = null;
-            if (screenTextPanels.TryGetValue(name, out result))
-            {
-                return result;
-            }
-            else
-            {
-                Application.error("GUIScreen " + guiName + " could not find requested text panel to update: " + name);
-                return result;
-            }
-        }
-
-        public void hideTextPanel(string name)
-        {
-            GUITextPanel result = null;
-            if (screenTextPanels.TryGetValue(name, out result))
-            {
-                result.hide();
-            }
-            else
-            {
-                Application.error("GUIScreen " + guiName + " could not find requested text panel to update: " + name);
-            }
-        }
-        public void unHideTextPanel(string name)
-        {
-            GUITextPanel result = null;
-            if (screenTextPanels.TryGetValue(name, out result))
-            {
-                result.unHide();
-            }
-            else
-            {
-                Application.error("GUIScreen " + guiName + " could not find requested text panel to update: " + name);
-            }
-        }
-
-        public void hideWholeGUIScreen()
-        {
-            wholeScreenHidden = true;
-            preHideWindowWidth = GameInstance.gameWindowWidth;
-            preHideWindowHeight = GameInstance.gameWindowHeight;
-        }
-        public void unHideWholeGUIScreen()
-        {
-            wholeScreenHidden = false;
-
-            if(preHideWindowWidth != GameInstance.gameWindowWidth || preHideWindowHeight != GameInstance.gameWindowHeight)
-            {
-                onWindowResize();
-            }
+            component.updateRenderData();
         }
 
         public void hideComponent(string name)
@@ -167,18 +62,6 @@ namespace RabbetGameEngine
             if (components.TryGetValue(name, out GUIComponent comp))
             {
                 components.Remove(name);
-            }
-        }
-        public void deleteTextPanel(string name)
-        {
-            if (screenTextPanels.TryGetValue(name, out GUITextPanel panel))
-            {
-                screenTextPanels.Remove(name);
-                buildAllText();
-            }
-            else
-            {
-                Application.warn("GUIScreen " + guiName + " Could not remove requested text panel: " +  name);
             }
         }
 
@@ -206,13 +89,12 @@ namespace RabbetGameEngine
                 {
                     component.onWindowResize();
                 }
-                buildAllText();
             }
         }
 
         public bool isFontNull()
         {
-            return this.screenFont == null;
+            return this.guiFont == null;
         }
 
         protected void defaultOnButtonHoverEnter()

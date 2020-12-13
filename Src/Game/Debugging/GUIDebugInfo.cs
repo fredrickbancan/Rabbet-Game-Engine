@@ -1,16 +1,17 @@
-﻿using OpenTK.Mathematics;
-using RabbetGameEngine.Debugging;
+﻿using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Sound;
 using RabbetGameEngine.SubRendering;
-using RabbetGameEngine.Text;
 
 namespace RabbetGameEngine
 {
+    //TODO: Create some sort of automatic debug profile gui system which shows all nested profiles under each section.
     public class GUIDebugInfo : GUI
     {
+        GUITextPanel t;
         public GUIDebugInfo() : base("debugInfo", "Arial_Shadow")
         {
-            addTextPanel("info", new GUITextPanel(new Vector2(0, 0.07F), ComponentAlignment.LEFT).setPanelColor(Color.lightGrey));
+            t = new GUITextPanel(0, -0.025F, guiFont, ComponentAnchor.TOP_LEFT).setPanelColor(Color.lightGrey);
+            addGuiComponent("info", t);
         }
         
         public override void onUpdate()
@@ -19,13 +20,18 @@ namespace RabbetGameEngine
             if (GameInstance.get.thePlayer != null && GameInstance.get.currentPlanet != null)
             {
                 float entColAverage = Profiler.getAverageForProfile("EntCollisions");
-                float colAverage = Profiler.getAverageForProfile("Collisions");
+                float colAverage = Profiler.getAverageForProfile("entWorldCol");
+                float projColAverage = Profiler.getAverageForProfile("projCol");
+                float vfxColAverage = Profiler.getAverageForProfile("vfxCol");
+                float entTickAverage = Profiler.getAverageForProfile("entTick") - colAverage;
+                float projTickAverage = Profiler.getAverageForProfile("projTick") - projColAverage;
+                float projColEntAverage = Profiler.getAverageForProfile("projColEnt");
+                float vfxTickAverage = Profiler.getAverageForProfile("vfxTick") - vfxColAverage;
                 float guiUpdateAverage = Profiler.getAverageForProfile("guiUpdate");
                 float renderUpdateAverage = Profiler.getAverageForProfile("renderUpdate");
                 float soundsAverage = Profiler.getAverageForProfile("sounds");
                 float gameLoopAverage = Profiler.getAverageForProfile("Loop");
                 float aux = Profiler.getAverageForProfile("aux");
-                GUITextPanel t = getTextPanel("info");
                 t.clear();
                 t.addLine("X: " + GameInstance.get.thePlayer.getPosition().X.ToString("0.00"));
                 t.addLine("Y: " + GameInstance.get.thePlayer.getPosition().Y.ToString("0.00"));
@@ -36,10 +42,14 @@ namespace RabbetGameEngine
                 t.addLine("Profiler Averages (MS)");
                 t.addLine("   GameLoop: " + gameLoopAverage.ToString("0.00 ms"));
                 t.addLine("   {");
-                t.addLine("       Entity Collisions: " + entColAverage.ToString("0.00 ms"));
-                t.addLine("       World Collisions: " + colAverage.ToString("0.00 ms"));
-                t.addLine("       Sounds: " + soundsAverage.ToString("0.00 ms"));
-                t.addLine("   }Residual: " + (gameLoopAverage - (entColAverage + colAverage + soundsAverage)).ToString("0.00 ms"));
+                t.addLine("       Entity Tick: " + entTickAverage.ToString("0.00 ms"));
+                t.addLine("       Inter-Entity Collisions: " + entColAverage.ToString("0.00 ms"));
+                t.addLine("       Projectile Tick: " + projTickAverage.ToString("0.00 ms"));
+                t.addLine("       Projectile Entity Collisions: " + projColEntAverage.ToString("0.00 ms"));
+                t.addLine("       VFX Tick: " + vfxTickAverage.ToString("0.00 ms"));
+                t.addLine("       Entity World Collisions: " + colAverage.ToString("0.00 ms"));
+                t.addLine("   }Residual: " + (gameLoopAverage - (vfxTickAverage + projColEntAverage + entTickAverage + projTickAverage + entColAverage + colAverage)).ToString("0.00 ms"));
+                t.addLine("Sound Update: " + soundsAverage.ToString("0.00 ms"));
                 t.addLine("GUI Update: " + guiUpdateAverage.ToString("0.00 ms"));
                 t.addLine("Render Update: " + renderUpdateAverage.ToString("0.00 ms"));
                 t.addLine("Aux: " + aux.ToString("0.00 ms"));

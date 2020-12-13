@@ -1,38 +1,53 @@
 ﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
+using System;
 using System.Text;
 namespace RabbetGameEngine.Text
 {
     //TODO: Add option parameters for non - dpi relative text (text which scales with width AND height)
     public static class TextModelBuilder2D
     {
+        private static float sizeMult = 0;
         private static readonly byte spaceAscii = 32;
-        public static Model[] convertstringArrayToModelArray(string[] thestrings, FontFace font, Vector4 color, Vector3 pixelTranslation, float fontSize, ComponentAlignment alignment)
+
+        private static void calSizeMult(bool dpiRelative)
         {
-          
+            float sizeMultWidth = MathUtil.normalize(0, GUIManager.guiMapRes.X, GameInstance.gameWindowWidth);
+            float sizeMultHeight = MathUtil.normalize(0, GUIManager.guiMapRes.Y, GameInstance.gameWindowHeight);
+            sizeMult = dpiRelative ? sizeMultHeight : Math.Min(sizeMultWidth, sizeMultHeight);
+        }
+
+        public static Model[] convertStringArrayToModelArray(string[] thestrings, FontFace font, Vector4 color, Vector3 pixelTranslation, float fontSize, ComponentAnchor alignment, bool dpiRelative = true)
+        {
+            calSizeMult(dpiRelative);
             Model[] result = new Model[thestrings.Length];
-            for(uint i = 0; i < thestrings.Length; i++)
+            for(int i = 0; i < thestrings.Length; i++)
             {
-                result[i] = new Model(convertstringToVertexArray(thestrings[i], font, color, pixelTranslation, fontSize, alignment, i), null);
+                result[i] = new Model(convertStringToVertexArray(thestrings[i], font, color, pixelTranslation, fontSize, alignment, i, thestrings.Length - 1 - i), null);
             }
             return result;
         }
-        public static Vertex[] convertstringToVertexArray(string thestring, FontFace font, Vector4 color, Vector3 pixelTranslation, float fontSize, ComponentAlignment alignment, uint previousLineCount = 0)
+
+        public static Model convertStringToModel(string theString, FontFace font, Vector4 color, Vector3 pixelTranslation, float fontSize, ComponentAnchor alignment, bool dpiRelative = true)
         {
-            float sizeMult = MathUtil.normalize(0, 1080, GameInstance.gameWindowHeight);
+            calSizeMult(dpiRelative);
+            Model result = new Model(convertStringToVertexArray(theString, font, color, pixelTranslation, fontSize, alignment, 0), null);
+            return result;
+        }
+        private static Vertex[] convertStringToVertexArray(string thestring, FontFace font, Vector4 color, Vector3 pixelTranslation, float fontSize, ComponentAnchor alignment, int linesAbove = 0, int linesBelow = 0)
+        {
             fontSize *= sizeMult;
-            Vector3 cursorPos = pixelTranslation; 
-            cursorPos.Y -= previousLineCount * (font.getLineHeightPixels() * fontSize) - font.getLineHeightPixels() * 0.5F * fontSize;
+            Vector3 cursorPos = pixelTranslation;
+            float halfLineHeight = font.getLineHeightPixels() * 0.5F * fontSize;
+            cursorPos.Y -= linesAbove * (font.getLineHeightPixels() * fontSize) - halfLineHeight;
             byte[] charIds = Encoding.ASCII.GetBytes(thestring);
             Vertex[] result = new Vertex[thestring.Replace(" ", "").Length * 4];//number of vertices for each character. Excluding spaces.
             int vertexIndex = 0;
 
             switch (alignment)
             {
-                case ComponentAlignment.RIGHT:
+                case ComponentAnchor.CENTER_RIGHT:
                     {
-                        //position cursor to right side and offset cursor to compensate for string length
-                        cursorPos.X = GameInstance.gameWindowWidth - cursorPos.X - 10;//put cursor to right side orientation
                         for (int i = 0; i < thestring.Length; i++)
                         {
                             if (charIds[i] == spaceAscii)
@@ -65,9 +80,8 @@ namespace RabbetGameEngine.Text
                         }
                     }
                     break;
-                case ComponentAlignment.CENTER:
+                case ComponentAnchor.CENTER:
                     {
-                        //offset cursor to compensate for string length so center of string is at origin provided
                         for (int i = 0; i < thestring.Length; i++)
                         {
                             if (charIds[i] == spaceAscii)
@@ -100,8 +114,9 @@ namespace RabbetGameEngine.Text
                         }
                     }
                     break;
-                case ComponentAlignment.LEFT:
+                case ComponentAnchor.CENTER_LEFT:
                     {
+                        cursorPos.X += 10;
                         for (int i = 0; i < thestring.Length; i++)
                         {
                             if (charIds[i] == spaceAscii)
@@ -122,12 +137,208 @@ namespace RabbetGameEngine.Text
                         }
                     }
                     break;
+                case ComponentAnchor.CENTER_BOTTOM:
+
+                    cursorPos.Y += 10 + linesBelow * (font.getLineHeightPixels() * fontSize) + halfLineHeight;
+
+                    for (int i = 0; i < thestring.Length; i++)
+                    {
+                        if (charIds[i] == spaceAscii)
+                        {
+                            cursorPos.X -= font.getSpaceWidthPixels() / 2 * fontSize;
+                        }
+                        else
+                        {
+                            cursorPos.X -= font.getCharacter(charIds[i]).getXAdvancePixels() / 2 * fontSize;
+                        }
+                    }
+
+                    for (int i = 0; i < thestring.Length; i++)
+                    {
+                        if (charIds[i] == spaceAscii)
+                        {
+                            cursorPos.X += font.getSpaceWidthPixels() * fontSize;
+                        }
+                        else
+                        {
+                            Character currentChar = font.getCharacter(charIds[i]);
+                            Vertex[] characterVertices = createVerticesFromChar(currentChar, color, cursorPos, fontSize);
+                            result[vertexIndex + 0] = characterVertices[0];
+                            result[vertexIndex + 1] = characterVertices[1];
+                            result[vertexIndex + 2] = characterVertices[2];
+                            result[vertexIndex + 3] = characterVertices[3];
+                            vertexIndex += 4;
+                            cursorPos.X += currentChar.getXAdvancePixels() * fontSize;
+                        }
+                    }
+                    break;
+                case ComponentAnchor.CENTER_TOP:
+                    cursorPos.Y -= 10 + halfLineHeight;
+
+                    for (int i = 0; i < thestring.Length; i++)
+                    {
+                        if (charIds[i] == spaceAscii)
+                        {
+                            cursorPos.X -= font.getSpaceWidthPixels() / 2 * fontSize;
+                        }
+                        else
+                        {
+                            cursorPos.X -= font.getCharacter(charIds[i]).getXAdvancePixels() / 2 * fontSize;
+                        }
+                    }
+
+                    for (int i = 0; i < thestring.Length; i++)
+                    {
+                        if (charIds[i] == spaceAscii)
+                        {
+                            cursorPos.X += font.getSpaceWidthPixels() * fontSize;
+                        }
+                        else
+                        {
+                            Character currentChar = font.getCharacter(charIds[i]);
+                            Vertex[] characterVertices = createVerticesFromChar(currentChar, color, cursorPos, fontSize);
+                            result[vertexIndex + 0] = characterVertices[0];
+                            result[vertexIndex + 1] = characterVertices[1];
+                            result[vertexIndex + 2] = characterVertices[2];
+                            result[vertexIndex + 3] = characterVertices[3];
+                            vertexIndex += 4;
+                            cursorPos.X += currentChar.getXAdvancePixels() * fontSize;
+                        }
+                    }
+                    break;
+                case ComponentAnchor.BOTTOM_LEFT:
+                    cursorPos.Y += 10 + linesBelow * (font.getLineHeightPixels() * fontSize) + halfLineHeight;
+                    cursorPos.X += 10;
+
+                    for (int i = 0; i < thestring.Length; i++)
+                    {
+                        if (charIds[i] == spaceAscii)
+                        {
+                            cursorPos.X += font.getSpaceWidthPixels() * fontSize;
+                        }
+                        else
+                        {
+                            Character currentChar = font.getCharacter(charIds[i]);
+                            Vertex[] characterVertices = createVerticesFromChar(currentChar, color, cursorPos, fontSize);
+                            result[vertexIndex + 0] = characterVertices[0];
+                            result[vertexIndex + 1] = characterVertices[1];
+                            result[vertexIndex + 2] = characterVertices[2];
+                            result[vertexIndex + 3] = characterVertices[3];
+                            vertexIndex += 4;
+                            cursorPos.X += currentChar.getXAdvancePixels() * fontSize;
+                        }
+                    }
+                    break;
+                case ComponentAnchor.BOTTOM_RIGHT:
+                    cursorPos.Y += 10 + linesBelow * (font.getLineHeightPixels() * fontSize) + halfLineHeight;
+                    cursorPos.X -= 10;
+
+                    for (int i = 0; i < thestring.Length; i++)
+                    {
+                        if (charIds[i] == spaceAscii)
+                        {
+                            cursorPos.X -= font.getSpaceWidthPixels() * fontSize;
+                        }
+                        else
+                        {
+                            cursorPos.X -= font.getCharacter(charIds[i]).getXAdvancePixels() * fontSize;
+                        }
+                    }
+
+                    for (int i = 0; i < thestring.Length; i++)
+                    {
+                        if (charIds[i] == spaceAscii)
+                        {
+                            cursorPos.X -= font.getSpaceWidthPixels() / 2 * fontSize;
+                        }
+                        else
+                        {
+                            cursorPos.X -= font.getCharacter(charIds[i]).getXAdvancePixels() / 2 * fontSize;
+                        }
+                    }
+
+                    for (int i = 0; i < thestring.Length; i++)
+                    {
+                        if (charIds[i] == spaceAscii)
+                        {
+                            cursorPos.X += font.getSpaceWidthPixels() * fontSize;
+                        }
+                        else
+                        {
+                            Character currentChar = font.getCharacter(charIds[i]);
+                            Vertex[] characterVertices = createVerticesFromChar(currentChar, color, cursorPos, fontSize);
+                            result[vertexIndex + 0] = characterVertices[0];
+                            result[vertexIndex + 1] = characterVertices[1];
+                            result[vertexIndex + 2] = characterVertices[2];
+                            result[vertexIndex + 3] = characterVertices[3];
+                            vertexIndex += 4;
+                            cursorPos.X += currentChar.getXAdvancePixels() * fontSize;
+                        }
+                    }
+                    break;
+                case ComponentAnchor.TOP_LEFT:
+                    cursorPos.Y -= 10 + halfLineHeight;
+                    cursorPos.X += 10;
+                    for (int i = 0; i < thestring.Length; i++)
+                    {
+                        if (charIds[i] == spaceAscii)
+                        {
+                            cursorPos.X += font.getSpaceWidthPixels() * fontSize;
+                        }
+                        else
+                        {
+                            Character currentChar = font.getCharacter(charIds[i]);
+                            Vertex[] characterVertices = createVerticesFromChar(currentChar, color, cursorPos, fontSize);
+                            result[vertexIndex + 0] = characterVertices[0];
+                            result[vertexIndex + 1] = characterVertices[1];
+                            result[vertexIndex + 2] = characterVertices[2];
+                            result[vertexIndex + 3] = characterVertices[3];
+                            vertexIndex += 4;
+                            cursorPos.X += currentChar.getXAdvancePixels() * fontSize;
+                        }
+                    }
+                    break;
+                case ComponentAnchor.TOP_RIGHT:
+                    cursorPos.Y -= 10 + halfLineHeight;
+                    cursorPos.X -= 10;
+
+                    for (int i = 0; i < thestring.Length; i++)
+                    {
+                        if (charIds[i] == spaceAscii)
+                        {
+                            cursorPos.X -= font.getSpaceWidthPixels() * fontSize;
+                        }
+                        else
+                        {
+                            cursorPos.X -= font.getCharacter(charIds[i]).getXAdvancePixels() * fontSize;
+                        }
+                    }
+
+                    for (int i = 0; i < thestring.Length; i++)
+                    {
+                        if (charIds[i] == spaceAscii)
+                        {
+                            cursorPos.X += font.getSpaceWidthPixels() * fontSize;
+                        }
+                        else
+                        {
+                            Character currentChar = font.getCharacter(charIds[i]);
+                            Vertex[] characterVertices = createVerticesFromChar(currentChar, color, cursorPos, fontSize);
+                            result[vertexIndex + 0] = characterVertices[0];
+                            result[vertexIndex + 1] = characterVertices[1];
+                            result[vertexIndex + 2] = characterVertices[2];
+                            result[vertexIndex + 3] = characterVertices[3];
+                            vertexIndex += 4;
+                            cursorPos.X += currentChar.getXAdvancePixels() * fontSize;
+                        }
+                    }
+                    break;
             }
 
             return result;
         }
        
-        public static Vertex[] createVerticesFromChar(Character character, Vector4 color, Vector3 pixelCursorTopLeft, float fontSize)
+        private static Vertex[] createVerticesFromChar(Character character, Vector4 color, Vector3 pixelCursorTopLeft, float fontSize)
         {
             //get pixel values
             float x = pixelCursorTopLeft.X + character.getxOffsetPixels() * fontSize;

@@ -15,19 +15,26 @@ namespace RabbetGameEngine.SubRendering
         /// <summary>
         /// Should be called before any rendering requests.
         /// </summary>
-        public static void preRenderUpdate()
+        public static void preWorldRenderUpdate()
         {
             for (int i = 0; i < batches.Count; ++i)
             {
                 batches.ElementAt(i).reset();
             }
+        }
+
+        /// <summary>
+        /// Should be called before any rendering requests.
+        /// </summary>
+        public static void preGUIRenderUpdate()
+        {
             for (int i = 0; i < guiBatches.Count; ++i)
             {
                 guiBatches.ElementAt(i).reset();
             }
         }
 
-        public static void postRenderUpdate()
+        public static void postWorldRenderUpdate()
         {
             for (int i = 0; i < batches.Count; ++i)
             {
@@ -44,7 +51,11 @@ namespace RabbetGameEngine.SubRendering
                 
                 batchAt.postRenderUpdate();
             }
+        }
 
+
+        public static void postGUIRenderUpdate()
+        {
             for (int i = 0; i < guiBatches.Count; ++i)
             {
                 Batch batchAt = guiBatches.ElementAt(i);
@@ -303,6 +314,6 @@ namespace RabbetGameEngine.SubRendering
             }
         }
 
-        public static int batchCount { get => batches.Count + guiBatches.Count; }
+        public static int batchCount { get => batches.Count; }
     }
 }

@@ -9,7 +9,7 @@ namespace RabbetGameEngine
 {
     public class GUIValueSlider : GUIComponent
     {
-        private List<System.Action> slideMoveListeners = new List<System.Action>();
+        private List<System.Action<GUIValueSlider>> slideMoveListeners = new List<System.Action<GUIValueSlider>>();
         public bool sliderGrabbed = false;
         public bool isInteger;
         public float minFloat, maxFloat;
@@ -38,8 +38,8 @@ namespace RabbetGameEngine
         private Vector2 sliderKnobPos;
         private Vector2 sliderKnobSize = new Vector2(0.05F, 0.9F);
         private Vector2 middleLineRectSize = new Vector2(1.0F, 0.1F);
-        private Color middleLineRectColor = Color.grey.setAlphaF(0.7F);
-        private Color endRectColor = Color.darkBlue.setAlphaF(0.8F);
+        private Color middleLineRectColor = Color.darkGrey;
+        private Color endRectColor = Color.darkGrey;
         /// <summary>
         /// text offsets are relative to the pos of the slider as a percentage of WINDOW size.
         /// </summary>
@@ -47,8 +47,8 @@ namespace RabbetGameEngine
         /// <summary>
         /// min/max text offsets are relative to the end/start of the slider as a percentage of WINDOW size.
         /// </summary>
-        private Vector2 minValTextOffset = new Vector2(-0.015F, 0.0F);
-        private Vector2 maxValTextOffset = new Vector2(0.015F, 0.0F);
+        private Vector2 minValTextOffset = new Vector2(-0.0125F, 0.0F);
+        private Vector2 maxValTextOffset = new Vector2(0.0125F, 0.0F);
         /// <summary>
         /// text offsets are relative to the pos of the slider as a percentage of WINDOW size.
         /// </summary>
@@ -59,24 +59,24 @@ namespace RabbetGameEngine
         private float titleFontSize = 0.2F;
 
         private GUIButton sliderKnob;
-        private GUITransparentRecangle middleLineRect;
-        private GUITransparentRecangle leftEndRect;
-        private GUITransparentRecangle rightEndRect;
-        private GUITransparentRecangle background;
+        private GUITransparentRectangle middleLineRect;
+        private GUITransparentRectangle leftEndRect;
+        private GUITransparentRectangle rightEndRect;
+        private GUITransparentRectangle background;
 
-        public GUIValueSlider(Vector2 pos, Vector2 size, string title, FontFace font, bool isInteger = false, int renderLayer = 0) : base(pos, renderLayer)
+        public GUIValueSlider(float posX, float posY, float sizeX, float sizeY, string title, FontFace font, bool isInteger = false, ComponentAnchor anchor = ComponentAnchor.CENTER, int renderLayer = 0) : base(posX, posY, renderLayer)
         {
             this.font = font;
             this.title = title;
             this.isInteger = isInteger;
-            alignment = ComponentAlignment.CENTER;
-            sliderKnob = new GUIButton(pos, Vector2.Zero, Color.grey, null, null, alignment, renderLayer).setHoverColor(Color.grey);
-            middleLineRect = new GUITransparentRecangle(pos, middleLineRectSize * size, middleLineRectColor, alignment, renderLayer - 1, false);
-            leftEndRect = new GUITransparentRecangle(new Vector2(pos.X - size.X * 0.5F, pos.Y), sliderKnobSize * size, endRectColor, alignment, renderLayer - 1, false);
-            rightEndRect = new GUITransparentRecangle(new Vector2(pos.X + size.X * 0.5F, pos.Y), sliderKnobSize * size, endRectColor, alignment, renderLayer - 1, false);
-            background = new GUITransparentRecangle(new Vector2(pos.X, pos.Y - size.Y * 0.5F), new Vector2(size.X * 1.7F, size.Y * 2.0F), Color.black.setAlphaF(0.7F), alignment, renderLayer - 1, false);
-            setSize(size.X, size.Y, false);
-            updateRenderData();
+            this.anchor = anchor;
+            background = new GUITransparentRectangle(posX, posY, sizeX, sizeY, Color.black.setAlphaF(0.7F), anchor, renderLayer - 1);
+            sliderKnob = new GUIButton(posX, posY, 0, 0, Color.grey, null, null, anchor, renderLayer).setHoverColor(Color.grey);
+            middleLineRect = new GUITransparentRectangle(posX, posY, middleLineRectSize.X * sizeX, middleLineRectSize.Y * sizeY, middleLineRectColor, anchor, renderLayer - 1);
+            Vector2 endRectSize = new Vector2(sliderKnobSize.X * 0.5F, sliderKnobSize.Y);
+            leftEndRect = new GUITransparentRectangle(posX - sizeX * 0.5F, posY, endRectSize.X * sizeX, endRectSize.Y * sizeY, endRectColor, anchor, renderLayer - 1);
+            rightEndRect = new GUITransparentRectangle(posX + sizeX * 0.5F, posY, endRectSize.X * sizeX, endRectSize.Y * sizeY, endRectColor, anchor, renderLayer - 1);
+            setSize(sizeX, sizeY, true);
         }
         public override void updateRenderData()
         {
@@ -86,21 +86,21 @@ namespace RabbetGameEngine
             leftEndRect.updateRenderData();
             rightEndRect.updateRenderData();
             background.updateRenderData();
-            titleTextModel = new Model(TextModelBuilder2D.convertstringToVertexArray(title, font, titleColor, new Vector3(screenPixelPos.X + titleOffset.X * GameInstance.gameWindowWidth, screenPixelPos.Y - titleOffset.Y * GameInstance.gameWindowHeight, -0.2F), titleFontSize, ComponentAlignment.CENTER, 0), null);
-            minValTextModel = new Model(TextModelBuilder2D.convertstringToVertexArray(minDisplayValString, font, minValColor, new Vector3(screenPixelPos.X - screenPixelSize.X*0.5F + minValTextOffset.X * GameInstance.gameWindowWidth, screenPixelPos.Y - minValTextOffset.Y * GameInstance.gameWindowHeight, -0.2F), minTextFontSize, ComponentAlignment.CENTER, 0), null);
-            maxValTextModel = new Model(TextModelBuilder2D.convertstringToVertexArray(maxDisplayValString, font, maxValColor, new Vector3(screenPixelPos.X + screenPixelSize.X*0.5F + maxValTextOffset.X * GameInstance.gameWindowWidth, screenPixelPos.Y - maxValTextOffset.Y * GameInstance.gameWindowHeight, -0.2F), maxTextFontSize, ComponentAlignment.CENTER, 0), null);
+            titleTextModel = TextModelBuilder2D.convertStringToModel(title, font, titleColor, new Vector3(screenPixelPos.X + titleOffset.X * GameInstance.gameWindowWidth, screenPixelPos.Y - titleOffset.Y * GameInstance.gameWindowHeight, -0.2F), titleFontSize, ComponentAnchor.CENTER);
+            minValTextModel = TextModelBuilder2D.convertStringToModel(minDisplayValString, font, minValColor, new Vector3(screenPixelPos.X - screenPixelSize.X*0.5F + minValTextOffset.X * GameInstance.gameWindowWidth, screenPixelPos.Y - minValTextOffset.Y * GameInstance.gameWindowHeight, -0.2F), minTextFontSize, ComponentAnchor.CENTER);
+            maxValTextModel = TextModelBuilder2D.convertStringToModel(maxDisplayValString, font, maxValColor, new Vector3(screenPixelPos.X + screenPixelSize.X*0.5F + maxValTextOffset.X * GameInstance.gameWindowWidth, screenPixelPos.Y - maxValTextOffset.Y * GameInstance.gameWindowHeight, -0.2F), maxTextFontSize, ComponentAnchor.CENTER);
             updateDisplayedCurrentVal();
         }
 
         private void updateDisplayedCurrentVal()
         {
             currentValString = isInteger ? ((int)(minDisplayValInt + (maxDisplayValInt - minDisplayValInt) * sliderPos)).ToString() : (minDisplayValFloat + (maxDisplayValFloat - minDisplayValFloat) * sliderPos).ToString("0.0");
-            currentValTextModel = new Model(TextModelBuilder2D.convertstringToVertexArray(currentValString, font, currentValColor, new Vector3(screenPixelPos.X + currentValTextOffset.X * GameInstance.gameWindowWidth, screenPixelPos.Y - currentValTextOffset.Y * GameInstance.gameWindowHeight, -0.2F), currentTextFontSize, ComponentAlignment.CENTER, 0), null);
+            currentValTextModel = TextModelBuilder2D.convertStringToModel(currentValString, font, currentValColor, new Vector3(screenPixelPos.X + currentValTextOffset.X * GameInstance.gameWindowWidth, screenPixelPos.Y - currentValTextOffset.Y * GameInstance.gameWindowHeight, -0.2F), currentTextFontSize, ComponentAnchor.CENTER);
         }
         public override void setSize(float width, float height, bool dpiRelative = true)
         {
             base.setSize(width, height, dpiRelative);
-            sliderKnob.setSize(sliderKnobSize.X * size.X, sliderKnobSize.Y * size.Y, false);
+            sliderKnob.setSize(sliderKnobSize.X * size.X, sliderKnobSize.Y * size.Y, true);
         }
 
         private void updateSlider()
@@ -227,7 +227,7 @@ namespace RabbetGameEngine
         public GUIValueSlider setTitleFontSize(float s)
         {
             titleFontSize = s;
-            titleTextModel = new Model(TextModelBuilder2D.convertstringToVertexArray(title, font, Color.white.toNormalVec4(), new Vector3(screenPixelPos.X, screenPixelPos.Y, -0.2F), titleFontSize, ComponentAlignment.CENTER, 0), null);
+            titleTextModel = TextModelBuilder2D.convertStringToModel(title, font, Color.white.toNormalVec4(), new Vector3(screenPixelPos.X, screenPixelPos.Y, -0.2F), titleFontSize, ComponentAnchor.CENTER);
             return this;
         }
 
@@ -267,13 +267,13 @@ namespace RabbetGameEngine
             updateDisplayedCurrentVal();
             if(sound)
             SoundManager.playSound("tick");
-            foreach (System.Action a in slideMoveListeners)
+            foreach (System.Action<GUIValueSlider> a in slideMoveListeners)
             {
-                a();
+                a(this);
             }
         }
 
-        public void addSlideMoveListener(System.Action a)
+        public void addSlideMoveListener(System.Action<GUIValueSlider> a)
         {
             slideMoveListeners.Add(a);
         }

@@ -1,17 +1,29 @@
-﻿using RabbetGameEngine.Debugging;
+﻿using OpenTK.Mathematics;
+using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Sound;
 using System.Collections.Generic;
 
 namespace RabbetGameEngine
 {
-    public enum ComponentAlignment
+    public enum ComponentAnchor
     {
-        LEFT,
+        CENTER_LEFT,
         CENTER,
-        RIGHT
+        CENTER_RIGHT,
+        CENTER_TOP,
+        CENTER_BOTTOM,
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT
     }
+
+
     public static class GUIManager//TODO: Change to handle GUI's as objects.
     {
+
+        public static Vector2 guiMapRes = new Vector2(1920, 1080);
+
         /// <summary>
         /// stack of gui's opened one after the other
         /// </summary>
@@ -76,12 +88,10 @@ namespace RabbetGameEngine
             foreach(GUI g in persistentGUIs.Values)
             {
                 g.requestGUIRender();
-                g.requestTextRender();
             }
             if (currentDisplayedGUI != null)
             {
                 currentDisplayedGUI.requestGUIRender();
-                currentDisplayedGUI.requestTextRender();
             }
 
         }

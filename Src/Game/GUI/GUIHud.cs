@@ -1,15 +1,19 @@
-﻿using OpenTK.Mathematics;
-
-namespace RabbetGameEngine
+﻿namespace RabbetGameEngine
 {
     public class GUIHud : GUI
     {
+        GUITextPanel flyPanel;
+        GUITextPanel noclipPanel;
+        GUITextPanel fpsPanel;
         public GUIHud() : base("hud", "Arial_Shadow")
         {
-            addTextPanel("flying", new GUITextPanel(new Vector2(0,0.015F), ComponentAlignment.RIGHT).addLine("Flying: OFF").setPanelColor(Color.darkRed));
-            addTextPanel("noclip", new GUITextPanel(new Vector2(0, 0.04F), ComponentAlignment.RIGHT).addLine("Noclip: OFF").setPanelColor(Color.darkRed));
-            addTextPanel("label", new GUITextPanel(new Vector2(0, 0.985F), ComponentAlignment.LEFT).addLine(Application.applicationName).setPanelColor(Color.black));
-            addTextPanel("fps", new GUITextPanel(new Vector2(0, 0.015F), ComponentAlignment.LEFT).addLine("0"));
+            flyPanel = new GUITextPanel(0, 0, guiFont, ComponentAnchor.TOP_RIGHT).addLine("Flying: OFF").setPanelColor(Color.darkRed);
+            noclipPanel = new GUITextPanel(0, -0.025F, guiFont, ComponentAnchor.TOP_RIGHT).addLine("Noclip: OFF").setPanelColor(Color.darkRed);
+            fpsPanel = new GUITextPanel(0, 0, guiFont, ComponentAnchor.TOP_LEFT).addLine("0");
+            addGuiComponent("flying",flyPanel);
+            addGuiComponent("noclip", noclipPanel);
+            addGuiComponent("label", new GUITextPanel(0, 0.0F, guiFont, ComponentAnchor.BOTTOM_LEFT).addLine(Application.applicationName).setPanelColor(Color.black));
+            addGuiComponent("fps", fpsPanel);
             addGuiComponent("crosshair", new GUICrosshair());
         }
 
@@ -19,46 +23,48 @@ namespace RabbetGameEngine
             displayFps();
             if (GameInstance.get.thePlayer.getIsFlying())
             {
-               getTextPanel("flying").setPanelColor(Color.green).clear().addLine("Flying: ON");
+               flyPanel.setPanelColor(Color.green).clear().addLine("Flying: ON");
             }
             else
             {
-                getTextPanel("flying").setPanelColor(Color.darkRed).clear().addLine("Flying: OFF");
+                flyPanel.setPanelColor(Color.darkRed).clear().addLine("Flying: OFF");
             }
 
             if (GameSettings.noclip)
             {
-                getTextPanel("noclip").setPanelColor(Color.green).clear().addLine("Noclip: ON");
+                noclipPanel.setPanelColor(Color.green).clear().addLine("Noclip: ON");
             }
             else
             {
-                getTextPanel("noclip").setPanelColor(Color.darkRed).clear().addLine("Noclip: OFF");
+               noclipPanel.setPanelColor(Color.darkRed).clear().addLine("Noclip: OFF");
             }
-            buildAllText();//do last, applies any changes to the text on screen.
+            flyPanel.updateRenderData();
+            noclipPanel.updateRenderData();
         }
 
         private void displayFps()
         {
             if (GameSettings.displayFps)
             {
-                unHideTextPanel("fps");
+                fpsPanel.unHide();
                 string fpsstring = TicksAndFrames.fps.ToString();
                 if (TicksAndFrames.fps < 75)
                 {
-                    getTextPanel("fps").clear().addLine(fpsstring).setPanelColor(Color.red);
+                    fpsPanel.clear().addLine(fpsstring).setPanelColor(Color.red);
                 }
                 else if (TicksAndFrames.fps < 120)
                 {
-                    getTextPanel("fps").clear().addLine(fpsstring).setPanelColor(Color.yellow);
+                    fpsPanel.clear().addLine(fpsstring).setPanelColor(Color.yellow);
                 }
                 else
                 {
-                    getTextPanel("fps").clear().addLine(fpsstring).setPanelColor(Color.green);
+                    fpsPanel.clear().addLine(fpsstring).setPanelColor(Color.green);
                 }
+                fpsPanel.updateRenderData();
             }
             else
             {
-                hideTextPanel("fps");
+                fpsPanel.hide();
             }
         }
     }

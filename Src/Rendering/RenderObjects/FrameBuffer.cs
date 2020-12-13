@@ -123,6 +123,7 @@ namespace RabbetGameEngine
             screenQuadShader.setUniform1F("barrelDistortion", GameSettings.barrelDistortionStrength); 
             screenQuadShader.setUniform1F("cylRatio", GameSettings.barrelDistortionCylRatio); 
             screenQuadShader.setUniform1F("brightness", GameSettings.defaultBrightness); 
+            screenQuadShader.setUniform1F("ditherScale", GameSettings.ditherScale); 
             GL.ActiveTexture(TextureUnit.Texture1);
             ditherTex.use();
             GL.ActiveTexture(TextureUnit.Texture0);

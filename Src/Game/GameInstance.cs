@@ -147,20 +147,21 @@ namespace RabbetGameEngine
                     //This area will be called at MAXIMUM of the tick rate. Meaning it will not be called multiple times in a laggy situation.
                     //It is called after the ticks are looped.
                     Application.updateRamUsage();
-                    Renderer.doRenderUpdate();
                     GUIManager.doUpdate();
+                    Renderer.doWorldRenderUpdate();
                     SoundManager.onUpdate();
                 }
-                GUIManager.onFrame();
             }
             catch(Exception e)
             {
                 Application.error("Failed to run game tick, Exception: " + e.Message + "\nStack Trace: " + e.StackTrace);
             }
-            TicksAndFrames.updateFPS();
             SoundManager.onFrame();
             thePlayer.onCameraUpdate();//do this before calling on tick to prepare camera variables
             currentPlanet.onFrame();//should be called before rendering world since this may prepare certain elements for a frame perfect render
+            TicksAndFrames.updateFPS();
+            GUIManager.onFrame();
+            Renderer.doGUIRenderUpdate();
             Renderer.renderAll();
         }
 

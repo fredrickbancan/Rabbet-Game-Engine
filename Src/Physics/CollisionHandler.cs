@@ -26,7 +26,6 @@ namespace RabbetGameEngine.Physics
 
         public static void testProjectilesAgainstEntities(Dictionary<int, Entity> entities, List<Entity> projectiles)
         {
-            Profiler.beginEndProfile("EntCollisions");
             Entity proj;
             Entity ent;
             for(int i = 0; i < projectiles.Count; i++)
@@ -43,7 +42,6 @@ namespace RabbetGameEngine.Physics
                     }
                 }
             }
-            Profiler.beginEndProfile("EntCollisions");
         }
 
         //TODO: impliment some sort of space partitioning (i.e, chunks) to avoid O(n^2 - n) complexity. Use technique to ignore unseen VFX. Make sure to perform tests to measure performance changes.
@@ -108,8 +106,6 @@ namespace RabbetGameEngine.Physics
                 obj.setPosition(obj.getPosition() + obj.getVelocity());
                 return;
             }
-            Profiler.beginEndProfile("Collisions");
-
             AABB objCollider = obj.getBoxHandle();
             Vector3 objVel = obj.getVelocity();
             Vector3 prevObjVel = objVel;
@@ -151,7 +147,6 @@ namespace RabbetGameEngine.Physics
 
             //lastly, position obj to center of hitbox offset
             obj.setPosition(objCollider.getCenterVec() - obj.getColliderOffset());
-            Profiler.beginEndProfile("Collisions");
         }
 
         #region AABBvsAABB

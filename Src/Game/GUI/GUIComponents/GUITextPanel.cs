@@ -5,60 +5,36 @@ using System.Collections.Generic;
 
 namespace RabbetGameEngine
 {
-    public class GUITextPanel
+
+    //TODO: Make guitextpanel a gui component and integrate text rendering into gui component system
+    public class GUITextPanel : GUIComponent
     {
-        public Vector2 panelPos; 
-        Vector2 panelPixelPos;
         public Vector4 panelColour = Color.white.toNormalVec4();
-        public ComponentAlignment alignment = ComponentAlignment.LEFT;
         public int screenEdgePadding = TextUtil.defaultScreenEdgePadding;
         public float fontSize = 0.2F;
         public FontFace font = null;
         public List<string> lines;
+        public Model[] models = new Model[0];
 
-        public Model[] models;
-
-        public bool hidden = false;
-
-        /// <summary>
-        /// Text with smaller renderlayer will be rendered first.
-        /// </summary>
-        public int renderLayer;
-
-        private Vector3 pixelTranslation;
-
-        public GUITextPanel(Vector2 panelPos, ComponentAlignment alignment, int renderLayer = 0)//new gui text panel with default format
+        public GUITextPanel(float posX, float posY, FontFace font, ComponentAnchor anchor, int renderLayer = 0, bool dpiRelative = true) : base(posX, posY, renderLayer)//new gui text panel with default format
         {
+            this.font = font;
             lines = new List<string>();
-            this.alignment = alignment;
-            panelPos.Y = 1 - panelPos.Y;
-            this.panelPos = panelPos - new Vector2(0.5F, 0.5F);
+            this.anchor = anchor;
             this.renderLayer = renderLayer;
+            setSize(0, 0, dpiRelative); 
+        }
+
+        public override void updateRenderData()
+        {
+            base.updateRenderData();
+
+            build();
         }
 
         public void build()
         {
-            correctPosition();
-            this.models = TextModelBuilder2D.convertstringArrayToModelArray(lines.ToArray(), font, panelColour, pixelTranslation, fontSize, alignment);
-        }
-
-        private void correctPosition()
-        {
-            float halfWindowWidth = GameInstance.gameWindowWidth * 0.5F;
-            panelPixelPos = new Vector2(panelPos.X * GameInstance.gameWindowWidth, panelPos.Y * GameInstance.gameWindowHeight);
-            switch (alignment)
-            {
-                case ComponentAlignment.CENTER:
-                    panelPixelPos.X += halfWindowWidth;
-                    break;
-                case ComponentAlignment.LEFT:
-                    panelPixelPos.X += screenEdgePadding;
-                    break;
-                case ComponentAlignment.RIGHT:
-                    panelPixelPos.X = halfWindowWidth - (panelPixelPos.X + halfWindowWidth + screenEdgePadding);
-                    break;
-            }
-            pixelTranslation = new Vector3(panelPixelPos.X, panelPixelPos.Y, -0.2F);
+            this.models = TextModelBuilder2D.convertStringArrayToModelArray(lines.ToArray(), font, panelColour, translationAndScale.ExtractTranslation(), fontSize, anchor);
         }
 
         public GUITextPanel hide()
@@ -103,13 +79,13 @@ namespace RabbetGameEngine
             fontSize = size;
             return this;
         }
-        public GUITextPanel setAlign(ComponentAlignment alignment)
+        public GUITextPanel setAlign(ComponentAnchor alignment)
         {
-            this.alignment = alignment;
+            this.anchor = alignment;
             return this;
         }
 
-        public void requestRender()
+        public override void requestRender()
         {
             if(!hidden)
             {

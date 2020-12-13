@@ -85,6 +85,21 @@ namespace RabbetGameEngine
             return this;
         }
 
+        /// <summary>
+        /// Can be added to a gui value slider as a listener func
+        /// </summary>
+        public void applySliderValue(GUIValueSlider g)
+        {
+            if(type == SettingType.FLOAT)
+            {
+                floatValue = g.getFloatValue();
+            }
+            else
+            {
+                intValue = g.getIntValue();
+            }
+        }
+
         public float normalizedFloatValue { get => MathUtil.normalize(minFloatVal, maxFloatVal, floatValue); }
     }
 }

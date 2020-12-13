@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 namespace RabbetGameEngine.Debugging
 {
+    //TODO: Implement concept of sections, which contain multiple nested profiles.
     /// <summary>
     /// This class will be responsable for debugging, measuring and testing performance of the subsystems in this program.
     /// </summary>
@@ -54,7 +55,7 @@ namespace RabbetGameEngine.Debugging
             {
                 return foundProfile.getAverageTimeSpentPerTick();
             }
-            return -1;
+            return 0;
         }
 
         public static void onTick()
