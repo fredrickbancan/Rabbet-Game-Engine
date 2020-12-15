@@ -52,7 +52,7 @@ namespace RabbetGameEngine.Physics
         /// <param name="entities"> All world entities to collide eachother.</param>
         public static void collideEntities(Dictionary<int, Entity> entities)
         {
-            Profiler.beginEndProfile("EntCollisions"); 
+            Profiler.endStartSection("EntCollisions"); 
             Vector2 entXZ;
             Vector2 otherEntXZ;
             Vector2 pushVec;
@@ -89,7 +89,7 @@ namespace RabbetGameEngine.Physics
                 }
 
             }
-            Profiler.beginEndProfile("EntCollisions");
+            Profiler.endStartSection("EntCollisions");
         }
 
         //TODO: Optimize further to reduce time spent on colliding with world, maybe space partitioning? (i.e, chunks)

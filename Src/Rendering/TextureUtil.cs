@@ -17,12 +17,12 @@ namespace RabbetGameEngine
             textures.Add("debug", new Texture());//second texture will be the debug texture
             textures.Add("dither", new Texture("dither", false));//third texture will be the dithering texture
             textures.Add("white", new Texture("white", false));//fourth texture will be a flat white texture
-            loadAllTexturesRecursive(ResourceUtil.getTextureFileDir());
-            loadAllTexturesRecursive(ResourceUtil.getFontFileDir());
-            loadAllTexturesRecursive(ResourceUtil.getIconFileDir());
+            loadAllTexturesRecursive(ResourceUtil.getTextureFileDir(), false);
+            loadAllTexturesRecursive(ResourceUtil.getFontFileDir(), true);
+            loadAllTexturesRecursive(ResourceUtil.getIconFileDir(), false);
         }
 
-        private static void loadAllTexturesRecursive(string directory)
+        private static void loadAllTexturesRecursive(string directory, bool filtering)
         {
             try
             {
@@ -32,13 +32,13 @@ namespace RabbetGameEngine
                 {
                     if (file.Contains(".png"))
                     {
-                        tryAddNewTexture(file);
+                        tryAddNewTexture(file, filtering);
                     }
                 }
 
                 foreach (string dir in allDirectories)
                 {
-                    loadAllTexturesRecursive(dir);
+                    loadAllTexturesRecursive(dir, filtering);
                 }
             }
             catch (Exception e)
@@ -47,10 +47,10 @@ namespace RabbetGameEngine
             }
         }
 
-        private static void tryAddNewTexture(string textureDir)
+        private static void tryAddNewTexture(string textureDir, bool filtering)
         {
             string shaderName = Path.GetFileName(textureDir).Replace(".png", "");//removes directory
-            Texture addingTexture = new Texture(textureDir, false);
+            Texture addingTexture = new Texture(textureDir, filtering);
             textures.Add(shaderName, addingTexture);
         }
 

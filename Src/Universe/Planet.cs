@@ -246,20 +246,19 @@ namespace RabbetGameEngine
 
         public void onTick()
         {
+            Profiler.startSection("skyUpdate");
             updateDayNightCycle();
+            Profiler.endStartSection("entCol");
             CollisionHandler.collideEntities(entities);
-            Profiler.beginEndProfile("entTick");
+            Profiler.endStartSection("entTick");
             tickEntities();
-            Profiler.beginEndProfile("entTick");
-            Profiler.beginEndProfile("projTick");
+            Profiler.endStartSection("projTick");
             tickProjectiles();
-            Profiler.beginEndProfile("projTick");
-            Profiler.beginEndProfile("projColEnt");
+            Profiler.endStartSection("projColEnt");
             CollisionHandler.testProjectilesAgainstEntities(entities, projectiles);
-            Profiler.beginEndProfile("projColEnt");
-            Profiler.beginEndProfile("vfxTick");
+            Profiler.endStartSection("vfxTick");
             tickVFX();
-            Profiler.beginEndProfile("vfxTick");
+            Profiler.endCurrentSection();
         }
 
         public void onRenderUpdate()
@@ -352,9 +351,9 @@ namespace RabbetGameEngine
                 {
                     entAt.setPosition(fallPlaneRespawnPos);
                 }
-                Profiler.beginEndProfile("projCol");
+                Profiler.startSection("projWorldCol");
                 CollisionHandler.tryToMoveObject(entAt, worldColliders);
-                Profiler.beginEndProfile("projCol");
+                Profiler.endCurrentSection();
 
                 if (entAt.getHasModel())
                 {
@@ -397,9 +396,9 @@ namespace RabbetGameEngine
                 }
                 else
                 {
-                    Profiler.beginEndProfile("entWorldCol");
+                    Profiler.startSection("entWorldCol");
                     CollisionHandler.tryToMoveObject(entAt, worldColliders);
-                    Profiler.beginEndProfile("entWorldCol");
+                    Profiler.endCurrentSection();
                 }
 
                 if(entAt.getHasModel())
@@ -427,9 +426,9 @@ namespace RabbetGameEngine
                     vfx.postTick();
                     if (vfx.isMovable())
                     {
-                        Profiler.beginEndProfile("vfxCol");
+                        Profiler.startSection("vfxWorldCol");
                         CollisionHandler.tryToMoveObject(vfx, worldColliders);
-                        Profiler.beginEndProfile("vfxCol");
+                        Profiler.endCurrentSection();
                     }
                 }
             }

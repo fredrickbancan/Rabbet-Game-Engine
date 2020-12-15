@@ -135,6 +135,7 @@ namespace RabbetGameEngine
         /*overriding OpenTk render update function, called every frame.*/
         protected override void OnRenderFrame(FrameEventArgs args)
         {
+            Profiler.startRoot();
             base.OnRenderFrame(args);
             
             Input.updateInput();
@@ -163,6 +164,8 @@ namespace RabbetGameEngine
             GUIManager.onFrame();
             Renderer.doGUIRenderUpdate();
             Renderer.renderAll();
+            Profiler.endRoot();
+            Profiler.onFrame();
         }
 
         /*Overriding OpenTK resize function, called every time the game window is resized*/
@@ -192,17 +195,13 @@ namespace RabbetGameEngine
         /*Each itteration of game logic is done here*/
         private void onTick()
         {
-            Profiler.beginEndProfile("Loop");
+            Profiler.startSection("tickLoop");
             if(Bounds.Size.X > 0 && Bounds.Size.Y > 0)
             windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
             if(!gamePaused)
             currentPlanet.onTick();
-            Renderer.onTick();
-            Profiler.onTick();
-            Renderer.onTickEnd();
-            Profiler.beginEndProfile("Loop");
-
             doneOneTick = true;//do last, ensures that certain functions are only called once per tick loop
+            Profiler.endCurrentSection();
         }
 
         public float getDrawDistance()
@@ -214,7 +213,6 @@ namespace RabbetGameEngine
             return 1000.0F;
         }
 
-        //TODO: Implement proper pausing of game, while keeping certain things running such as U.I and sound.
         public void pauseGame()
         {
             if (!gamePaused)

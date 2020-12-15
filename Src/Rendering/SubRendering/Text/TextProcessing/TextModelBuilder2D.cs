@@ -4,7 +4,6 @@ using System;
 using System.Text;
 namespace RabbetGameEngine.Text
 {
-    //TODO: Add option parameters for non - dpi relative text (text which scales with width AND height)
     public static class TextModelBuilder2D
     {
         private static float sizeMult = 0;
@@ -345,10 +344,10 @@ namespace RabbetGameEngine.Text
             float y = pixelCursorTopLeft.Y - character.getyOffsetPixels() * fontSize;
             float xMax = x + character.getPixelWidth() * fontSize;
             float yMax = y - character.getPixelHeight() * fontSize;
-            float u = character.getU() + 0.00001F;
-            float v = character.getV() + 0.00001F;
-            float uMax = character.getUMax() - 0.00001F;
-            float vMax = character.getVMax() - 0.00001F;
+            float u = character.getU();
+            float v = character.getV();
+            float uMax = character.getUMax();
+            float vMax = character.getVMax();
 
             Vertex[] modelVertices = new Vertex[4];
 

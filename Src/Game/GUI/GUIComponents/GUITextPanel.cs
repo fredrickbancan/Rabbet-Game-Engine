@@ -5,8 +5,6 @@ using System.Collections.Generic;
 
 namespace RabbetGameEngine
 {
-
-    //TODO: Make guitextpanel a gui component and integrate text rendering into gui component system
     public class GUITextPanel : GUIComponent
     {
         public Vector4 panelColour = Color.white.toNormalVec4();

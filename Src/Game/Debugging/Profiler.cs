@@ -1,130 +1,170 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace RabbetGameEngine.Debugging
 {
-    //TODO: Implement concept of sections, which contain multiple nested profiles.
     /// <summary>
-    /// This class will be responsable for debugging, measuring and testing performance of the subsystems in this program.
+    /// This class is responsable for debugging, measuring and testing performance of the subsystems in this program.
     /// </summary>
     public static class Profiler
     {
-        private static Dictionary<string, Profile> profiles = new Dictionary<string, Profile>();
+        private static Section rootSection = new Section("root");
 
-        /// <summary>
-        /// Calling this function with a name will either create and begin a profile or end an existing running profile, or run an existing non running profile.
-        /// Apon ending a profile the time difference between starting and ending will be displayed. This allows us to measure how long different things take.
-        /// </summary>
-        /// <param name="profileName">Name of profile to begin/end </param>
-        public static void beginEndProfile(string profileName)
+        public static void startRoot()
+        {
+            rootSection.begin();
+        }
+        public static void endRoot()
+        {
+            rootSection.end();
+        }
+
+        public static void startSection(string sectionName)
         {
             if (!GameSettings.debugScreen)
             {
                 return;
             }
-
-            if (profiles.TryGetValue(profileName, out Profile foundProfile))
-            {
-                if (foundProfile.hasEnded)
-                {
-                    foundProfile.begin();
-                }
-                else
-                {
-                    foundProfile.end();
-                }
-            }
-            else
-            {
-                profiles.Add(profileName, new Profile(profileName).begin());
-            }
+            rootSection.startSection(sectionName);
         }
 
-        /// <summary>
-        /// Returns the average used time in ms for the requested profile per tick. returns -1 if profile isnt found
-        /// </summary>
-        /// <param name="profileName">Name of profile to get averages for</param>
-        /// <returns></returns>
-        public static float getAverageForProfile(string profileName)
-        {
-            if (!GameSettings.debugScreen)
-            {
-                return 0;
-            }
-            if (profiles.TryGetValue(profileName, out Profile foundProfile))
-            {
-                return foundProfile.getAverageTimeSpentPerTick();
-            }
-            return 0;
-        }
-
-        public static void onTick()
+        public static void endCurrentSection()
         {
             if (!GameSettings.debugScreen)
             {
                 return;
             }
-            foreach (Profile p in profiles.Values)
-            {
-                p.updateAverage();
-            }
+            rootSection.endCurrentSection();
         }
 
-        
-        /*private class for profiles.*/
-        private class Profile
+        public static void endStartSection(string sectionName)
+        {
+            if (!GameSettings.debugScreen)
+            {
+                return;
+            }
+            rootSection.endCurrentSection();
+            rootSection.startSection(sectionName);
+        }
+        public static void getFrameProfilingData(List<string> lines)
+        {
+            if (!GameSettings.debugScreen)
+            {
+                return;
+            }
+            lines.Clear();
+            lines.Add("Profiler averages [frame times]");
+            lines.Add("{");
+            rootSection.getProfilingData(lines, ""); 
+            lines.Add("}");
+        }
+
+        public static void onFrame()
+        {
+            if (!GameSettings.debugScreen)
+            {
+                return;
+            }
+            rootSection.updateAverages();
+        }
+
+        private class Section
         {
             private long[] recordedTimes = new long[100];
             private long startTime;
             private long timeSpentInCurrentTick;
-            private string name;
             private int updateIndex;
             private long combinedTimePassed;
             public bool hasEnded = true;
+            private Section currentSection = null;
+            public Dictionary<string, Section> subSections = new Dictionary<string, Section>();
 
-            public Profile(string name)
+            public string sectionName = "";
+            public Section(string sectionName)
             {
-                this.name = name;
+                this.sectionName = sectionName;
+                this.currentSection = this;
+            }
+            public void getProfilingData(List<string> lines, string indentation)
+            {
+                string subsections = "";
+                if (subSections.Count > 0) subsections = "(" + getSubSectionCount() + " sub sections)";
+                lines.Add(indentation + sectionName + subsections + ": " + getAverageTimeSpentPerTick().ToString("0.00 ms"));
+                foreach(Section s in subSections.Values)
+                {
+                    s.getProfilingData(lines, indentation + "   ");
+                }
             }
 
-            public Profile begin()
+            public int getSubSectionCount()
+            {
+                int result = subSections.Count;
+                foreach(Section s in subSections.Values)
+                {
+                    result += s.getSubSectionCount();
+                }
+                return result;
+            }
+
+            public void startSection(string sectionName)
+            {
+
+                if(currentSection!=this)
+                {
+                    currentSection.startSection(sectionName);
+                    return;
+                }
+
+                if (subSections.TryGetValue(sectionName, out Section s))
+                {
+                    currentSection = s.begin();
+                    return;
+                }
+                subSections.Add(sectionName, (currentSection = new Section(sectionName).begin()));
+            }
+
+            public Section begin()
             {
                 startTime = TicksAndFrames.nanoTime();
                 hasEnded = false;
                 return this;
             }
-            
-            public void end()
+            public Section end()
             {
                 timeSpentInCurrentTick += TicksAndFrames.nanoTime() - startTime;
                 hasEnded = true;
+                return this;
             }
 
-            /// <summary>
-            /// should be called at the end of each tick.
-            /// </summary>
-            public void updateAverage()
+            public bool endCurrentSection()
+            {
+                if(currentSection != this)
+                {
+                    if (currentSection.endCurrentSection()) currentSection = this;
+                    return false;
+                }
+                end();
+                return true;
+            }
+
+            public void updateAverages()
             {
                 combinedTimePassed -= recordedTimes[updateIndex];
                 combinedTimePassed += timeSpentInCurrentTick;
                 recordedTimes[updateIndex++] = timeSpentInCurrentTick;
+                if (timeSpentInCurrentTick > 100000000L) Application.warn("Somethings taking too long! Section " + sectionName + " took " + ((double)timeSpentInCurrentTick / 1000000D).ToString("0.00 ms") + " to run!");
                 timeSpentInCurrentTick = 0;
                 updateIndex %= 100;//keep update index within 100
+                foreach (Section s in subSections.Values)
+                {
+                    s.updateAverages();
+                }
             }
 
-            public float getAverageTimeSpentPerTick()
+            public double getAverageTimeSpentPerTick()
             {
-                return ((float)combinedTimePassed / 100F) / 1000000F;
+                return ((double)combinedTimePassed / 100D) / 1000000D;
             }
 
-            private void printInfo()
-            {  
-                Console.BackgroundColor = ConsoleColor.Cyan;
-                Console.ForegroundColor = ConsoleColor.Black;
-                Console.WriteLine("Profile: \"" + name + "\" measured " + (TicksAndFrames.getRealTimeMills() - startTime) + " miliseconds from start to finish.");
-                Console.BackgroundColor = ConsoleColor.White;
-                Console.ForegroundColor = ConsoleColor.White;
-            }
         }
     }
     

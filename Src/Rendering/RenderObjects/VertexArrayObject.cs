@@ -4,9 +4,6 @@ using System.Linq;
 
 namespace RabbetGameEngine
 {
-    //TODO: add methods for resizing dynamic buffers
-    //TODO: add support for requesting certain vertex attrib layouts for vbos and instance bo
-    //TODO: consider having buffers as a set maximum size instead of resizing and giving an initial size. Also look into bufferusagehint.streamdraw.
     public class VertexArrayObject
     {
         private int vaoID;

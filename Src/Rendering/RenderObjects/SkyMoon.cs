@@ -46,7 +46,6 @@ namespace RabbetGameEngine
             }
             cyclePercent = MathUtil.normalizeClamped(0, maxCycleTicks, cycleTicks);
             skyAngle = MathUtil.radians(cyclePercent * 360.0F) + angleOffset;
-            //TODO: Implement random orbits.
             float rotX = MathF.Cos(skyAngle);
             float rotY = MathF.Sin(skyAngle);
             float rotZ = -MathF.Cos(skyAngle);

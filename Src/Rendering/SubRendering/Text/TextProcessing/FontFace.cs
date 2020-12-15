@@ -20,13 +20,14 @@ namespace RabbetGameEngine.Text
         private int size;
         private int scaleW;
         private int scaleH;
-        private int lineHeightPixels;
-        private int spaceWidth;
+        private float lineHeightPixels;
+        private float spaceWidth;
 
         private Dictionary<byte, Character> finalFontData = new Dictionary<byte, Character>();
         private Dictionary<string, string> lineData = new Dictionary<string, string>();
         private StreamReader reader;
         private Texture fontTexture;
+        private float dpiCorrection = 0.0F;
         public FontFace(string fontName)
         {
             debugDir = ResourceUtil.getFontFileDir(fontName + ".fnt");
@@ -63,12 +64,14 @@ namespace RabbetGameEngine.Text
             paddingBottom = paddingData[2];
             paddingRight = paddingData[3];
             size = getValueFromLineData("size");
+            dpiCorrection = 100.0F / (float)size;
+            Application.infoPrint(dpiCorrection);
         }
         
         private void loadLineAndImageSize()
         {
             readNextLine();
-            lineHeightPixels = getValueFromLineData("lineHeight");
+            lineHeightPixels = getValueFromLineData("lineHeight") * dpiCorrection;
             scaleW = getValueFromLineData("scaleW");
             scaleH = getValueFromLineData("scaleH");
         }
@@ -94,6 +97,7 @@ namespace RabbetGameEngine.Text
             if(id == spaceAscii)
             {
                 spaceWidth = getValueFromLineData("xadvance") + paddingLeft + paddingRight;
+                spaceWidth *= dpiCorrection;
                 return null;
             }
             float u = ((float)getValueFromLineData("x")) / scaleW;
@@ -109,7 +113,8 @@ namespace RabbetGameEngine.Text
             //flipping v
             v = 1 - v;
             vMax = 1 - vMax;
-            return new Character(id, u, v, uMax, vMax, pixelsWidth, pixelsHeight, xOffsetPixels, yOffsetPixels, xAdvancePixels);
+            float uvEpsilon = 0.0005F;
+            return new Character(id, u + uvEpsilon, v - uvEpsilon, uMax - uvEpsilon, vMax + uvEpsilon, pixelsWidth * dpiCorrection, pixelsHeight * dpiCorrection, xOffsetPixels * dpiCorrection, yOffsetPixels * dpiCorrection, xAdvancePixels * dpiCorrection);
         }
 
         /*resets line data and reads the next line of file, adds any relevant info to the lineData dictionary for processing.*/

@@ -5,8 +5,6 @@ using System;
 
 namespace RabbetGameEngine.SubRendering
 {
-
-    //TODO:Ensure all quad based rendering does not waste time building indices. uncluding text, gui and quad based.
     public static class BatchUtil
     {
         public static void init()
@@ -35,6 +33,15 @@ namespace RabbetGameEngine.SubRendering
                     vao.addIndicesBufferDynamic(theBatch.indices.Length);
                     vao.updateIndices(theBatch.indices, theBatch.indices.Length);
                     vao.drawType = PrimitiveType.Triangles;
+                    break;
+
+                case RenderType.guiLines:
+                    ShaderUtil.tryGetShader(ShaderUtil.guiLinesName, out theBatch.batchShader);
+                    theBatch.vertices = new Vertex[Batch.initialArraySize];
+                    VertexBufferLayout ll = new VertexBufferLayout();
+                    Vertex.configureLayout(ll);
+                    vao.addBufferDynamic(Batch.initialArraySize * Vertex.vertexByteSize, ll);
+                    vao.drawType = PrimitiveType.Lines;
                     break;
 
                 case RenderType.guiTransparent:
@@ -370,7 +377,6 @@ namespace RabbetGameEngine.SubRendering
             theBatch.hasBeenUsed = true;
             switch (theBatch.getRenderType())
             {
-
                 case RenderType.guiCutout:
                     {
                         n = theBatch.vertices.Length;
@@ -385,6 +391,21 @@ namespace RabbetGameEngine.SubRendering
                             }
                         }
                         else return false;
+
+                        if (theBatch.vertices.Length != n)
+                        {
+                            theBatch.VAO.resizeBuffer(0, theBatch.vertices.Length * Vertex.vertexByteSize);
+                        }
+
+                        Array.Copy(mod.vertices, 0, theBatch.vertices, theBatch.requestedVerticesCount, mod.vertices.Length);
+                        theBatch.requestedVerticesCount += mod.vertices.Length;
+                    }
+                    break;
+
+                case RenderType.guiLines:
+                    {
+                        n = theBatch.vertices.Length;
+                        if (!canFitOrResize(ref theBatch.vertices, mod.vertices.Length, theBatch.requestedVerticesCount, theBatch.maxVertexCount)) return false;
 
                         if (theBatch.vertices.Length != n)
                         {
@@ -943,6 +964,15 @@ namespace RabbetGameEngine.SubRendering
                     GL.DepthMask(false);
                     GL.DepthRange(0, 0.005F);
                     GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedVerticesCount + (theBatch.requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
+                    GL.DepthRange(0, 1);
+                    GL.DepthMask(true);
+                    break;
+
+                case RenderType.guiLines:
+                    theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
+                    GL.DepthMask(false);
+                    GL.DepthRange(0, 0.005F);
+                    GL.DrawArrays(PrimitiveType.Lines, 0, theBatch.requestedVerticesCount);
                     GL.DepthRange(0, 1);
                     GL.DepthMask(true);
                     break;

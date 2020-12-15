@@ -1,6 +1,5 @@
 ﻿namespace RabbetGameEngine
 {
-    //TODO: Implement settings
     public class GUISettingsMenu : GUI
     {
         GUIButton backButton;

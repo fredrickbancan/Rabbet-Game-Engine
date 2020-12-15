@@ -14,6 +14,7 @@ namespace RabbetGameEngine
         none,
         MARKER_GUI_START,
         guiCutout,
+        guiLines,
         MARKER_TRANSPARENT_START,
         guiText, 
         guiTransparent,
@@ -39,13 +40,14 @@ namespace RabbetGameEngine
         iSpheres,
         spriteCylinder
     }
-    //TODO: implement optional fisheye distortion to solve large fov scaling issues, and optional full screen dithering if banding becomes an issue.
+
     public static class Renderer
     {
         private static int privateTotalDrawCallCount;
         private static Matrix4 projectionMatrix;
         private static Matrix4 orthographicMatrix;
         private static bool useFrameBuffer = true;
+        private static int lineWidthPixels = 0;
        
         /// <summary>
         /// A list of all requested static renders
@@ -73,7 +75,8 @@ namespace RabbetGameEngine
             GL.Enable(EnableCap.VertexProgramPointSize);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            GL.LineWidth(GameInstance.realScreenHeight / 1500 + 1);
+            lineWidthPixels = GameInstance.realScreenHeight / 1500 + 1;
+            GL.LineWidth(lineWidthPixels);
             onResize();
             staticDraws = new Dictionary<string, StaticRenderObject>();
             SkyboxRenderer.init();
@@ -114,31 +117,26 @@ namespace RabbetGameEngine
         {
             BatchManager.requestRender(point, prevTickPoint, transparency);
         }
-        public static void onTick()
-        {
-            SkyboxRenderer.onTick();
-        }
-
-        public static void onTickEnd()
-        {
-            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.defaultFov), GameInstance.aspectRatio, 0.1F, GameInstance.get.getDrawDistance());
-        }
         public static void doWorldRenderUpdate()
         {
-            Profiler.beginEndProfile("renderUpdate");
+            Profiler.startSection("renderUpdate");
             BatchManager.preWorldRenderUpdate();
+            SkyboxRenderer.onUpdate();
             if (GameInstance.get.currentPlanet != null)
             {
                 GameInstance.get.currentPlanet.onRenderUpdate();
             }
             BatchManager.postWorldRenderUpdate();
-            Profiler.beginEndProfile("renderUpdate");
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.defaultFov), GameInstance.aspectRatio, 0.1F, GameInstance.get.getDrawDistance());
+            Profiler.endCurrentSection();
         }
         public static void doGUIRenderUpdate()
-        { 
+        {
+            Profiler.startSection("guiRenderUpdate");
             BatchManager.preGUIRenderUpdate();
             GUIManager.requestRender();
             BatchManager.postGUIRenderUpdate();
+            Profiler.endCurrentSection();
         }
 
         /*Called before all draw calls*/
@@ -152,6 +150,7 @@ namespace RabbetGameEngine
 
         public static void renderAll()
         {
+            Profiler.startSection("renderWorld");
             preRender();
             SkyboxRenderer.drawSkybox(GameInstance.get.thePlayer.getViewMatrix());
             drawAllStaticRenderObjects();
@@ -159,6 +158,7 @@ namespace RabbetGameEngine
             if(!useFrameBuffer)
             BatchManager.drawAllGUI(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
             postRender();
+            Profiler.endCurrentSection();
         }
         
         /*Called after all draw calls*/
@@ -249,7 +249,7 @@ namespace RabbetGameEngine
         public static int totalDraws { get { return privateTotalDrawCallCount; } set { privateTotalDrawCallCount = value; } }
         public static Matrix4 orthoMatrix { get => orthographicMatrix; }
         public static Vector3 camPos { get => GameInstance.get.thePlayer.getLerpEyePos(); }
-
+        public static int lineWidthInPixels { get => lineWidthPixels; }
         public static Vector2 viewPortSize { get => useFrameBuffer ? FrameBuffer.size : new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight);}
 
     }

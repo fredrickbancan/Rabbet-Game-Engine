@@ -33,7 +33,7 @@ namespace RabbetGameEngine.Sound
             }
         }
 
-        //TODO: Fix, needs to produce array of short, also the sounds produced from this sound distorted and noisy
+       
         private void loadOGG(string dir)
         {
             try

@@ -195,7 +195,7 @@ namespace RabbetGameEngine
         }
 
 
-        public static void onTick()
+        public static void onUpdate()
         {
             skyboxShader.use();
             skyboxShader.setUniformVec3F("skyTop", skyboxToDraw.getSkyColor());

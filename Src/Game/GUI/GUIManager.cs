@@ -19,7 +19,7 @@ namespace RabbetGameEngine
     }
 
 
-    public static class GUIManager//TODO: Change to handle GUI's as objects.
+    public static class GUIManager
     {
 
         public static Vector2 guiMapRes = new Vector2(1920, 1080);
@@ -41,6 +41,7 @@ namespace RabbetGameEngine
 
         public static void onFrame()
         {
+            Profiler.startSection("guiUpdate");
             if (currentDisplayedGUI != null)
             {
                 currentDisplayedGUI.onFrame();
@@ -49,11 +50,13 @@ namespace RabbetGameEngine
             {
                 g.onFrame();
             }
+            Profiler.endCurrentSection();
         }
 
         public static void doUpdate()
         {
-            Profiler.beginEndProfile("guiUpdate");
+            Profiler.startSection("guiUpdate");
+            Profiler.startSection("overlayGUI");
             if(currentDisplayedGUI != null)
             {
                 currentDisplayedGUI.onUpdate();
@@ -63,11 +66,13 @@ namespace RabbetGameEngine
             {
                 GameInstance.get.unPauseGame();
             }
+            Profiler.endStartSection("persistentGUI");
             foreach (GUI g in persistentGUIs.Values)
             {
                 g.onUpdate();
             }
-            Profiler.beginEndProfile("guiUpdate");
+            Profiler.endCurrentSection();
+            Profiler.endCurrentSection();
         }
 
         public static void onWindowResize()

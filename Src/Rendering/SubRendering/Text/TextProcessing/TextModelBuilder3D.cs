@@ -3,7 +3,6 @@ using RabbetGameEngine.Models;
 using System.Text;
 namespace RabbetGameEngine.Text
 {
-    //TODO: Shift all text up by half the text height
     public static class TextModelBuilder3D
     {
         private static readonly byte spaceAscii = 32;

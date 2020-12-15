@@ -63,5 +63,15 @@ namespace RabbetGameEngine.SubRendering
 
             return result;
         }
+
+        public static uint[] getIndicesForLineCount(int count)
+        {
+            uint[] result = new uint[count * 2];
+            for(uint i = 0; i < result.Length; i++)
+            {
+                result[i] = i;
+            }
+            return result;
+        }
     }
 }
