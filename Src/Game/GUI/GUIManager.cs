@@ -21,6 +21,7 @@ namespace RabbetGameEngine
 
     public static class GUIManager
     {
+        public static int guiLineWidth = (GameInstance.realScreenHeight / 1000) + 2;
 
         public static Vector2 guiMapRes = new Vector2(1920, 1080);
 

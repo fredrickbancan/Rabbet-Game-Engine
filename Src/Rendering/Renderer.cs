@@ -14,8 +14,8 @@ namespace RabbetGameEngine
         none,
         MARKER_GUI_START,
         guiCutout,
-        guiLines,
         MARKER_TRANSPARENT_START,
+        guiLines,
         guiText, 
         guiTransparent,
         MARKER_GUI_END,
@@ -75,7 +75,7 @@ namespace RabbetGameEngine
             GL.Enable(EnableCap.VertexProgramPointSize);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
-            lineWidthPixels = GameInstance.realScreenHeight / 1500 + 1;
+            lineWidthPixels = (GameInstance.realScreenHeight / 900) + 1;
             GL.LineWidth(lineWidthPixels);
             onResize();
             staticDraws = new Dictionary<string, StaticRenderObject>();
@@ -150,15 +150,19 @@ namespace RabbetGameEngine
 
         public static void renderAll()
         {
-            Profiler.startSection("renderWorld");
             preRender();
+            Profiler.startSection("renderWorld");
             SkyboxRenderer.drawSkybox(GameInstance.get.thePlayer.getViewMatrix());
             drawAllStaticRenderObjects();
             BatchManager.drawAllWorld(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
             if(!useFrameBuffer)
-            BatchManager.drawAllGUI(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
-            postRender();
+            {
+                Profiler.startSection("renderGUI");
+                BatchManager.drawAllGUI(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
+                Profiler.endCurrentSection();
+            }
             Profiler.endCurrentSection();
+            postRender();
         }
         
         /*Called after all draw calls*/
@@ -167,8 +171,10 @@ namespace RabbetGameEngine
             GameInstance.get.SwapBuffers();
             if(useFrameBuffer)
             {
+                Profiler.startSection("renderGUI");
                 FrameBuffer.renderOffScreenTexture();
                 BatchManager.drawAllGUI(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
+                Profiler.endCurrentSection();
             }
         }
 
@@ -249,7 +255,7 @@ namespace RabbetGameEngine
         public static int totalDraws { get { return privateTotalDrawCallCount; } set { privateTotalDrawCallCount = value; } }
         public static Matrix4 orthoMatrix { get => orthographicMatrix; }
         public static Vector3 camPos { get => GameInstance.get.thePlayer.getLerpEyePos(); }
-        public static int lineWidthInPixels { get => lineWidthPixels; }
+        public static int defaultLineWidthInPixels { get => lineWidthPixels; }
         public static Vector2 viewPortSize { get => useFrameBuffer ? FrameBuffer.size : new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight);}
 
     }

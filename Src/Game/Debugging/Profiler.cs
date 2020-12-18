@@ -8,6 +8,7 @@ namespace RabbetGameEngine.Debugging
     public static class Profiler
     {
         private static Section rootSection = new Section("root");
+        private static Section rootTickSection = new Section("rootTick");
 
         public static void startRoot()
         {
@@ -17,7 +18,22 @@ namespace RabbetGameEngine.Debugging
         {
             rootSection.end();
         }
-
+        public static void startTick()
+        {
+            rootTickSection.begin();
+        }
+        public static void endTick()
+        {
+            rootTickSection.end();
+        }
+        public static void startTickSection(string sectionName)
+        {
+            if (!GameSettings.debugScreen)
+            {
+                return;
+            }
+            rootTickSection.startSection(sectionName);
+        }
         public static void startSection(string sectionName)
         {
             if (!GameSettings.debugScreen)
@@ -26,7 +42,14 @@ namespace RabbetGameEngine.Debugging
             }
             rootSection.startSection(sectionName);
         }
-
+        public static void endCurrentTickSection()
+        {
+            if (!GameSettings.debugScreen)
+            {
+                return;
+            }
+            rootTickSection.endCurrentSection();
+        }
         public static void endCurrentSection()
         {
             if (!GameSettings.debugScreen)
@@ -45,16 +68,36 @@ namespace RabbetGameEngine.Debugging
             rootSection.endCurrentSection();
             rootSection.startSection(sectionName);
         }
+        public static void endStartTickSection(string sectionName)
+        {
+            if (!GameSettings.debugScreen)
+            {
+                return;
+            }
+            rootTickSection.endCurrentSection();
+            rootTickSection.startSection(sectionName);
+        }
         public static void getFrameProfilingData(List<string> lines)
         {
             if (!GameSettings.debugScreen)
             {
                 return;
             }
-            lines.Clear();
             lines.Add("Profiler averages [frame times]");
             lines.Add("{");
             rootSection.getProfilingData(lines, ""); 
+            lines.Add("}");
+        }
+
+        public static void getTickProfilingData(List<string> lines)
+        {
+            if (!GameSettings.debugScreen)
+            {
+                return;
+            }
+            lines.Add("Profiler averages [tick times]");
+            lines.Add("{");
+            rootTickSection.getProfilingData(lines, "");
             lines.Add("}");
         }
 
@@ -65,6 +108,15 @@ namespace RabbetGameEngine.Debugging
                 return;
             }
             rootSection.updateAverages();
+        }
+
+        public static void onTick()
+        {
+            if (!GameSettings.debugScreen)
+            {
+                return;
+            }
+            rootTickSection.updateAverages();
         }
 
         private class Section
@@ -88,7 +140,7 @@ namespace RabbetGameEngine.Debugging
             {
                 string subsections = "";
                 if (subSections.Count > 0) subsections = "(" + getSubSectionCount() + " sub sections)";
-                lines.Add(indentation + sectionName + subsections + ": " + getAverageTimeSpentPerTick().ToString("0.00 ms"));
+                lines.Add(indentation + sectionName + subsections + ": " + getAverageTimeSpentPerTick().ToString("0.0000 ms"));
                 foreach(Section s in subSections.Values)
                 {
                     s.getProfilingData(lines, indentation + "   ");

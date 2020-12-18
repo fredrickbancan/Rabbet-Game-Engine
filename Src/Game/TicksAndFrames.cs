@@ -17,14 +17,16 @@ namespace RabbetGameEngine
         private static int frames;
         private static int framesPerSec;
         private static double timer;
-        private static long millInSec5FPS = (long)TimeSpan.FromSeconds(1).TotalMilliseconds / 5;
+        private static long millInSec2FPS = (long)TimeSpan.FromSeconds(1).TotalMilliseconds / 2L;
+        private static double[] frameTimes = new double[200];
+        private static int frameTimeIndex = 0;
         public static void init(int tps)
         {
             ticksPerSecond = tps;
             msPerTick = 1000D / (double)ticksPerSecond;
-            lastFrameTime = getRealTimeMills();
+            lastFrameTime = nanoTime();
             applicationTime = getRealTimeMills();
-            currentFrameTime = getRealTimeMills();
+            currentFrameTime = nanoTime();
         }
 
         /*called every frame*/
@@ -32,20 +34,42 @@ namespace RabbetGameEngine
         {
             /*updating FPS*/
             lastFrameTime = currentFrameTime;
-            currentFrameTime = getRealTimeMills();
-            deltaFrameTime = (currentFrameTime - lastFrameTime) / 1000D;
+            currentFrameTime = nanoTime();
+            deltaFrameTime = (currentFrameTime - lastFrameTime) / 1000000D;
             timer += deltaFrameTime;
 
-            if(timer >= 1D)
+            if(timer >= 1000D)
             {
                 framesPerSec = frames;
                 frames = 0;
-                timer -= 1D;
+                timer -= 1000D;
             }
             frames++;
-            
+
+            frameTimes[frameTimeIndex++] = deltaFrameTime;
+            frameTimeIndex = frameTimeIndex % 200;
         }
         
+        public static double[] getFrameTimes()
+        {
+            return frameTimes;
+        }
+
+        public static int getFrameIndex()
+        {
+            return frameTimeIndex;
+        }
+
+        public static double getAverageFrameTime()
+        {
+            double total = 0D;
+            for(int i = 0; i < 200; i++)
+            {
+                total += frameTimes[i];
+            }
+            return total / 200D;
+        }
+
         /// <summary>
         /// runs the provided onTick function repeatidly untill application has synced with realtime
         /// minimum frame rate is 5 FPS.
@@ -57,7 +81,7 @@ namespace RabbetGameEngine
             {
                 onTickFunc();
                 applicationTime += (long)msPerTick;
-                if(getRealTimeMills() - applicationTime >= millInSec5FPS)
+                if(getRealTimeMills() - applicationTime >= millInSec2FPS)
                 {
                     applicationTime = getRealTimeMills() - (long)msPerTick;
                     break;

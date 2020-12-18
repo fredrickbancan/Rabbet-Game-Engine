@@ -863,6 +863,10 @@ namespace RabbetGameEngine.SubRendering
                     theBatch.VAO.updateBuffer(0, theBatch.vertices, theBatch.requestedVerticesCount * Vertex.vertexByteSize);
                     return;
 
+                case RenderType.guiLines:
+                    theBatch.VAO.updateBuffer(0, theBatch.vertices, theBatch.requestedVerticesCount * Vertex.vertexByteSize);
+                    return;
+
                 case RenderType.guiTransparent:
                     theBatch.VAO.updateBuffer(0, theBatch.vertices, theBatch.requestedVerticesCount * Vertex.vertexByteSize);
                     return;
@@ -970,11 +974,13 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.guiLines:
                     theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
+                    GL.LineWidth(GUIManager.guiLineWidth);
                     GL.DepthMask(false);
                     GL.DepthRange(0, 0.005F);
                     GL.DrawArrays(PrimitiveType.Lines, 0, theBatch.requestedVerticesCount);
                     GL.DepthRange(0, 1);
                     GL.DepthMask(true);
+                    GL.LineWidth(Renderer.defaultLineWidthInPixels);
                     break;
 
                 case RenderType.guiTransparent:

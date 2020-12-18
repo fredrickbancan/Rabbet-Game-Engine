@@ -247,18 +247,25 @@ namespace RabbetGameEngine
         public void onTick()
         {
             Profiler.startSection("skyUpdate");
+            Profiler.startTickSection("skyUpdate");
             updateDayNightCycle();
             Profiler.endStartSection("entCol");
+            Profiler.endStartTickSection("entCol");
             CollisionHandler.collideEntities(entities);
             Profiler.endStartSection("entTick");
+            Profiler.endStartTickSection("entTick");
             tickEntities();
             Profiler.endStartSection("projTick");
+            Profiler.endStartTickSection("projTick");
             tickProjectiles();
             Profiler.endStartSection("projColEnt");
+            Profiler.endStartTickSection("projColEnt");
             CollisionHandler.testProjectilesAgainstEntities(entities, projectiles);
             Profiler.endStartSection("vfxTick");
+            Profiler.endStartTickSection("vfxTick");
             tickVFX();
             Profiler.endCurrentSection();
+            Profiler.endCurrentTickSection();
         }
 
         public void onRenderUpdate()
@@ -352,7 +359,9 @@ namespace RabbetGameEngine
                     entAt.setPosition(fallPlaneRespawnPos);
                 }
                 Profiler.startSection("projWorldCol");
+                Profiler.startTickSection("projWorldCol");
                 CollisionHandler.tryToMoveObject(entAt, worldColliders);
+                Profiler.endCurrentTickSection();
                 Profiler.endCurrentSection();
 
                 if (entAt.getHasModel())
@@ -397,7 +406,9 @@ namespace RabbetGameEngine
                 else
                 {
                     Profiler.startSection("entWorldCol");
+                    Profiler.startTickSection("entWorldCol");
                     CollisionHandler.tryToMoveObject(entAt, worldColliders);
+                    Profiler.endCurrentTickSection();
                     Profiler.endCurrentSection();
                 }
 
@@ -427,7 +438,9 @@ namespace RabbetGameEngine
                     if (vfx.isMovable())
                     {
                         Profiler.startSection("vfxWorldCol");
+                        Profiler.startTickSection("vfxWorldCol");
                         CollisionHandler.tryToMoveObject(vfx, worldColliders);
+                        Profiler.endCurrentTickSection();
                         Profiler.endCurrentSection();
                     }
                 }

@@ -196,11 +196,18 @@ namespace RabbetGameEngine
         private void onTick()
         {
             Profiler.startSection("tickLoop");
+            Profiler.startTick();
             if(Bounds.Size.X > 0 && Bounds.Size.Y > 0)
             windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
-            if(!gamePaused)
+            Profiler.startSection("tickWorld");
+            Profiler.startTickSection("tickWorld");
+            if (!gamePaused)
             currentPlanet.onTick();
+            Profiler.endCurrentTickSection();
+            Profiler.endCurrentSection();
             doneOneTick = true;//do last, ensures that certain functions are only called once per tick loop
+            Profiler.endTick();
+            Profiler.onTick();
             Profiler.endCurrentSection();
         }
 

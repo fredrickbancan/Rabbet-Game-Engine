@@ -108,7 +108,7 @@ namespace RabbetGameEngine.Text
             float pixelsHeight = getValueFromLineData("height") + paddingTop + paddingBottom;
             float xOffsetPixels = getValueFromLineData("xoffset");
             float yOffsetPixels = getValueFromLineData("yoffset");
-            float xAdvancePixels = getValueFromLineData("xadvance") ;
+            float xAdvancePixels = getValueFromLineData("xadvance");
 
             //flipping v
             v = 1 - v;
