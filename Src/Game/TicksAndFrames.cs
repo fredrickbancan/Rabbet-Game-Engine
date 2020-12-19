@@ -19,6 +19,7 @@ namespace RabbetGameEngine
         private static double timer;
         private static long millInSec2FPS = (long)TimeSpan.FromSeconds(1).TotalMilliseconds / 2L;
         private static double[] frameTimes = new double[200];
+        private static int prevFrameTimeIndex = 0;
         private static int frameTimeIndex = 0;
         public static void init(int tps)
         {
@@ -45,7 +46,7 @@ namespace RabbetGameEngine
                 timer -= 1000D;
             }
             frames++;
-
+            prevFrameTimeIndex = frameTimeIndex;
             frameTimes[frameTimeIndex++] = deltaFrameTime;
             frameTimeIndex = frameTimeIndex % 200;
         }
@@ -57,7 +58,7 @@ namespace RabbetGameEngine
 
         public static int getFrameIndex()
         {
-            return frameTimeIndex;
+            return prevFrameTimeIndex;
         }
 
         public static double getAverageFrameTime()

@@ -54,7 +54,7 @@ namespace RabbetGameEngine
         {
             //load settings from file here
 
-            GameInstance.get.VSync = OpenTK.Windowing.Common.VSyncMode.On;
+            GameInstance.get.VSync = OpenTK.Windowing.Common.VSyncMode.Off;
         }
     }
 }

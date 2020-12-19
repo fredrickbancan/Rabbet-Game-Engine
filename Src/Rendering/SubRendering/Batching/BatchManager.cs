@@ -72,6 +72,7 @@ namespace RabbetGameEngine.SubRendering
             }
         }
 
+        //TODO: implement render layer properly sorting based on numerical value with lower layer numbers rendering first.
         /// <summary>
         /// Can be called to request that the provided data be added to the appropriate existing batch
         /// or, if said batch does not exist or is full, creates and adds a new batch.

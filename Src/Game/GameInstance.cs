@@ -77,7 +77,7 @@ namespace RabbetGameEngine
                 currentPlanet = new Planet(0xdeadbeef);
                 //create and spawn player in new world
                 thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
-                for (int i = 0; i < 35; i++)
+                for (int i = 0; i < 165; i++)
                 {
                    currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(-privateRand.Next(-26, 27), 2.5F, -privateRand.Next(-26, 27))));
                 }
