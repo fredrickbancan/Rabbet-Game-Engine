@@ -6,7 +6,7 @@
         GUIButton audioSettingsButton;
         GUIButton graphicalSettingsButton;
         GUIButton controlsSettingsButton;
-        public GUISettingsMenu() : base("settingsMenu", "Arial_Shadow")
+        public GUISettingsMenu() : base("settingsMenu", "arial")
         {
             addGuiComponent("background", new GUITransparentOverlay(Color.black, 0.7F));
             addGuiComponent("titleBack", new GUITransparentRectangle(0, 0, 1.5F, 1F, Color.black.setAlphaF(0.7F), ComponentAnchor.CENTER));

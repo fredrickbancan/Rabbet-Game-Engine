@@ -114,7 +114,7 @@ namespace RabbetGameEngine.Text
             v = 1 - v;
             vMax = 1 - vMax;
             float uvEpsilon = 0.0005F;
-            return new Character(id, u + uvEpsilon, v - uvEpsilon, uMax - uvEpsilon, vMax + uvEpsilon, pixelsWidth * dpiCorrection, pixelsHeight * dpiCorrection, xOffsetPixels * dpiCorrection, yOffsetPixels * dpiCorrection, xAdvancePixels * dpiCorrection);
+            return new Character(id, u + uvEpsilon, v , uMax - uvEpsilon, vMax , pixelsWidth * dpiCorrection, pixelsHeight * dpiCorrection, xOffsetPixels * dpiCorrection, yOffsetPixels * dpiCorrection, xAdvancePixels * dpiCorrection);
         }
 
         /*resets line data and reads the next line of file, adds any relevant info to the lineData dictionary for processing.*/

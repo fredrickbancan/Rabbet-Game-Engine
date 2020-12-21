@@ -24,7 +24,7 @@ namespace RabbetGameEngine
             this.anchor = anchor;
             backGround = new GUITransparentRectangle(posX, posY, ((float)GUIManager.guiLineWidth * 200.0F + 40.0F) / (float)GameInstance.gameWindowWidth, 200.0F / (float)GameInstance.gameWindowHeight, Color.black, anchor, renderLayer, false);
 
-            TextUtil.tryGetFont("Consolas_Shadow", out font);
+            TextUtil.tryGetFont("consolas", out font);
             componentTexture = TextureUtil.getTexture("none");
             updateRenderData();
 

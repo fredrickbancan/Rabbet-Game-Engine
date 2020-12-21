@@ -103,6 +103,7 @@ namespace RabbetGameEngine
         public static void error(object s)
         {
             Console.WriteLine("Error!: " + s);
+            GameInstance.get.onError();
             Console.ReadKey();
         }
         public static void debugPrint(object s)

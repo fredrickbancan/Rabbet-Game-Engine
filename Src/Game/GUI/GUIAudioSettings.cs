@@ -5,7 +5,7 @@
         GUIButton backButton;
         GUIButton applyButton; 
         GUIValueSlider s;
-        public GUIAudioSettings() : base("audioSettings", "Arial_Shadow")
+        public GUIAudioSettings() : base("audioSettings", "arial")
         {
             addGuiComponent("background", new GUITransparentOverlay(Color.black, 0.7F));
             addGuiComponent("titleBack", new GUITransparentRectangle(0, 0, 1.5F, 1.0F, Color.black.setAlphaF(0.7F), ComponentAnchor.CENTER));

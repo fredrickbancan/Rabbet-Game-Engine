@@ -103,6 +103,11 @@ namespace RabbetGameEngine
             base.OnLoad();
         }
 
+        public void onError()
+        {
+            this.WindowState = WindowState.Normal;
+        }
+
         public Size getGameWindowSize()
         {
             return new Size(ClientRectangle.Size.X, ClientRectangle.Size.Y);

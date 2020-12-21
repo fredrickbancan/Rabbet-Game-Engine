@@ -8,7 +8,7 @@ namespace RabbetGameEngine
         GUITextPanel profileAveragesText;
         GUITextPanel infoText;
         GUIDebugFrameTimeChart timeChart;
-        public GUIDebugInfo() : base("debugInfo", "Consolas_Shadow")
+        public GUIDebugInfo() : base("debugInfo", "consolas")
         {
             timeChart = new GUIDebugFrameTimeChart(0, 0, ComponentAnchor.BOTTOM_RIGHT);
             addGuiComponent("frameTimeChart", timeChart);
@@ -43,6 +43,7 @@ namespace RabbetGameEngine
                 infoText.addLine("Entities: " + GameInstance.get.currentPlanet.getEntityCount());
                 infoText.addLine("Projectiles: " + GameInstance.get.currentPlanet.getProjectileCount());
                 infoText.addLine("Draw calls: " + Renderer.totalDraws);
+                infoText.addLine("Resolution: " + Renderer.viewPortSize.X + " X " + Renderer.viewPortSize.Y);
                 infoText.addLine("Memory Usage: " + Application.ramUsageInBytes / 1000000L + " MB");
                 infoText.build();
             }

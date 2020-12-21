@@ -13,6 +13,7 @@ namespace RabbetGameEngine.Text
         /*Returns true if the requested font was found in the global list*/
         public static bool tryGetFont(string name, out FontFace font)
         {
+            name = name.ToLower();
             bool success = fonts.TryGetValue(name, out font);
             if(!success)
             {
@@ -26,15 +27,13 @@ namespace RabbetGameEngine.Text
         {
             try
             {
-
-
                 string[] allFileDirectoriesAndName = Directory.GetFiles(ResourceUtil.getFontFileDir());
                 foreach (string dir in allFileDirectoriesAndName)
                 {
                     if (dir.Contains(".fnt"))
                     {
                         string fontName = dir.Replace(ResourceUtil.getFontFileDir(), "").Replace(".fnt", "");//removes directory and file extension
-                        tryAddNewFontToGlobalList(fontName);
+                        tryAddNewFontToGlobalList(fontName.ToLower());
                     }
                 }
             }

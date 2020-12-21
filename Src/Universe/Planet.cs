@@ -531,7 +531,7 @@ namespace RabbetGameEngine
                 entities.Add(entityIDItterator++, theEntity);
                 if (GameSettings.entityLabels)
                 {
-                    addDebugLabel(new VFXMovingText3D(theEntity, "debugLabel", "Arial_Shadow", "Entity: " + (entityIDItterator - 1).ToString(), new Vector3(0, 1, 0), 2.0F, Color.white));
+                    addDebugLabel(new VFXMovingText3D(theEntity, "debugLabel", "arial", "Entity: " + (entityIDItterator - 1).ToString(), new Vector3(0, 1, 0), 2.0F, Color.white));
                 }
             }
         }

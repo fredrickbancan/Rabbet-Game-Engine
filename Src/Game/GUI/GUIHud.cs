@@ -5,7 +5,7 @@
         GUITextPanel flyPanel;
         GUITextPanel noclipPanel;
         GUITextPanel fpsPanel;
-        public GUIHud() : base("hud", "Arial_Shadow")
+        public GUIHud() : base("hud", "arial")
         {
             flyPanel = new GUITextPanel(0, 0, guiFont, ComponentAnchor.TOP_RIGHT).addLine("Flying: OFF").setPanelColor(Color.darkRed);
             noclipPanel = new GUITextPanel(0, -0.025F, guiFont, ComponentAnchor.TOP_RIGHT).addLine("Noclip: OFF").setPanelColor(Color.darkRed);

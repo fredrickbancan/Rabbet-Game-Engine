@@ -5,7 +5,7 @@
         GUIButton quitButton;
         GUIButton settingsButton;
         GUIButton resumeButton;
-        public GUIPauseMenu() : base("pauseMenu", "Arial_Shadow")
+        public GUIPauseMenu() : base("pauseMenu", "arial")
         {
             addGuiComponent("background", new GUITransparentOverlay(Color.black, 0.7F));
             addGuiComponent("titleBack", new GUITransparentRectangle(0, 0, 0.5F, 0.5F, Color.black.setAlphaF(0.7F), ComponentAnchor.CENTER));

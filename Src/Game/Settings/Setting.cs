@@ -7,7 +7,9 @@ namespace RabbetGameEngine
         BOOL,
         INT,
         FLOAT,
-        LIST
+        LIST_INT,
+        LIST_FLOAT,
+        LIST_STRING
     }
 
     public class Setting
@@ -22,13 +24,16 @@ namespace RabbetGameEngine
         public float maxFloatVal = (float)int.MaxValue;
         public int minIntVal = 0;
         public int maxIntVal = int.MaxValue;
-        public string[] listTitles;
+        public string[] listStrings;
+        public int[] listInts;
+        public float[] listFloats;
         public int listIndex = 0;
 
         /// <summary>
         /// if true, this setting will be displayed in settings gui
         /// </summary>
         public bool editable;
+
         public Setting(string title, SettingType type, List<Setting> category, bool editable = true)
         {
             this.editable = editable;
@@ -55,9 +60,21 @@ namespace RabbetGameEngine
             return this;
         }
 
-        public Setting setListEntries(string[] listTitles)
+        public Setting setListStrings(string[] listTitles)
         {
-            this.listTitles = listTitles;
+            this.listStrings = listTitles;
+            return this;
+        }
+
+        public Setting setListInts(int[] listTitles)
+        {
+            this.listInts = listTitles;
+            return this;
+        }
+
+        public Setting setListFloats(float[] listTitles)
+        {
+            this.listFloats = listTitles;
             return this;
         }
 

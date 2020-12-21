@@ -23,7 +23,7 @@ namespace RabbetGameEngine
         /// </summary>
         public static float defaultMasterVolume = 0.2F;
 
-        public static string defaultFont = "Arial_Shadow";
+        public static string defaultFont = "arial";
 
         public static bool defaultVsync = false;
         public static float defaultMaxDrawDistance = 1024.0F;

@@ -17,12 +17,12 @@ namespace RabbetGameEngine
             textures.Add("debug", new Texture());//second texture will be the debug texture
             textures.Add("dither", new Texture("dither", false));//third texture will be the dithering texture
             textures.Add("white", new Texture("white", false));//fourth texture will be a flat white texture
-            loadAllTexturesRecursive(ResourceUtil.getTextureFileDir(), false);
-            loadAllTexturesRecursive(ResourceUtil.getFontFileDir(), true);
-            loadAllTexturesRecursive(ResourceUtil.getIconFileDir(), false);
+            loadAllTexturesRecursive(ResourceUtil.getTextureFileDir());
+            loadAllTexturesRecursive(ResourceUtil.getFontFileDir());
+            loadAllTexturesRecursive(ResourceUtil.getIconFileDir());
         }
 
-        private static void loadAllTexturesRecursive(string directory, bool filtering)
+        private static void loadAllTexturesRecursive(string directory)
         {
             try
             {
@@ -32,13 +32,13 @@ namespace RabbetGameEngine
                 {
                     if (file.Contains(".png"))
                     {
-                        tryAddNewTexture(file, filtering);
+                        tryAddNewTexture(file);
                     }
                 }
 
                 foreach (string dir in allDirectories)
                 {
-                    loadAllTexturesRecursive(dir, filtering);
+                    loadAllTexturesRecursive(dir);
                 }
             }
             catch (Exception e)
@@ -47,16 +47,24 @@ namespace RabbetGameEngine
             }
         }
 
-        private static void tryAddNewTexture(string textureDir, bool filtering)
+        private static void tryAddNewTexture(string textureDir)
         {
-            string shaderName = Path.GetFileName(textureDir).Replace(".png", "");//removes directory
-            Texture addingTexture = new Texture(textureDir, filtering);
+            string shaderName = Path.GetFileName(textureDir).Replace(".png", "").ToLower();//removes directory
+            bool filterMin = shaderName.Contains("_min");
+            bool filterMag = shaderName.Contains("_mag");
+            bool trilinear = shaderName.Contains("_tri");
+
+            shaderName = shaderName.Replace("_min", "");
+            shaderName = shaderName.Replace("_mag", "");
+            shaderName = shaderName.Replace("_tri", "");
+            Texture addingTexture = new Texture(textureDir, filterMin, filterMag, trilinear);
             textures.Add(shaderName, addingTexture);
         }
 
         /*Returns true if the requested texture was found in the global list*/
         public static bool tryGetTexture(string name, out Texture texture)
         {
+            name = name.ToLower(); 
             if(name == "none")
             {
                 texture = textures.ElementAt(0).Value;
