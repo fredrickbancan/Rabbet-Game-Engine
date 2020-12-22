@@ -72,7 +72,6 @@ namespace RabbetGameEngine.SubRendering
             }
         }
 
-        //TODO: implement render layer properly sorting based on numerical value with lower layer numbers rendering first.
         /// <summary>
         /// Can be called to request that the provided data be added to the appropriate existing batch
         /// or, if said batch does not exist or is full, creates and adds a new batch.
@@ -100,13 +99,11 @@ namespace RabbetGameEngine.SubRendering
                     //ensure that all opaque batches come before transparent ones in the list.
                     if (isTypeTransparent(type))
                     {
-                        bl.Add(new Batch(type, tex, renderLayer));
-                        BatchUtil.tryToFitInBatchModel(theModel, bl.ElementAt(i+1));
+                        insertTransparentBatchToEnd(bl, new Batch(type, tex, renderLayer), theModel);
                     }
                     else
                     {
-                        bl.Insert(0, new Batch(type, tex, renderLayer));
-                        BatchUtil.tryToFitInBatchModel(theModel, bl.ElementAt(0));
+                        insertOpaqueBatchToStart(bl, new Batch(type, tex, renderLayer), theModel);
                     }
                     
                     return;
@@ -114,6 +111,47 @@ namespace RabbetGameEngine.SubRendering
             }
             
         }
+
+        private static void insertTransparentBatchToEnd(List<Batch> bl, Batch b, Model m)
+        {
+            if(bl.Count == 0)
+            {
+                bl.Add(b);
+                BatchUtil.tryToFitInBatchModel(m, bl.ElementAt(0));
+                return;
+            }
+
+            for(int i = bl.Count - 1; i >= 0; i--)
+            {
+                if(bl.ElementAt(i).renderLayer <= b.renderLayer)
+                {
+                    bl.Insert(i+1, b);
+                    BatchUtil.tryToFitInBatchModel(m, bl.ElementAt(i+1));
+                    return;
+                }
+            }
+        }
+
+        private static void insertOpaqueBatchToStart(List<Batch> bl, Batch b, Model m)
+        {
+            if (bl.Count == 0)
+            {
+                bl.Add(b);
+                BatchUtil.tryToFitInBatchModel(m, bl.ElementAt(0));
+                return;
+            }
+
+            for (int i = 0; i < bl.Count; i++)
+            {
+                if (b.renderLayer <= bl.ElementAt(i).renderLayer || isTypeTransparent(bl.ElementAt(i).getRenderType()))
+                {
+                    bl.Insert(i, b);
+                    BatchUtil.tryToFitInBatchModel(m, bl.ElementAt(i));
+                    return;
+                }
+            }
+        }
+
         public static void requestRender(PointCloudModel pParticleModel, bool transparency, bool lerp)
         {
             RenderType type;

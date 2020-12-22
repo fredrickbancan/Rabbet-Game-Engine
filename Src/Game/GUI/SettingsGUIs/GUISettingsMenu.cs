@@ -26,7 +26,7 @@
             audioSettingsButton.setHoverColor(Color.black.setAlphaF(0.5F));
             addGuiComponent("audioSettingsButton", audioSettingsButton);
 
-            graphicalSettingsButton = new GUIButton(0.0F, 0F, 0.2F, 0.1F, Color.grey.setAlphaF(0.7F), "Graphics Settings", guiFont, ComponentAnchor.CENTER, 1);
+            graphicalSettingsButton = new GUIButton(0.0F, 0F, 0.2F, 0.1F, Color.grey.setAlphaF(0.7F), "Video Settings", guiFont, ComponentAnchor.CENTER, 1);
             graphicalSettingsButton.addClickListener(onGraphicsSettingsButtonClick);
             graphicalSettingsButton.addHoverEnterListener(defaultOnButtonHoverEnter);
             graphicalSettingsButton.addHoverExitListener(defaultOnButtonHoverExit);
@@ -41,22 +41,23 @@
             addGuiComponent("controlsSettingsButton", controlsSettingsButton);
         }
 
-        private void onBackButtonClick()
+        private void onBackButtonClick(GUIButton g)
         {
             GUIManager.closeCurrentGUI();
         }
-        private void onAudioSettingsButtonClick()
+        private void onAudioSettingsButtonClick(GUIButton g)
         {
             defaultOnButtonClick();
             GUIManager.openGUI(new GUIAudioSettings());
         }
 
-        private void onGraphicsSettingsButtonClick()
+        private void onGraphicsSettingsButtonClick(GUIButton g)
         {
             defaultOnButtonClick();
+            GUIManager.openGUI(new GUIVideoSettings());
         }
 
-        private void onControlsButtonClick()
+        private void onControlsButtonClick(GUIButton g)
         {
             defaultOnButtonClick();
         }

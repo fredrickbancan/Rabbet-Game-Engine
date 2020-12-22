@@ -10,6 +10,7 @@ namespace RabbetGameEngine
         protected Vector2 size;
         protected Vector2 screenPixelSize;
         protected bool hidden = false;
+        public bool paused = false;
 
         /// <summary>
         /// If this bool is true, size of this component will in pixels will be a percentage of the window HEIGHT,
@@ -135,6 +136,16 @@ namespace RabbetGameEngine
         public virtual void requestRender()
         {
            
+        }
+
+        public void pause()
+        {
+            paused = true;
+        }
+
+        public void unPause()
+        {
+            paused = false;
         }
     }
 }

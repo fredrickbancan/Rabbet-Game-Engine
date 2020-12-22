@@ -31,7 +31,7 @@
             addGuiComponent("s", s);
             s.updateRenderData();
         }
-        private void onBackButtonClick()
+        private void onBackButtonClick(GUIButton g)
         {
             GUIManager.closeCurrentGUI();
         }

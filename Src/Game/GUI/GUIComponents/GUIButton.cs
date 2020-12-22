@@ -18,7 +18,7 @@ namespace RabbetGameEngine
         /// True if the cursor was already down when it entered this button.
         /// </summary>
         protected bool clickDragged = false;
-        protected List<System.Action> clickListeners = new List<System.Action>();
+        protected List<System.Action<GUIButton>> clickListeners = new List<System.Action<GUIButton>>();
         protected List<System.Action> hoverEnterListeners = new List<System.Action>();
         protected List<System.Action> hoverExitListeners = new List<System.Action>();
         protected string title;
@@ -33,6 +33,7 @@ namespace RabbetGameEngine
         protected Vector4 pixelBounds;
         public GUIButton(float posX, float posY, float sizeX, float sizeY, Color color, string title, FontFace font, ComponentAnchor align = ComponentAnchor.CENTER_LEFT, int renderLayer = 0, string textureName = "white") : base(posX, posY, renderLayer)
         {
+            setHoverColor(Color.black.setAlphaF(0.8F));
             this.title = title;
             this.color = color;
             componentTexture = TextureUtil.getTexture(textureName);
@@ -129,25 +130,28 @@ namespace RabbetGameEngine
 
         private void onClick()
         {
-            foreach (System.Action a in clickListeners)
+            foreach (System.Action<GUIButton> a in clickListeners)
             {
-                a();
+                a(this);
             }
         }
 
-        public void addClickListener(System.Action a)
+        public GUIButton addClickListener(System.Action<GUIButton> a)
         {
             clickListeners.Add(a);
+            return this;
         }
 
-        public void addHoverEnterListener(System.Action a)
+        public GUIButton addHoverEnterListener(System.Action a)
         {
             hoverEnterListeners.Add(a);
+            return this;
         }
 
-        public void addHoverExitListener(System.Action a)
+        public GUIButton addHoverExitListener(System.Action a)
         {
             hoverExitListeners.Add(a);
+            return this;
         }
 
         public GUIButton setHoverColor(Color color)

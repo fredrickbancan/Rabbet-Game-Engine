@@ -11,7 +11,6 @@ namespace RabbetGameEngine
         private bool wholeScreenHidden = false;
         private uint maxCharCount;
         public string guiName = "";
-
         public GUI(string guiName, string textFont, uint maxCharCount = 1024)
         {
             if(!TextUtil.tryGetFont(textFont, out guiFont))
@@ -69,7 +68,8 @@ namespace RabbetGameEngine
         {
             foreach (GUIComponent component in components.Values)
             {
-                component.onUpdate();
+                if(!component.paused)
+                    component.onUpdate();
             }
         }
 
@@ -77,7 +77,8 @@ namespace RabbetGameEngine
         {
             foreach (GUIComponent component in components.Values)
             {
-                component.onFrame();
+                if (!component.paused)
+                    component.onFrame();
             }
         }
 
@@ -97,17 +98,35 @@ namespace RabbetGameEngine
             return this.guiFont == null;
         }
 
-        protected void defaultOnButtonHoverEnter()
+        public static void defaultOnButtonHoverEnter()
         {
             SoundManager.playSound("buttonhover");
         }
 
-        protected void defaultOnButtonHoverExit()
+        public static void defaultOnButtonHoverExit()
         {
         }
-        protected void defaultOnButtonClick()
+        public static void defaultOnButtonClick()
         {
             SoundManager.playSound("buttonclick");
         }
+
+        public void pauseAllExcept(GUIComponent g)
+        {
+            foreach(GUIComponent c in components.Values)
+            {
+                if(c != g)
+                c.pause();
+            }
+        }
+
+        public void unPauseAll()
+        {
+            foreach (GUIComponent c in components.Values)
+            {
+                c.unPause();
+            }
+        }
+
     }
 }

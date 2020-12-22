@@ -7,6 +7,7 @@ namespace RabbetGameEngine
         BOOL,
         INT,
         FLOAT,
+        STRING,
         LIST_INT,
         LIST_FLOAT,
         LIST_STRING
@@ -17,6 +18,7 @@ namespace RabbetGameEngine
         public SettingType type;
         public string title;
         public string description = null;
+        public string stringValue = "";
         public float floatValue = 0;
         public int intValue = 0;
         public bool boolValue = false;
@@ -24,6 +26,7 @@ namespace RabbetGameEngine
         public float maxFloatVal = (float)int.MaxValue;
         public int minIntVal = 0;
         public int maxIntVal = int.MaxValue;
+        public string[] listTitles;
         public string[] listStrings;
         public int[] listInts;
         public float[] listFloats;
@@ -59,22 +62,27 @@ namespace RabbetGameEngine
             maxIntVal = max;
             return this;
         }
-
-        public Setting setListStrings(string[] listTitles)
+        public Setting setListTitles(string[] listTitles)
         {
-            this.listStrings = listTitles;
+            this.listTitles = listTitles;
             return this;
         }
 
-        public Setting setListInts(int[] listTitles)
+        public Setting setListStrings(string[] values)
         {
-            this.listInts = listTitles;
+            this.listStrings = values;
             return this;
         }
 
-        public Setting setListFloats(float[] listTitles)
+        public Setting setListInts(int[] values)
         {
-            this.listFloats = listTitles;
+            this.listInts = values;
+            return this;
+        }
+
+        public Setting setListFloats(float[] values)
+        {
+            this.listFloats = values;
             return this;
         }
 
@@ -114,6 +122,35 @@ namespace RabbetGameEngine
             else
             {
                 intValue = g.getIntValue();
+            }
+        }
+
+        /// <summary>
+        /// Can be added to a GUI drop down button as a listener func
+        /// </summary>
+        public void applyDropDownValue(GUIDropDownButton g)
+        {
+            listIndex = g.listIndex;
+            switch (type)
+            {
+                case SettingType.LIST_STRING:
+                    if(listStrings != null)
+                    {
+                        stringValue = listStrings[listIndex];
+                    }
+                    break;
+                case SettingType.LIST_INT:
+                    if (listInts != null)
+                    {
+                        intValue = listInts[listIndex];
+                    }
+                    break;
+                case SettingType.LIST_FLOAT:
+                    if (listFloats != null)
+                    {
+                        floatValue = listFloats[listIndex];
+                    }
+                    break;
             }
         }
 

@@ -34,17 +34,17 @@
             addGuiComponent("quitButton", quitButton);
         }
 
-        private void onQuitButtonClick()
+        private void onQuitButtonClick(GUIButton g)
         {
             defaultOnButtonClick();
             GameInstance.get.Close();
         }
 
-        private void onResumeButtonClick()
+        private void onResumeButtonClick(GUIButton g)
         {
             GUIManager.closeCurrentGUI();
         }
-        private void onSettingsButtonClick()
+        private void onSettingsButtonClick(GUIButton g)
         {
             defaultOnButtonClick();
             GUIManager.openGUI(new GUISettingsMenu());
