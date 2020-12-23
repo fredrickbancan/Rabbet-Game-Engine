@@ -21,17 +21,19 @@ namespace RabbetGameEngine
             setHoverColor(Color.black.setAlphaF(0.8F));
             listeners = new List<Action<GUIDropDownButton>>();
             this.listTitles = listTitles;
+            clearHoverEnterListeners();
+            clearClickListeners();
             addHoverEnterListener(onHoverEnter);
             addClickListener(onClick);
-            float listButtonSizeX = sizeX;
-            float listButtonSizeY = 0.049F;
-            dropDownBackground = new GUIButton(posX, posY, listButtonSizeX + 0.05F, listButtonSizeY * listTitles.Length + 0.05F, Color.black.setAlphaF(0.8F), "", font, anchor, renderLayer + 1).setHoverColor(Color.black.setAlphaF(0.8F));
+            float listButtonSizeX = sizeX - 0.05F;
+            float listButtonSizeY = sizeY - 0.02F;
+            dropDownBackground = new GUIButton(posX, posY, listButtonSizeX + 0.05F, listButtonSizeY * listTitles.Length + 0.05F, Color.black.setAlphaF(0.8F), "", font, anchor, renderLayer + 1).clearHoverEnterListeners().clearClickListeners().setHoverColor(Color.black.setAlphaF(0.8F));
             dropDownBackground.updateRenderData();
             dropDownButtons = new GUIButton[listTitles.Length];
             for(int i = 0; i < listTitles.Length; i++)
             {
                 float yPos = dropDownBackground.getScreenPos().Y + (listTitles.Length * listButtonSizeY * 0.5F - i * listButtonSizeY - listButtonSizeY * 0.5F);
-                dropDownButtons[i] = new GUIButton(dropDownBackground.getScreenPos().X, yPos, listButtonSizeX, listButtonSizeY, color.setAlphaF(1.0F), listTitles[i], font, ComponentAnchor.CENTER, renderLayer + 2).addClickListener(onDropDownButtonClick).addHoverEnterListener(GUI.defaultOnButtonHoverEnter);
+                dropDownButtons[i] = new GUIButton(dropDownBackground.getScreenPos().X, yPos, listButtonSizeX, listButtonSizeY, Color.darkGrey, listTitles[i], font, ComponentAnchor.CENTER, renderLayer + 2).addClickListener(onDropDownButtonClick);
             }
             updateRenderData();
         }
@@ -52,14 +54,14 @@ namespace RabbetGameEngine
             if(!listEnabled)
             {
                 listEnabled = true;
-                GUI.defaultOnButtonClick();
+                GUIUtil.defaultOnButtonClick(g);
             }
         }
         private void onHoverEnter()
         {
             if(!listEnabled)
             {
-                GUI.defaultOnButtonHoverEnter();
+                GUIUtil.defaultOnButtonHoverEnter();
             }
         }
 
@@ -98,7 +100,6 @@ namespace RabbetGameEngine
 
         private void onDropDownButtonClick(GUIButton b)
         {
-            GUI.defaultOnButtonClick();
             for(int i = 0; i < dropDownButtons.Length; i++)
             {
                 dropDownButtons[i].enable();
@@ -106,6 +107,11 @@ namespace RabbetGameEngine
                 {
                     setDropDownIndex(i);
                 }
+            }
+
+            foreach(Action<GUIDropDownButton> a in listeners)
+            {
+                a(this);
             }
         }
 
@@ -117,10 +123,12 @@ namespace RabbetGameEngine
 
         public GUIDropDownButton setDropDownIndex(int i)
         {
+            if (i >= listTitles.Length) return this;
             listIndex = i;
             dropDownButtons[i].disable();
             title = baseTitle + ": " + listTitles[i];
             updateRenderData();
+            parentGUI.onComponentValueChanged();
             return this;
         }
     }

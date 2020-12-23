@@ -14,29 +14,22 @@
 
             resumeButton = new GUIButton(0, 0, 0.2F, 0.05F, Color.grey.setAlphaF(0.7F), "Resume Game", guiFont, ComponentAnchor.CENTER, 1);
             resumeButton.addClickListener(onResumeButtonClick);
-            resumeButton.addHoverEnterListener(defaultOnButtonHoverEnter);
-            resumeButton.addHoverExitListener(defaultOnButtonHoverExit);
             resumeButton.setHoverColor(Color.black.setAlphaF(0.5F));
             addGuiComponent("resumeButton", resumeButton);
 
             settingsButton = new GUIButton(0.0F, -0.05F, 0.2F, 0.05F, Color.grey.setAlphaF(0.7F), "Settings", guiFont, ComponentAnchor.CENTER, 1);
             settingsButton.addClickListener(onSettingsButtonClick);
-            settingsButton.addHoverEnterListener(defaultOnButtonHoverEnter);
-            settingsButton.addHoverExitListener(defaultOnButtonHoverExit);
             settingsButton.setHoverColor(Color.black.setAlphaF(0.5F));
             addGuiComponent("settingsButton", settingsButton);
 
             quitButton = new GUIButton(0.0F, -0.1F, 0.2F, 0.05F, Color.grey.setAlphaF(0.7F), "Quit Game", guiFont, ComponentAnchor.CENTER, 1);
             quitButton.addClickListener(onQuitButtonClick);
-            quitButton.addHoverEnterListener(defaultOnButtonHoverEnter);
-            quitButton.addHoverExitListener(defaultOnButtonHoverExit);
             quitButton.setHoverColor(Color.black.setAlphaF(0.5F));
             addGuiComponent("quitButton", quitButton);
         }
 
         private void onQuitButtonClick(GUIButton g)
         {
-            defaultOnButtonClick();
             GameInstance.get.Close();
         }
 
@@ -46,7 +39,6 @@
         }
         private void onSettingsButtonClick(GUIButton g)
         {
-            defaultOnButtonClick();
             GUIManager.openGUI(new GUISettingsMenu());
         }
     }

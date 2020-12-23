@@ -1,5 +1,4 @@
-﻿using RabbetGameEngine.Sound;
-using RabbetGameEngine.Text;
+﻿using RabbetGameEngine.Text;
 using System.Collections.Generic;
 
 namespace RabbetGameEngine
@@ -7,7 +6,7 @@ namespace RabbetGameEngine
     public class GUI
     {
         private Dictionary<string, GUIComponent> components = new Dictionary<string, GUIComponent>();//all of the gui related components in this GUI, such as crosshairs, health bars, menus ect. Each component can be individually hidden, changed or removed.
-        protected FontFace guiFont;
+        public FontFace guiFont;
         private bool wholeScreenHidden = false;
         private uint maxCharCount;
         public string guiName = "";
@@ -82,6 +81,11 @@ namespace RabbetGameEngine
             }
         }
 
+        public virtual void onComponentValueChanged()
+        {
+
+        }
+
         public void onWindowResize()
         {
             if (!wholeScreenHidden)
@@ -96,19 +100,6 @@ namespace RabbetGameEngine
         public bool isFontNull()
         {
             return this.guiFont == null;
-        }
-
-        public static void defaultOnButtonHoverEnter()
-        {
-            SoundManager.playSound("buttonhover");
-        }
-
-        public static void defaultOnButtonHoverExit()
-        {
-        }
-        public static void defaultOnButtonClick()
-        {
-            SoundManager.playSound("buttonclick");
         }
 
         public void pauseAllExcept(GUIComponent g)

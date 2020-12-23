@@ -130,17 +130,5 @@ namespace RabbetGameEngine
             }
         }
 
-        public static void loadSliderValueFromSetting(GUIValueSlider gvs, Setting s)
-        {
-            if(gvs.isInteger)
-            {
-                gvs.sliderPos = MathUtil.normalizeClamped(s.minIntVal, s.maxIntVal, s.intValue);
-            }
-            else
-            {
-                gvs.sliderPos = MathUtil.normalizeClamped(s.minFloatVal, s.maxFloatVal, s.floatValue);
-            }
-        }
-
     }
 }

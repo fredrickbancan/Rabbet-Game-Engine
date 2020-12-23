@@ -87,7 +87,7 @@ namespace RabbetGameEngine
         public static void onResize()
         {
             GL.Viewport(GameInstance.get.getGameWindowSize());
-            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.defaultFov), GameInstance.aspectRatio, 0.1F, 1000.0F);
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov.floatValue), GameInstance.aspectRatio, 0.1F, 1000.0F);
             orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 100.0F);
             GUIManager.onWindowResize();
             FrameBuffer.onResize();
@@ -127,7 +127,7 @@ namespace RabbetGameEngine
                 GameInstance.get.currentPlanet.onRenderUpdate();
             }
             BatchManager.postWorldRenderUpdate();
-            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.defaultFov), GameInstance.aspectRatio, 0.1F, GameInstance.get.getDrawDistance());
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov.floatValue), GameInstance.aspectRatio, 0.1F, GameInstance.get.getDrawDistance());
             Profiler.endCurrentSection();
         }
         public static void doGUIRenderUpdate()

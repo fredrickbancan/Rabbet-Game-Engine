@@ -63,15 +63,17 @@ namespace RabbetGameEngine
         private GUITransparentRectangle leftEndRect;
         private GUITransparentRectangle rightEndRect;
         private GUITransparentRectangle background;
+        private GUI parentGUI;
 
-        public GUIValueSlider(float posX, float posY, float sizeX, float sizeY, string title, FontFace font, bool isInteger = false, ComponentAnchor anchor = ComponentAnchor.CENTER, int renderLayer = 0) : base(posX, posY, renderLayer)
+        public GUIValueSlider(GUI parentGUI, float posX, float posY, float sizeX, float sizeY, string title, FontFace font, bool isInteger = false, ComponentAnchor anchor = ComponentAnchor.CENTER, int renderLayer = 0) : base(posX, posY, renderLayer)
         {
+            this.parentGUI = parentGUI;
             this.font = font;
             this.title = title;
             this.isInteger = isInteger;
             this.anchor = anchor;
             background = new GUITransparentRectangle(posX, posY, sizeX, sizeY, Color.black.setAlphaF(0.7F), anchor, renderLayer - 1);
-            sliderKnob = new GUIButton(posX, posY, 0, 0, Color.grey, null, null, anchor, renderLayer).setHoverColor(Color.grey);
+            sliderKnob = new GUIButton(posX, posY, 0, 0, Color.grey, null, null, anchor, renderLayer).setHoverColor(Color.grey).clearHoverEnterListeners().clearClickListeners();
             middleLineRect = new GUITransparentRectangle(posX, posY, middleLineRectSize.X * sizeX, middleLineRectSize.Y * sizeY, middleLineRectColor, anchor, renderLayer - 1);
             Vector2 endRectSize = new Vector2(sliderKnobSize.X * 0.5F, sliderKnobSize.Y);
             leftEndRect = new GUITransparentRectangle(posX - sizeX * 0.5F, posY, endRectSize.X * sizeX, endRectSize.Y * sizeY, endRectColor, anchor, renderLayer - 1);
@@ -94,7 +96,7 @@ namespace RabbetGameEngine
 
         private void updateDisplayedCurrentVal()
         {
-            currentValString = isInteger ? ((int)(minDisplayValInt + (maxDisplayValInt - minDisplayValInt) * sliderPos)).ToString() : (minDisplayValFloat + (maxDisplayValFloat - minDisplayValFloat) * sliderPos).ToString("0.0");
+            currentValString = (isInteger ? ((int)((float)minDisplayValInt + ((float)maxDisplayValInt - (float)minDisplayValInt) * sliderPos)).ToString() : (minDisplayValFloat + (maxDisplayValFloat - minDisplayValFloat) * sliderPos).ToString("0.0"));
             currentValTextModel = TextModelBuilder2D.convertStringToModel(currentValString, font, currentValColor, new Vector3(screenPixelPos.X + currentValTextOffset.X * GameInstance.gameWindowWidth, screenPixelPos.Y - currentValTextOffset.Y * GameInstance.gameWindowHeight, -0.2F), currentTextFontSize, ComponentAnchor.CENTER);
         }
         public override void setSize(float width, float height, bool dpiRelative = true)
@@ -138,7 +140,7 @@ namespace RabbetGameEngine
 
             if (sliderGrabbed)
             {
-                float newPos = (GameInstance.get.MouseState.Position.X - GameInstance.gameWindowWidth * 0.5F) / screenPixelSize.X + 0.5F;
+                float newPos = (GameInstance.get.MouseState.Position.X - GameInstance.gameWindowWidth * 0.5F - screenPixelPos.X) / screenPixelSize.X + 0.5F;
                 int section = (int)(newPos * 20.0F);
                 bool sound = section != (int)(sliderPos * 20.0F);
                 float s = MathF.Abs(newPos - prevSliderPos);
@@ -198,30 +200,21 @@ namespace RabbetGameEngine
             maxInt = max;
             return this;
         }
-
-        public GUIValueSlider setMinDisplayVal(int v)
+        public GUIValueSlider setDisplayRange(float min, float max)
         {
-            minDisplayValInt = v;
-            minDisplayValString = v.ToString();
-            return this;
-        }
-        public GUIValueSlider setMaxDisplayVal(int  v)
-        {
-            maxDisplayValInt = v;
-            maxDisplayValString = v.ToString();
+            minDisplayValFloat = min;
+            minDisplayValString = ((int)min).ToString();
+            maxDisplayValFloat = max;
+            maxDisplayValString = ((int)max).ToString();
             return this;
         }
 
-        public GUIValueSlider setMinDisplayVal(float v)
+        public GUIValueSlider setDisplayRange(int min, int max)
         {
-            minDisplayValFloat= v;
-            minDisplayValString = v.ToString("0.0");
-            return this;
-        }
-        public GUIValueSlider setMaxDisplayVal(float v)
-        {
-            maxDisplayValFloat = v;
-            maxDisplayValString = v.ToString("0.0");
+            minDisplayValInt= min;
+            minDisplayValString = min.ToString();
+            maxDisplayValInt = max;
+            maxDisplayValString = max.ToString();
             return this;
         }
         public GUIValueSlider setTitleFontSize(float s)
@@ -271,11 +264,13 @@ namespace RabbetGameEngine
             {
                 a(this);
             }
+            parentGUI.onComponentValueChanged();
         }
 
-        public void addSlideMoveListener(System.Action<GUIValueSlider> a)
+        public GUIValueSlider addSlideMoveListener(System.Action<GUIValueSlider> a)
         {
             slideMoveListeners.Add(a);
+            return this;
         }
 
         public override void requestRender()

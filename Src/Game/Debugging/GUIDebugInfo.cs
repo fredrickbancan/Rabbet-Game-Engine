@@ -1,5 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Debugging;
+using RabbetGameEngine.Sound;
 
 namespace RabbetGameEngine
 {
@@ -44,6 +45,7 @@ namespace RabbetGameEngine
                 infoText.addLine("Projectiles: " + GameInstance.get.currentPlanet.getProjectileCount());
                 infoText.addLine("Draw calls: " + Renderer.totalDraws);
                 infoText.addLine("Resolution: " + Renderer.viewPortSize.X + " X " + Renderer.viewPortSize.Y);
+                infoText.addLine("Sounds: " + SoundManager.getPlayingSoundsCount());
                 infoText.addLine("Memory Usage: " + Application.ramUsageInBytes / 1000000L + " MB");
                 infoText.build();
             }

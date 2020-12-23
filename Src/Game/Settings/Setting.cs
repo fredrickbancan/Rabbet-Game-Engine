@@ -26,10 +26,14 @@ namespace RabbetGameEngine
         public float maxFloatVal = (float)int.MaxValue;
         public int minIntVal = 0;
         public int maxIntVal = int.MaxValue;
-        public string[] listTitles;
-        public string[] listStrings;
-        public int[] listInts;
-        public float[] listFloats;
+        public int minIntDisplayVal = 0;
+        public int maxIntDisplayVal = 0;
+        public float minFloatDisplayVal = 0.0F;
+        public float maxFloatDisplayVal = 0.0F;
+        public string[] listTitles = new string[0];
+        public string[] listStrings = new string[0];
+        public int[] listInts = new int[0];
+        public float[] listFloats = new float[0];
         public int listIndex = 0;
 
         /// <summary>
@@ -48,6 +52,18 @@ namespace RabbetGameEngine
         public Setting setDescription(string d)
         {
             description = d;
+            return this;
+        }
+        public Setting setDisplayRange(float min, float max)
+        {
+            minFloatDisplayVal = min;
+            maxFloatDisplayVal = max;
+            return this;
+        }
+        public Setting setDisplayRange(int min, int max)
+        {
+            minIntDisplayVal = min;
+            maxIntDisplayVal = max;
             return this;
         }
         public Setting setRange(float min, float max)
@@ -107,7 +123,36 @@ namespace RabbetGameEngine
         public Setting setListIndex(int i)
         {
             listIndex = i;
+            switch (type)
+            {
+                case SettingType.LIST_STRING:
+                    if (listStrings != null && listIndex < listStrings.Length)
+                    {
+                        stringValue = listStrings[listIndex];
+                    }
+                    break;
+                case SettingType.LIST_INT:
+                    if (listInts != null && listIndex < listInts.Length)
+                    {
+                        intValue = listInts[listIndex];
+                    }
+                    break;
+                case SettingType.LIST_FLOAT:
+                    if (listFloats != null && listIndex < listFloats.Length)
+                    {
+                        floatValue = listFloats[listIndex];
+                    }
+                    break;
+            }
             return this;
+        }
+
+        /// <summary>
+        /// Can be added to a gui bool button as a listener func
+        /// </summary>
+        public void applyBoolButtonValue(GUIBoolButton b)
+        {
+            boolValue = b.boolValue;
         }
 
         /// <summary>
@@ -134,19 +179,19 @@ namespace RabbetGameEngine
             switch (type)
             {
                 case SettingType.LIST_STRING:
-                    if(listStrings != null)
+                    if(listStrings != null && listIndex < listStrings.Length)
                     {
                         stringValue = listStrings[listIndex];
                     }
                     break;
                 case SettingType.LIST_INT:
-                    if (listInts != null)
+                    if (listInts != null && listIndex < listInts.Length)
                     {
                         intValue = listInts[listIndex];
                     }
                     break;
                 case SettingType.LIST_FLOAT:
-                    if (listFloats != null)
+                    if (listFloats != null  && listIndex < listFloats.Length)
                     {
                         floatValue = listFloats[listIndex];
                     }
@@ -155,5 +200,6 @@ namespace RabbetGameEngine
         }
 
         public float normalizedFloatValue { get => MathUtil.normalize(minFloatVal, maxFloatVal, floatValue); }
+        public float normalizedIntValue { get => MathUtil.normalize((float)minIntVal, (float)maxIntVal, (float)intValue); }
     }
 }

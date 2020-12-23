@@ -210,13 +210,13 @@ namespace RabbetGameEngine
             sunShader.use();
             sunShader.setUniformVec3F("sunPos", skyboxToDraw.getSunDirection());
             sunShader.setUniformVec3F("sunColor", skyboxToDraw.getSunColor());
-            sunShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
+            sunShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
 
             if (skyboxToDraw != null)
             {
                 starsShader.use();
                 starsShader.setUniformMat4F("modelMatrix", MathUtil.dirVectorToRotationNoFlip(skyboxToDraw.getSunDirection()));
-                starsShader.setUniformVec2F("viewPortSize", new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight));
+                starsShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
                 starsShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
               
                 SkyMoon[] m = skyboxToDraw.getMoons();

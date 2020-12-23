@@ -44,6 +44,9 @@ namespace RabbetGameEngine
             currentTitleColor = titleColor;
             if (title != null && titleFont != null)
                 titleTextModel = TextModelBuilder2D.convertStringToModel(title, titleFont, currentTitleColor.toNormalVec4(), new Vector3(screenPixelPos.X, screenPixelPos.Y, -0.2F), fontSize, ComponentAnchor.CENTER);
+
+            addClickListener(GUIUtil.defaultOnButtonClick);
+            addHoverEnterListener(GUIUtil.defaultOnButtonHoverEnter);
         }
 
         public override void updateRenderData()
@@ -151,6 +154,22 @@ namespace RabbetGameEngine
         public GUIButton addHoverExitListener(System.Action a)
         {
             hoverExitListeners.Add(a);
+            return this;
+        }
+
+        public GUIButton clearClickListeners()
+        {
+            clickListeners.Clear();
+            return this;
+        }
+        public GUIButton clearHoverEnterListeners()
+        {
+            hoverEnterListeners.Clear();
+            return this;
+        }
+        public GUIButton clearHoverExitListeners()
+        {
+            hoverExitListeners.Clear();
             return this;
         }
 

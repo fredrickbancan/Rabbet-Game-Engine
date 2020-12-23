@@ -7,7 +7,6 @@ namespace RabbetGameEngine
 {
     public static class FrameBuffer
     {
-        public static float barrelDistortionSuperSampleModifyer = 0.15F;
         private static int texColorBuffer;
         private static int depthBuffer;
         private static int frameBuffer;
@@ -26,11 +25,11 @@ namespace RabbetGameEngine
             depthBuffer = GL.GenRenderbuffer();
             texColorBuffer = GL.GenTexture();
 
-            width = (int)(GameInstance.realScreenWidth * (1.0F + GameSettings.barrelDistortionStrength * barrelDistortionSuperSampleModifyer));
-            height = (int)(GameInstance.realScreenHeight * (1.0F + GameSettings.barrelDistortionStrength * barrelDistortionSuperSampleModifyer));
+            width = (int)(GameInstance.realScreenWidth * GameSettings.superSample.floatValue);
+            height = (int)(GameInstance.realScreenHeight * GameSettings.superSample.floatValue);
 
             GL.BindTexture(TextureTarget.Texture2D, texColorBuffer);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba16, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
 
@@ -75,11 +74,11 @@ namespace RabbetGameEngine
 
         public static void onResize()
         {
-            width = (int)(GameInstance.gameWindowWidth * (1.0F + GameSettings.barrelDistortionStrength * barrelDistortionSuperSampleModifyer));
-            height = (int)(GameInstance.gameWindowHeight * (1.0F + GameSettings.barrelDistortionStrength * barrelDistortionSuperSampleModifyer));
+            width = (int)(GameInstance.gameWindowWidth * GameSettings.superSample.floatValue);
+            height = (int)(GameInstance.gameWindowHeight * GameSettings.superSample.floatValue);
 
             GL.BindTexture(TextureTarget.Texture2D, texColorBuffer);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba16, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
 
@@ -119,10 +118,10 @@ namespace RabbetGameEngine
             screenQuadShader.setUniformVec3F("cameraFrontVec", GameInstance.get.thePlayer.getCamera().getFrontVector());
             if (GameInstance.gameWindowWidth > 0 && GameInstance.gameWindowHeight > 0)
                 screenQuadShader.setUniform1F("aspectRatio", GameInstance.gameWindowWidth / GameInstance.gameWindowHeight);
-            screenQuadShader.setUniform1F("height", MathF.Tan(MathUtil.radians(GameSettings.defaultFov) / 2.0F)); 
-            screenQuadShader.setUniform1F("barrelDistortion", GameSettings.barrelDistortionStrength); 
+            screenQuadShader.setUniform1F("height", MathF.Tan(MathUtil.radians(GameSettings.fov.floatValue) / 2.0F)); 
+            screenQuadShader.setUniform1F("barrelDistortion", GameSettings.barrelDistortion.floatValue); 
             screenQuadShader.setUniform1F("cylRatio", GameSettings.barrelDistortionCylRatio); 
-            screenQuadShader.setUniform1F("brightness", GameSettings.defaultBrightness); 
+            screenQuadShader.setUniform1F("brightness", GameSettings.brightness.floatValue); 
             screenQuadShader.setUniform1F("ditherScale", GameSettings.ditherScale); 
             GL.ActiveTexture(TextureUnit.Texture1);
             ditherTex.use();
