@@ -61,7 +61,7 @@ namespace RabbetGameEngine
                 if(i >= displayedSettingsCount - bottomRowCount)
                 {
                     compPosY -= (i / componentsWide) * (componentHeight + componentSpacing);
-                    compPosX = (-(bottomRowCount/2 * (componentWidth + componentSpacing))) + (bottomRowCount - (displayedSettingsCount - i)) * (componentWidth + componentSpacing);
+                    compPosX = (-(bottomRowCount/2 * (componentWidth + componentSpacing)) * 0.5F) + (bottomRowCount - (displayedSettingsCount - i)) * (componentWidth + componentSpacing);
                 }
                 else
                 {

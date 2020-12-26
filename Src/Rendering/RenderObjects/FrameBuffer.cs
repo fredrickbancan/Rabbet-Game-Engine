@@ -25,8 +25,8 @@ namespace RabbetGameEngine
             depthBuffer = GL.GenRenderbuffer();
             texColorBuffer = GL.GenTexture();
 
-            width = (int)(GameInstance.realScreenWidth * GameSettings.superSample.floatValue);
-            height = (int)(GameInstance.realScreenHeight * GameSettings.superSample.floatValue);
+            width = (int)(GameInstance.realScreenWidth * GameSettings.renderScale.floatValue);
+            height = (int)(GameInstance.realScreenHeight * GameSettings.renderScale.floatValue);
 
             GL.BindTexture(TextureTarget.Texture2D, texColorBuffer);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
@@ -68,14 +68,20 @@ namespace RabbetGameEngine
             screenQuadVAO.finishBuilding();
             ShaderUtil.tryGetShader(ShaderUtil.frameBufferName, out screenQuadShader);
             screenQuadShader.use();
+            Application.debugPrint("h");
             screenQuadShader.setUniform1I("ditherTex", 1);
+            screenQuadShader.setUniform1F("height", MathF.Tan(MathUtil.radians(GameSettings.fov.floatValue) / 2.0F));
+            screenQuadShader.setUniform1F("barrelDistortion", GameSettings.barrelDistortion.floatValue * GameSettings.fov.floatValue * 0.01F);
+            screenQuadShader.setUniform1F("cylRatio", GameSettings.barrelDistortionCylRatio);
+            screenQuadShader.setUniform1F("brightness", GameSettings.brightness.floatValue);
+            screenQuadShader.setUniform1F("ditherScale", GameSettings.ditherScale);
             TextureUtil.tryGetTexture("dither", out ditherTex);
         }
 
         public static void onResize()
         {
-            width = (int)(GameInstance.gameWindowWidth * GameSettings.superSample.floatValue);
-            height = (int)(GameInstance.gameWindowHeight * GameSettings.superSample.floatValue);
+            width = (int)(GameInstance.gameWindowWidth * GameSettings.renderScale.floatValue);
+            height = (int)(GameInstance.gameWindowHeight * GameSettings.renderScale.floatValue);
 
             GL.BindTexture(TextureTarget.Texture2D, texColorBuffer);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
@@ -97,7 +103,9 @@ namespace RabbetGameEngine
             {
                 Application.error("Framebuffer could not resize!");
             }
-
+            screenQuadShader.use();
+            if (GameInstance.gameWindowWidth > 0 && GameInstance.gameWindowHeight > 0)
+                screenQuadShader.setUniform1F("aspectRatio", GameInstance.gameWindowWidth / GameInstance.gameWindowHeight);
         }
 
         public static void prepareToRenderToOffScreenTexture()
@@ -116,18 +124,50 @@ namespace RabbetGameEngine
             screenQuadVAO.bind();
             screenQuadShader.use();
             screenQuadShader.setUniformVec3F("cameraFrontVec", GameInstance.get.thePlayer.getCamera().getFrontVector());
-            if (GameInstance.gameWindowWidth > 0 && GameInstance.gameWindowHeight > 0)
-                screenQuadShader.setUniform1F("aspectRatio", GameInstance.gameWindowWidth / GameInstance.gameWindowHeight);
-            screenQuadShader.setUniform1F("height", MathF.Tan(MathUtil.radians(GameSettings.fov.floatValue) / 2.0F)); 
-            screenQuadShader.setUniform1F("barrelDistortion", GameSettings.barrelDistortion.floatValue); 
-            screenQuadShader.setUniform1F("cylRatio", GameSettings.barrelDistortionCylRatio); 
-            screenQuadShader.setUniform1F("brightness", GameSettings.brightness.floatValue); 
-            screenQuadShader.setUniform1F("ditherScale", GameSettings.ditherScale); 
             GL.ActiveTexture(TextureUnit.Texture1);
             ditherTex.use();
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.DrawElements(PrimitiveType.Triangles, screenQuad.indices.Length, DrawElementsType.UnsignedInt, 0);
         }
+
+        public static void onVideoSettingsChanged()
+        {
+            width = (int)(GameInstance.gameWindowWidth * GameSettings.renderScale.floatValue);
+            height = (int)(GameInstance.gameWindowHeight * GameSettings.renderScale.floatValue);
+
+            GL.BindTexture(TextureTarget.Texture2D, texColorBuffer);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba16, width, height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, IntPtr.Zero);
+
+            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, depthBuffer);
+            GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.DepthComponent32, width, height);
+
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, frameBuffer);
+            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, texColorBuffer, 0);
+            GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, depthBuffer);
+
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+            GL.BindRenderbuffer(RenderbufferTarget.Renderbuffer, 0);
+            GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
+
+            if ((errorCode = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer)) != FramebufferErrorCode.FramebufferComplete)
+            {
+                Application.error("Framebuffer could not resize!");
+            }
+            screenQuadShader.use();
+            screenQuadShader.setUniform1F("height", MathF.Tan(MathUtil.radians(GameSettings.fov.floatValue) / 2.0F));
+            screenQuadShader.setUniform1F("barrelDistortion", GameSettings.barrelDistortion.floatValue * GameSettings.fov.floatValue * 0.01F);
+            screenQuadShader.setUniform1F("cylRatio", GameSettings.barrelDistortionCylRatio);
+            screenQuadShader.setUniform1F("brightness", GameSettings.brightness.floatValue);
+            screenQuadShader.setUniform1F("ditherScale", GameSettings.ditherScale);
+        }
+
+        public static void onClosing()
+        {
+            screenQuadVAO.delete();
+        }
+
         public static Vector2 size { get => new Vector2(width, height); }
         public static int getWidth { get => width; }
         public static int getHeight { get => height; }

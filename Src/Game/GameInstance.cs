@@ -2,7 +2,6 @@
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Sound;
 using RabbetGameEngine.Text;
@@ -22,10 +21,10 @@ namespace RabbetGameEngine
         public static readonly string entityLabelName = "entLabel";
         private static GameInstance instance;
         private static Random privateRand;
-        private static int windowWidth;
-        private static int windowHeight;
-        private static int screenWidth;
-        private static int screenHeight;
+        public static int windowWidth;
+        public static int windowHeight;
+        public static int screenWidth;
+        public static int screenHeight;
         private static Vector2 windowCenter;
         private static float dpiY;
         private static bool gamePaused = false;
@@ -35,41 +34,29 @@ namespace RabbetGameEngine
         /// <summary>
         /// Will be true if there has been atleast one onTick() call since last frame.
         /// </summary>
-        private bool doneOneTick = false; 
+        private bool doneOneTick = false;
 
-        public unsafe GameInstance(GameWindowSettings gameWindowSettings, NativeWindowSettings windowSettings) : base(gameWindowSettings, windowSettings)
+        public GameInstance(GameWindowSettings gameWindowSettings, NativeWindowSettings windowSettings) : base(gameWindowSettings, windowSettings)
         {
             GameInstance.instance = this;
-            TicksAndFrames.init(30);
             Title = Application.applicationName;
             int iconWidth, iconHeight;
             byte[] data;
             IconLoader.getIcon("icon", out iconWidth, out iconHeight, out data);
             Icon = new WindowIcon(new OpenTK.Windowing.Common.Input.Image[] { new OpenTK.Windowing.Common.Input.Image(iconWidth, iconHeight, data) });
-            
-            OpenTK.Windowing.Common.MonitorHandle m = CurrentMonitor;
-            
-            VideoMode mode = *GLFW.GetVideoMode(m.ToUnsafePtr<OpenTK.Windowing.GraphicsLibraryFramework.Monitor>());
-            screenWidth = mode.Width;
-            screenHeight = mode.Height;
-            int hw = screenWidth / 2;
-            int hh = screenHeight / 2;
-            ClientRectangle = new Box2i(hw - hw / 2, hh - hh / 2, hw + hw / 2, hh + hh / 2);
-            GameInstance.windowWidth = this.ClientRectangle.Size.X;
-            GameInstance.windowHeight = this.ClientRectangle.Size.Y;
-            Context.MakeCurrent();
         }
-        
+
         protected override void OnLoad()
         {
-                Application.infoPrint("loading.");
+            Application.infoPrint("loading.");
             try
             {
-                GameInstance.privateRand = new Random();
+                privateRand = new Random();
+                TicksAndFrames.init(30);
                 ResourceUtil.init();
-                GameSettings.loadSettings();
                 Renderer.init();
                 TextUtil.loadAllFoundTextFiles();
+                GameSettings.loadSettings();
                 SoundManager.init();
                 windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
                 setDPIScale();
@@ -79,16 +66,16 @@ namespace RabbetGameEngine
                 thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
                 for (int i = 0; i < 165; i++)
                 {
-                   currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(-privateRand.Next(-26, 27), 2.5F, -privateRand.Next(-26, 27))));
+                    currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(-privateRand.Next(-26, 27), 2.5F, -privateRand.Next(-26, 27))));
                 }
                 currentPlanet.spawnEntityInWorld(thePlayer);
 
                 //temp sound examples
                 SoundManager.playSoundLoopingAt("waterroll", new Vector3(16, 1, 16), 0.5F);
-                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll", GameSettings.defaultFont, "waterroll.ogg, 50% volume", new Vector3(16,2.5F,16), 5.0F, Color.white));
+                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll", GameSettings.defaultFont, "waterroll.ogg, 50% volume", new Vector3(16, 2.5F, 16), 5.0F, Color.white));
                 SoundManager.playSoundLoopingAt("waterroll_large", new Vector3(-16, 1, -16), 1.0F);
-                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", GameSettings.defaultFont, "waterroll_large.ogg, 100% volume", new Vector3(-16,2.5F,-16), 5.0F, Color.white));
-                for(int i = 0; i < 5000; i++)
+                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", GameSettings.defaultFont, "waterroll_large.ogg, 100% volume", new Vector3(-16, 2.5F, -16), 5.0F, Color.white));
+                for (int i = 0; i < 5000; i++)
                 {
                     currentPlanet.spawnVFXInWorld(new VFXLogoSprite3D(new Vector3(-privateRand.Next(-26, 27), 2.5F, -privateRand.Next(-26, 27)), new Vector2(5, 5)));
                 }
@@ -96,7 +83,7 @@ namespace RabbetGameEngine
                 Input.setCursorHiddenAndGrabbed(true);
                 Application.infoPrint("Initialized.");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Application.error("Failed load game, Exception: " + e.Message + "\nStack Trace: " + e.StackTrace);
             }
@@ -118,18 +105,18 @@ namespace RabbetGameEngine
         /// </summary>
         public void onToggleEntityLabels()
         {
-            if(GameSettings.entityLabels)
+            if (GameSettings.entityLabels)
             {
-                foreach(KeyValuePair<int, Entity> e in currentPlanet.entities)
+                foreach (KeyValuePair<int, Entity> e in currentPlanet.entities)
                 {
-                    currentPlanet.addDebugLabel(new VFXMovingText3D(e.Value, entityLabelName, GameSettings.defaultFont, "Entity: " +  e.Key.ToString(), new Vector3(0,1,0), 2.0F, Color.white));
+                    currentPlanet.addDebugLabel(new VFXMovingText3D(e.Value, entityLabelName, GameSettings.defaultFont, "Entity: " + e.Key.ToString(), new Vector3(0, 1, 0), 2.0F, Color.white));
                 }
             }
             else
             {
-                foreach(VFX v in currentPlanet.vfxList)
+                foreach (VFX v in currentPlanet.vfxList)
                 {
-                    if(v.vfxName == entityLabelName)
+                    if (v.vfxName == entityLabelName)
                     {
                         v.ceaseToExist();
                     }
@@ -142,13 +129,13 @@ namespace RabbetGameEngine
         {
             Profiler.startRoot();
             base.OnRenderFrame(args);
-            
+
             Input.updateInput();
             try
             {
                 doneOneTick = false;
                 TicksAndFrames.doOnTickUntillRealtimeSync(onTick);
-                if(doneOneTick)
+                if (doneOneTick)
                 {
                     //This area will be called at MAXIMUM of the tick rate. Meaning it will not be called multiple times in a laggy situation.
                     //It is called after the ticks are looped.
@@ -158,7 +145,7 @@ namespace RabbetGameEngine
                     SoundManager.onUpdate();
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Application.error("Failed to run game tick, Exception: " + e.Message + "\nStack Trace: " + e.StackTrace);
             }
@@ -202,12 +189,12 @@ namespace RabbetGameEngine
         {
             Profiler.startSection("tickLoop");
             Profiler.startTick();
-            if(Bounds.Size.X > 0 && Bounds.Size.Y > 0)
-            windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
+            if (Bounds.Size.X > 0 && Bounds.Size.Y > 0)
+                windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
             Profiler.startSection("tickWorld");
             Profiler.startTickSection("tickWorld");
             if (!gamePaused)
-            currentPlanet.onTick();
+                currentPlanet.onTick();
             Profiler.endCurrentTickSection();
             Profiler.endCurrentSection();
             doneOneTick = true;//do last, ensures that certain functions are only called once per tick loop
@@ -216,9 +203,18 @@ namespace RabbetGameEngine
             Profiler.endCurrentSection();
         }
 
+        public void onVideoSettingsChanged()
+        {
+            if (currentPlanet != null)
+            {
+                currentPlanet.onVideoSettingsChanged();
+            }
+            Renderer.onVideoSettingsChanged();//do last
+        }
+
         public float getDrawDistance()
         {
-            if(currentPlanet != null)
+            if (currentPlanet != null)
             {
                 return currentPlanet.getDrawDistance();
             }
@@ -234,7 +230,7 @@ namespace RabbetGameEngine
 
         public void unPauseGame()
         {
-            if(gamePaused)
+            if (gamePaused)
                 Input.setCursorHiddenAndGrabbed(true);
             gamePaused = false;
         }

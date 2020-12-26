@@ -1,6 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.SubRendering;
@@ -55,7 +56,7 @@ namespace RabbetGameEngine
         private static Dictionary<string, StaticRenderObject> staticDraws;
         
         /*Called before any rendering is done*/
-        public static void init()
+        public static unsafe void init()
         {
             ShaderUtil.loadAllFoundShaderFiles();
             TextureUtil.loadAllFoundTextureFiles();
@@ -77,10 +78,21 @@ namespace RabbetGameEngine
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             lineWidthPixels = (GameInstance.realScreenHeight / 900) + 1;
             GL.LineWidth(lineWidthPixels);
-            onResize();
             staticDraws = new Dictionary<string, StaticRenderObject>();
             SkyboxRenderer.init();
             FrameBuffer.init();
+
+            OpenTK.Windowing.Common.MonitorHandle m = GameInstance.get.CurrentMonitor;
+            VideoMode mode = *GLFW.GetVideoMode(m.ToUnsafePtr<OpenTK.Windowing.GraphicsLibraryFramework.Monitor>());
+            GameInstance.screenWidth = mode.Width;
+            GameInstance.screenHeight = mode.Height;
+            int hw = GameInstance.screenWidth / 2;
+            int hh = GameInstance.screenHeight / 2;
+            GameInstance.get.ClientRectangle = new Box2i(hw - hw / 2, hh - hh / 2, hw + hw / 2, hh + hh / 2);
+            GameInstance.windowWidth = GameInstance.get.ClientRectangle.Size.X;
+            GameInstance.windowHeight = GameInstance.get.ClientRectangle.Size.Y;
+            GameInstance.get.Context.MakeCurrent();
+            onResize();
         }
 
         /*Called each time the game window is resized*/
@@ -91,6 +103,7 @@ namespace RabbetGameEngine
             orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 100.0F);
             GUIManager.onWindowResize();
             FrameBuffer.onResize();
+            BatchManager.onWindowResize();
         }
 
         public static void requestRender(RenderType type, Texture tex, Model mod, int renderLayer = 0)
@@ -148,6 +161,11 @@ namespace RabbetGameEngine
             privateTotalDrawCallCount = 0;
         }
 
+        public static void onVideoSettingsChanged()
+        {
+            FrameBuffer.onVideoSettingsChanged();
+            BatchManager.onVideoSettingsChanged();
+        }
         public static void renderAll()
         {
             preRender();
@@ -250,6 +268,7 @@ namespace RabbetGameEngine
             ShaderUtil.deleteAll();
             TextureUtil.deleteAll();
             SkyboxRenderer.deleteVAO();
+            FrameBuffer.onClosing();
         }
         public static Matrix4 projMatrix { get => projectionMatrix; }
         public static int totalDraws { get { return privateTotalDrawCallCount; } set { privateTotalDrawCallCount = value; } }

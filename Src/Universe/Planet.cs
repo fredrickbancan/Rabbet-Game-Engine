@@ -244,6 +244,11 @@ namespace RabbetGameEngine
             this.addWorldAABB(new AABB(new Vector3(-1, 0, -1), new Vector3(1, 1, 1)));//2x1x2 lump in middle of playground
         }
 
+        public void onVideoSettingsChanged()
+        {
+            setDrawDistanceAndFog(drawDistance);
+        }
+
         public void onTick()
         {
             Profiler.startSection("skyUpdate");
@@ -500,9 +505,9 @@ namespace RabbetGameEngine
         private void setDrawDistanceAndFog(float dist)
         {
             //TODO: Properly configure to hide clip plane at different draw distances
-            drawDistance = Math.Clamp(dist, 0, GameSettings.maxDrawDistance.floatValue);
-            fogStart = drawDistance / 16;
-            fogEnd = drawDistance - 1.0F;
+            drawDistance = dist;
+            fogStart = Math.Clamp(dist, 0, GameSettings.maxDrawDistance.floatValue) / 16;
+            fogEnd = Math.Clamp(dist, 0, GameSettings.maxDrawDistance.floatValue) - 1.0F;
         }
 
         public float getFogStart()

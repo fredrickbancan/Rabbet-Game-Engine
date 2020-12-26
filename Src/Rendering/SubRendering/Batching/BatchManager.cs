@@ -305,6 +305,30 @@ namespace RabbetGameEngine.SubRendering
             }
         }
 
+        public static void onWindowResize()
+        {
+            foreach (Batch b in batches)
+            {
+                BatchUtil.updateUniformsForBatch(b);
+            }
+            foreach (Batch b in guiBatches)
+            {
+                BatchUtil.updateUniformsForBatch(b);
+            }
+        }
+
+        public static void onVideoSettingsChanged()
+        {
+            foreach(Batch b in batches)
+            {
+                BatchUtil.updateUniformsForBatch(b);
+            }
+            foreach (Batch b in guiBatches)
+            {
+                BatchUtil.updateUniformsForBatch(b);
+            }
+        }
+
         public static void drawAllWorld(Matrix4 viewMatrix, Vector3 fogColor)
         {
             foreach(Batch b in batches)

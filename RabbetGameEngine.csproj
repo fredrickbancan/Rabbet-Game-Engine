@@ -53,7 +53,7 @@
     <PackageReference Include="MedallionRandom" Version="1.1.0" />
     <PackageReference Include="NVorbis" Version="0.10.1" />
     <PackageReference Include="OpenAL-Soft" Version="1.16.0" />
-    <PackageReference Include="OpenTK" Version="4.3.0" />
+    <PackageReference Include="OpenTK" Version="4.4.0" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
   </ItemGroup>
 

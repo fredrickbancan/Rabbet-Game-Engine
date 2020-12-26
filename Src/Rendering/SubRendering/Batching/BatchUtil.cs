@@ -24,6 +24,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.guiCutout:
                     ShaderUtil.tryGetShader(ShaderUtil.guiCutoutName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
                     theBatch.maxBufferSizeBytes /= 2;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.indices = QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6);
@@ -37,6 +39,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.guiLines:
                     ShaderUtil.tryGetShader(ShaderUtil.guiLinesName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     VertexBufferLayout ll = new VertexBufferLayout();
                     Vertex.configureLayout(ll);
@@ -47,6 +51,8 @@ namespace RabbetGameEngine.SubRendering
                 case RenderType.guiTransparent:
                     {
                         ShaderUtil.tryGetShader(ShaderUtil.guiTransparentName, out theBatch.batchShader);
+                        theBatch.batchShader.use();
+                        theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
                         theBatch.maxBufferSizeBytes /= 2;
                         theBatch.vertices = new Vertex[Batch.initialArraySize];
                         theBatch.indices = QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6);
@@ -61,6 +67,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.guiText:
                     ShaderUtil.tryGetShader(ShaderUtil.text2DName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
                     theBatch.maxBufferSizeBytes /= 2;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.indices = QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6);
@@ -74,6 +82,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.text3D:
                     ShaderUtil.tryGetShader(ShaderUtil.text3DName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                     theBatch.maxBufferSizeBytes /= 4;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.indices = QuadCombiner.getIndicesForQuadCount(Batch.initialArraySize / 6);
@@ -94,6 +104,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.lerpText3D:
                     ShaderUtil.tryGetShader(ShaderUtil.lerpText3DName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                     theBatch.maxBufferSizeBytes /= 4;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.drawCommands = new DrawCommand[Batch.initialArraySize];
@@ -115,6 +127,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.triangles:
                     ShaderUtil.tryGetShader(ShaderUtil.trianglesName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                     theBatch.maxBufferSizeBytes /= 3;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.indices = new uint[Batch.initialArraySize];
@@ -128,6 +142,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.quads:
                     ShaderUtil.tryGetShader(ShaderUtil.quadsName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                     theBatch.maxBufferSizeBytes /= 2;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     VertexBufferLayout l5 = new VertexBufferLayout();
@@ -140,6 +156,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.lines:
                     ShaderUtil.tryGetShader(ShaderUtil.linesName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                     theBatch.maxBufferSizeBytes /= 2;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.indices = new uint[Batch.initialArraySize];
@@ -152,6 +170,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.iSpheres:
                     ShaderUtil.tryGetShader(ShaderUtil.iSpheresName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                     theBatch.batchedPoints = new PointParticle[Batch.initialArraySize];
                     VertexBufferLayout l7 = new VertexBufferLayout();
                     PointParticle.configureLayout(l7);
@@ -165,6 +185,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.iSpheresTransparent:
                     ShaderUtil.tryGetShader(ShaderUtil.iSpheresTransparentName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                     theBatch.batchedPoints = new PointParticle[Batch.initialArraySize];
                     VertexBufferLayout l8 = new VertexBufferLayout();
                     PointParticle.configureLayout(l8);
@@ -178,6 +200,9 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.lerpISpheres:
                     ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    theBatch.batchShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
                     theBatch.batchedPoints = new PointParticle[Batch.initialArraySize];
                     VertexBufferLayout l9 = new VertexBufferLayout();
                     PointParticle.configureLayout(l9);
@@ -188,6 +213,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.lerpTriangles:
                     ShaderUtil.tryGetShader(ShaderUtil.lerpTrianglesName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                     theBatch.maxBufferSizeBytes /= 4;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.indices = new uint[Batch.initialArraySize];
@@ -214,6 +241,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.lerpQuads:
                     ShaderUtil.tryGetShader(ShaderUtil.quadsName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                     theBatch.maxBufferSizeBytes /= 3;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.modelMatrices = new Matrix4[Batch.initialArraySize];
@@ -238,6 +267,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.lerpLines:
                     ShaderUtil.tryGetShader(ShaderUtil.lerpLinesName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                     theBatch.maxBufferSizeBytes /= 3;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.indices = new uint[Batch.initialArraySize];
@@ -261,7 +292,10 @@ namespace RabbetGameEngine.SubRendering
                     break;
 
                 case RenderType.lerpISpheresTransparent:
-                    ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresTransparentName, out theBatch.batchShader);
+                    ShaderUtil.tryGetShader(ShaderUtil.lerpISpheresTransparentName, out theBatch.batchShader); 
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    theBatch.batchShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
                     theBatch.batchedPoints = new PointParticle[Batch.initialArraySize];
                     VertexBufferLayout l13 = new VertexBufferLayout();
                     PointParticle.configureLayout(l13);
@@ -271,7 +305,9 @@ namespace RabbetGameEngine.SubRendering
                     break;
 
                 case RenderType.lerpTrianglesTransparent:
-                    ShaderUtil.tryGetShader(ShaderUtil.lerpTrianglesName, out theBatch.batchShader);
+                    ShaderUtil.tryGetShader(ShaderUtil.lerpTrianglesName, out theBatch.batchShader); 
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                     theBatch.maxBufferSizeBytes /= 3;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.indices = new uint[Batch.initialArraySize];
@@ -296,6 +332,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.lerpQuadsTransparent:
                     ShaderUtil.tryGetShader(ShaderUtil.lerpQuadsTransparentName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                     theBatch.maxBufferSizeBytes /= 3;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.modelMatrices = new Matrix4[Batch.initialArraySize];
@@ -320,6 +358,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.trianglesTransparent:
                     ShaderUtil.tryGetShader(ShaderUtil.trianglesName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                     theBatch.maxBufferSizeBytes /= 3;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     theBatch.indices = new uint[Batch.initialArraySize];
@@ -340,6 +380,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.quadsTransparent:
                     ShaderUtil.tryGetShader(ShaderUtil.quadsTransparentName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                     theBatch.maxBufferSizeBytes /= 2;
                     theBatch.vertices = new Vertex[Batch.initialArraySize];
                     VertexBufferLayout l17 = new VertexBufferLayout();
@@ -352,6 +394,8 @@ namespace RabbetGameEngine.SubRendering
 
                 case RenderType.spriteCylinder:
                     ShaderUtil.tryGetShader(ShaderUtil.spriteCylinderName, out theBatch.batchShader);
+                    theBatch.batchShader.use();
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
                     theBatch.sprites3D = new Sprite3D[Batch.initialArraySize];
                     VertexBufferLayout l18 = new VertexBufferLayout();
                     Sprite3D.configureLayout(l18);
@@ -953,18 +997,13 @@ namespace RabbetGameEngine.SubRendering
                 theBatch.batchTex.use();
             }
             theBatch.batchShader.use();
-            theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             theBatch.batchShader.setUniformMat4F("viewMatrix", viewMatrix);
-            theBatch.batchShader.setUniformVec3F("fogColor", fogColor);
+            theBatch.batchShader.setUniformVec3F("fogColor", fogColor);           
             theBatch.batchShader.setUniform1F("fogStart", GameInstance.get.currentPlanet.getFogStart());
             theBatch.batchShader.setUniform1F("fogEnd", GameInstance.get.currentPlanet.getFogEnd());
             switch (theBatch.getRenderType())
             {
-                case RenderType.none:
-                    break;
-
                 case RenderType.guiCutout:
-                    theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
                     GL.DepthMask(false);
                     GL.DepthRange(0, 0.005F);
                     GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedVerticesCount + (theBatch.requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
@@ -973,7 +1012,6 @@ namespace RabbetGameEngine.SubRendering
                     break;
 
                 case RenderType.guiLines:
-                    theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
                     GL.LineWidth(GUIManager.guiLineWidth);
                     GL.DepthMask(false);
                     GL.DepthRange(0, 0.005F);
@@ -984,7 +1022,6 @@ namespace RabbetGameEngine.SubRendering
                     break;
 
                 case RenderType.guiTransparent:
-                    theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
                     GL.DepthMask(false);
                     GL.DepthRange(0, 0.005F);
                     GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedVerticesCount + (theBatch.requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
@@ -993,7 +1030,6 @@ namespace RabbetGameEngine.SubRendering
                     break;
 
                 case RenderType.guiText:
-                    theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
                     GL.DepthMask(false);
                     GL.DepthRange(0,0.005F);
                     GL.DrawElements(PrimitiveType.Triangles, theBatch.requestedVerticesCount + (theBatch.requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
@@ -1033,7 +1069,6 @@ namespace RabbetGameEngine.SubRendering
                     break;
 
                 case RenderType.lerpISpheres:
-                    theBatch.batchShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
                     theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
                     GL.DrawArrays(PrimitiveType.Points, 0, theBatch.pointsItterator / 2);
                     break;
@@ -1054,7 +1089,6 @@ namespace RabbetGameEngine.SubRendering
                     break;
 
                 case RenderType.lerpISpheresTransparent:
-                    theBatch.batchShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
                     theBatch.batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
                     GL.DrawArrays(PrimitiveType.Points, 0, theBatch.pointsItterator/2);
                     break;
@@ -1083,5 +1117,79 @@ namespace RabbetGameEngine.SubRendering
             }
             theBatch.VAO.unBind();
         }
+
+        public static void updateUniformsForBatch(Batch theBatch)
+        {
+            theBatch.batchShader.use();
+            switch (theBatch.getRenderType())
+            {
+                case RenderType.guiCutout:
+                    theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
+                    break;
+                case RenderType.guiLines:
+                    theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
+                    break;
+                case RenderType.guiText:
+                    theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
+                    break;
+                case RenderType.guiTransparent:
+                    theBatch.batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
+                    break;
+                case RenderType.iSpheresTransparent:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    break;
+                case RenderType.trianglesTransparent:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    break;
+                case RenderType.quadsTransparent:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    break;
+                case RenderType.lerpISpheresTransparent:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    theBatch.batchShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
+                    break;
+                case RenderType.lerpTrianglesTransparent:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    break;
+                case RenderType.lerpQuadsTransparent:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    break;
+                case RenderType.lerpText3D:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    break;
+                case RenderType.lerpISpheres:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    theBatch.batchShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
+                    break;
+                case RenderType.lerpTriangles:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    break;
+                case RenderType.lerpQuads:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    break;
+                case RenderType.lerpLines:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    break;
+                case RenderType.text3D:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    break;
+                case RenderType.triangles:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    break;
+                case RenderType.quads:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    break;
+                case RenderType.lines:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    break;
+                case RenderType.iSpheres:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    break;
+                case RenderType.spriteCylinder:
+                    theBatch.batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+                    break;
+            }
+        }
+
     }
 }

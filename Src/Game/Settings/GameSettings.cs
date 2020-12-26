@@ -11,8 +11,8 @@ namespace RabbetGameEngine
         public static bool controlsChanged = false;
         public static bool bindingsChanged = false;
         public static float defaultFov = 80; //fov of player camera
-        public static float barrelDistortionStrength = defaultFov * 0.01F;
-        public static float barrelDistortionCylRatio = 2.0F;
+        public static float defaultBarrelDistortionStrength = 0;
+        public static readonly float barrelDistortionCylRatio = 2.0F;
 
         public static float defaultBrightness = 1.0F;
         public static float ditherScale = 1.0F;
@@ -34,10 +34,12 @@ namespace RabbetGameEngine
         public static bool fullscreen = false;
         public static bool noclip = false;
 
-        public static int defaultSuperSampleIndex = 0;
+        public static int defaultRenderScaleIndex = 2;
 
         private static string[] superSampleTitles = new string[]
-        {
+        { 
+            "0.25x",
+            "0.5x",
             "1x",
             "1.5x",
             "2x",
@@ -48,6 +50,8 @@ namespace RabbetGameEngine
         };
         private static float[] superSampleFloats = new float[]
         {
+            0.25F,
+            0.5F,
             1.0F,
             1.5F,
             2.0F,
@@ -65,8 +69,8 @@ namespace RabbetGameEngine
         public static Setting fov = new Setting("Field of View", SettingType.FLOAT, videoSettings).setRange(60.0F, 120.0F).setDisplayRange(60.0F, 120.0F).setFloatValue(defaultFov);
         public static Setting maxDrawDistance = new Setting("Draw Distance", SettingType.FLOAT, videoSettings).setRange(128.0F, 2048.0F).setDisplayRange(128.0F, 2048.0F).setFloatValue(defaultMaxDrawDistance);
         public static Setting brightness = new Setting("Brightness", SettingType.FLOAT, videoSettings).setRange(0.5F, 1.1F).setDisplayRange(50.0F, 110.0F).setFloatValue(defaultBrightness);
-        public static Setting barrelDistortion = new Setting("Barrel Distortion Strength", SettingType.FLOAT, videoSettings).setRange(0.0F, 5.0F).setDisplayRange(0.0F, 500.0F).setFloatValue(defaultFov * 0.01F);//when changed, value should be set to fov * 0.01F * value. Needs to be updated with FOV
-        public static Setting superSample = new Setting("Super Sampling", SettingType.LIST_FLOAT, videoSettings).setListTitles(superSampleTitles).setListFloats(superSampleFloats).setListIndex(defaultSuperSampleIndex);
+        public static Setting barrelDistortion = new Setting("Barrel Distortion Strength", SettingType.FLOAT, videoSettings).setRange(0.0F, 5.0F).setDisplayRange(0.0F, 500.0F).setFloatValue(defaultBarrelDistortionStrength);//when changed, value should be set to fov * 0.01F * value. Needs to be updated with FOV
+        public static Setting renderScale = new Setting("Render Scale", SettingType.LIST_FLOAT, videoSettings).setListTitles(superSampleTitles).setListFloats(superSampleFloats).setListIndex(defaultRenderScaleIndex);
         public static Setting vsync = new Setting("Vertical Sync", SettingType.BOOL, videoSettings).setBoolValue(defaultVsync);
        
         public static Setting masterVolume = new Setting("Volume", SettingType.FLOAT, audioSettings).setRange(0.0F, 1.0F).setDisplayRange(0.0F, 100.0F).setFloatValue(defaultMasterVolume);
@@ -84,6 +88,7 @@ namespace RabbetGameEngine
         {
             //TODO: Update all dependant uniforms and other values
             videoSettingsChanged = false;
+            GameInstance.get.onVideoSettingsChanged();
         }
 
         public static void applyAudioSettings()
