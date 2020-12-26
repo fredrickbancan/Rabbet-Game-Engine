@@ -17,12 +17,12 @@
             addGuiComponent("backButton", backButton);
 
             applyButton = new GUIButton(0.1F, 0.05F, 0.2F, 0.05F, Color.grey.setAlphaF(0.7F), "Apply", guiFont, ComponentAnchor.CENTER_BOTTOM, 2);
-            if (!GameSettings.audioSettingsChanged) applyButton.disable();
+            if (!GameSettings.videoSettingsChanged) applyButton.disable();
             applyButton.addClickListener(onApplyButtonClick);
             applyButton.setHoverColor(Color.black.setAlphaF(0.5F));
             addGuiComponent("applyButton", applyButton);
 
-            GUIUtil.addVideoSettingsChangersToGUI(this);
+            GUIUtil.addSettingsComponentsToGui(GameSettings.videoSettings, this);
         }
 
         public override void onComponentValueChanged()

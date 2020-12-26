@@ -68,7 +68,6 @@ namespace RabbetGameEngine
             screenQuadVAO.finishBuilding();
             ShaderUtil.tryGetShader(ShaderUtil.frameBufferName, out screenQuadShader);
             screenQuadShader.use();
-            Application.debugPrint("h");
             screenQuadShader.setUniform1I("ditherTex", 1);
             screenQuadShader.setUniform1F("height", MathF.Tan(MathUtil.radians(GameSettings.fov.floatValue) / 2.0F));
             screenQuadShader.setUniform1F("barrelDistortion", GameSettings.barrelDistortion.floatValue * GameSettings.fov.floatValue * 0.01F);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using OpenTK.Windowing.GraphicsLibraryFramework;
+using System.Collections.Generic;
 
 namespace RabbetGameEngine
 {
@@ -16,7 +17,7 @@ namespace RabbetGameEngine
 
         public static float defaultBrightness = 1.0F;
         public static float ditherScale = 1.0F;
-        public static float defaultMouseSensitivity = 0.08F;
+        public static float defaultMouseSensitivity = 0.025F;
 
         /// <summary>
         /// This setting MUST be between 0 and 1
@@ -60,11 +61,11 @@ namespace RabbetGameEngine
             3.5F,
             4.0F
         };
+
+        public static List<ControlBinding> bindings = new List<ControlBinding>();
+        public static List<Setting> controlsSettings = new List<Setting>();
         public static List<Setting> videoSettings = new List<Setting>();
-        public static List<Setting> advVideoSettings = new List<Setting>();
         public static List<Setting> audioSettings = new List<Setting>();
-        public static List<Setting> controls = new List<Setting>();
-        public static List<Setting> bindings = new List<Setting>();
 
         public static Setting fov = new Setting("Field of View", SettingType.FLOAT, videoSettings).setRange(60.0F, 120.0F).setDisplayRange(60.0F, 120.0F).setFloatValue(defaultFov);
         public static Setting maxDrawDistance = new Setting("Draw Distance", SettingType.FLOAT, videoSettings).setRange(128.0F, 2048.0F).setDisplayRange(128.0F, 2048.0F).setFloatValue(defaultMaxDrawDistance);
@@ -73,9 +74,19 @@ namespace RabbetGameEngine
         public static Setting renderScale = new Setting("Render Scale", SettingType.LIST_FLOAT, videoSettings).setListTitles(superSampleTitles).setListFloats(superSampleFloats).setListIndex(defaultRenderScaleIndex);
         public static Setting vsync = new Setting("Vertical Sync", SettingType.BOOL, videoSettings).setBoolValue(defaultVsync);
        
-        public static Setting masterVolume = new Setting("Volume", SettingType.FLOAT, audioSettings).setRange(0.0F, 1.0F).setDisplayRange(0.0F, 100.0F).setFloatValue(defaultMasterVolume);
+        public static Setting masterVolume = new Setting("Master Volume", SettingType.FLOAT, audioSettings).setRange(0.0F, 1.0F).setDisplayRange(0.0F, 100.0F).setFloatValue(defaultMasterVolume);
 
-        public static Setting mouseSensetivity = new Setting("Mouse Sensitivity", SettingType.FLOAT, controls).setRange(0.01F, 10.0F).setDisplayRange(1.0F, 1000.0F).setFloatValue(defaultMouseSensitivity);
+        public static Setting mouseSensetivity = new Setting("Mouse Sensitivity", SettingType.FLOAT, controlsSettings).setRange(0.01F, 1.0F).setDisplayRange(1.0F, 100.0F).setFloatValue(defaultMouseSensitivity);
+
+        public static ControlBinding walkFowardsBind = new ControlBinding(EntityAction.fowards, Keys.W);
+        public static ControlBinding strafeLeftBind = new ControlBinding(EntityAction.strafeLeft, Keys.A);
+        public static ControlBinding strafeRightBind = new ControlBinding(EntityAction.strafeRight, Keys.D);
+        public static ControlBinding walkBackwardsBind = new ControlBinding(EntityAction.backwards, Keys.S);
+        public static ControlBinding jumpBind = new ControlBinding(EntityAction.jump, Keys.Space);
+        public static ControlBinding interactBind = new ControlBinding(EntityAction.interact, Keys.F);
+        public static ControlBinding duckBind = new ControlBinding(EntityAction.duck, Keys.LeftControl);
+        public static ControlBinding sprintBind = new ControlBinding(EntityAction.sprint, Keys.LeftShift);
+        public static ControlBinding attackBind = new ControlBinding(EntityAction.attack, MouseButton.Left);
 
         public static void loadSettings()
         {
@@ -89,6 +100,7 @@ namespace RabbetGameEngine
             //TODO: Update all dependant uniforms and other values
             videoSettingsChanged = false;
             GameInstance.get.onVideoSettingsChanged();
+            GameInstance.get.VSync =vsync.boolValue ? OpenTK.Windowing.Common.VSyncMode.On : OpenTK.Windowing.Common.VSyncMode.Off;
         }
 
         public static void applyAudioSettings()

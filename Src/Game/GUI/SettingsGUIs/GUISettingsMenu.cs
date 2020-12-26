@@ -49,7 +49,7 @@
 
         private void onControlsButtonClick(GUIButton g)
         {
-
+            GUIManager.openGUI(new GUIControlsSettings());
         }
     }
 }

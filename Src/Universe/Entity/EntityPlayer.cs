@@ -34,7 +34,7 @@ namespace RabbetGameEngine
         public override void onTick()
         {
                 base.onTick();
-                if(doingAction(Action.attack))
+                if(doingAction(EntityAction.attack))
                 {
                     currentPlanet.spawnEntityInWorld(new EntityTankProjectile(currentPlanet, (getEyePosition() + new Vector3(0, -0.55F, 0)) + camera.getFrontVector(), Vector3.Normalize(camera.getFrontVector() + new Vector3(0, 0.0872F, 0)), camera.getPitch(), camera.getYaw()));
                     VFXUtil.doSmallBangEffect(currentPlanet, (getEyePosition() + new Vector3(0, -0.55F, 0)) + camera.getFrontVector());
@@ -93,7 +93,7 @@ namespace RabbetGameEngine
             return ref upVector;
         }
 
-        public override bool doingAction(Action act)
+        public override bool doingAction(EntityAction act)
         {
             return PlayerController.getDoingAction(act);
         }

@@ -65,7 +65,6 @@ namespace RabbetGameEngine.Text
             paddingRight = paddingData[3];
             size = getValueFromLineData("size");
             dpiCorrection = 100.0F / (float)size;
-            Application.infoPrint(dpiCorrection);
         }
         
         private void loadLineAndImageSize()

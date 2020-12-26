@@ -1,4 +1,6 @@
 ﻿using RabbetGameEngine.Sound;
+using System.Collections.Generic;
+
 namespace RabbetGameEngine
 {
     public static class GUIUtil
@@ -29,16 +31,12 @@ namespace RabbetGameEngine
             }
         }
 
-        public static void addAudioSettingsChangersToGUI(GUI g)
-        {
-
-        }
-        public static void addVideoSettingsChangersToGUI(GUI g)
+        public static void addSettingsComponentsToGui(List<Setting> settings, GUI g)
         {
             int displayedSettingsCount = 0;
-            for(int i = 0; i < GameSettings.videoSettings.Count; i++)
+            for (int i = 0; i < settings.Count; i++)
             {
-                if (GameSettings.videoSettings[i].editable) displayedSettingsCount++;
+                if (settings[i].editable) displayedSettingsCount++;
             }
             int componentsWide = 4;
             int bottomRowCount = displayedSettingsCount % componentsWide;
@@ -49,19 +47,19 @@ namespace RabbetGameEngine
             float halfComponentWidth = componentWidth * 0.5F;
             float halfComponentHeight = componentHeight * 0.5F;
 
-            for(int i = 0; i < GameSettings.videoSettings.Count; i++)
+            for (int i = 0; i < settings.Count; i++)
             {
-                Setting curSet = GameSettings.videoSettings[i];
+                Setting curSet = settings[i];
                 if (!curSet.editable) continue;
                 GUIComponent newComp = null;
 
                 float compPosY = 0.5F - componentHeight * 4.0F;
-                float compPosX = (-(componentsWide * (componentWidth + componentSpacing) - componentSpacing)) * 0.5F + halfComponentWidth; 
+                float compPosX = (-(componentsWide * (componentWidth + componentSpacing) - componentSpacing)) * 0.5F + halfComponentWidth;
 
-                if(i >= displayedSettingsCount - bottomRowCount)
+                if (i >= displayedSettingsCount - bottomRowCount)
                 {
                     compPosY -= (i / componentsWide) * (componentHeight + componentSpacing);
-                    compPosX = (-(bottomRowCount/2 * (componentWidth + componentSpacing)) * 0.5F) + (bottomRowCount - (displayedSettingsCount - i)) * (componentWidth + componentSpacing);
+                    compPosX = (-(bottomRowCount / 2 * (componentWidth + componentSpacing)) * 0.5F) + (bottomRowCount - (displayedSettingsCount - i)) * (componentWidth + componentSpacing);
                 }
                 else
                 {
@@ -69,7 +67,7 @@ namespace RabbetGameEngine
                     compPosX += (i % componentsWide) * (componentWidth + componentSpacing);
                 }
 
-                switch(curSet.type)
+                switch (curSet.type)
                 {
                     case SettingType.BOOL:
                         newComp = new GUIBoolButton(g, compPosX, compPosY, componentWidth, componentHeight, Color.grey.setAlphaF(0.7F), curSet.title, g.guiFont, ComponentAnchor.CENTER, 2).setBoolValue(curSet.boolValue).addValueChangedListener(curSet.applyBoolButtonValue);
@@ -92,23 +90,11 @@ namespace RabbetGameEngine
                         newComp = new GUIDropDownButton(g, compPosX, compPosY, componentWidth, componentHeight, Color.grey.setAlphaF(0.7F), curSet.title, curSet.listTitles, g.guiFont, ComponentAnchor.CENTER, 2).setDropDownIndex(curSet.listIndex).addValueChangeListener(curSet.applyDropDownValue);
                         break;
                 }
-                if(newComp != null)
+                if (newComp != null)
                 {
                     g.addGuiComponent(curSet.title, newComp);
                 }
             }
-        }
-        public static void addAdvVideoSettingsChangersToGUI(GUI g)
-        {
-
-        }
-        public static void addControlsSettingsChangersToGUI(GUI g)
-        {
-
-        }
-        public static void addBindingsSettingsChangersToGUI(GUI g)
-        {
-
         }
     }
 }

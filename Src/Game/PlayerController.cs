@@ -13,18 +13,18 @@ namespace RabbetGameEngine
         public static void updateInput(KeyboardState keyboard)
         {
             currentKeyboardState = keyboard;
-            checkAndAddAction(Keys.W, Action.fowards);
-            checkAndAddAction(Keys.S, Action.backwards);
-            checkAndAddAction(Keys.A, Action.strafeLeft);
-            checkAndAddAction(Keys.D, Action.strafeRight);
-            checkAndAddAction(Keys.Space, Action.jump);
-            checkAndAddAction(Keys.F, Action.interact);
+            checkAndAddAction(Keys.W, EntityAction.fowards);
+            checkAndAddAction(Keys.S, EntityAction.backwards);
+            checkAndAddAction(Keys.A, EntityAction.strafeLeft);
+            checkAndAddAction(Keys.D, EntityAction.strafeRight);
+            checkAndAddAction(Keys.Space, EntityAction.jump);
+            checkAndAddAction(Keys.F, EntityAction.interact);
         }
 
         public static void updateMouseButtonInput(MouseState mouse)
         {
             currentMouseState = mouse;
-            checkAndAddAction(MouseButton.Left, Action.attack);
+            checkAndAddAction(MouseButton.Left, EntityAction.attack);
         }
 
         /*Called if a new key is being pressed in a tick. Will only call for one tick if it is the same key.
@@ -39,19 +39,19 @@ namespace RabbetGameEngine
         }
 
         /*if key is down, adds action to player.*/
-        private static void checkAndAddAction(Keys key, Action act)
+        private static void checkAndAddAction(Keys key, EntityAction act)
         {
             if(currentKeyboardState.IsKeyDown(key))
                 playerActions[(int)act] = true;
         }
-        private static void checkAndAddAction(MouseButton button, Action act)//for mouse buttons
+        private static void checkAndAddAction(MouseButton button, EntityAction act)//for mouse buttons
         {
             if (currentMouseState.IsButtonDown(button))
                 playerActions[(int)act] = true;
         }
 
         /*can be called to determine if the player (user) is performing a certain action*/
-        public static bool getDoingAction(Action act)
+        public static bool getDoingAction(EntityAction act)
         {
            return playerActions[(int)act];
         }

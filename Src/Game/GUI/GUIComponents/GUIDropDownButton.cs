@@ -14,6 +14,7 @@ namespace RabbetGameEngine
         private string baseTitle = "";
         private string[] listTitles;
         private GUI parentGUI = null;
+        private bool valueChosen = false;
         public GUIDropDownButton(GUI parentGUI, float posX, float posY, float sizeX, float sizeY, Color color, string title, string[] listTitles, FontFace font, ComponentAnchor anchor = ComponentAnchor.CENTER, int renderLayer = 0, string textureName = "white") : base(posX, posY, sizeX, sizeY, color, title, font, anchor, renderLayer, textureName)
         {
             baseTitle = title;
@@ -67,8 +68,7 @@ namespace RabbetGameEngine
 
         public override void onUpdate()
         {
-
-            if (listEnabled)
+            if (listEnabled && !valueChosen)
             {
                 parentGUI.pauseAllExcept(this);
                 foreach (GUIButton b in dropDownButtons)
@@ -80,8 +80,11 @@ namespace RabbetGameEngine
             }
             else
             {
+                dropDownBackground.isHovered = false;
+                listEnabled = false;
+                valueChosen = false;
                 parentGUI.unPauseAll();
-            base.onUpdate();
+                base.onUpdate();
             }
         }
 
@@ -100,12 +103,14 @@ namespace RabbetGameEngine
 
         private void onDropDownButtonClick(GUIButton b)
         {
+            valueChosen = true;
             for(int i = 0; i < dropDownButtons.Length; i++)
             {
                 dropDownButtons[i].enable();
                 if(b == dropDownButtons[i])
                 {
                     setDropDownIndex(i);
+                    parentGUI.onComponentValueChanged();
                 }
             }
 
@@ -128,7 +133,6 @@ namespace RabbetGameEngine
             dropDownButtons[i].disable();
             title = baseTitle + ": " + listTitles[i];
             updateRenderData();
-            parentGUI.onComponentValueChanged();
             return this;
         }
     }

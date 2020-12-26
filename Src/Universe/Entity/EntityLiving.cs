@@ -3,7 +3,7 @@ using System;
 namespace RabbetGameEngine
 {
     /*List of all possible player/EntityLiving actions requestable via keyboard and mouse input or game logic*/
-    public enum Action
+    public enum EntityAction
     {
         none,
         fowards,
@@ -14,7 +14,7 @@ namespace RabbetGameEngine
         attack,
         duck,
         sprint,
-        interact
+        interact,
     };
 
     public class EntityLiving : Entity
@@ -27,7 +27,7 @@ namespace RabbetGameEngine
         protected float headPitch; // Pitch of the living entity head
         public static readonly float defaultWalkSpeed = 0.075F;
         protected float walkSpeed = defaultWalkSpeed;
-        public static readonly int actionsCount = Enum.GetNames(typeof(Action)).Length;
+        public static readonly int actionsCount = Enum.GetNames(typeof(EntityAction)).Length;
         protected TickTimer interactTimer;
 
 
@@ -74,7 +74,7 @@ namespace RabbetGameEngine
 
             moveByMovementVector();
 
-            interactTimer.doFunctionAtIntervalOnUpdate(interact, doingAction(Action.interact));
+            interactTimer.doFunctionAtIntervalOnUpdate(interact, doingAction(EntityAction.interact));
         }
 
         /*When called, aligns vectors according to the entities state and rotations.*/
@@ -108,10 +108,10 @@ namespace RabbetGameEngine
                 walkSpeedModified *= 0.05F;//reduce movespeed when jumping or mid air 
             }
             //setting movementVector.X to -1, 0 or 1 based on strafing actions
-            movementVector.X = Convert.ToInt32(doingAction(Action.strafeRight)) - Convert.ToInt32(doingAction(Action.strafeLeft));
+            movementVector.X = Convert.ToInt32(doingAction(EntityAction.strafeRight)) - Convert.ToInt32(doingAction(EntityAction.strafeLeft));
 
             //setting movementVector.Z to -1, 0 or 1 based on fowards/backwards actions
-            movementVector.Z = Convert.ToInt32(doingAction(Action.fowards)) - Convert.ToInt32(doingAction(Action.backwards));
+            movementVector.Z = Convert.ToInt32(doingAction(EntityAction.fowards)) - Convert.ToInt32(doingAction(EntityAction.backwards));
 
             if (movementVector != Vector3.Zero)
             {
@@ -125,7 +125,7 @@ namespace RabbetGameEngine
 
             movementVector *= 0;//reset movement vector
 
-            if (doingAction(Action.jump) && isGrounded)
+            if (doingAction(EntityAction.jump) && isGrounded)
             {
                 velocity.Y += 0.32F;//jump here
                 isGrounded = false;
@@ -133,7 +133,7 @@ namespace RabbetGameEngine
         }
         public virtual void jump()
         {
-            addAction(Action.jump);
+            addAction(EntityAction.jump);
         }
 
         /*When called, this entity will attempt to interact with an object, could be anything.
@@ -144,19 +144,19 @@ namespace RabbetGameEngine
 
         public virtual void walkFowards()
         {
-            addAction(Action.fowards);
+            addAction(EntityAction.fowards);
         }
         public virtual void walkBackwards()
         {
-            addAction(Action.backwards);
+            addAction(EntityAction.backwards);
         }
         public virtual void strafeRight()
         {
-            addAction(Action.strafeRight);
+            addAction(EntityAction.strafeRight);
         }
         public virtual void strafeLeft()
         {
-            addAction(Action.strafeLeft);
+            addAction(EntityAction.strafeLeft);
         }
 
         public virtual void setHeadPitch(float Pitch)
@@ -182,13 +182,13 @@ namespace RabbetGameEngine
         }
 
         /*returns true if entity is doing the specified action*/
-        public virtual bool doingAction(Action act)
+        public virtual bool doingAction(EntityAction act)
         {
             return actions[(int)act];
         }
 
         /*used for adding a entity action*/
-        public void addAction(Action act)
+        public void addAction(EntityAction act)
         {
             actions[(int)act] = true;
         }
