@@ -96,5 +96,44 @@ namespace RabbetGameEngine
                 }
             }
         }
+
+        public static void addBindingComponentsToGui(List<ControlBinding> controls, GUI g)
+        {
+            int componentsWide = 4;
+            int bottomRowCount = controls.Count % componentsWide;
+            float componentWidth = 0.25F;
+            float componentHeight = 0.05F;
+            float componentSpacing = 0.05F;
+            float halfComponentSpacing = componentSpacing * 0.5F;
+            float halfComponentWidth = componentWidth * 0.5F;
+            float halfComponentHeight = componentHeight * 0.5F;
+
+            for (int i = 0; i < controls.Count; i++)
+            {
+                ControlBinding curSet = controls[i];
+                GUIComponent newComp = null;
+
+                float compPosY = 0.5F - componentHeight * 4.0F;
+                float compPosX = (-(componentsWide * (componentWidth + componentSpacing) - componentSpacing)) * 0.5F + halfComponentWidth;
+
+                if (i >= controls.Count - bottomRowCount)
+                {
+                    compPosY -= (i / componentsWide) * (componentHeight + componentSpacing);
+                    compPosX = (-(bottomRowCount / 2 * (componentWidth + componentSpacing)) * 0.5F) + (bottomRowCount - (controls.Count - i)) * (componentWidth + componentSpacing);
+                }
+                else
+                {
+                    compPosY -= (i / componentsWide) * (componentHeight + componentSpacing);
+                    compPosX += (i % componentsWide) * (componentWidth + componentSpacing);
+                }
+
+                newComp = new GUIBindingButton(g, compPosX, compPosY, componentWidth, componentHeight, Color.darkGrey, curSet.title, g.guiFont, ComponentAnchor.CENTER, 2);
+
+                if (newComp != null)
+                {
+                    g.addGuiComponent(curSet.title, newComp);
+                }
+            }
+        }
     }
 }

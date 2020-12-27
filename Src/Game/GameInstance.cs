@@ -54,9 +54,9 @@ namespace RabbetGameEngine
                 privateRand = new Random();
                 TicksAndFrames.init(30);
                 ResourceUtil.init();
+                GameSettings.loadSettings();
                 Renderer.init();
                 TextUtil.loadAllFoundTextFiles();
-                GameSettings.loadSettings();
                 SoundManager.init();
                 windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
                 setDPIScale();

@@ -16,35 +16,15 @@ namespace RabbetGameEngine
         private static bool mouseGrabbed = false;
         private static Vector2 mouseDelta = new Vector2(0,0);
 
-        /*called every tick to check which keys are being pressed and manipulates the provided game instance reference's logic and entities */
         public static void updateInput()
         {
             PlayerController.resetActions();
-            updateMouseButtonInput();
-            updateKeyboardInput();
-            updateMouse();
-        }
-        private static void updateMouseButtonInput()
-        {
-            previousMouseState = mouseState;
-            mouseState = GameInstance.get.MouseState.GetSnapshot();
-            /*Only update mouse input if the game window is focused, and if any key is being pressed.*/
-            if (GameInstance.get.IsFocused && mouseState.IsAnyButtonDown)
-            {
-                //do constant input here
-
-                //this does single button input
-                PlayerController.updateMouseButtonInput(mouseState);
-            }
-        }
-
-        private static void updateKeyboardInput()
-        {
             previouskeyboardState = keyboardState;
             keyboardState = GameInstance.get.KeyboardState.GetSnapshot();
-
+            previousMouseState = mouseState;
+            mouseState = GameInstance.get.MouseState.GetSnapshot();
             /*Only update keyboard input if the game window is focused, and if any key is being pressed.*/
-            if (GameInstance.get.IsFocused && keyboardState.IsAnyKeyDown)
+            if (GameInstance.get.IsFocused && (keyboardState.IsAnyKeyDown || mouseState.IsAnyButtonDown))
             {
                 if (Input.singleKeyPress(Keys.Escape))
                 {
@@ -95,9 +75,10 @@ namespace RabbetGameEngine
                 {
                     ScreenShotter.takeScreenshot();
                 }
-                PlayerController.updateInput(keyboardState);//do player input 
+                PlayerController.updateInput(keyboardState, mouseState);//do player input 
                 PlayerController.updateSinglePressInput(keyboardState);//do player single button input
             }
+            updateMouse();
         }
 
         public static void toggleBoolean(ref bool boolean)

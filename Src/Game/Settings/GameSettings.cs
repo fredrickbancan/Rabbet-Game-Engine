@@ -3,31 +3,28 @@ using System.Collections.Generic;
 
 namespace RabbetGameEngine
 {
-    //TODO: Make settings able to be itterated through by gui systems with support for info hover panels, sliders, buttons etc.
     //TODO: Add descriptions and working drop down panels to show them.
-    static class GameSettings
+
+    public static class GameSettings
     {
         public static bool videoSettingsChanged = false;
         public static bool audioSettingsChanged = false;
         public static bool controlsChanged = false;
         public static bool bindingsChanged = false;
-        public static float defaultFov = 80; //fov of player camera
-        public static float defaultBarrelDistortionStrength = 0;
+        public static readonly float defaultFov = 80; //fov of player camera
+        public static readonly float defaultBarrelDistortionStrength = 0;
         public static readonly float barrelDistortionCylRatio = 2.0F;
 
-        public static float defaultBrightness = 1.0F;
-        public static float ditherScale = 1.0F;
-        public static float defaultMouseSensitivity = 0.025F;
+        public static readonly float defaultBrightness = 1.0F;
+        public static readonly float ditherScale = 1.0F;
+        public static readonly float defaultMouseSensitivity = 0.025F;
 
-        /// <summary>
-        /// This setting MUST be between 0 and 1
-        /// </summary>
-        public static float defaultMasterVolume = 0.2F;
+        public static readonly float defaultMasterVolume = 0.2F;
 
-        public static string defaultFont = "arial";
+        public static readonly string defaultFont = "arial";
 
-        public static bool defaultVsync = false;
-        public static float defaultMaxDrawDistance = 1024.0F;
+        public static readonly bool defaultVsync = false;
+        public static readonly float defaultMaxDrawDistance = 1024.0F;
         public static bool displayFps = true;
         public static bool debugScreen = false;
         public static bool entityLabels = false;
@@ -35,9 +32,9 @@ namespace RabbetGameEngine
         public static bool fullscreen = false;
         public static bool noclip = false;
 
-        public static int defaultRenderScaleIndex = 2;
+        public static readonly int defaultRenderScaleIndex = 2;
 
-        private static string[] superSampleTitles = new string[]
+        private static readonly string[] renderScaleTitles = new string[]
         { 
             "0.25x",
             "0.5x",
@@ -49,7 +46,7 @@ namespace RabbetGameEngine
             "3.5x",
             "4x"
         };
-        private static float[] superSampleFloats = new float[]
+        private static readonly float[] superSampleFloats = new float[]
         {
             0.25F,
             0.5F,
@@ -71,7 +68,7 @@ namespace RabbetGameEngine
         public static Setting maxDrawDistance = new Setting("Draw Distance", SettingType.FLOAT, videoSettings).setRange(128.0F, 2048.0F).setDisplayRange(128.0F, 2048.0F).setFloatValue(defaultMaxDrawDistance);
         public static Setting brightness = new Setting("Brightness", SettingType.FLOAT, videoSettings).setRange(0.5F, 1.1F).setDisplayRange(50.0F, 110.0F).setFloatValue(defaultBrightness);
         public static Setting barrelDistortion = new Setting("Barrel Distortion Strength", SettingType.FLOAT, videoSettings).setRange(0.0F, 5.0F).setDisplayRange(0.0F, 500.0F).setFloatValue(defaultBarrelDistortionStrength);//when changed, value should be set to fov * 0.01F * value. Needs to be updated with FOV
-        public static Setting renderScale = new Setting("Render Scale", SettingType.LIST_FLOAT, videoSettings).setListTitles(superSampleTitles).setListFloats(superSampleFloats).setListIndex(defaultRenderScaleIndex);
+        public static Setting renderScale = new Setting("Render Scale", SettingType.LIST_FLOAT, videoSettings).setListTitles(renderScaleTitles).setListFloats(superSampleFloats).setListIndex(defaultRenderScaleIndex);
         public static Setting vsync = new Setting("Vertical Sync", SettingType.BOOL, videoSettings).setBoolValue(defaultVsync);
        
         public static Setting masterVolume = new Setting("Master Volume", SettingType.FLOAT, audioSettings).setRange(0.0F, 1.0F).setDisplayRange(0.0F, 100.0F).setFloatValue(defaultMasterVolume);
@@ -86,7 +83,7 @@ namespace RabbetGameEngine
         public static ControlBinding interactBind = new ControlBinding(EntityAction.interact, Keys.F);
         public static ControlBinding duckBind = new ControlBinding(EntityAction.duck, Keys.LeftControl);
         public static ControlBinding sprintBind = new ControlBinding(EntityAction.sprint, Keys.LeftShift);
-        public static ControlBinding attackBind = new ControlBinding(EntityAction.attack, MouseButton.Left);
+        public static ControlBinding attackBind = new ControlBinding(EntityAction.attack, MouseButton.Left); 
 
         public static void loadSettings()
         {

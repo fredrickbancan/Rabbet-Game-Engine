@@ -28,6 +28,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <OutputPath>Build\</OutputPath>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

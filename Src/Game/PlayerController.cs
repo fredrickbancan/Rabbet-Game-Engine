@@ -10,22 +10,24 @@ namespace RabbetGameEngine
         private static KeyboardState currentKeyboardState;
         private static MouseState currentMouseState;
         /*Called every tick from Input.cs if a key is being pressed. for detecting player input*/
-        public static void updateInput(KeyboardState keyboard)
+        public static void updateInput(KeyboardState keyboard , MouseState mouse)
         {
             currentKeyboardState = keyboard;
-            checkAndAddAction(Keys.W, EntityAction.fowards);
-            checkAndAddAction(Keys.S, EntityAction.backwards);
-            checkAndAddAction(Keys.A, EntityAction.strafeLeft);
-            checkAndAddAction(Keys.D, EntityAction.strafeRight);
-            checkAndAddAction(Keys.Space, EntityAction.jump);
-            checkAndAddAction(Keys.F, EntityAction.interact);
+            currentMouseState = mouse;
+            for (int i = 0; i < GameSettings.bindings.Count; i++)
+            {
+                if(GameSettings.bindings[i].isMouseButton)
+                {
+                    checkAndAddAction((MouseButton)GameSettings.bindings[i].code, GameSettings.bindings[i].act);
+                }
+                else
+                {
+                    checkAndAddAction((Keys)GameSettings.bindings[i].code, GameSettings.bindings[i].act);
+                }
+            }
         }
 
-        public static void updateMouseButtonInput(MouseState mouse)
-        {
-            currentMouseState = mouse;
-            checkAndAddAction(MouseButton.Left, EntityAction.attack);
-        }
+       
 
         /*Called if a new key is being pressed in a tick. Will only call for one tick if it is the same key.
           usefull for input such as opening menus, attacking, jumping, things that only need one key press.*/
