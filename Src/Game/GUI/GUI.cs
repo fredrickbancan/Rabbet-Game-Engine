@@ -1,4 +1,5 @@
-﻿using RabbetGameEngine.Text;
+﻿using OpenTK.Windowing.Common;
+using RabbetGameEngine.Text;
 using System.Collections.Generic;
 
 namespace RabbetGameEngine
@@ -118,6 +119,28 @@ namespace RabbetGameEngine
                 c.unPause();
             }
         }
+        public virtual void onKeyDown(KeyboardKeyEventArgs e)
+        {
+            foreach (GUIComponent c in components.Values)
+            {
+                c.onKeyDown(e);
+            }
+        }
 
+        public virtual void onMouseDown(MouseButtonEventArgs e)
+        {
+            foreach (GUIComponent c in components.Values)
+            {
+                c.onMouseDown(e);
+            }
+        }
+
+        public virtual void onMouseWheel(MouseWheelEventArgs e)
+        {
+            foreach (GUIComponent c in components.Values)
+            {
+                c.onMouseWheel(e);
+            }
+        }
     }
 }

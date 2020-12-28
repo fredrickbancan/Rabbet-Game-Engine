@@ -1,5 +1,7 @@
 ﻿using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using RabbetGameEngine.Models;
+
 namespace RabbetGameEngine
 {
     public class GUIComponent
@@ -49,6 +51,16 @@ namespace RabbetGameEngine
         }
 
         public virtual void onUpdate()
+        {
+
+        }
+
+        public virtual void onKeyDown(KeyboardKeyEventArgs e)
+        {
+
+        }
+
+        public virtual void onMouseDown(MouseButtonEventArgs e)
         {
 
         }
@@ -116,6 +128,11 @@ namespace RabbetGameEngine
             }
 
             translationAndScale = Matrix4.CreateScale(screenPixelSize.X, screenPixelSize.Y, 1) *  Matrix4.CreateTranslation(screenPixelPos.X, screenPixelPos.Y, -0.2F);
+        }
+
+        public virtual void onMouseWheel(MouseWheelEventArgs e)
+        {
+            
         }
 
         public virtual void setHide(bool flag)

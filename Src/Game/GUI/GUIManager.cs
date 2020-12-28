@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Sound;
 using System.Collections.Generic;
@@ -130,5 +131,40 @@ namespace RabbetGameEngine
             }
         }
 
+        public static void onKeyDown(KeyboardKeyEventArgs e)
+        {
+            if (currentDisplayedGUI != null)
+            {
+                currentDisplayedGUI.onKeyDown(e);
+            }
+            foreach (GUI g in persistentGUIs.Values)
+            {
+                g.onKeyDown(e);
+            }
+        }
+
+        public static void onMouseDown(MouseButtonEventArgs e)
+        {
+            if (currentDisplayedGUI != null)
+            {
+                currentDisplayedGUI.onMouseDown(e);
+            }
+            foreach (GUI g in persistentGUIs.Values)
+            {
+                g.onMouseDown(e);
+            }
+        }
+
+        public static void onMouseWheel(MouseWheelEventArgs e)
+        {
+            if (currentDisplayedGUI != null)
+            {
+                currentDisplayedGUI.onMouseWheel(e);
+            }
+            foreach (GUI g in persistentGUIs.Values)
+            {
+                g.onMouseWheel(e);
+            }
+        }
     }
 }

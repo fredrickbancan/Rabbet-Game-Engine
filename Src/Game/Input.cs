@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace RabbetGameEngine
@@ -17,6 +18,11 @@ namespace RabbetGameEngine
         private static bool mouseGrabbed = false;
         private static Vector2 mouseDelta = new Vector2(0,0);
 
+        /// <summary>
+        /// if is true, inputs will not activate their default logic
+        /// </summary>
+        private static bool paused = false;
+
         public static void updateInput()
         {
             PlayerController.resetActions();
@@ -25,7 +31,7 @@ namespace RabbetGameEngine
             previousMouseState = mouseState;
             mouseState = GameInstance.get.MouseState.GetSnapshot();
             /*Only update keyboard input if the game window is focused, and if any key is being pressed.*/
-            if (GameInstance.get.IsFocused && (keyboardState.IsAnyKeyDown || mouseState.IsAnyButtonDown))
+            if ( !paused && GameInstance.get.IsFocused && (keyboardState.IsAnyKeyDown || mouseState.IsAnyButtonDown))
             {
                 if (Input.singleKeyPress(Keys.Escape))
                 {
@@ -77,7 +83,7 @@ namespace RabbetGameEngine
                     ScreenShotter.takeScreenshot();
                 }
                 PlayerController.updateInput(keyboardState, mouseState);//do player input 
-                PlayerController.updateSinglePressInput(keyboardState);//do player single button input
+                PlayerController.updateSinglePressInput(keyboardState);//do single button input
             }
             updateMouse();
         }
@@ -128,6 +134,18 @@ namespace RabbetGameEngine
             }
         }
 
+        public static void onKeyDown(KeyboardKeyEventArgs e)
+        {
+            GUIManager.onKeyDown(e);
+        }
+        public static void onMouseDown(MouseButtonEventArgs e)
+        {
+            GUIManager.onMouseDown(e);
+        }
+        public static void onMouseWheel(MouseWheelEventArgs e)
+        {
+            GUIManager.onMouseWheel(e);
+        }
         public static bool mouseleftButtonDown()
         {
             return mouseState.IsButtonDown(MouseButton.Left);
@@ -138,5 +156,14 @@ namespace RabbetGameEngine
             return mouseDelta;
         }
 
+        public static void pause()
+        {
+            paused = true;
+        }
+
+        public static void unPause()
+        {
+            paused = false;
+        }
     }
 }

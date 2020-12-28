@@ -54,23 +54,20 @@ namespace RabbetGameEngine
 
         public ControlBinding setMouseButton(MouseButton mb)
         {
+            isMouseButton = true;
             mButtonValue = mb;
+            code = (int)mb;
             return this;
         }
 
         public ControlBinding setKeyValue(Keys mb)
         {
+            isMouseButton = false;
             keyValue = mb;
+            code = (int)mb;
             return this;
         }
 
-        /// <summary>
-        /// can be used as listener func
-        /// </summary>
-        public void applyBindingButtonValue(GUIBindingButton b)
-        {
-
-        }
     }
     
 }

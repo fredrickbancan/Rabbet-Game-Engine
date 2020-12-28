@@ -89,6 +89,25 @@ namespace RabbetGameEngine
         public void onError()
         {
             this.WindowState = WindowState.Normal;
+            Renderer.onClosing();
+        }
+
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnMouseWheel(e);
+            Input.onMouseWheel(e);
+        }
+
+        protected override void OnKeyDown(KeyboardKeyEventArgs e)
+        {
+            base.OnKeyDown(e);
+            Input.onKeyDown(e);
+        }
+
+        protected override void OnMouseDown(MouseButtonEventArgs e)
+        {
+            base.OnMouseDown(e);
+            Input.onMouseDown(e);
         }
 
         public Size getGameWindowSize()

@@ -1,11 +1,11 @@
 ﻿using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Text;
 using System;
 
 namespace RabbetGameEngine
 {
-    //TODO: implement ability to change bindings
     public class GUIBindingButton : GUIButton
     {
         public GUI parentGUI = null;
@@ -22,8 +22,9 @@ namespace RabbetGameEngine
         {
             this.bind = bind;
             this.parentGUI = parentGUI;
+            clearHoverEnterListeners();
+            addHoverEnterListener(onHoverEnter);
             addClickListener(onClick);
-            title = Enum.GetName(bind.isMouseButton ? bind.mButtonValue.GetType() : bind.keyValue.GetType(), bind.isMouseButton ? (int)bind.mButtonValue : (int)bind.keyValue);
             bindingTitle = bind.title;
             setFontSize(0.15F);
             backGround = new GUITransparentRectangle(posX, posY + 0.015F, sizeX + 0.075F, sizeY + 0.05F, Color.black.setAlphaF(0.7F), ComponentAnchor.CENTER, renderLayer-1);
@@ -34,15 +35,73 @@ namespace RabbetGameEngine
             popupText.addLine("[press ESC to cancel]");
             updateRenderData();
         }
-
+        public void onHoverEnter()
+        {
+            if (!bindPopupEnabled)
+            {
+                GUIUtil.defaultOnButtonHoverEnter();
+            }
+        }
         public void onClick(GUIButton b)
         {
-            bindPopupEnabled = true;
-            parentGUI.pauseAllExcept(this);
+            if (!bindPopupEnabled)
+            {
+                bindPopupEnabled = true;
+                parentGUI.pauseAllExcept(this);
+                Input.pause();
+            }
+        }
+
+        public override void onFrame()
+        {
+            base.onFrame();
+            if(bindPopupEnabled)
+            {
+                isHovered = false;
+                Input.pause();
+            }
+            else
+            {
+                Input.unPause();
+                parentGUI.unPauseAll();
+            }
+        }
+
+        public override void onKeyDown(KeyboardKeyEventArgs e)
+        {
+            base.onKeyDown(e);
+            if (bindPopupEnabled)
+            {
+                bindPopupEnabled = false;
+                bind.setKeyValue(e.Key);
+                updateRenderData();
+            }
+        }
+        public override void onMouseDown(MouseButtonEventArgs e)
+        {
+            base.onMouseDown(e);
+            if (bindPopupEnabled)
+            {
+                bindPopupEnabled = false;
+                bind.setMouseButton(e.Button);
+                updateRenderData();
+            }
+        }
+
+        public override void onMouseWheel(MouseWheelEventArgs e)
+        {
+            base.onMouseWheel(e);
+            if (bindPopupEnabled)
+            {
+                bindPopupEnabled = false;
+                //TODO: add support for mouse wheel bindings
+                updateRenderData();
+            }
         }
 
         public override void updateRenderData()
         {
+            title = Enum.GetName(bind.isMouseButton ? bind.mButtonValue.GetType() : bind.keyValue.GetType(), bind.isMouseButton ? (int)bind.mButtonValue : (int)bind.keyValue);
             base.updateRenderData();
             backGround.updateRenderData();
             bindTitleModel = TextModelBuilder2D.convertStringToModel(bindingTitle, parentGUI.guiFont, Color.lightGrey.toNormalVec4(), new Vector3(screenPixelPos.X + bindTitleOffset.X * GameInstance.gameWindowHeight, screenPixelPos.Y + bindTitleOffset.Y * GameInstance.gameWindowHeight, -0.2F), 0.2F, ComponentAnchor.CENTER);
