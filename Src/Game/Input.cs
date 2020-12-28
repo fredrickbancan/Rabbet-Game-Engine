@@ -3,6 +3,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace RabbetGameEngine
 {
+    //TODO: add func to pause input for things such as popups
     /*This class is responsable for checking the input of the mouse and keyboard,
       and manipulating the games logic respectively. Checking should be done each tick.*/
     public static class Input

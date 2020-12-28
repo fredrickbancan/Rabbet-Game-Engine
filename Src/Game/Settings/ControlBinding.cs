@@ -26,26 +26,50 @@ namespace RabbetGameEngine
         public int code = 0;
 
         public EntityAction act;
+        public Keys keyValue = 0;
+        public MouseButton mButtonValue = 0;
 
         public string title = "";
 
         public ControlBinding(EntityAction act, Keys defaultKeyBinding)
         {
             this.act = act;
-            code = (int)act;
+            keyValue = defaultKeyBinding;
+            code = (int)defaultKeyBinding;
             isMouseButton = false;
             GameSettings.bindings.Add(this);
-            title = bindingsTitles[code];
+            title = bindingsTitles[(int)act];
         }
 
 
         public ControlBinding(EntityAction act,  MouseButton defaultButtonBinding)
         {
             this.act = act;
-            code = (int)act;
+            mButtonValue = defaultButtonBinding;
+            code = (int)defaultButtonBinding;
             isMouseButton = true;
             GameSettings.bindings.Add(this);
-            title = bindingsTitles[code];
+            title = bindingsTitles[(int)act];
+        }
+
+        public ControlBinding setMouseButton(MouseButton mb)
+        {
+            mButtonValue = mb;
+            return this;
+        }
+
+        public ControlBinding setKeyValue(Keys mb)
+        {
+            keyValue = mb;
+            return this;
+        }
+
+        /// <summary>
+        /// can be used as listener func
+        /// </summary>
+        public void applyBindingButtonValue(GUIBindingButton b)
+        {
+
         }
     }
     

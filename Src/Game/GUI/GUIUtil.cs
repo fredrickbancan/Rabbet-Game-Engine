@@ -101,9 +101,9 @@ namespace RabbetGameEngine
         {
             int componentsWide = 4;
             int bottomRowCount = controls.Count % componentsWide;
-            float componentWidth = 0.25F;
+            float componentWidth = 0.1F;
             float componentHeight = 0.05F;
-            float componentSpacing = 0.05F;
+            float componentSpacing = 0.08F;
             float halfComponentSpacing = componentSpacing * 0.5F;
             float halfComponentWidth = componentWidth * 0.5F;
             float halfComponentHeight = componentHeight * 0.5F;
@@ -127,7 +127,7 @@ namespace RabbetGameEngine
                     compPosX += (i % componentsWide) * (componentWidth + componentSpacing);
                 }
 
-                newComp = new GUIBindingButton(g, compPosX, compPosY, componentWidth, componentHeight, Color.darkGrey, curSet.title, g.guiFont, ComponentAnchor.CENTER, 2);
+                newComp = new GUIBindingButton(g, curSet, compPosX, compPosY, componentWidth, componentHeight, Color.darkGrey, g.guiFont, ComponentAnchor.CENTER, 2);
 
                 if (newComp != null)
                 {

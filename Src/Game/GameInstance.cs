@@ -64,7 +64,7 @@ namespace RabbetGameEngine
                 currentPlanet = new Planet(0xdeadbeef);
                 //create and spawn player in new world
                 thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
-                for (int i = 0; i < 165; i++)
+                for (int i = 0; i < 65; i++)
                 {
                     currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(-privateRand.Next(-26, 27), 2.5F, -privateRand.Next(-26, 27))));
                 }
@@ -75,10 +75,6 @@ namespace RabbetGameEngine
                 currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll", GameSettings.defaultFont, "waterroll.ogg, 50% volume", new Vector3(16, 2.5F, 16), 5.0F, Color.white));
                 SoundManager.playSoundLoopingAt("waterroll_large", new Vector3(-16, 1, -16), 1.0F);
                 currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", GameSettings.defaultFont, "waterroll_large.ogg, 100% volume", new Vector3(-16, 2.5F, -16), 5.0F, Color.white));
-                for (int i = 0; i < 5000; i++)
-                {
-                    currentPlanet.spawnVFXInWorld(new VFXLogoSprite3D(new Vector3(-privateRand.Next(-26, 27), 2.5F, -privateRand.Next(-26, 27)), new Vector2(5, 5)));
-                }
 
                 Input.setCursorHiddenAndGrabbed(true);
                 Application.infoPrint("Initialized.");
