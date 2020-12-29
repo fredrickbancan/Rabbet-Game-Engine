@@ -16,13 +16,24 @@ namespace RabbetGameEngine
             currentMouseState = mouse;
             for (int i = 0; i < GameSettings.bindings.Count; i++)
             {
-                if(GameSettings.bindings[i].isMouseButton)
+                switch(GameSettings.bindings[i].type)
                 {
-                    checkAndAddAction((MouseButton)GameSettings.bindings[i].code, GameSettings.bindings[i].act);
-                }
-                else
-                {
-                    checkAndAddAction((Keys)GameSettings.bindings[i].code, GameSettings.bindings[i].act);
+                    case BindingType.KEY:
+                        checkAndAddAction((Keys)GameSettings.bindings[i].code, GameSettings.bindings[i].act);
+                        break;
+                    case BindingType.MOUSEBUTTON:
+                        checkAndAddAction((MouseButton)GameSettings.bindings[i].code, GameSettings.bindings[i].act);
+                        break;
+                    case BindingType.MWHEEL:
+                        if(currentMouseState.ScrollDelta.Y < -0.00001F && GameSettings.bindings[i].mWheelValue == ScrollDirection.MWDown)
+                        {
+                            playerActions[(int)GameSettings.bindings[i].act] = true;
+                        }
+                        else if(currentMouseState.ScrollDelta.Y > 0.00001F && GameSettings.bindings[i].mWheelValue == ScrollDirection.MWUp)
+                        {
+                            playerActions[(int)GameSettings.bindings[i].act] = true;
+                        }
+                        break;
                 }
             }
         }

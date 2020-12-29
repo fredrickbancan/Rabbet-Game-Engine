@@ -155,15 +155,15 @@ namespace RabbetGameEngine
             }
         }
 
-        public static void onMouseWheel(MouseWheelEventArgs e)
+        public static void onMouseWheel(float scrollDelta)
         {
             if (currentDisplayedGUI != null)
             {
-                currentDisplayedGUI.onMouseWheel(e);
+                currentDisplayedGUI.onMouseWheel(scrollDelta);
             }
             foreach (GUI g in persistentGUIs.Values)
             {
-                g.onMouseWheel(e);
+                g.onMouseWheel(scrollDelta);
             }
         }
     }

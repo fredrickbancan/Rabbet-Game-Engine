@@ -158,6 +158,7 @@ namespace RabbetGameEngine
                     GUIManager.doUpdate();
                     Renderer.doWorldRenderUpdate();
                     SoundManager.onUpdate();
+                    PlayerController.resetActions();
                 }
             }
             catch (Exception e)

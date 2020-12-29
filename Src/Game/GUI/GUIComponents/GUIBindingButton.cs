@@ -1,5 +1,6 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.GraphicsLibraryFramework;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Text;
 using System;
@@ -72,9 +73,16 @@ namespace RabbetGameEngine
             base.onKeyDown(e);
             if (bindPopupEnabled)
             {
-                bindPopupEnabled = false;
-                bind.setKeyValue(e.Key);
-                updateRenderData();
+                if(e.Key == Keys.Escape)
+                {
+                    bindPopupEnabled = false;
+                }
+                else
+                {
+                    bindPopupEnabled = false;
+                    bind.setKeyValue(e.Key);
+                    updateRenderData();
+                }
             }
         }
         public override void onMouseDown(MouseButtonEventArgs e)
@@ -88,20 +96,39 @@ namespace RabbetGameEngine
             }
         }
 
-        public override void onMouseWheel(MouseWheelEventArgs e)
+        public override void onMouseWheel(float scrolldelta)
         {
-            base.onMouseWheel(e);
+            base.onMouseWheel(scrolldelta);
             if (bindPopupEnabled)
             {
                 bindPopupEnabled = false;
-                //TODO: add support for mouse wheel bindings
+                Application.debugPrint(scrolldelta);
+                if(scrolldelta < -0.00001F)
+                {
+                    bind.setScrollValue(ScrollDirection.MWDown);
+                }
+                else if(scrolldelta > 0.00001F)
+                {
+                    bind.setScrollValue(ScrollDirection.MWUp);
+                }
                 updateRenderData();
             }
         }
 
         public override void updateRenderData()
         {
-            title = Enum.GetName(bind.isMouseButton ? bind.mButtonValue.GetType() : bind.keyValue.GetType(), bind.isMouseButton ? (int)bind.mButtonValue : (int)bind.keyValue);
+            switch (bind.type)
+            {
+                case BindingType.MOUSEBUTTON:
+                    title = Enum.GetName(bind.mButtonValue.GetType(), (int)bind.mWheelValue);
+                    break;
+                case BindingType.KEY:
+                    title = Enum.GetName(bind.keyValue.GetType(), (int)bind.keyValue);
+                    break;
+                case BindingType.MWHEEL:
+                    title = Enum.GetName(bind.mWheelValue.GetType(), (int)bind.mWheelValue);
+                    break;
+            }
             base.updateRenderData();
             backGround.updateRenderData();
             bindTitleModel = TextModelBuilder2D.convertStringToModel(bindingTitle, parentGUI.guiFont, Color.lightGrey.toNormalVec4(), new Vector3(screenPixelPos.X + bindTitleOffset.X * GameInstance.gameWindowHeight, screenPixelPos.Y + bindTitleOffset.Y * GameInstance.gameWindowHeight, -0.2F), 0.2F, ComponentAnchor.CENTER);

@@ -135,11 +135,11 @@ namespace RabbetGameEngine
             }
         }
 
-        public virtual void onMouseWheel(MouseWheelEventArgs e)
+        public virtual void onMouseWheel(float scrollDelta)
         {
             foreach (GUIComponent c in components.Values)
             {
-                c.onMouseWheel(e);
+                c.onMouseWheel(scrollDelta);
             }
         }
     }

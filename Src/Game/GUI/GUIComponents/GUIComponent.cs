@@ -130,7 +130,7 @@ namespace RabbetGameEngine
             translationAndScale = Matrix4.CreateScale(screenPixelSize.X, screenPixelSize.Y, 1) *  Matrix4.CreateTranslation(screenPixelPos.X, screenPixelPos.Y, -0.2F);
         }
 
-        public virtual void onMouseWheel(MouseWheelEventArgs e)
+        public virtual void onMouseWheel(float scrolldelta)
         {
             
         }

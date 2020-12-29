@@ -17,7 +17,7 @@ namespace RabbetGameEngine
 
         private static bool mouseGrabbed = false;
         private static Vector2 mouseDelta = new Vector2(0,0);
-
+        private static float prevScrollOffset = 0;
         /// <summary>
         /// if is true, inputs will not activate their default logic
         /// </summary>
@@ -25,13 +25,12 @@ namespace RabbetGameEngine
 
         public static void updateInput()
         {
-            PlayerController.resetActions();
             previouskeyboardState = keyboardState;
             keyboardState = GameInstance.get.KeyboardState.GetSnapshot();
             previousMouseState = mouseState;
             mouseState = GameInstance.get.MouseState.GetSnapshot();
             /*Only update keyboard input if the game window is focused, and if any key is being pressed.*/
-            if ( !paused && GameInstance.get.IsFocused && (keyboardState.IsAnyKeyDown || mouseState.IsAnyButtonDown))
+            if (!paused && GameInstance.get.IsFocused)
             {
                 if (Input.singleKeyPress(Keys.Escape))
                 {
@@ -144,7 +143,8 @@ namespace RabbetGameEngine
         }
         public static void onMouseWheel(MouseWheelEventArgs e)
         {
-            GUIManager.onMouseWheel(e);
+            GUIManager.onMouseWheel(e.OffsetY - prevScrollOffset);
+            prevScrollOffset = e.OffsetY;
         }
         public static bool mouseleftButtonDown()
         {
