@@ -1,5 +1,4 @@
-﻿using OpenTK.Mathematics;
-using RabbetGameEngine.Models;
+﻿using RabbetGameEngine.Models;
 using RabbetGameEngine.Text;
 using System.Collections.Generic;
 
@@ -7,17 +6,19 @@ namespace RabbetGameEngine
 {
     public class GUITextPanel : GUIComponent
     {
-        public Vector4 panelColour = Color.white.toNormalVec4();
+        public Color defaultLineColor = Color.white;
         public int screenEdgePadding = TextUtil.defaultScreenEdgePadding;
         public float fontSize = 0.2F;
         public FontFace font = null;
         public List<string> lines;
+        public List<Color> lineColors;
         public Model[] models = new Model[0];
 
         public GUITextPanel(float posX, float posY, FontFace font, ComponentAnchor anchor, int renderLayer = 0, bool dpiRelative = true) : base(posX, posY, renderLayer)//new gui text panel with default format
         {
             this.font = font;
             lines = new List<string>();
+            lineColors = new List<Color>();
             this.anchor = anchor;
             this.renderLayer = renderLayer;
             setSize(0, 0, dpiRelative); 
@@ -32,7 +33,7 @@ namespace RabbetGameEngine
 
         public void build()
         {
-            this.models = TextModelBuilder2D.convertStringArrayToModelArray(lines.ToArray(), font, panelColour, translationAndScale.ExtractTranslation(), fontSize, anchor);
+            this.models = TextModelBuilder2D.convertStringsToModelsWithColor(lines, lineColors, font, translationAndScale.ExtractTranslation(), fontSize, anchor);
         }
 
         public GUITextPanel hide()
@@ -54,18 +55,25 @@ namespace RabbetGameEngine
         public GUITextPanel clear()
         {
             lines.Clear();
+            lineColors.Clear();
             return this;
         }
 
         public GUITextPanel addLine(string line)
         {
             lines.Add(line);
+            lineColors.Add(defaultLineColor);
             return this;
         }
-
-        public GUITextPanel setPanelColor(Color color)
+        public GUITextPanel addLine(string line, Color c)
         {
-            panelColour = color.toNormalVec4();
+            lines.Add(line);
+            lineColors.Add(c);
+            return this;
+        }
+        public GUITextPanel setDefaultLineColor(Color color)
+        {
+            defaultLineColor = color;
             return this;
         }
 

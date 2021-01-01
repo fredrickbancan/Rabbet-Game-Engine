@@ -94,7 +94,6 @@ namespace RabbetGameEngine
 
         public static void applyVideoSettings()
         {
-            //TODO: Update all dependant uniforms and other values
             videoSettingsChanged = false;
             GameInstance.get.onVideoSettingsChanged();
             GameInstance.get.VSync =vsync.boolValue ? OpenTK.Windowing.Common.VSyncMode.On : OpenTK.Windowing.Common.VSyncMode.Off;

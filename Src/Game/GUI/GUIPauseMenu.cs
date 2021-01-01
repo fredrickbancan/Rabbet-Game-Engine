@@ -9,7 +9,7 @@
         {
             addGuiComponent("background", new GUITransparentOverlay(Color.black, 0.7F));
             addGuiComponent("titleBack", new GUITransparentRectangle(0, 0, 0.5F, 0.5F, Color.black.setAlphaF(0.7F), ComponentAnchor.CENTER));
-            addGuiComponent("title", new GUITextPanel(0, 0.15F, guiFont, ComponentAnchor.CENTER, 1).addLine("Game Paused").setFontSize(0.4F).setPanelColor(Color.white));
+            addGuiComponent("title", new GUITextPanel(0, 0.15F, guiFont, ComponentAnchor.CENTER, 1).addLine("Game Paused").setFontSize(0.4F).setDefaultLineColor(Color.white));
 
 
             resumeButton = new GUIButton(0, 0, 0.2F, 0.05F, Color.grey.setAlphaF(0.7F), "Resume Game", guiFont, ComponentAnchor.CENTER, 1);

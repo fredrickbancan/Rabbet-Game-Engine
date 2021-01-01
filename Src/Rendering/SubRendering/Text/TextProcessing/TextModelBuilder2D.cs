@@ -1,6 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
 using System;
+using System.Collections.Generic;
 using System.Text;
 namespace RabbetGameEngine.Text
 {
@@ -15,14 +16,24 @@ namespace RabbetGameEngine.Text
             float sizeMultHeight = MathUtil.normalize(0, GUIManager.guiMapRes.Y, GameInstance.gameWindowHeight);
             sizeMult = dpiRelative ? sizeMultHeight : Math.Min(sizeMultWidth, sizeMultHeight);
         }
-
-        public static Model[] convertStringArrayToModelArray(string[] thestrings, FontFace font, Vector4 color, Vector3 pixelTranslation, float fontSize, ComponentAnchor alignment, bool dpiRelative = true)
+        public static Model[] convertStringsToModelsWithColor(List<string> theStrings, List<Color> colors, FontFace font, Vector3 pixelTranslation, float fontSize, ComponentAnchor alignment, bool dpiRelative = true)
         {
             calSizeMult(dpiRelative);
-            Model[] result = new Model[thestrings.Length];
-            for(int i = 0; i < thestrings.Length; i++)
+            Model[] result = new Model[theStrings.Count];
+            for (int i = 0; i < theStrings.Count; i++)
             {
-                result[i] = new Model(convertStringToVertexArray(thestrings[i], font, color, pixelTranslation, fontSize, alignment, i, thestrings.Length - 1 - i), null);
+                result[i] = new Model(convertStringToVertexArray(theStrings[i], font, colors[i].toNormalVec4(), pixelTranslation, fontSize, alignment, i, theStrings.Count - 1 - i), null);
+            }
+            return result;
+        }
+
+        public static Model[] convertStringsToModels(List<string> thestrings, FontFace font, Vector4 color, Vector3 pixelTranslation, float fontSize, ComponentAnchor alignment, bool dpiRelative = true)
+        {
+            calSizeMult(dpiRelative);
+            Model[] result = new Model[thestrings.Count];
+            for(int i = 0; i < thestrings.Count; i++)
+            {
+                result[i] = new Model(convertStringToVertexArray(thestrings[i], font, color, pixelTranslation, fontSize, alignment, i, thestrings.Count - 1 - i), null);
             }
             return result;
         }
@@ -137,7 +148,7 @@ namespace RabbetGameEngine.Text
                     }
                     break;
                 case ComponentAnchor.CENTER_BOTTOM:
-
+                    cursorPos.Y += (linesAbove + linesBelow) * (font.getLineHeightPixels() * fontSize) - halfLineHeight;
                     cursorPos.Y += 10 + linesBelow * (font.getLineHeightPixels() * fontSize) + halfLineHeight;
 
                     for (int i = 0; i < thestring.Length; i++)
@@ -206,6 +217,7 @@ namespace RabbetGameEngine.Text
                     }
                     break;
                 case ComponentAnchor.BOTTOM_LEFT:
+                    cursorPos.Y += (linesAbove + linesBelow) * (font.getLineHeightPixels() * fontSize) - halfLineHeight;
                     cursorPos.Y += 10 + linesBelow * (font.getLineHeightPixels() * fontSize) + halfLineHeight;
                     cursorPos.X += 10;
 
@@ -229,6 +241,7 @@ namespace RabbetGameEngine.Text
                     }
                     break;
                 case ComponentAnchor.BOTTOM_RIGHT:
+                    cursorPos.Y += (linesAbove + linesBelow) * (font.getLineHeightPixels() * fontSize) - halfLineHeight;
                     cursorPos.Y += 10 + linesBelow * (font.getLineHeightPixels() * fontSize) + halfLineHeight;
                     cursorPos.X -= 10;
 

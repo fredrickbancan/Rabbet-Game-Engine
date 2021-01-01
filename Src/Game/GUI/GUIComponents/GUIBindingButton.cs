@@ -77,7 +77,7 @@ namespace RabbetGameEngine
                 {
                     bindPopupEnabled = false;
                 }
-                else
+                else if(e.Key < Keys.F1 || e.Key > Keys.F25)
                 {
                     bindPopupEnabled = false;
                     bind.setKeyValue(e.Key);

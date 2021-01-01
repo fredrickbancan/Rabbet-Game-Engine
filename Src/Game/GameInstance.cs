@@ -12,8 +12,6 @@ using System.Drawing;
 
 namespace RabbetGameEngine
 {
-    //TODO: Implement functions which are only called when game settings change. This will help optimize certain code, for example uniforms which only need to change when settings change.
-
     /*This class is the main game class. It contains all the execution code for rendering, logic loops and loading.*/
     public class GameInstance : GameWindow
     {

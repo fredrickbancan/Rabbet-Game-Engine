@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 
+//TODO: Make so profiling data can have colors based on their delay to allow for easy detection of slow sytstems
 namespace RabbetGameEngine.Debugging
 {
     /// <summary>
@@ -7,8 +8,8 @@ namespace RabbetGameEngine.Debugging
     /// </summary>
     public static class Profiler
     {
-        private static Section rootSection = new Section("root");
-        private static Section rootTickSection = new Section("rootTick");
+        private static Section rootSection = new Section("root", false);
+        private static Section rootTickSection = new Section("rootTick", true);
 
         public static void startRoot()
         {
@@ -32,7 +33,7 @@ namespace RabbetGameEngine.Debugging
             {
                 return;
             }
-            rootTickSection.startSection(sectionName);
+            rootTickSection.startSection(sectionName, true);
         }
         public static void startSection(string sectionName)
         {
@@ -40,7 +41,7 @@ namespace RabbetGameEngine.Debugging
             {
                 return;
             }
-            rootSection.startSection(sectionName);
+            rootSection.startSection(sectionName, false);
         }
         public static void endCurrentTickSection()
         {
@@ -50,6 +51,7 @@ namespace RabbetGameEngine.Debugging
             }
             rootTickSection.endCurrentSection();
         }
+
         public static void endCurrentSection()
         {
             if (!GameSettings.debugScreen)
@@ -66,7 +68,7 @@ namespace RabbetGameEngine.Debugging
                 return;
             }
             rootSection.endCurrentSection();
-            rootSection.startSection(sectionName);
+            rootSection.startSection(sectionName, false);
         }
         public static void endStartTickSection(string sectionName)
         {
@@ -75,30 +77,36 @@ namespace RabbetGameEngine.Debugging
                 return;
             }
             rootTickSection.endCurrentSection();
-            rootTickSection.startSection(sectionName);
+            rootTickSection.startSection(sectionName, true);
         }
-        public static void getFrameProfilingData(List<string> lines)
+        public static void getFrameProfilingData(List<string> lines, List<Color> lineColors)
         {
             if (!GameSettings.debugScreen)
             {
                 return;
             }
             lines.Add("Profiler averages [frame times]");
+            lineColors.Add(Color.white);
             lines.Add("{");
-            rootSection.getProfilingData(lines, ""); 
+            lineColors.Add(Color.white);
+            rootSection.getProfilingData(lines, lineColors, ""); 
             lines.Add("}");
+            lineColors.Add(Color.white);
         }
 
-        public static void getTickProfilingData(List<string> lines)
+        public static void getTickProfilingData(List<string> lines, List<Color> lineColors)
         {
             if (!GameSettings.debugScreen)
             {
                 return;
             }
-            lines.Add("Profiler averages [tick times]");
-            lines.Add("{");
-            rootTickSection.getProfilingData(lines, "");
+            lines.Add("Profiler averages [tick times]"); 
+            lineColors.Add(Color.white);
+            lines.Add("{"); 
+            lineColors.Add(Color.white);
+            rootTickSection.getProfilingData(lines, lineColors, "");
             lines.Add("}");
+            lineColors.Add(Color.white);
         }
 
         public static void onFrame()
@@ -129,21 +137,36 @@ namespace RabbetGameEngine.Debugging
             public bool hasEnded = true;
             private Section currentSection = null;
             public Dictionary<string, Section> subSections = new Dictionary<string, Section>();
+            public bool isTickProfile = true;
 
             public string sectionName = "";
-            public Section(string sectionName)
+            public Section(string sectionName, bool tickProfile)
             {
+                this.isTickProfile = tickProfile;
                 this.sectionName = sectionName;
                 this.currentSection = this;
             }
-            public void getProfilingData(List<string> lines, string indentation)
+            public void getProfilingData(List<string> lines, List<Color> lineColors, string indentation)
             {
                 string subsections = "";
                 if (subSections.Count > 0) subsections = "(" + getSubSectionCount() + " sub sections)";
-                lines.Add(indentation + sectionName + subsections + ": " + getAverageTimeSpentPerTick().ToString("0.0000 ms"));
+                double avg = getAverageTimeSpentPerTick();
+                Color lineCol;
+
+                if(isTickProfile)
+                {
+                    lineCol = (avg <= 1.0D) ? Color.green : (avg <= 2.5D) ? Color.yellow : Color.red;
+                }
+                else
+                {
+                    lineCol = (avg <= 0.5D) ? Color.green : (avg <= 1.25D) ? Color.yellow : Color.red;
+                }
+
+                lines.Add(indentation + sectionName + subsections + ": " + avg.ToString("0.0000 ms"));
+                lineColors.Add(lineCol);
                 foreach(Section s in subSections.Values)
                 {
-                    s.getProfilingData(lines, indentation + "   ");
+                    s.getProfilingData(lines, lineColors, indentation + "   ");
                 }
             }
 
@@ -157,12 +180,12 @@ namespace RabbetGameEngine.Debugging
                 return result;
             }
 
-            public void startSection(string sectionName)
+            public void startSection(string sectionName, bool tickProfile)
             {
 
                 if(currentSection!=this)
                 {
-                    currentSection.startSection(sectionName);
+                    currentSection.startSection(sectionName, tickProfile);
                     return;
                 }
 
@@ -171,7 +194,7 @@ namespace RabbetGameEngine.Debugging
                     currentSection = s.begin();
                     return;
                 }
-                subSections.Add(sectionName, (currentSection = new Section(sectionName).begin()));
+                subSections.Add(sectionName, (currentSection = new Section(sectionName, tickProfile).begin()));
             }
 
             public Section begin()

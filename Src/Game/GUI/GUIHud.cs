@@ -7,12 +7,12 @@
         GUITextPanel fpsPanel;
         public GUIHud() : base("hud", "arial")
         {
-            flyPanel = new GUITextPanel(0, 0, guiFont, ComponentAnchor.TOP_RIGHT).addLine("Flying: OFF").setPanelColor(Color.darkRed);
-            noclipPanel = new GUITextPanel(0, -0.025F, guiFont, ComponentAnchor.TOP_RIGHT).addLine("Noclip: OFF").setPanelColor(Color.darkRed);
+            flyPanel = new GUITextPanel(0, 0, guiFont, ComponentAnchor.TOP_RIGHT).addLine("Flying: OFF").setDefaultLineColor(Color.darkRed);
+            noclipPanel = new GUITextPanel(0, -0.025F, guiFont, ComponentAnchor.TOP_RIGHT).addLine("Noclip: OFF").setDefaultLineColor(Color.darkRed);
             fpsPanel = new GUITextPanel(0, 0, guiFont, ComponentAnchor.TOP_LEFT).addLine("0");
             addGuiComponent("flying",flyPanel);
             addGuiComponent("noclip", noclipPanel);
-            addGuiComponent("label", new GUITextPanel(0, 0.0F, guiFont, ComponentAnchor.BOTTOM_LEFT).addLine(Application.applicationName).setPanelColor(Color.black));
+            addGuiComponent("label", new GUITextPanel(0, 0.0F, guiFont, ComponentAnchor.BOTTOM_LEFT).addLine(Application.applicationName).setDefaultLineColor(Color.black));
             addGuiComponent("fps", fpsPanel);
             addGuiComponent("crosshair", new GUICrosshair());
         }
@@ -23,20 +23,20 @@
             displayFps();
             if (GameInstance.get.thePlayer.getIsFlying())
             {
-               flyPanel.setPanelColor(Color.green).clear().addLine("Flying: ON");
+               flyPanel.setDefaultLineColor(Color.green).clear().addLine("Flying: ON");
             }
             else
             {
-                flyPanel.setPanelColor(Color.darkRed).clear().addLine("Flying: OFF");
+                flyPanel.setDefaultLineColor(Color.darkRed).clear().addLine("Flying: OFF");
             }
 
             if (GameSettings.noclip)
             {
-                noclipPanel.setPanelColor(Color.green).clear().addLine("Noclip: ON");
+                noclipPanel.setDefaultLineColor(Color.green).clear().addLine("Noclip: ON");
             }
             else
             {
-               noclipPanel.setPanelColor(Color.darkRed).clear().addLine("Noclip: OFF");
+               noclipPanel.setDefaultLineColor(Color.darkRed).clear().addLine("Noclip: OFF");
             }
             flyPanel.updateRenderData();
             noclipPanel.updateRenderData();
@@ -50,15 +50,15 @@
                 string fpsstring = TicksAndFrames.fps.ToString();
                 if (TicksAndFrames.fps < 75)
                 {
-                    fpsPanel.clear().addLine(fpsstring).setPanelColor(Color.red);
+                    fpsPanel.clear().addLine(fpsstring).setDefaultLineColor(Color.red);
                 }
                 else if (TicksAndFrames.fps < 120)
                 {
-                    fpsPanel.clear().addLine(fpsstring).setPanelColor(Color.yellow);
+                    fpsPanel.clear().addLine(fpsstring).setDefaultLineColor(Color.yellow);
                 }
                 else
                 {
-                    fpsPanel.clear().addLine(fpsstring).setPanelColor(Color.green);
+                    fpsPanel.clear().addLine(fpsstring).setDefaultLineColor(Color.green);
                 }
                 fpsPanel.updateRenderData();
             }

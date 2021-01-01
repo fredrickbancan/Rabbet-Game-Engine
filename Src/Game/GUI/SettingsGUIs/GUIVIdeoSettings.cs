@@ -9,7 +9,7 @@
         {
             addGuiComponent("background", new GUITransparentOverlay(Color.black, 0.7F, 1));
             addGuiComponent("titleBack", new GUITransparentRectangle(0, 0, 1.5F, 1.0F, Color.black.setAlphaF(0.7F), ComponentAnchor.CENTER, 1));
-            addGuiComponent("title", new GUITextPanel(0, 0, guiFont, ComponentAnchor.CENTER_TOP, 2).addLine("Video Settings").setFontSize(0.4F).setPanelColor(Color.white));
+            addGuiComponent("title", new GUITextPanel(0, 0, guiFont, ComponentAnchor.CENTER_TOP, 2).addLine("Video Settings").setFontSize(0.4F).setDefaultLineColor(Color.white));
 
             backButton = new GUIButton(-0.1F, 0.05F, 0.2F, 0.05F, Color.grey.setAlphaF(0.7F), "Back", guiFont, ComponentAnchor.CENTER_BOTTOM, 2).clearClickListeners();
             backButton.addClickListener(onBackButtonClick);

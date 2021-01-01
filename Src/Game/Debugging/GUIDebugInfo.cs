@@ -13,11 +13,11 @@ namespace RabbetGameEngine
         {
             timeChart = new GUIDebugFrameTimeChart(0, 0, ComponentAnchor.BOTTOM_RIGHT);
             addGuiComponent("frameTimeChart", timeChart);
-            profileAveragesText = new GUITextPanel(0, -0.025F, guiFont, ComponentAnchor.TOP_LEFT).setPanelColor(Color.white);
+            profileAveragesText = new GUITextPanel(0, -0.025F, guiFont, ComponentAnchor.TOP_LEFT).setDefaultLineColor(Color.white);
             profileAveragesText.setFontSize(0.15F);
             addGuiComponent("profileAverages", profileAveragesText);
 
-            infoText = new GUITextPanel(0, -0.05F, guiFont, ComponentAnchor.TOP_RIGHT).setPanelColor(Color.white);
+            infoText = new GUITextPanel(0, -0.05F, guiFont, ComponentAnchor.TOP_RIGHT).setDefaultLineColor(Color.white);
             infoText.setFontSize(0.15F);
             addGuiComponent("info", infoText);
         }
@@ -28,9 +28,9 @@ namespace RabbetGameEngine
             if (GameInstance.get.thePlayer != null && GameInstance.get.currentPlanet != null)
             {
                 profileAveragesText.clear();
-                Profiler.getFrameProfilingData(profileAveragesText.lines);
+                Profiler.getFrameProfilingData(profileAveragesText.lines, profileAveragesText.lineColors);
                 profileAveragesText.addLine("");
-                Profiler.getTickProfilingData(profileAveragesText.lines);
+                Profiler.getTickProfilingData(profileAveragesText.lines, profileAveragesText.lineColors);
                 profileAveragesText.build();
                 Vector3 pPos = GameInstance.get.thePlayer.getEyePosition();
                 Vector3 pVel = GameInstance.get.thePlayer.getVelocity();
