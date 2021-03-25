@@ -49,7 +49,7 @@ namespace RabbetGameEngine
         private static Matrix4 orthographicMatrix;
         private static bool useFrameBuffer = true;
         private static int lineWidthPixels = 0;
-       
+        private static bool initialized = false;
         /// <summary>
         /// A list of all requested static renders
         /// </summary>
@@ -93,6 +93,7 @@ namespace RabbetGameEngine
             GameInstance.windowHeight = GameInstance.get.ClientRectangle.Size.Y;
             GameInstance.get.Context.MakeCurrent();
             onResize();
+            initialized = true;
         }
 
         /*Called each time the game window is resized*/
@@ -260,6 +261,7 @@ namespace RabbetGameEngine
         /*deletes all loaded opengl assets*/
         public static void onClosing()
         {
+            if (!initialized) return;
             foreach (StaticRenderObject s in staticDraws.Values)
             {
                 s.delete();
