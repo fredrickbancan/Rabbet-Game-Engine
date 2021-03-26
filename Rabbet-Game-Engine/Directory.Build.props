@@ -1,0 +1,11 @@
+<Project>
+    <PropertyGroup>
+	    <TargetFramework>netcoreapp3.1</TargetFramework>
+        <MSBUildProjectExtensionsPath>Temp\obj\</MSBUildProjectExtensionsPath>
+		<IntermediateOutputPath>Temp\obj\</IntermediateOutputPath>
+        <BaseIntermediateOutputPath>Temp\obj\</BaseIntermediateOutputPath>
+		<OutputPath>Temp\Build\</OutputPath>
+		<DocumentationFile>Temp\Build\RabbetGameEngine.xml</DocumentationFile>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+</Project>

@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace RabbetGameEngine.Sound
 {
+    //TODO: Implement openal in a way where theres no complications with .dll files
     //TODO: Add support for sounds from moving objects
     //TODO: Add support for Looping sounds from moving objects
     public static class SoundManager
@@ -17,6 +18,7 @@ namespace RabbetGameEngine.Sound
         private static List<int> freeSourceIDs;
         private static List<int> busySourceIDs;
         private static List<int> usedSourceIDs;
+
         public static void init()
         {
             try

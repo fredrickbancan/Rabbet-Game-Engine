@@ -3,144 +3,25 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-	<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <ApplicationIcon></ApplicationIcon>
+    <ApplicationIcon>Resources\Icon\icon.ico</ApplicationIcon>
     <StartupObject>RabbetGameEngine.Application</StartupObject>
     <Platforms>AnyCPU;x64;x86</Platforms>
-    <PackageIcon>icon.ico</PackageIcon>
-    <Copyright>Enbi Games 2020</Copyright>
-    <NoWin32Manifest>true</NoWin32Manifest>
     <Company>Enbi Games</Company>
-    <Authors>Rabbet</Authors>
-    <PackageId>RGE</PackageId>
-    <Version>1.0.0</Version>
     <Product>Rabbet Game Engine</Product>
-    <SignAssembly>false</SignAssembly>
-    <EnableNETAnalyzers>true</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
-    <Nullable>warnings</Nullable>
+    <Version>0.0.0.1</Version>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <OutputPath>Temp\Build\</OutputPath>
-	<BaseIntermediateOutputPath>Temp\</BaseIntermediateOutputPath>
-    <DocumentationFile>Temp\Build\RabbetGameEngine.xml</DocumentationFile>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <OutputPath>Temp\Build\</OutputPath>
-	  <BaseIntermediateOutputPath>Temp\</BaseIntermediateOutputPath>
-    <DocumentationFile>Temp\Build\RabbetGameEngine.xml</DocumentationFile>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <OutputPath>Temp\Build\</OutputPath>
-	  <BaseIntermediateOutputPath>Temp\</BaseIntermediateOutputPath>
-    <DebugType>full</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <DocumentationFile>Temp\Build\RabbetGameEngine.xml</DocumentationFile>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <OutputPath>Temp\Build\</OutputPath>
-	  <BaseIntermediateOutputPath>Temp\</BaseIntermediateOutputPath>
-    <DocumentationFile>Temp\Build\RabbetGameEngine.xml</DocumentationFile>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <OutputPath>Temp\Build\</OutputPath>
-	  <BaseIntermediateOutputPath>Temp\</BaseIntermediateOutputPath>
-    <DocumentationFile>Temp\Build\RabbetGameEngine.xml</DocumentationFile>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>true</Optimize>
-    <OutputPath>Temp\Build\</OutputPath>
-	  <BaseIntermediateOutputPath>Temp\</BaseIntermediateOutputPath>
-    <DocumentationFile>Temp\Build\RabbetGameEngine.xml</DocumentationFile>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="obj\**" />
-    <EmbeddedResource Remove="obj\**" />
-    <None Remove="obj\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove=".editorconfig" />
-  </ItemGroup>
-  
 
   <ItemGroup>
     <PackageReference Include="MedallionRandom" Version="1.1.0" />
     <PackageReference Include="NVorbis" Version="0.10.1" />
-    <PackageReference Include="OpenAL-Soft" Version="1.16.0" />
-    <PackageReference Include="OpenTK" Version="4.6.2" />
-    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
+    <PackageReference Include="OpenTK" Version="4.1.0" />
+    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
   </ItemGroup>
-  
 
-  <ItemGroup>
-    <None Include="Res\Icon\icon.ico">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
-  
-
-  <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  
-
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="rd &quot;$(ProjectDir)obj&quot; /S /Q&#xD;&#xA;XCOPY &quot;$(SolutionDir)Res&quot; &quot;$(TargetDir)\Res\&quot; /S /Y" />
-  </Target>
-  
-
-  <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\disckord\Desktop\RabbetGameEngine workspace\Rabbet-Game-Engine\.editorconfig" />
-  </ItemGroup>
-  
-
-  <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\disckord\Desktop\RabbetGameEngine workspace\Rabbet-Game-Engine\.editorconfig" />
-  </ItemGroup>
-  
-
-  <ItemGroup>
-    <EditorConfigFiles Remove="C:\Users\disckord\Desktop\RabbetGameEngine workspace\Rabbet-Game-Engine\.editorconfig" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="Resources\**">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 	
 </Project>
-

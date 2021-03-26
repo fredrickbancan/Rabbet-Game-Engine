@@ -7,8 +7,8 @@ namespace RabbetGameEngine
     public static class ResourceUtil
     {
         public static readonly string workingDir = Directory.GetCurrentDirectory();
-        public static readonly string libsDir = workingDir + @"\Libs\";
-        public static readonly string resDir = workingDir + @"\Res\";
+        public static readonly string libsDir = workingDir + @"\Libraries\";
+        public static readonly string resDir = workingDir + @"\Resources\";
 
         public static void init()
         {
