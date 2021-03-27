@@ -5,7 +5,7 @@ using System;
 
 namespace RabbetGameEngine
 {
-//TODO: Make into a non static object so multiple framebuffers can be used for things like multi stage post processing (guassian blur). Make new static class for specifically rendering to fullscreen quad
+    //TODO: Make into a non static object so multiple framebuffers can be used for things like multi stage post processing (guassian blur). Make new static class for specifically rendering to fullscreen quad
     public static class FrameBuffer
     {
         private static int texColorBuffer;
@@ -74,7 +74,6 @@ namespace RabbetGameEngine
             screenQuadShader.setUniform1F("barrelDistortion", GameSettings.barrelDistortion.floatValue * GameSettings.fov.floatValue * 0.01F);
             screenQuadShader.setUniform1F("cylRatio", GameSettings.barrelDistortionCylRatio);
             screenQuadShader.setUniform1F("brightness", GameSettings.brightness.floatValue);
-            screenQuadShader.setUniform1F("ditherScale", GameSettings.ditherScale);
             TextureUtil.tryGetTexture("dither", out ditherTex);
         }
 
@@ -160,7 +159,6 @@ namespace RabbetGameEngine
             screenQuadShader.setUniform1F("barrelDistortion", GameSettings.barrelDistortion.floatValue * GameSettings.fov.floatValue * 0.01F);
             screenQuadShader.setUniform1F("cylRatio", GameSettings.barrelDistortionCylRatio);
             screenQuadShader.setUniform1F("brightness", GameSettings.brightness.floatValue);
-            screenQuadShader.setUniform1F("ditherScale", GameSettings.ditherScale);
         }
 
         public static void onClosing()

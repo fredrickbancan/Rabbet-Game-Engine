@@ -7,6 +7,7 @@ namespace RabbetGameEngine
 {
     public static class SkyboxRenderer
     {
+        private static Texture ditherTex = null;
         private static Texture moonsTex = null;
         private static Planet skyboxToDraw = null;
         private static Model skyboxModel = null;
@@ -60,7 +61,7 @@ namespace RabbetGameEngine
 
             ShaderUtil.tryGetShader(ShaderUtil.skyboxName, out skyboxShader);
             skyboxShader.use();
-
+            skyboxShader.setUniform1I("ditherTex", 1);
             ShaderUtil.tryGetShader(ShaderUtil.sunName, out sunShader);
             sunShader.use();
 
@@ -70,6 +71,7 @@ namespace RabbetGameEngine
 
             ShaderUtil.tryGetShader(ShaderUtil.moonGlowName, out moonGlowShader);
             moonGlowShader.use();
+            TextureUtil.tryGetTexture("dither", out ditherTex);
             TextureUtil.tryGetTexture("moons", out moonsTex);
             moonsTex.use();
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
@@ -140,7 +142,10 @@ namespace RabbetGameEngine
             skyboxShader.setUniformMat4F("projectionMatrix", proj);
             skyboxShader.setUniformMat4F("viewMatrix", view);
             GL.DepthRange(0.999999f, 1);
+            GL.ActiveTexture(TextureUnit.Texture1);
+            ditherTex.use();
             GL.DrawElements(PrimitiveType.Triangles, skyboxModel.indices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.ActiveTexture(TextureUnit.Texture0);
             Renderer.totalDraws++;
 
             //drawing horizon shroud

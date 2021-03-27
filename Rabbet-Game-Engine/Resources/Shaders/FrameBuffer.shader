@@ -39,14 +39,11 @@ in vec2 vUVDot;
 layout(location = 0) out vec4 color;
 
 uniform sampler2D renderedTexture;
-uniform sampler2D ditherTex;
 uniform vec3 cameraFrontVec;
-uniform float ditherScale = 1;
 uniform float brightness;
 void main()
 {
     vec3 uv = dot(vUVDot, vUVDot) * vec3(-0.5, -0.5, -1.0) + vUV;
 	color = texture(renderedTexture, uv.xy / uv.z) * brightness;
-	color += vec4(texture2D(ditherTex, gl_FragCoord.xy / (8.0 * ditherScale)).r / 32.0 - (1.0 / 128.0));//dithering
 	color.a = 1.0;
 }

@@ -82,8 +82,8 @@ namespace RabbetGameEngine
             SkyboxRenderer.init();
             FrameBuffer.init();
 
-            OpenTK.Windowing.Common.Monitor m = GameInstance.get.CurrentMonitor;
-            VideoMode mode = *GLFW.GetVideoMode(m.ToUnsafePtr<OpenTK.Windowing.GraphicsLibraryFramework.Monitor>());
+            MonitorHandle m = GameInstance.get.CurrentMonitor;
+            VideoMode mode = *GLFW.GetVideoMode(m.ToUnsafePtr<Monitor>());
             GameInstance.screenWidth = mode.Width;
             GameInstance.screenHeight = mode.Height;
             int hw = GameInstance.screenWidth / 2;
