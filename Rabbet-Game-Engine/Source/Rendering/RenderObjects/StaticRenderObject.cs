@@ -26,7 +26,7 @@ namespace RabbetGameEngine
                         VAO.beginBuilding();
                         VertexBufferLayout l = new VertexBufferLayout();
                         Vertex.configureLayout(l);
-                        VAO.addBuffer(data.vertices, Vertex.vertexByteSize, l);
+                        VAO.addBuffer(data.vertices, Vertex.SIZE_BYTES, l);
                         VAO.addIndicesBuffer(data.indices);
                         VAO.finishBuilding();
                     }
@@ -38,7 +38,7 @@ namespace RabbetGameEngine
                         VAO.beginBuilding();
                         VertexBufferLayout l = new VertexBufferLayout();
                         Vertex.configureLayout(l);
-                        VAO.addBuffer(data.vertices, Vertex.vertexByteSize, l);
+                        VAO.addBuffer(data.vertices, Vertex.SIZE_BYTES, l);
                         VAO.addIndicesBuffer(data.indices);
                         VAO.finishBuilding();
                     }
@@ -64,7 +64,7 @@ namespace RabbetGameEngine
                 VAO.beginBuilding();
                 VertexBufferLayout l = new VertexBufferLayout();
                 PointParticle.configureLayout(l);
-                VAO.addBuffer(data, PointParticle.pParticleByteSize, l);
+                VAO.addBuffer(data, PointParticle.SIZE_BYTES, l);
                 VAO.finishBuilding();
             }
             else
@@ -75,7 +75,7 @@ namespace RabbetGameEngine
                 VAO.beginBuilding();
                 VertexBufferLayout l = new VertexBufferLayout();
                 PointParticle.configureLayout(l);
-                VAO.addBuffer(data, PointParticle.pParticleByteSize, l);
+                VAO.addBuffer(data, PointParticle.SIZE_BYTES, l);
                 VAO.finishBuilding();
             }
             this.renderLength = data.Length;

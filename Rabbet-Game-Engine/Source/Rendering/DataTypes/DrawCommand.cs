@@ -7,7 +7,7 @@ namespace RabbetGameEngine
     /// </summary>
     public struct DrawCommand
     {
-        public static readonly int sizeInBytes = 5 * sizeof(uint);
+        public static readonly int SIZE_BYTES = 5 * sizeof(uint);
         public static readonly byte countOffset = (byte)Marshal.OffsetOf(typeof(DrawCommand), "count");
         public static readonly byte instanceCountOffset = (byte)Marshal.OffsetOf(typeof(DrawCommand), "instanceCount");
         public static readonly byte firstIndexOffset = (byte)Marshal.OffsetOf(typeof(DrawCommand), "firstIndex");

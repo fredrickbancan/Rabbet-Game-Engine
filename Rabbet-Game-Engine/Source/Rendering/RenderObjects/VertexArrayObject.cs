@@ -77,7 +77,7 @@ namespace RabbetGameEngine
         {
             if (hasSetUpIndirect) return;
             indbo = new IndirectBufferObject();
-            indbo.init(initialCount * DrawCommand.sizeInBytes);
+            indbo.init(initialCount * DrawCommand.SIZE_BYTES);
             hasSetUpIndirect = true;
             usesIndirect = true;
         }

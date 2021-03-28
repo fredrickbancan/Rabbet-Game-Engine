@@ -18,7 +18,7 @@ namespace RabbetGameEngine
         public static readonly byte positionOffset = (byte)Marshal.OffsetOf(typeof(Vertex), "pos");
         public static readonly byte colorOffset = (byte)Marshal.OffsetOf(typeof(Vertex), "color");
         public static readonly byte uvOffset = (byte)Marshal.OffsetOf(typeof(Vertex), "uv");
-        public static readonly int vertexByteSize = positionSize + colorSize + uvSize;
+        public static readonly int SIZE_BYTES = positionSize + colorSize + uvSize;
 
         public Vertex(float x, float y, float z, float r, float g, float b, float a, float u, float v)
         {

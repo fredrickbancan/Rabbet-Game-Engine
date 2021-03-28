@@ -21,13 +21,13 @@ namespace RabbetGameEngine
         public void updateData(DrawCommand[] data, int count)
         {
             GL.BindBuffer(BufferTarget.DrawIndirectBuffer, id);
-            GL.BufferSubData(BufferTarget.DrawIndirectBuffer, IntPtr.Zero, count * DrawCommand.sizeInBytes, data);
+            GL.BufferSubData(BufferTarget.DrawIndirectBuffer, IntPtr.Zero, count * DrawCommand.SIZE_BYTES, data);
         }
 
         public void resizeBuffer(int newCount)
         {
             GL.BindBuffer(BufferTarget.DrawIndirectBuffer, id);
-            GL.BufferData(BufferTarget.DrawIndirectBuffer, newCount * DrawCommand.sizeInBytes, IntPtr.Zero, BufferUsageHint.DynamicDraw);
+            GL.BufferData(BufferTarget.DrawIndirectBuffer, newCount * DrawCommand.SIZE_BYTES, IntPtr.Zero, BufferUsageHint.DynamicDraw);
         }
 
         public void bind()

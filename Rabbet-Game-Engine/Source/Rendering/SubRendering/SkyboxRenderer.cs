@@ -40,7 +40,7 @@ namespace RabbetGameEngine
             skyVAO.beginBuilding();
             VertexBufferLayout l = new VertexBufferLayout();
             Vertex.configureLayout(l);
-            skyVAO.addBuffer(skyboxModel.vertices, Vertex.vertexByteSize, l);
+            skyVAO.addBuffer(skyboxModel.vertices, Vertex.SIZE_BYTES, l);
             skyVAO.addIndicesBuffer(skyboxModel.indices);
             skyVAO.finishBuilding();
 
@@ -55,7 +55,7 @@ namespace RabbetGameEngine
             shroudModel = new Model(QuadCombiner.combineData(temp), QuadCombiner.getIndicesForQuadCount(5));
             shroudVAO = new VertexArrayObject();
             shroudVAO.beginBuilding();
-            shroudVAO.addBuffer(shroudModel.vertices, Vertex.vertexByteSize, l);
+            shroudVAO.addBuffer(shroudModel.vertices, Vertex.SIZE_BYTES, l);
             shroudVAO.addIndicesBuffer(shroudModel.indices);
             shroudVAO.finishBuilding();
 
@@ -88,7 +88,7 @@ namespace RabbetGameEngine
             starsVAO.beginBuilding();
             VertexBufferLayout sl = new VertexBufferLayout();
             PointParticle.configureLayout(sl);
-            starsVAO.addBuffer(p.getStars().points, PointParticle.pParticleByteSize, sl);
+            starsVAO.addBuffer(p.getStars().points, PointParticle.SIZE_BYTES, sl);
             starsVAO.finishBuilding();
 
             if (moonsVAO != null)

@@ -1,4 +1,6 @@
 ﻿using OpenTK.Mathematics;
+using RabbetGameEngine.Models;
+using RabbetGameEngine.Rendering;
 using System;
 
 namespace RabbetGameEngine.SubRendering
@@ -6,101 +8,204 @@ namespace RabbetGameEngine.SubRendering
     //TODO: replace look at camera function in iSphere shaders with new faster one. (found in mathutil and in moons.shader)
     public class Batch
     { 
-        public static readonly int vectorSize = sizeof(float) * 3;
-        public static readonly int matrixSize = sizeof(float) * 16;
-        public static readonly int initialArraySize = 32;
-        public static readonly int baseMaxBufferSizeBytes = 8388608;
-        public int maxBufferSizeBytes = baseMaxBufferSizeBytes;
-        public int maxIndiciesCount;
-        public int maxVertexCount;
-        public int maxPositionCount;
-        public int maxPointCount;
-        public int maxSprite3DCount;
-        public int maxMatrixCount;
-        public int maxDrawCommandCount;
+        protected int maxBufferSizeBytes = RenderConstants.MAX_BATCH_BUFFER_SIZE_BYTES;
+        protected int maxIndiciesCount;
+        protected int maxVertexCount;
+        protected int maxPositionCount;
+        protected int maxPointCount;
+        protected int maxSprite3DCount;
+        protected int maxMatrixCount;
+        protected int maxDrawCommandCount;
 
         /// <summary>
         /// true if this batch requires transparency sorting
         /// </summary>
-        public bool requiresSorting = false;
+        protected bool requiresSorting = false;
 
-        public bool hasBeenUsed = false;
+        protected bool hasBeenUsed = false;
 
-        public VertexArrayObject VAO;
-        public Vertex[] vertices;
-        public uint[] indices;
+        protected VertexArrayObject VAO;
+        protected Vertex[] vertices;
+        protected uint[] indices;
 
-        public PointParticle[] batchedPoints = null;
+        protected PointParticle[] batchedPoints = null;
 
-        public Matrix4[] modelMatrices = null;
+        protected Matrix4[] modelMatrices = null;
 
-        public Vector3[] positions = null;
+        protected Vector3[] positions = null;
 
-        public Vector3[] scales = null;
+        protected Vector3[] scales = null;
 
-        public Sprite3D[] sprites3D = null;
+        protected Sprite3D[] sprites3D = null;
 
-        public DrawCommand[] drawCommands = null;
+        protected DrawCommand[] drawCommands = null;
+
+        protected Texture[] batchTextures = null;
+
+        //TODO: Move all itterators and arrays and shit to their own batch class where they belong
 
         /// <summary>
         /// number of individual objects requested. This must be used as an identifier for each vertex of 
         /// the individual objects so the shader can determine which model matrices to use to transform it.
         /// </summary>
-        public int requestedObjectItterator = 0;
+        protected int requestedObjectItterator = 0;
 
         /// <summary>
         /// Used for properly interlacing and including new requests for lerp triangle types which require 2 matrices per object
         /// </summary>
-        public int matricesItterator = 0;
+        protected int matricesItterator = 0;
 
         /// <summary>
         /// Used for properly interlacing and including new requests for lerp points which require 2 points per point.
         /// </summary>
-        public int pointsItterator = 0;
+        protected int pointsItterator = 0;
 
         /// <summary>
         /// Used for properly interlacing and including new requests for lerp 3d text or any other type which uses 2 positions per object.
         /// </summary>
-        public int positionItterator = 0;
+        protected int positionItterator = 0;
 
-        public int spriteItterator = 0;
+        protected int spriteItterator = 0;
 
         /// <summary>
         /// number of vertices requested to be added to this batch since the last update.
         /// </summary>
-        public int requestedVerticesCount = 0;
+        protected int requestedVerticesCount = 0;
 
         /// <summary>
         /// number of indices requested to be added to this batch since the last update
         /// </summary>
-        public int requestedIndicesCount = 0;
+        protected int requestedIndicesCount = 0;
 
-        private RenderType batchType;
-        public Texture batchTex;
-        public Shader batchShader;
+        /// <summary>
+        /// Number of textures added to this batch
+        /// </summary>
+        protected int requestedTextures = 0;
 
-        public int renderLayer = 0;
+        /// <summary>
+        /// Will be true if this batch can not fit any more textures
+        /// </summary>
+        protected bool texturesFull = false;
 
-        public Batch(RenderType type, Texture tex, int renderLayer = 0)
+        protected RenderType batchType;
+        protected Shader batchShader;
+
+        protected int renderLayer = 0;
+
+        public Batch(RenderType type, int renderLayer = 0)
         {
-            this.renderLayer = renderLayer;
+            this.renderLayer= renderLayer;
             batchType = type;
-            batchTex = tex;
+            batchTextures = new Texture[RenderConstants.MAX_BATCH_TEXTURES];
             BatchUtil.buildBatch(this);
+            VAO = new VertexArrayObject();
+            VAO.beginBuilding();
+            buildBatch();
+            VAO.finishBuilding();
             calculateBatchLimitations();
+            hasBeenUsed = true;
         }
 
-        public void calculateBatchLimitations()
+        protected virtual void buildBatch()
+        {
+
+        }
+
+        /// <summary>
+        /// returns True if this batch accepts and successfully fit the point cloud
+        /// </summary>
+        /// <param name="mod">the point cloud</param>
+        public virtual bool tryToFitInBatchPoints(PointCloudModel mod)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Returns true if this batch accepts and successfully fits the provided model
+        /// </summary>
+        /// <param name="mod">The model</param>
+        public virtual bool tryToFitInBatchModel(Model mod)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Returns true if this batch accepts and successfully fits the provided point particle
+        /// </summary>
+        /// <param name="p">The Point particle</param>
+        public virtual bool tryToFitInBatchSinglePoint(PointParticle p)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Returns true if this batch accepts and successfully fits the provided lerped point particle
+        /// </summary>
+        /// <param name="p">the point particle</param>
+        /// <param name="prevP">the point particle's previous update data</param>
+        public virtual bool tryToFitInBatchLerpPoint(PointParticle p, PointParticle prevP)
+        {
+            return false;
+        }
+        /// <summary>
+        /// Returns true if this batch accepts and successfully fits the provided Sprite3D
+        /// </summary>
+        /// <param name="s">the 3d sprite</param>
+        public virtual bool tryToFitInBatchSprite3D(Sprite3D s)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Updates this batches vao buffers with all requested render data, should be done after each render update.
+        /// </summary>
+        public virtual void updateBuffers()
+        {
+
+        }
+
+        /// <summary>
+        /// Updates the uniforms for this batches shader. Should be called after each render update before rendering.
+        /// This is for uniforms which only need to be updated once per update, not per frame.
+        /// </summary>
+        public virtual void updateUniforms()
+        {
+
+        }
+
+        /// <summary>
+        /// Renders this batch based on variables in the provided planet.
+        /// </summary>
+        /// <param name="thePlanet">The current planet being rendered</param>
+        public virtual void drawBatch(Planet thePlanet)
+        {
+
+        }
+
+        protected void bindAllTextures()
+        {
+
+        }
+
+        /// <summary>
+        /// Should be called after dividing maxBufferSizeBytes to accomidate all buffer objects
+        /// </summary>
+        protected void calculateBatchLimitations()
         {
             maxIndiciesCount = maxBufferSizeBytes / sizeof(uint);
-            maxVertexCount = maxBufferSizeBytes / Vertex.vertexByteSize;
-            maxDrawCommandCount = maxBufferSizeBytes / DrawCommand.sizeInBytes;
+            maxVertexCount = maxBufferSizeBytes / Vertex.SIZE_BYTES;
+            maxDrawCommandCount = maxBufferSizeBytes / DrawCommand.SIZE_BYTES;
             maxMatrixCount = maxBufferSizeBytes / (sizeof(float) * 16);
             maxPositionCount = maxBufferSizeBytes / (sizeof(float) * 3);
             maxSprite3DCount = maxBufferSizeBytes / Sprite3D.sizeInBytes;
-            maxPointCount = maxBufferSizeBytes / PointParticle.pParticleByteSize;
+            maxPointCount = maxBufferSizeBytes / PointParticle.SIZE_BYTES;
         }
 
+        /// <summary>
+        /// Adds a drawcommand to buffers at the requestedobjectitterator based on given parameters
+        /// </summary>
+        /// <param name="objIndCount">Number of indices of the object</param>
+        /// <param name="quads">True if the object is made of seperate quads (such as 3d text)</param>
         public void configureDrawCommandsForCurrentObject(int objIndCount, bool quads)
         {
             int n;
@@ -124,7 +229,10 @@ namespace RabbetGameEngine.SubRendering
             drawCommands[requestedObjectItterator] = new DrawCommand((uint)(objIndCount), (uint)(1), (uint)(requestedIndicesCount), (uint)(requestedVerticesCount), (uint)(requestedObjectItterator));
         }
 
-        public void reset()
+        /// <summary>
+        /// Resets all itteratiors and counts to 0 to prepare for new render update
+        /// </summary>
+        public virtual void reset()
         {
             requestedVerticesCount = 0;
             requestedIndicesCount = 0;
@@ -156,9 +264,10 @@ namespace RabbetGameEngine.SubRendering
             return this.batchType;
         }
 
-        public Texture getBatchtexture()
+        public Texture getBatchtexture(int index)
         {
-            return batchTex;
+            if (index >= RenderConstants.MAX_BATCH_TEXTURES) return null;
+            return batchTextures[index];
         }
 
         public void setVAO(VertexArrayObject vao)
@@ -175,5 +284,14 @@ namespace RabbetGameEngine.SubRendering
         {
             VAO.delete();
         }
+
+        public Batch addTexture(Texture tex)
+        {
+            if (texturesFull) return this;
+            batchTextures[requestedTextures++] = tex;
+            texturesFull = requestedTextures >= RenderConstants.MAX_BATCH_TEXTURES;
+            return this;
+        }
+
     }
 }

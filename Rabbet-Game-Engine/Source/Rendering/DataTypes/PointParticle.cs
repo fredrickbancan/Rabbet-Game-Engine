@@ -22,7 +22,7 @@ namespace RabbetGameEngine
         public static readonly byte colorOffset = (byte)Marshal.OffsetOf(typeof(PointParticle), "color");
         public static readonly byte radiusOffset = (byte)Marshal.OffsetOf(typeof(PointParticle), "radius");
         public static readonly byte aocOffset = (byte)Marshal.OffsetOf(typeof(PointParticle), "aoc");
-        public static readonly int pParticleByteSize = positionSize + colorSize + radiusSize + aocSize;
+        public static readonly int SIZE_BYTES = positionSize + colorSize + radiusSize + aocSize;
 
         public PointParticle(float x, float y, float z, float r, float g, float b, float a, float radius, bool aoc)
         {

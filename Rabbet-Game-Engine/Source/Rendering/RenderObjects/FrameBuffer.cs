@@ -64,7 +64,7 @@ namespace RabbetGameEngine
             screenQuadVAO.beginBuilding();
             VertexBufferLayout l = new VertexBufferLayout();
             Vertex.configureLayout(l);
-            screenQuadVAO.addBuffer(screenQuad.vertices, Vertex.vertexByteSize, l);
+            screenQuadVAO.addBuffer(screenQuad.vertices, Vertex.SIZE_BYTES, l);
             screenQuadVAO.addIndicesBuffer(screenQuad.indices);
             screenQuadVAO.finishBuilding();
             ShaderUtil.tryGetShader(ShaderUtil.frameBufferName, out screenQuadShader);
