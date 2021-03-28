@@ -5,24 +5,23 @@ using System;
 
 namespace RabbetGameEngine.SubRendering
 {
-    public class BatchGuiCutOut :  Batch
+    public class BatchGuiTransparent : Batch
     {
-        public BatchGuiCutOut(int renderLayer = 0) : base(RenderType.guiCutout, renderLayer)
+        public BatchGuiTransparent(int renderLayer = 0) : base(RenderType.guiLines, renderLayer)
         {
         }
 
         protected override void buildBatch()
         {
-            base.buildBatch();
-            ShaderUtil.tryGetShader(ShaderUtil.guiCutoutName, out batchShader);
+            ShaderUtil.tryGetShader(ShaderUtil.guiTransparentName, out batchShader);
             batchShader.use();
             batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
             maxBufferSizeBytes /= 2;
             vertices = new Vertex[RenderConstants.INIT_BATCH_ARRAY_SIZE];
             indices = QuadCombiner.getIndicesForQuadCount(RenderConstants.INIT_BATCH_ARRAY_SIZE / 6);
-            VertexBufferLayout l = new VertexBufferLayout();
-            Vertex.configureLayout(l);
-            vao.addBufferDynamic(RenderConstants.INIT_BATCH_ARRAY_SIZE * Vertex.SIZE_BYTES, l);
+            VertexBufferLayout lt = new VertexBufferLayout();
+            Vertex.configureLayout(lt);
+            vao.addBufferDynamic(RenderConstants.INIT_BATCH_ARRAY_SIZE * Vertex.SIZE_BYTES, lt);
             vao.addIndicesBufferDynamic(indices.Length);
             vao.updateIndices(indices, indices.Length);
             vao.drawType = PrimitiveType.Triangles;
@@ -60,7 +59,6 @@ namespace RabbetGameEngine.SubRendering
 
         public override void updateUniforms(World thePlanet)
         {
-            batchShader.use();
             batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
         }
 
@@ -68,10 +66,9 @@ namespace RabbetGameEngine.SubRendering
         {
             vao.bind();
             batchShader.use();
-            batchShader.setUniformMat4F("viewMatrix", GameInstance.get.thePlayer.getViewMatrix());
             GL.DepthMask(false);
             GL.DepthRange(0, 0.005F);
-            GL.DrawElements(PrimitiveType.Triangles,requestedVerticesCount + (requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.Triangles, requestedVerticesCount + (requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
             GL.DepthRange(0, 1);
             GL.DepthMask(true);
             vao.unBind();

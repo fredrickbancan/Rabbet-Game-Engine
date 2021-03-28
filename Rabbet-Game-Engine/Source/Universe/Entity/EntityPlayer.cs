@@ -14,7 +14,7 @@ namespace RabbetGameEngine
         public bool debugScreenOn = false;
 
         public static readonly Vector3 eyeOffset = new Vector3(0.0F, 0.62F, 0.0F);
-        public EntityPlayer(Planet planet, string name) : base(planet)
+        public EntityPlayer(World planet, string name) : base(planet)
         {
             isPlayer = true;
             this.playerName = name;
@@ -22,7 +22,7 @@ namespace RabbetGameEngine
             this.collider = new AABB(new Vector3(-0.5F, -1, -0.5F), new Vector3(0.5F, 1, 0.5F), this);
             this.hasCollider = true;
         }
-        public EntityPlayer(Planet planet, string name, Vector3 spawnPosition) : base(planet, spawnPosition)
+        public EntityPlayer(World planet, string name, Vector3 spawnPosition) : base(planet, spawnPosition)
         {
             isPlayer = true;
             this.playerName = name;

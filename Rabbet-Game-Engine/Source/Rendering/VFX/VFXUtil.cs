@@ -11,7 +11,7 @@ namespace RabbetGameEngine.VisualEffects
     {
         //temp
         private static List<PointCloudModel > debugPointClouds = new List<PointCloudModel>();
-        public static void doExplosionEffect(Planet planet, Vector3 location, float radius, float pitch = 0, float yaw = -90, float roll = 0)
+        public static void doExplosionEffect(World planet, Vector3 location, float radius, float pitch = 0, float yaw = -90, float roll = 0)
         {
             VFXPointCloud smoke = new VFXPointCloud(location, Color.darkGrey, true, false, 4F, 0.15F, 0.8F);
 
@@ -44,7 +44,7 @@ namespace RabbetGameEngine.VisualEffects
             planet.spawnVFXInWorld(explosion2);
         }
 
-        public static void doSmallSmokePuffEffect(Planet planet, Vector3 location)
+        public static void doSmallSmokePuffEffect(World planet, Vector3 location)
         {
             VFXPointCloud smoke = new VFXPointCloud(location, Color.darkGrey, true, false, 2F, 0.05F, 0.7F);
             smoke.constructRandomPointCloudModel(7, 0.05F, true);
@@ -54,7 +54,7 @@ namespace RabbetGameEngine.VisualEffects
             planet.spawnVFXInWorld(smoke);
         }
 
-        public static void doSmallBangEffect(Planet planet, Vector3 location)
+        public static void doSmallBangEffect(World planet, Vector3 location)
         {
             VFXPointCloud bang = new VFXPointCloud(location, Color.flame, false, false, 0.075F, 0.0375F, 1);
             bang.constructRandomPointCloudModel(7, 0.15F, false);
@@ -71,7 +71,7 @@ namespace RabbetGameEngine.VisualEffects
             doSmallSmokePuffEffect(planet, location);
         }
 
-        public static void doDebugSmokeEffect(Planet planet)
+        public static void doDebugSmokeEffect(World planet)
         {
             VFXPointCloud smoke = new VFXPointCloud(new Vector3(0, 2F, 0), Color.darkGrey, true, false, 4F, 0.5F, 0.7F);
             smoke.constructRandomPointCloudModel(15, 0.5F, true);

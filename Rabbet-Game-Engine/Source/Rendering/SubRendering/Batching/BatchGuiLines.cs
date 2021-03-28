@@ -5,43 +5,28 @@ using System;
 
 namespace RabbetGameEngine.SubRendering
 {
-    public class BatchGuiCutOut :  Batch
+    public class BatchGuiLines : Batch
     {
-        public BatchGuiCutOut(int renderLayer = 0) : base(RenderType.guiCutout, renderLayer)
+        public BatchGuiLines(int renderLayer = 0) : base(RenderType.guiLines, renderLayer)
         {
         }
 
         protected override void buildBatch()
         {
-            base.buildBatch();
-            ShaderUtil.tryGetShader(ShaderUtil.guiCutoutName, out batchShader);
+            ShaderUtil.tryGetShader(ShaderUtil.guiLinesName, out batchShader);
             batchShader.use();
             batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
-            maxBufferSizeBytes /= 2;
             vertices = new Vertex[RenderConstants.INIT_BATCH_ARRAY_SIZE];
-            indices = QuadCombiner.getIndicesForQuadCount(RenderConstants.INIT_BATCH_ARRAY_SIZE / 6);
-            VertexBufferLayout l = new VertexBufferLayout();
-            Vertex.configureLayout(l);
-            vao.addBufferDynamic(RenderConstants.INIT_BATCH_ARRAY_SIZE * Vertex.SIZE_BYTES, l);
-            vao.addIndicesBufferDynamic(indices.Length);
-            vao.updateIndices(indices, indices.Length);
-            vao.drawType = PrimitiveType.Triangles;
+            VertexBufferLayout ll = new VertexBufferLayout();
+            Vertex.configureLayout(ll);
+            vao.addBufferDynamic(RenderConstants.INIT_BATCH_ARRAY_SIZE * Vertex.SIZE_BYTES, ll);
+            vao.drawType = PrimitiveType.Lines;
         }
 
         public override bool tryToFitInBatchModel(Model mod)
         {
             int n = vertices.Length;
             if (!BatchUtil.canFitOrResize(ref vertices, mod.vertices.Length, requestedVerticesCount, maxVertexCount)) return false;
-            int i = indices.Length;
-            if (BatchUtil.canResizeQuadIndicesIfNeeded(ref indices, requestedVerticesCount + mod.vertices.Length, maxIndiciesCount))
-            {
-                if (i != indices.Length)
-                {
-                    vao.resizeIndices(indices.Length);
-                    vao.updateIndices(indices, indices.Length);
-                }
-            }
-            else return false;
 
             if (vertices.Length != n)
             {
@@ -63,17 +48,19 @@ namespace RabbetGameEngine.SubRendering
             batchShader.use();
             batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
         }
-
+            
         public override void drawBatch(World thePlanet)
         {
             vao.bind();
             batchShader.use();
             batchShader.setUniformMat4F("viewMatrix", GameInstance.get.thePlayer.getViewMatrix());
+            GL.LineWidth(GUIManager.guiLineWidth);
             GL.DepthMask(false);
             GL.DepthRange(0, 0.005F);
-            GL.DrawElements(PrimitiveType.Triangles,requestedVerticesCount + (requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
+            GL.DrawArrays(PrimitiveType.Lines, 0, requestedVerticesCount);
             GL.DepthRange(0, 1);
             GL.DepthMask(true);
+            GL.LineWidth(Renderer.defaultLineWidthInPixels);
             vao.unBind();
         }
     }

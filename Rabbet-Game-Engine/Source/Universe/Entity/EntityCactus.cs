@@ -9,7 +9,7 @@ namespace RabbetGameEngine
         private bool turningLeft = false;
         private bool walkingFowards = false;
 		private float rotationSpeed = 2.5F;
-        public EntityCactus(Planet planet) : base(planet)
+        public EntityCactus(World planet) : base(planet)
         {
             this.walkSpeed = 0.025F;
             this.entityModel = new EntityCactusModel(this);
@@ -19,7 +19,7 @@ namespace RabbetGameEngine
             yaw = (float)currentPlanet.rand.NextDouble() * 360;
             walkFowards();
         }
-        public EntityCactus(Planet planet, Vector3 pos) : base(planet, pos)
+        public EntityCactus(World planet, Vector3 pos) : base(planet, pos)
         {
             this.walkSpeed = 0.025F;
             this.entityModel = new EntityCactusModel(this);

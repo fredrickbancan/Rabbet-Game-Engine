@@ -5,7 +5,7 @@ namespace RabbetGameEngine
 {
     class EntityTankProjectile : EntityProjectile
     {
-        public EntityTankProjectile(Planet p, Vector3 pos, Vector3 direction, float barrelPitch, float initialYaw) : base(p, pos, direction)
+        public EntityTankProjectile(World p, Vector3 pos, Vector3 direction, float barrelPitch, float initialYaw) : base(p, pos, direction)
         {
             this.yaw = initialYaw ;
             this.pitch = barrelPitch;

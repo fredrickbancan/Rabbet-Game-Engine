@@ -35,7 +35,7 @@ namespace RabbetGameEngine
           is set to true. To detect if an action is requested, check the index. e.g: if(actions[Action.attack])*/
         protected bool[] actions = new bool[EntityLiving.actionsCount];
 
-        public EntityLiving(Planet planet) : base(planet)
+        public EntityLiving(World planet) : base(planet)
         {
             frontVector = new Vector3(0.0F, 0.0F, -1.0F);
             upVector = new Vector3(0.0F, 1.0F, 0.0F);
@@ -43,7 +43,7 @@ namespace RabbetGameEngine
             isLiving = true;
         }
 
-        public EntityLiving(Planet planet, Vector3 pos) : base(planet, pos)
+        public EntityLiving(World planet, Vector3 pos) : base(planet, pos)
         {
             frontVector = new Vector3(0.0F, 0.0F, -1.0F);
             upVector = new Vector3(0.0F, 1.0F, 0.0F);

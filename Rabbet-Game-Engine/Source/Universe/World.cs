@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace RabbetGameEngine
 {
-    public class Planet
+    public class World
     {
         private Color fogColor;
         private Color horizonColor;
@@ -66,7 +66,7 @@ namespace RabbetGameEngine
         private float fogStart;
         private float fogEnd;
         private float drawDistance = 0;
-        public Planet(long seed)
+        public World(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
             horizonColor = Color.lightOrange;

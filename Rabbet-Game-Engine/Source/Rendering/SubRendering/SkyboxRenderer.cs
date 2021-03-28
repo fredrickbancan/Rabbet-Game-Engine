@@ -9,7 +9,7 @@ namespace RabbetGameEngine
     {
         private static Texture ditherTex = null;
         private static Texture moonsTex = null;
-        private static Planet skyboxToDraw = null;
+        private static World skyboxToDraw = null;
         private static Model skyboxModel = null;
         private static Model shroudModel = null;
         private static Shader skyboxShader = null;
@@ -77,7 +77,7 @@ namespace RabbetGameEngine
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
         }
 
-        public static void setSkyboxToDraw(Planet p)
+        public static void setSkyboxToDraw(World p)
         {
             skyboxToDraw = p;
             if(starsVAO != null)

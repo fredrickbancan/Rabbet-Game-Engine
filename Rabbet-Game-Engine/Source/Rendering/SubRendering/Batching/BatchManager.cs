@@ -18,7 +18,7 @@ namespace RabbetGameEngine.SubRendering
         {
             for (int i = 0; i < batches.Count; ++i)
             {
-                batches.ElementAt(i).reset();
+                batches.ElementAt(i).preRednerUpdate();
             }
         }
 
@@ -29,7 +29,7 @@ namespace RabbetGameEngine.SubRendering
         {
             for (int i = 0; i < guiBatches.Count; ++i)
             {
-                guiBatches.ElementAt(i).reset();
+                guiBatches.ElementAt(i).preRednerUpdate();
             }
         }
 

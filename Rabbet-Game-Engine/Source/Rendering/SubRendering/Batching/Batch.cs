@@ -24,7 +24,7 @@ namespace RabbetGameEngine.SubRendering
 
         protected bool hasBeenUsed = false;
 
-        protected VertexArrayObject VAO;
+        protected VertexArrayObject vao;
         protected Vertex[] vertices;
         protected uint[] indices;
 
@@ -97,11 +97,10 @@ namespace RabbetGameEngine.SubRendering
             this.renderLayer= renderLayer;
             batchType = type;
             batchTextures = new Texture[RenderConstants.MAX_BATCH_TEXTURES];
-            BatchUtil.buildBatch(this);
-            VAO = new VertexArrayObject();
-            VAO.beginBuilding();
+            vao = new VertexArrayObject();
+            vao.beginBuilding();
             buildBatch();
-            VAO.finishBuilding();
+            vao.finishBuilding();
             calculateBatchLimitations();
             hasBeenUsed = true;
         }
@@ -168,7 +167,8 @@ namespace RabbetGameEngine.SubRendering
         /// Updates the uniforms for this batches shader. Should be called after each render update before rendering.
         /// This is for uniforms which only need to be updated once per update, not per frame.
         /// </summary>
-        public virtual void updateUniforms()
+        /// /// <param name="thePlanet">The current planet being rendered</param>
+        public virtual void updateUniforms(World thePlanet)
         {
 
         }
@@ -177,7 +177,7 @@ namespace RabbetGameEngine.SubRendering
         /// Renders this batch based on variables in the provided planet.
         /// </summary>
         /// <param name="thePlanet">The current planet being rendered</param>
-        public virtual void drawBatch(Planet thePlanet)
+        public virtual void drawBatch(World thePlanet)
         {
 
         }
@@ -214,12 +214,12 @@ namespace RabbetGameEngine.SubRendering
                 if((n*=2) >= maxDrawCommandCount)
                 {
                     Array.Resize<DrawCommand>(ref drawCommands, maxDrawCommandCount);
-                    VAO.resizeIndirect(maxDrawCommandCount);
+                    vao.resizeIndirect(maxDrawCommandCount);
                 }
                 else
                 {
                     Array.Resize<DrawCommand>(ref drawCommands, n);
-                    VAO.resizeIndirect(n);
+                    vao.resizeIndirect(n);
                 }
             }
 
@@ -243,20 +243,15 @@ namespace RabbetGameEngine.SubRendering
             spriteItterator = 0;
         }
 
-        public void postRenderUpdate()
+        public virtual void preRednerUpdate()
         {
-            BatchUtil.updateBuffers(this);
-            hasBeenUsed = false;
-        }
-        
-        public void draw( Matrix4 viewMatrix, Vector3 fogColor)
-        {
-            BatchUtil.drawBatch(this, viewMatrix, fogColor);
+            reset();
         }
 
-        public void bindVAO()
+        public virtual void postRenderUpdate()
         {
-            VAO.bind();
+            updateBuffers();
+            hasBeenUsed = false;
         }
 
         public RenderType getRenderType()
@@ -270,11 +265,6 @@ namespace RabbetGameEngine.SubRendering
             return batchTextures[index];
         }
 
-        public void setVAO(VertexArrayObject vao)
-        {
-            this.VAO = vao;
-        }
-
         public bool hasBeenUsedSinceLastUpdate()
         {
             return hasBeenUsed;
@@ -282,7 +272,16 @@ namespace RabbetGameEngine.SubRendering
 
         public void deleteVAO()
         {
-            VAO.delete();
+            vao.delete();
+        }
+
+        public bool containsTexture(Texture tex)
+        {
+            foreach(Texture t in batchTextures)
+            {
+                if (t == tex) return true;
+            }
+            return false;
         }
 
         public Batch addTexture(Texture tex)

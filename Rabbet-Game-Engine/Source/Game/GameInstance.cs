@@ -27,7 +27,7 @@ namespace RabbetGameEngine
         private static float dpiY;
         private static bool gamePaused = false;
         public EntityPlayer thePlayer;
-        public Planet currentPlanet;
+        public World currentPlanet;
 
         /// <summary>
         /// Will be true if there has been atleast one onTick() call since last frame.
@@ -59,7 +59,7 @@ namespace RabbetGameEngine
                 windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
                 setDPIScale();
                 GUIManager.addPersistentGUI(new GUIHud());
-                currentPlanet = new Planet(0xdeadbeef);
+                currentPlanet = new World(0xdeadbeef);
                 //create and spawn player in new world
                 thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
                 for (int i = 0; i < 65; i++)
