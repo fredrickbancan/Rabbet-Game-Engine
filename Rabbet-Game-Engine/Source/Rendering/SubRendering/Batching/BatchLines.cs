@@ -47,6 +47,7 @@ namespace RabbetGameEngine.SubRendering
             }
             requestedVerticesCount += mod.vertices.Length;
             requestedIndicesCount += mod.indices.Length;
+            hasBeenUsed = true;
             return true;
         }
 
@@ -58,6 +59,7 @@ namespace RabbetGameEngine.SubRendering
 
         public override void updateUniforms(World thePlanet)
         {
+            batchShader.use();
             batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             batchShader.setUniformVec3F("fogColor", thePlanet.getFogColor());
             batchShader.setUniform1F("fogStart", thePlanet.getFogStart());

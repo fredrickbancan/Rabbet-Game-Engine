@@ -27,7 +27,7 @@ namespace RabbetGameEngine
         private static float dpiY;
         private static bool gamePaused = false;
         public EntityPlayer thePlayer;
-        public World currentPlanet;
+        public World currentWorld;
 
         /// <summary>
         /// Will be true if there has been atleast one onTick() call since last frame.
@@ -59,20 +59,20 @@ namespace RabbetGameEngine
                 windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
                 setDPIScale();
                 GUIManager.addPersistentGUI(new GUIHud());
-                currentPlanet = new World(0xdeadbeef);
+                currentWorld = new World(0xdeadbeef);
                 //create and spawn player in new world
-                thePlayer = new EntityPlayer(currentPlanet, "Steve", new Vector3(0, 3, 2));
+                thePlayer = new EntityPlayer(currentWorld, "Steve", new Vector3(0, 3, 2));
                 for (int i = 0; i < 65; i++)
                 {
-                    currentPlanet.spawnEntityInWorld(new EntityCactus(currentPlanet, new Vector3(-privateRand.Next(-26, 27), 2.5F, -privateRand.Next(-26, 27))));
+                    currentWorld.spawnEntityInWorld(new EntityCactus(currentWorld, new Vector3(-privateRand.Next(-26, 27), 2.5F, -privateRand.Next(-26, 27))));
                 }
-                currentPlanet.spawnEntityInWorld(thePlayer);
+                currentWorld.spawnEntityInWorld(thePlayer);
 
                 //temp sound examples
                 SoundManager.playSoundLoopingAt("waterroll", new Vector3(16, 1, 16), 0.5F);
-                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll", GameSettings.defaultFont, "waterroll.ogg, 50% volume", new Vector3(16, 2.5F, 16), 5.0F, Color.white));
+                currentWorld.spawnVFXInWorld(new VFXStaticText3D("waterroll", GameSettings.defaultFont, "waterroll.ogg, 50% volume", new Vector3(16, 2.5F, 16), 5.0F, Color.white));
                 SoundManager.playSoundLoopingAt("waterroll_large", new Vector3(-16, 1, -16), 1.0F);
-                currentPlanet.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", GameSettings.defaultFont, "waterroll_large.ogg, 100% volume", new Vector3(-16, 2.5F, -16), 5.0F, Color.white));
+                currentWorld.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", GameSettings.defaultFont, "waterroll_large.ogg, 100% volume", new Vector3(-16, 2.5F, -16), 5.0F, Color.white));
 
                 Input.setCursorHiddenAndGrabbed(true);
                 Application.infoPrint("Initialized.");
@@ -120,14 +120,14 @@ namespace RabbetGameEngine
         {
             if (GameSettings.entityLabels)
             {
-                foreach (KeyValuePair<int, Entity> e in currentPlanet.entities)
+                foreach (KeyValuePair<int, Entity> e in currentWorld.entities)
                 {
-                    currentPlanet.addDebugLabel(new VFXMovingText3D(e.Value, entityLabelName, GameSettings.defaultFont, "Entity: " + e.Key.ToString(), new Vector3(0, 1, 0), 2.0F, Color.white));
+                    currentWorld.addDebugLabel(new VFXMovingText3D(e.Value, entityLabelName, GameSettings.defaultFont, "Entity: " + e.Key.ToString(), new Vector3(0, 1, 0), 2.0F, Color.white));
                 }
             }
             else
             {
-                foreach (VFX v in currentPlanet.vfxList)
+                foreach (VFX v in currentWorld.vfxList)
                 {
                     if (v.vfxName == entityLabelName)
                     {
@@ -165,7 +165,7 @@ namespace RabbetGameEngine
             }
             SoundManager.onFrame();
             thePlayer.onCameraUpdate();//do this before calling on tick to prepare camera variables
-            currentPlanet.onFrame();//should be called before rendering world since this may prepare certain elements for a frame perfect render
+            currentWorld.onFrame();//should be called before rendering world since this may prepare certain elements for a frame perfect render
             TicksAndFrames.updateFPS();
             GUIManager.onFrame();
             Renderer.doGUIRenderUpdate();
@@ -185,8 +185,8 @@ namespace RabbetGameEngine
 
         protected override void OnUnload()
         {
-            if (currentPlanet != null)
-                currentPlanet.onLeavingPlanet();
+            if (currentWorld != null)
+                currentWorld.onLeavingPlanet();
             Renderer.onClosing();
             SoundManager.onClosing();
         }
@@ -208,7 +208,7 @@ namespace RabbetGameEngine
             Profiler.startSection("tickWorld");
             Profiler.startTickSection("tickWorld");
             if (!gamePaused)
-                currentPlanet.onTick();
+                currentWorld.onTick();
             Profiler.endCurrentTickSection();
             Profiler.endCurrentSection();
             doneOneTick = true;//do last, ensures that certain functions are only called once per tick loop
@@ -219,18 +219,18 @@ namespace RabbetGameEngine
 
         public void onVideoSettingsChanged()
         {
-            if (currentPlanet != null)
+            if (currentWorld != null)
             {
-                currentPlanet.onVideoSettingsChanged();
+                currentWorld.onVideoSettingsChanged();
             }
             Renderer.onVideoSettingsChanged();//do last
         }
 
         public float getDrawDistance()
         {
-            if (currentPlanet != null)
+            if (currentWorld != null)
             {
-                return currentPlanet.getDrawDistance();
+                return currentWorld.getDrawDistance();
             }
             return 1000.0F;
         }

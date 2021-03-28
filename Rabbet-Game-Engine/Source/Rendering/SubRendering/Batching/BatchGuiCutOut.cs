@@ -50,6 +50,7 @@ namespace RabbetGameEngine.SubRendering
 
             Array.Copy(mod.vertices, 0, vertices, requestedVerticesCount, mod.vertices.Length);
             requestedVerticesCount += mod.vertices.Length;
+            hasBeenUsed = true;
             return true;
         }
 
@@ -67,6 +68,7 @@ namespace RabbetGameEngine.SubRendering
         public override void drawBatch(World thePlanet)
         {
             vao.bind();
+            bindAllTextures();
             batchShader.use();
             batchShader.setUniformMat4F("viewMatrix", GameInstance.get.thePlayer.getViewMatrix());
             GL.DepthMask(false);
@@ -75,6 +77,7 @@ namespace RabbetGameEngine.SubRendering
             GL.DepthRange(0, 1);
             GL.DepthMask(true);
             vao.unBind();
+            GL.ActiveTexture(TextureUnit.Texture0);
         }
     }
 }

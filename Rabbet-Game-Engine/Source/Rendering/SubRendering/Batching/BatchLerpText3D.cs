@@ -69,6 +69,7 @@ namespace RabbetGameEngine.SubRendering
             requestedObjectItterator++;
             requestedVerticesCount += mod.vertices.Length;
             requestedIndicesCount += n;
+            hasBeenUsed = true;
             return true;
         }
 
@@ -81,6 +82,7 @@ namespace RabbetGameEngine.SubRendering
 
         public override void updateUniforms(World thePlanet)
         {
+            batchShader.use();
             batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             batchShader.setUniformVec3F("fogColor", thePlanet.getFogColor());
             batchShader.setUniform1F("fogStart", thePlanet.getFogStart());
@@ -90,10 +92,12 @@ namespace RabbetGameEngine.SubRendering
         public override void drawBatch(World thePlanet)
         {
             vao.bind();
+            bindAllTextures();
             batchShader.use();
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             GL.MultiDrawElementsIndirect(PrimitiveType.Triangles, DrawElementsType.UnsignedInt, System.IntPtr.Zero, requestedObjectItterator, 0);
             vao.unBind();
+            GL.ActiveTexture(TextureUnit.Texture0);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using OpenTK.Graphics.OpenGL;
+using OpenTK.Mathematics;
 using RabbetGameEngine.Models;
 using RabbetGameEngine.Rendering;
 using System;
@@ -184,7 +185,11 @@ namespace RabbetGameEngine.SubRendering
 
         protected void bindAllTextures()
         {
-
+             for(int i = 0; i < requestedTextures; i++)
+             {
+                 GL.ActiveTexture(TextureUnit.Texture0 + i);
+                 batchTextures[i].use();
+             }
         }
 
         /// <summary>
@@ -241,9 +246,12 @@ namespace RabbetGameEngine.SubRendering
             pointsItterator = 0;
             positionItterator = 0;
             spriteItterator = 0;
+            requestedTextures = 0;
+            texturesFull = false;
+            hasBeenUsed = false;
         }
 
-        public virtual void preRednerUpdate()
+        public virtual void preRenderUpdate()
         {
             reset();
         }
@@ -251,7 +259,6 @@ namespace RabbetGameEngine.SubRendering
         public virtual void postRenderUpdate()
         {
             updateBuffers();
-            hasBeenUsed = false;
         }
 
         public RenderType getRenderType()
@@ -275,6 +282,11 @@ namespace RabbetGameEngine.SubRendering
             vao.delete();
         }
 
+        public int getRenderLayer()
+        {
+            return renderLayer;
+        }
+
         public bool containsTexture(Texture tex)
         {
             foreach(Texture t in batchTextures)
@@ -292,5 +304,12 @@ namespace RabbetGameEngine.SubRendering
             return this;
         }
 
+        public bool tryAddTexture(Texture tex)
+        {
+            if (texturesFull) return false;
+            batchTextures[requestedTextures++] = tex;
+            texturesFull = requestedTextures >= RenderConstants.MAX_BATCH_TEXTURES;
+            return true;
+        }
     }
 }

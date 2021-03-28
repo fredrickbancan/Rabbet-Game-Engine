@@ -49,6 +49,7 @@ namespace RabbetGameEngine.SubRendering
 
         public override void updateUniforms(World thePlanet)
         {
+            batchShader.use();
             batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             batchShader.setUniformVec3F("fogColor", thePlanet.getFogColor());
             batchShader.setUniform1F("fogStart", thePlanet.getFogStart());
@@ -58,10 +59,12 @@ namespace RabbetGameEngine.SubRendering
         public override void drawBatch(World thePlanet)
         {
             vao.bind();
+            bindAllTextures();
             batchShader.use();
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             GL.MultiDrawArraysIndirect(PrimitiveType.Triangles, System.IntPtr.Zero, requestedObjectItterator, sizeof(uint));
             vao.unBind();
+            GL.ActiveTexture(TextureUnit.Texture0);
         }
     }
 }

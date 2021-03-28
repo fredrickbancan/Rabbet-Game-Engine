@@ -107,8 +107,8 @@ namespace RabbetGameEngine
             shader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
             shader.setUniformVec3F("fogColor", fogColor);
-            shader.setUniform1F("fogStart", GameInstance.get.currentPlanet.getFogStart());
-            shader.setUniform1F("fogEnd", GameInstance.get.currentPlanet.getFogEnd());
+            shader.setUniform1F("fogStart", GameInstance.get.currentWorld.getFogStart());
+            shader.setUniform1F("fogEnd", GameInstance.get.currentWorld.getFogEnd());
             shader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
 
             switch(type)

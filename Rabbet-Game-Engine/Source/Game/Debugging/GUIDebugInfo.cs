@@ -1,6 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Debugging;
 using RabbetGameEngine.Sound;
+using RabbetGameEngine.SubRendering;
 
 namespace RabbetGameEngine
 {
@@ -25,7 +26,7 @@ namespace RabbetGameEngine
         public override void onUpdate()
         {
             base.onUpdate();
-            if (GameInstance.get.thePlayer != null && GameInstance.get.currentPlanet != null)
+            if (GameInstance.get.thePlayer != null && GameInstance.get.currentWorld != null)
             {
                 profileAveragesText.clear();
                 Profiler.getFrameProfilingData(profileAveragesText.lines, profileAveragesText.lineColors);
@@ -41,8 +42,10 @@ namespace RabbetGameEngine
                 infoText.addLine("X vel: " + pVel.X.ToString("0.0 m/t"));
                 infoText.addLine("Y vel: " + pVel.Y.ToString("0.0 m/t"));
                 infoText.addLine("Z vel: " + pVel.Z.ToString("0.0 m/t"));
-                infoText.addLine("Entities: " + GameInstance.get.currentPlanet.getEntityCount());
-                infoText.addLine("Projectiles: " + GameInstance.get.currentPlanet.getProjectileCount());
+                infoText.addLine("Entities: " + GameInstance.get.currentWorld.getEntityCount());
+                infoText.addLine("Projectiles: " + GameInstance.get.currentWorld.getProjectileCount());
+                infoText.addLine("Batches: " + BatchManager.batchCount);
+                infoText.addLine("GUI Batches: " + BatchManager.guiBatchCount);
                 infoText.addLine("Draw calls: " + Renderer.totalDraws);
                 infoText.addLine("Resolution: " + Renderer.viewPortSize.X + " X " + Renderer.viewPortSize.Y);
                 infoText.addLine("Sounds: " + SoundManager.getPlayingSoundsCount());

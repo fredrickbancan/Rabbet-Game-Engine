@@ -35,6 +35,7 @@ namespace RabbetGameEngine.SubRendering
 
             Array.Copy(mod.vertices, 0, vertices, requestedVerticesCount, mod.vertices.Length);
             requestedVerticesCount += mod.vertices.Length;
+            hasBeenUsed = true;
             return true;
         }
 

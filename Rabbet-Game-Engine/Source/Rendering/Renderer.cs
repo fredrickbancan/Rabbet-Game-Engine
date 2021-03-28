@@ -136,9 +136,9 @@ namespace RabbetGameEngine
             Profiler.startSection("renderUpdate");
             BatchManager.preWorldRenderUpdate();
             SkyboxRenderer.onUpdate();
-            if (GameInstance.get.currentPlanet != null)
+            if (GameInstance.get.currentWorld != null)
             {
-                GameInstance.get.currentPlanet.onRenderUpdate();
+                GameInstance.get.currentWorld.onRenderUpdate();
             }
             BatchManager.postWorldRenderUpdate();
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov.floatValue), GameInstance.aspectRatio, 0.1F, GameInstance.get.getDrawDistance());
@@ -173,11 +173,11 @@ namespace RabbetGameEngine
             Profiler.startSection("renderWorld");
             SkyboxRenderer.drawSkybox(GameInstance.get.thePlayer.getViewMatrix());
             drawAllStaticRenderObjects();
-            BatchManager.drawAllWorld(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
+            BatchManager.drawAllWorld();
             if(!useFrameBuffer)
             {
                 Profiler.startSection("renderGUI");
-                BatchManager.drawAllGUI(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
+                BatchManager.drawAllGUI();
                 Profiler.endCurrentSection();
             }
             Profiler.endCurrentSection();
@@ -192,7 +192,7 @@ namespace RabbetGameEngine
             {
                 Profiler.startSection("renderGUI");
                 FrameBuffer.renderOffScreenTexture();
-                BatchManager.drawAllGUI(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
+                BatchManager.drawAllGUI();
                 Profiler.endCurrentSection();
             }
         }
@@ -240,7 +240,7 @@ namespace RabbetGameEngine
         {
             for(int i = 0; i < staticDraws.Count; ++i)
             { 
-                staticDraws.ElementAt(i).Value.draw(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentPlanet.getFogColor());
+                staticDraws.ElementAt(i).Value.draw(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentWorld.getFogColor());
                 totalDraws++;
             }
         }

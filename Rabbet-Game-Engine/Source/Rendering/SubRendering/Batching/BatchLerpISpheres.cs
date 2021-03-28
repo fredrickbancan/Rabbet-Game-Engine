@@ -37,6 +37,7 @@ namespace RabbetGameEngine.SubRendering
                 batchedPoints[pointsItterator + 1] = mod.prevPoints[n];
                 pointsItterator += 2;
             }
+            hasBeenUsed = true;
             return true;
         }
 
@@ -51,6 +52,7 @@ namespace RabbetGameEngine.SubRendering
             batchedPoints[pointsItterator] = p;
             batchedPoints[pointsItterator + 1] = prevP;
             pointsItterator += 2;
+            hasBeenUsed = true;
             return true;
         }
 
@@ -61,6 +63,7 @@ namespace RabbetGameEngine.SubRendering
 
         public override void updateUniforms(World thePlanet)
         {
+            batchShader.use();
             batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             batchShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
             batchShader.setUniformVec3F("fogColor", thePlanet.getFogColor());

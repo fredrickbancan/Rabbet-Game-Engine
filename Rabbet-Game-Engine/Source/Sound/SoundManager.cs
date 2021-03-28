@@ -19,10 +19,6 @@ namespace RabbetGameEngine.Sound
         private static List<int> busySourceIDs;
         private static List<int> usedSourceIDs;
 
-        static SoundManager()
-        {
-            ALC.RegisterOpenALResolver();
-        }
         public static void init()
         {
             try

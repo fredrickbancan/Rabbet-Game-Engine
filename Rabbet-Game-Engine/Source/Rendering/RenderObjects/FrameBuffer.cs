@@ -118,7 +118,8 @@ namespace RabbetGameEngine
         {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             GL.Viewport(0, 0, GameInstance.gameWindowWidth, GameInstance.gameWindowHeight);
-            GL.Disable(EnableCap.DepthTest);
+            GL.Disable(EnableCap.DepthTest); 
+            GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, texColorBuffer);
             screenQuadVAO.bind();
             screenQuadShader.use();

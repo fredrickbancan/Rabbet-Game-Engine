@@ -34,6 +34,7 @@ namespace RabbetGameEngine.SubRendering
             }
             System.Array.Copy(mod.points, 0, batchedPoints, pointsItterator, mod.points.Length);
             pointsItterator += mod.points.Length;
+            hasBeenUsed = true;
             return true;
         }
 
@@ -46,6 +47,7 @@ namespace RabbetGameEngine.SubRendering
                 vao.resizeBuffer(0, batchedPoints.Length * PointParticle.SIZE_BYTES);
             }
             batchedPoints[pointsItterator++] = p;
+            hasBeenUsed = true;
             return true;
         }
         public override void updateBuffers()
@@ -55,6 +57,7 @@ namespace RabbetGameEngine.SubRendering
 
         public override void updateUniforms(World thePlanet)
         {
+            batchShader.use();
             batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             batchShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
             batchShader.setUniformVec3F("fogColor", thePlanet.getFogColor());

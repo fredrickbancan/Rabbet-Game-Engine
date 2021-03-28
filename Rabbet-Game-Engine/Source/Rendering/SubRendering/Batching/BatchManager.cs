@@ -1,5 +1,4 @@
-﻿using OpenTK.Mathematics;
-using RabbetGameEngine.Models;
+﻿using RabbetGameEngine.Models;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -18,7 +17,7 @@ namespace RabbetGameEngine.SubRendering
         {
             for (int i = 0; i < batches.Count; ++i)
             {
-                batches.ElementAt(i).preRednerUpdate();
+                batches.ElementAt(i).preRenderUpdate();
             }
         }
 
@@ -29,7 +28,7 @@ namespace RabbetGameEngine.SubRendering
         {
             for (int i = 0; i < guiBatches.Count; ++i)
             {
-                guiBatches.ElementAt(i).preRednerUpdate();
+                guiBatches.ElementAt(i).preRenderUpdate();
             }
         }
 
@@ -67,7 +66,6 @@ namespace RabbetGameEngine.SubRendering
                     --i;
                     continue;
                 }
-
                 batchAt.postRenderUpdate();
             }
         }
@@ -79,19 +77,26 @@ namespace RabbetGameEngine.SubRendering
         public static void requestRender(RenderType type, Texture tex, Model theModel, int renderLayer)
         {
             List<Batch> bl = isTypeGUI(type) ? guiBatches : batches;
-            if (bl.Count < 1)
+
+            if (bl.Count == 0)//adding first batch
             {
-                bl.Add(new Batch(type, tex, renderLayer));
-                BatchUtil.tryToFitInBatchModel(theModel, bl.ElementAt(0));
+                Batch b = BatchUtil.getBatchForType(type, renderLayer).addTexture(tex);
+                b.tryToFitInBatchModel(theModel);
+                bl.Add(b);
                 return;
             }
 
             for (int i = 0; i < bl.Count; ++i)
             {
                 Batch batchAt = bl.ElementAt(i);
-                if(batchAt.getRenderType() == type && renderLayer == batchAt.renderLayer && batchAt.getBatchtexture() == tex &&  BatchUtil.tryToFitInBatchModel(theModel, batchAt))
+              
+                if(batchAt.getRenderType() == type && renderLayer == batchAt.getRenderLayer())//if there is a compatible batch, try to fit the model in.
                 {
-                    return;//successfull batch adding
+                    
+                    if((batchAt.containsTexture(tex) || batchAt.tryAddTexture(tex)) && batchAt.tryToFitInBatchModel(theModel))
+                    {
+                        return;//successfull batch adding
+                    }
                 }
 
                 if(i == bl.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
@@ -99,11 +104,11 @@ namespace RabbetGameEngine.SubRendering
                     //ensure that all opaque batches come before transparent ones in the list.
                     if (isTypeTransparent(type))
                     {
-                        insertTransparentBatchToEnd(bl, new Batch(type, tex, renderLayer), theModel);
+                        insertTransparentBatchToEnd(bl, BatchUtil.getBatchForType(type, renderLayer).addTexture(tex), theModel);
                     }
                     else
                     {
-                        insertOpaqueBatchToStart(bl, new Batch(type, tex, renderLayer), theModel);
+                        insertOpaqueBatchToStart(bl, BatchUtil.getBatchForType(type, renderLayer).addTexture(tex), theModel);
                     }
                     
                     return;
@@ -116,17 +121,17 @@ namespace RabbetGameEngine.SubRendering
         {
             if(bl.Count == 0)
             {
+                b.tryToFitInBatchModel(m);
                 bl.Add(b);
-                BatchUtil.tryToFitInBatchModel(m, bl.ElementAt(0));
                 return;
             }
 
             for(int i = bl.Count - 1; i >= 0; i--)
             {
-                if(bl.ElementAt(i).renderLayer <= b.renderLayer)
+                if(bl.ElementAt(i).getRenderLayer() <= b.getRenderLayer())
                 {
+                    b.tryToFitInBatchModel(m);
                     bl.Insert(i+1, b);
-                    BatchUtil.tryToFitInBatchModel(m, bl.ElementAt(i+1));
                     return;
                 }
             }
@@ -136,17 +141,17 @@ namespace RabbetGameEngine.SubRendering
         {
             if (bl.Count == 0)
             {
+                b.tryToFitInBatchModel(m);
                 bl.Add(b);
-                BatchUtil.tryToFitInBatchModel(m, bl.ElementAt(0));
                 return;
             }
 
             for (int i = 0; i < bl.Count; i++)
             {
-                if (b.renderLayer <= bl.ElementAt(i).renderLayer || isTypeTransparent(bl.ElementAt(i).getRenderType()))
+                if (b.getRenderLayer() <= bl.ElementAt(i).getRenderLayer() || isTypeTransparent(bl.ElementAt(i).getRenderType()))
                 {
+                    b.tryToFitInBatchModel(m);
                     bl.Insert(i, b);
-                    BatchUtil.tryToFitInBatchModel(m, bl.ElementAt(i));
                     return;
                 }
             }
@@ -181,25 +186,21 @@ namespace RabbetGameEngine.SubRendering
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
-                if (batchAt.getRenderType() == type && BatchUtil.tryToFitInBatchPoints(pParticleModel, batchAt))
+                if (batchAt.getRenderType() == type && batchAt.tryToFitInBatchPoints(pParticleModel))
                 {
                     return;//successfull batch adding
                 }
 
                 if (i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
+                    Batch b = BatchUtil.getBatchForType(type);
+                    b.tryToFitInBatchPoints(pParticleModel);
+
                     //ensure that all opaque batches come before transparent ones in the list.
                     if (transparency)
-                    {
-                        batches.Add(new Batch(type, null));
-                        BatchUtil.tryToFitInBatchPoints(pParticleModel, batches.ElementAt(i + 1));
-                    }
+                        batches.Add(b);
                     else
-                    {
-                        batches.Insert(0, new Batch(type, null));
-                        BatchUtil.tryToFitInBatchPoints(pParticleModel, batches.ElementAt(0));
-                    }
-
+                        batches.Insert(0, b);
                     return;
                 }
             }
@@ -222,7 +223,7 @@ namespace RabbetGameEngine.SubRendering
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
-                if (batchAt.getRenderType() == type && BatchUtil.tryToFitInBatchSinglePoint(pParticle, batchAt))
+                if (batchAt.getRenderType() == type && batchAt.tryToFitInBatchSinglePoint(pParticle))
                 {
                     return;//successfull batch adding
                 }
@@ -230,17 +231,14 @@ namespace RabbetGameEngine.SubRendering
                 if (i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
                     //ensure that all opaque batches come before transparent ones in the list.
-                    if (transparency)
-                    {
-                        batches.Add(new Batch(type, null));
-                        BatchUtil.tryToFitInBatchSinglePoint(pParticle, batches.ElementAt(i + 1));
-                    }
-                    else
-                    {
-                        batches.Insert(0, new Batch(type, null));
-                        BatchUtil.tryToFitInBatchSinglePoint(pParticle, batches.ElementAt(0));
-                    }
+                    Batch b = BatchUtil.getBatchForType(type);
+                    b.tryToFitInBatchSinglePoint(pParticle);
 
+                    //ensure that all opaque batches come before transparent ones in the list.
+                    if (transparency)
+                        batches.Add(b);
+                    else
+                        batches.Insert(0, b);
                     return;
                 }
             }
@@ -262,7 +260,7 @@ namespace RabbetGameEngine.SubRendering
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
-                if (batchAt.getRenderType() == type && BatchUtil.tryToFitInBatchLerpPoint(pParticle, prevTickPParticle, batchAt))
+                if (batchAt.getRenderType() == type && batchAt.tryToFitInBatchLerpPoint(pParticle, prevTickPParticle))
                 {
                     return;//successfull batch adding
                 }
@@ -270,36 +268,45 @@ namespace RabbetGameEngine.SubRendering
                 if (i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
                     //ensure that all opaque batches come before transparent ones in the list.
+                    Batch b = BatchUtil.getBatchForType(type);
+                    b.tryToFitInBatchLerpPoint(pParticle, prevTickPParticle);
+
+                    //ensure that all opaque batches come before transparent ones in the list.
                     if (transparency)
-                    {
-                        batches.Add(new Batch(type, null));
-                        BatchUtil.tryToFitInBatchLerpPoint(pParticle, prevTickPParticle, batches.ElementAt(i + 1));
-                    }
+                        batches.Add(b);
                     else
-                    {
-                        batches.Insert(0, new Batch(type, null));
-                        BatchUtil.tryToFitInBatchLerpPoint(pParticle, prevTickPParticle, batches.ElementAt(0));
-                    }
+                        batches.Insert(0, b);
 
                     return;
                 }
             }
         }
 
-        public static void requestRender(Sprite3D s, Texture tex)
+        //TODO: add support for transparent sprites with their own type
+        public static void requestRender(Sprite3D s, Texture tex, bool transparency = false)
         {
+            if (batches.Count == 0)//adding first batch
+            {
+                Batch b = BatchUtil.getBatchForType(RenderType.spriteCylinder).addTexture(tex);
+                b.tryToFitInBatchSprite3D(s);
+                batches.Add(b);
+                return;
+            }
+
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
-                if (batchAt.getRenderType() == RenderType.spriteCylinder && batchAt.batchTex == tex && BatchUtil.tryToFitInBatchSprite3D(s, batchAt))
+                if (batchAt.getRenderType() == RenderType.spriteCylinder)
                 {
-                    return;//successfull batch adding
+                    if ((batchAt.containsTexture(tex) || batchAt.tryAddTexture(tex)) && batchAt.tryToFitInBatchSprite3D(s))
+                        return;//successfull batch adding
                 }
 
                 if (i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
-                    batches.Insert(0, new Batch(RenderType.spriteCylinder, tex));
-                    BatchUtil.tryToFitInBatchSprite3D(s, batches.ElementAt(0));
+                    Batch b = BatchUtil.getBatchForType(RenderType.spriteCylinder).addTexture(tex);
+                    b.tryToFitInBatchSprite3D(s);
+                    batches.Insert(0, b);
                     return;
                 }
             }
@@ -307,41 +314,45 @@ namespace RabbetGameEngine.SubRendering
 
         public static void onWindowResize()
         {
+            World w = GameInstance.get.currentWorld;
             foreach (Batch b in batches)
             {
-                BatchUtil.updateUniformsForBatch(b);
+                b.updateUniforms(w);
             }
             foreach (Batch b in guiBatches)
             {
-                BatchUtil.updateUniformsForBatch(b);
+                b.updateUniforms(w);
             }
         }
 
         public static void onVideoSettingsChanged()
         {
-            foreach(Batch b in batches)
+            World w = GameInstance.get.currentWorld;
+            foreach (Batch b in batches)
             {
-                BatchUtil.updateUniformsForBatch(b);
+                b.updateUniforms(w);
             }
             foreach (Batch b in guiBatches)
             {
-                BatchUtil.updateUniformsForBatch(b);
+                b.updateUniforms(w);
             }
         }
 
-        public static void drawAllWorld(Matrix4 viewMatrix, Vector3 fogColor)
+        public static void drawAllWorld()
         {
-            foreach(Batch b in batches)
+            World w = GameInstance.get.currentWorld;
+            foreach (Batch b in batches)
             {
-                b.draw(viewMatrix, fogColor);
+                b.drawBatch(w);
                 Renderer.totalDraws++;
             }
         }
-        public static void drawAllGUI(Matrix4 viewMatrix, Vector3 fogColor)
+        public static void drawAllGUI()
         {
+            World w = GameInstance.get.currentWorld;
             foreach (Batch b in guiBatches)
             {
-                b.draw(viewMatrix, fogColor);
+                b.drawBatch(w);
                 Renderer.totalDraws++;
             }
         }
@@ -377,5 +388,6 @@ namespace RabbetGameEngine.SubRendering
         }
 
         public static int batchCount { get => batches.Count; }
+        public static int guiBatchCount { get => guiBatches.Count; }
     }
 }
