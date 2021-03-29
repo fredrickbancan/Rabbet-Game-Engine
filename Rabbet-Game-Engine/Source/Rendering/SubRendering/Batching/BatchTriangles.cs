@@ -6,7 +6,7 @@ namespace RabbetGameEngine.SubRendering
 {
     public class BatchTriangles : Batch
     {
-        public BatchTriangles(int renderLayer = 0) : base(RenderType.guiLines, renderLayer)
+        public BatchTriangles(int renderLayer = 0) : base(RenderType.triangles, renderLayer)
         {
         }
 

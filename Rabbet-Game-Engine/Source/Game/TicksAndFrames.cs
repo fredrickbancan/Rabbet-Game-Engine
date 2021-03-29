@@ -81,6 +81,7 @@ namespace RabbetGameEngine
             while((applicationTime + msPerTick) < getRealTimeMills())
             {
                 onTickFunc();
+               
                 applicationTime += (long)msPerTick;
                 if(getRealTimeMills() - applicationTime >= millInSec2FPS)
                 {

@@ -34,6 +34,7 @@ namespace RabbetGameEngine.SubRendering
 
         public static void postWorldRenderUpdate()
         {
+          //  Application.debugPrint("World Batches: " + batches.Count);
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
@@ -54,6 +55,7 @@ namespace RabbetGameEngine.SubRendering
 
         public static void postGUIRenderUpdate()
         {
+         //  Application.debugPrint("Gui Batches: " + guiBatches.Count);
             for (int i = 0; i < guiBatches.Count; ++i)
             {
                 Batch batchAt = guiBatches.ElementAt(i);
@@ -85,7 +87,6 @@ namespace RabbetGameEngine.SubRendering
                 bl.Add(b);
                 return;
             }
-
             for (int i = 0; i < bl.Count; ++i)
             {
                 Batch batchAt = bl.ElementAt(i);
@@ -98,7 +99,6 @@ namespace RabbetGameEngine.SubRendering
                         return;//successfull batch adding
                     }
                 }
-
                 if(i == bl.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
                     //ensure that all opaque batches come before transparent ones in the list.

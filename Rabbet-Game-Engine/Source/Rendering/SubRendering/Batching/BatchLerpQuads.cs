@@ -6,7 +6,7 @@ namespace RabbetGameEngine.SubRendering
 {
     public class BatchLerpQuads : Batch
     {
-        public BatchLerpQuads(int renderLayer = 0) : base(RenderType.guiLines, renderLayer)
+        public BatchLerpQuads(int renderLayer = 0) : base(RenderType.lerpQuads, renderLayer)
         {
         }
 

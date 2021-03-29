@@ -5,7 +5,7 @@ namespace RabbetGameEngine.SubRendering
 {
     public class BatchLerpISpheres : Batch
     {
-        public BatchLerpISpheres(int renderLayer = 0) : base(RenderType.guiLines, renderLayer)
+        public BatchLerpISpheres(int renderLayer = 0) : base(RenderType.lerpISpheres, renderLayer)
         {
         }
 

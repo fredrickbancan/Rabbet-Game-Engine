@@ -5,7 +5,7 @@ namespace RabbetGameEngine.SubRendering
 {
     public class BatchLines : Batch
     {
-        public BatchLines(int renderLayer = 0) : base(RenderType.guiLines, renderLayer)
+        public BatchLines(int renderLayer = 0) : base(RenderType.lines, renderLayer)
         {
         }
 

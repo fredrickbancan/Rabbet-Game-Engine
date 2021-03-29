@@ -6,7 +6,7 @@ namespace RabbetGameEngine.SubRendering
 {
     public class BatchLerpQuadsTransparent : Batch
     {
-        public BatchLerpQuadsTransparent(int renderLayer = 0) : base(RenderType.guiLines, renderLayer)
+        public BatchLerpQuadsTransparent(int renderLayer = 0) : base(RenderType.lerpQuadsTransparent, renderLayer)
         {
         }
 

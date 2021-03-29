@@ -7,7 +7,7 @@ namespace RabbetGameEngine.SubRendering
 {
     public class BatchGuiTransparent : Batch
     {
-        public BatchGuiTransparent(int renderLayer = 0) : base(RenderType.guiLines, renderLayer)
+        public BatchGuiTransparent(int renderLayer = 0) : base(RenderType.guiTransparent, renderLayer)
         {
         }
 

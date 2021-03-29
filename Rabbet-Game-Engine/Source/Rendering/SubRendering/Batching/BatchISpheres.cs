@@ -5,7 +5,7 @@ namespace RabbetGameEngine.SubRendering
 {
     public class BatchISpheres : Batch
     {
-        public BatchISpheres(int renderLayer = 0) : base(RenderType.guiLines, renderLayer)
+        public BatchISpheres(int renderLayer = 0) : base(RenderType.iSpheres, renderLayer)
         {
         }
 

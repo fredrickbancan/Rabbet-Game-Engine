@@ -5,7 +5,7 @@ namespace RabbetGameEngine.SubRendering
 {
     public class BatchSpriteCylinder : Batch
     {
-        public BatchSpriteCylinder(int renderLayer = 0) : base(RenderType.guiLines, renderLayer)
+        public BatchSpriteCylinder(int renderLayer = 0) : base(RenderType.spriteCylinder, renderLayer)
         {
         }
 

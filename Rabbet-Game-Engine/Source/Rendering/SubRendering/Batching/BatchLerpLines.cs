@@ -6,7 +6,7 @@ namespace RabbetGameEngine.SubRendering
 {
     public class BatchLerpLines : Batch
     {
-        public BatchLerpLines(int renderLayer = 0) : base(RenderType.guiLines, renderLayer)
+        public BatchLerpLines(int renderLayer = 0) : base(RenderType.lerpLines, renderLayer)
         {
         }
 

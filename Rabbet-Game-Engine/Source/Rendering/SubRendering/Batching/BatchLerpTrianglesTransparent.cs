@@ -6,7 +6,7 @@ namespace RabbetGameEngine.SubRendering
 {
     public class BatchLerpTrianglesTransparent : Batch
     {
-        public BatchLerpTrianglesTransparent(int renderLayer = 0) : base(RenderType.guiLines, renderLayer)
+        public BatchLerpTrianglesTransparent(int renderLayer = 0) : base(RenderType.lerpTrianglesTransparent, renderLayer)
         {
         }
 

@@ -6,7 +6,7 @@ namespace RabbetGameEngine.SubRendering
 {
     public class BatchText3D : Batch
     {
-        public BatchText3D(int renderLayer = 0) : base(RenderType.guiLines, renderLayer)
+        public BatchText3D(int renderLayer = 0) : base(RenderType.text3D, renderLayer)
         {
         }
 

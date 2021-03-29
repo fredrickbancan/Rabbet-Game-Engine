@@ -122,7 +122,7 @@ namespace RabbetGameEngine.Debugging
             if (!GameSettings.debugScreen)
             {
                 return;
-            }
+            } 
             rootTickSection.updateAverages();
         }
 
