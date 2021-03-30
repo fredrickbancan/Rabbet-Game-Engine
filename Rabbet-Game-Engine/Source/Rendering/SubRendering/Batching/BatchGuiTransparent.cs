@@ -16,6 +16,7 @@ namespace RabbetGameEngine.SubRendering
             ShaderUtil.tryGetShader(ShaderUtil.guiTransparentName, out batchShader);
             batchShader.use();
             batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
+            batchShader.setUniformIArray("uTextures", getUniformTextureSamplerArrayInts(RenderConstants.MAX_BATCH_TEXTURES));
             maxBufferSizeBytes /= 2;
             vertices = new Vertex[RenderConstants.INIT_BATCH_ARRAY_SIZE];
             indices = QuadCombiner.getIndicesForQuadCount(RenderConstants.INIT_BATCH_ARRAY_SIZE / 6);
@@ -27,8 +28,10 @@ namespace RabbetGameEngine.SubRendering
             vao.drawType = PrimitiveType.Triangles;
         }
 
-        public override bool tryToFitInBatchModel(Model mod)
+        public override bool tryToFitInBatchModel(Model mod, Texture tex = null)
         {
+            if (!tryAddModelTexAndApplyIndex(mod, tex)) return false;
+
             int n = vertices.Length;
             if (!BatchUtil.canFitOrResize(ref vertices, mod.vertices.Length, requestedVerticesCount, maxVertexCount)) return false;
             int i = indices.Length;

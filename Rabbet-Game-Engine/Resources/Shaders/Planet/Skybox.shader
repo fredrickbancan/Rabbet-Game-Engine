@@ -30,6 +30,7 @@ uniform vec3 skyHorizon;
 uniform vec3 fogColor;
 uniform vec3 sunDir;
 uniform sampler2D ditherTex;
+//todo rework
 void main()
 {
 	vec3 fragDir = normalize(worldSpacePos.xyz);
@@ -42,7 +43,7 @@ void main()
 		skyModified = mix(skyAmbient, skyTop, fragDirDot * fragDirDot);
 
 		float horizonRatio = 1 - (fragDirDot + 1) * 0.5;
-		vec3 skyHorizonModified = mix(skyHorizon, skyModified, clamp(horizonRatio*2, 0, 1));
+		vec3 skyHorizonModified = mix(skyHorizon, skyModified, clamp(horizonRatio * 2, 0, 1));
 		horizonRatio += fragDir.y;
 		horizonRatio += clamp(-sunDir.y, 0, 1) * 2;//make horizon color fade to nothing when sun goes over horizon
 		color.rgb = mix(skyHorizonModified, skyModified, clamp(horizonRatio,0,1));

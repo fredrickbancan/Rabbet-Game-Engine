@@ -17,6 +17,7 @@ namespace RabbetGameEngine.SubRendering
         protected int maxSprite3DCount;
         protected int maxMatrixCount;
         protected int maxDrawCommandCount;
+        protected int maxTextureIDCount;
 
         /// <summary>
         /// true if this batch requires transparency sorting
@@ -26,9 +27,8 @@ namespace RabbetGameEngine.SubRendering
         protected bool hasBeenUsed = false;
 
         protected VertexArrayObject vao;
-        protected Vertex[] vertices;
-        protected uint[] indices;
-
+        protected Vertex[] vertices = null;
+        protected uint[] indices = null;
         protected PointParticle[] batchedPoints = null;
 
         protected Matrix4[] modelMatrices = null;
@@ -124,7 +124,8 @@ namespace RabbetGameEngine.SubRendering
         /// Returns true if this batch accepts and successfully fits the provided model
         /// </summary>
         /// <param name="mod">The model</param>
-        public virtual bool tryToFitInBatchModel(Model mod)
+        /// <param name="tex">The models texture, can be null</param>
+        public virtual bool tryToFitInBatchModel(Model mod, Texture tex = null)
         {
             return false;
         }
@@ -151,7 +152,8 @@ namespace RabbetGameEngine.SubRendering
         /// Returns true if this batch accepts and successfully fits the provided Sprite3D
         /// </summary>
         /// <param name="s">the 3d sprite</param>
-        public virtual bool tryToFitInBatchSprite3D(Sprite3D s)
+        /// <param name="tex">the sprite texture</param>
+        public virtual bool tryToFitInBatchSprite3D(Sprite3D s, Texture tex = null)
         {
             return false;
         }
@@ -185,11 +187,11 @@ namespace RabbetGameEngine.SubRendering
 
         protected void bindAllTextures()
         {
-             for(int i = 0; i < requestedTextures; i++)
-             {
+            for (int i = 0; i < requestedTextures; i++)
+            {
                  GL.ActiveTexture(TextureUnit.Texture0 + i);
                  batchTextures[i].use();
-             }
+            }
         }
 
         /// <summary>
@@ -204,6 +206,7 @@ namespace RabbetGameEngine.SubRendering
             maxPositionCount = maxBufferSizeBytes / (sizeof(float) * 3);
             maxSprite3DCount = maxBufferSizeBytes / Sprite3D.sizeInBytes;
             maxPointCount = maxBufferSizeBytes / PointParticle.SIZE_BYTES;
+            maxTextureIDCount = RenderConstants.MAX_BATCH_TEXTURES * sizeof(int);
         }
 
         /// <summary>
@@ -251,9 +254,10 @@ namespace RabbetGameEngine.SubRendering
             hasBeenUsed = false;
         }
 
-        public virtual void preRenderUpdate()
+        public virtual void preRenderUpdate(World theWorld)
         {
             reset();
+            updateUniforms(theWorld);
         }
 
         public virtual void postRenderUpdate()
@@ -287,12 +291,45 @@ namespace RabbetGameEngine.SubRendering
             return renderLayer;
         }
 
-        public bool containsTexture(Texture tex)
+        public bool tryAddModelTexAndApplyIndex(Model mod, Texture tex)
         {
-            foreach(Texture t in batchTextures)
+            if (tex == null)
+                return true;
+
+            int index = 0;
+            if(containsTexture(tex, out index) || tryAddTexture(tex, out index))
             {
-                if (t == tex) return true;
+                mod.setTextureIndex(index);
+                return true;
             }
+            return false;
+        }
+
+        public bool tryToAddSpriteTexAndApplyIndex(Sprite3D s, Texture tex)
+        {
+            if (tex == null)
+                return true;
+
+            int index = 0;
+            if (containsTexture(tex, out index) || tryAddTexture(tex, out index))
+            {
+                s.textureIndex = index;
+                return true;
+            }
+            return false;
+        }
+
+        public bool containsTexture(Texture tex, out int index)
+        {
+            for(int i = 0; i < requestedTextures; i++)
+            {
+                if(batchTextures[i] == tex)
+                {
+                    index = i;
+                    return true;
+                }
+            }
+            index = 0;
             return false;
         }
 
@@ -311,5 +348,33 @@ namespace RabbetGameEngine.SubRendering
             texturesFull = requestedTextures >= RenderConstants.MAX_BATCH_TEXTURES;
             return true;
         }
+
+        public bool tryAddTexture(Texture tex, out int index)
+        {
+            if (texturesFull)
+            {
+                index = 0;
+                return false;
+            }
+            index = requestedTextures;
+            batchTextures[requestedTextures++] = tex;
+            texturesFull = requestedTextures >= RenderConstants.MAX_BATCH_TEXTURES;
+            return true;
+        }
+
+        /// <summary>
+        /// Returns an array of ints with values 0 to count in order, useful for uniform texutre samplers arrays
+        /// </summary>
+        /// <param name="count">Count of integers or texture samplelrs</param>
+        public static int[] getUniformTextureSamplerArrayInts(int count)
+        {
+            int[] result = new int[count];
+            for(int i = 0; i < count; i++)
+            {
+                result[i] = i;
+            }
+            return result;
+        }
+
     }
 }

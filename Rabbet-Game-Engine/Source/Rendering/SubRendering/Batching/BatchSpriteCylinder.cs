@@ -25,8 +25,10 @@ namespace RabbetGameEngine.SubRendering
             vao.drawType = PrimitiveType.TriangleStrip;
         }
 
-        public override bool tryToFitInBatchSprite3D(Sprite3D s)
+        public override bool tryToFitInBatchSprite3D(Sprite3D s, Texture tex = null)
         {
+            if (!tryToAddSpriteTexAndApplyIndex(s, tex)) return false;
+
             int n = sprites3D.Length;
             if (!BatchUtil.canFitOrResize(ref sprites3D, 1, spriteItterator, maxSprite3DCount)) return false;
 
@@ -58,6 +60,7 @@ namespace RabbetGameEngine.SubRendering
             vao.bind();
             bindAllTextures();
             batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", thePlanet.getViewMatrix());
             GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, spriteItterator);
             vao.unBind();
             GL.ActiveTexture(TextureUnit.Texture0);

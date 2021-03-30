@@ -4,14 +4,16 @@
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 texCoord;
-layout(location = 3) in mat4 modelMatrix;
-layout(location = 7) in mat4 prevTickModelMatrix;
+layout(location = 3) in float textureIndex;
+layout(location = 4) in mat4 modelMatrix;
+layout(location = 8) in mat4 prevTickModelMatrix;
 
 uniform float fogStart = 1000;
 uniform float fogEnd = 1000;
 
 out vec2 vTexCoord;
 out vec4 vColor;
+out float vTextureIndex;
 out float visibility;//for fog
 
 uniform mat4 projectionMatrix;
@@ -35,6 +37,7 @@ void main()
 
 	vColor = vertexColor;
 	vTexCoord = texCoord;
+	vTextureIndex = textureIndex;
 }
 
 /*#############################################################################################################################################################################################*/
@@ -42,21 +45,22 @@ void main()
 #version 330 core
 in vec2 vTexCoord;
 in vec4 vColor;
+in float vTextureIndex;
 in float visibility;
 out vec4 fragColor;
 
-uniform sampler2D uTexture;
+uniform sampler2D uTextures[8];
 uniform int frame = 0;
 uniform vec3 fogColor;
 
-
 void main()
 {
-	vec4 textureColor = texture(uTexture, vTexCoord) * vColor;
+	int i = int(ceil(vTextureIndex));
+	vec4 textureColor = texture(uTextures[i], vTexCoord) * vColor;
 	if (textureColor.a < 0.01F)
 	{
 		discard;//cutout
 	}
 	fragColor.rgb = mix(fogColor, textureColor.rgb, visibility);
-	fragColor.a = 1;
+	fragColor.a = 1.0F;
 }

@@ -13,22 +13,22 @@ namespace RabbetGameEngine.SubRendering
         /// <summary>
         /// Should be called before any rendering requests.
         /// </summary>
-        public static void preWorldRenderUpdate()
+        public static void preWorldRenderUpdate(World theWorld)
         {
             for (int i = 0; i < batches.Count; ++i)
             {
-                batches.ElementAt(i).preRenderUpdate();
+                batches.ElementAt(i).preRenderUpdate(theWorld);
             }
         }
 
         /// <summary>
         /// Should be called before any rendering requests.
         /// </summary>
-        public static void preGUIRenderUpdate()
+        public static void preGUIRenderUpdate(World theWorld)
         {
             for (int i = 0; i < guiBatches.Count; ++i)
             {
-                guiBatches.ElementAt(i).preRenderUpdate();
+                guiBatches.ElementAt(i).preRenderUpdate(theWorld);
             }
         }
 
@@ -82,7 +82,7 @@ namespace RabbetGameEngine.SubRendering
 
             if (bl.Count == 0)//adding first batch
             {
-                Batch b = BatchUtil.getBatchForType(type, renderLayer).addTexture(tex);
+                Batch b = BatchUtil.getBatchForType(type, renderLayer);
                 b.tryToFitInBatchModel(theModel);
                 bl.Add(b);
                 return;
@@ -93,22 +93,24 @@ namespace RabbetGameEngine.SubRendering
               
                 if(batchAt.getRenderType() == type && renderLayer == batchAt.getRenderLayer())//if there is a compatible batch, try to fit the model in.
                 {
-                    
-                    if((batchAt.containsTexture(tex) || batchAt.tryAddTexture(tex)) && batchAt.tryToFitInBatchModel(theModel))
+                    if(batchAt.tryToFitInBatchModel(theModel, tex))
                     {
                         return;//successfull batch adding
                     }
                 }
+
                 if(i == bl.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
+                    Batch b = BatchUtil.getBatchForType(type, renderLayer);
+                    b.tryToFitInBatchModel(theModel, tex);
                     //ensure that all opaque batches come before transparent ones in the list.
                     if (isTypeTransparent(type))
                     {
-                        insertTransparentBatchToEnd(bl, BatchUtil.getBatchForType(type, renderLayer).addTexture(tex), theModel);
+                        insertTransparentBatchToEnd(bl, b, theModel);
                     }
                     else
                     {
-                        insertOpaqueBatchToStart(bl, BatchUtil.getBatchForType(type, renderLayer).addTexture(tex), theModel);
+                        insertOpaqueBatchToStart(bl, b, theModel);
                     }
                     
                     return;
@@ -119,18 +121,10 @@ namespace RabbetGameEngine.SubRendering
 
         private static void insertTransparentBatchToEnd(List<Batch> bl, Batch b, Model m)
         {
-            if(bl.Count == 0)
-            {
-                b.tryToFitInBatchModel(m);
-                bl.Add(b);
-                return;
-            }
-
             for(int i = bl.Count - 1; i >= 0; i--)
             {
                 if(bl.ElementAt(i).getRenderLayer() <= b.getRenderLayer())
                 {
-                    b.tryToFitInBatchModel(m);
                     bl.Insert(i+1, b);
                     return;
                 }
@@ -139,18 +133,10 @@ namespace RabbetGameEngine.SubRendering
 
         private static void insertOpaqueBatchToStart(List<Batch> bl, Batch b, Model m)
         {
-            if (bl.Count == 0)
-            {
-                b.tryToFitInBatchModel(m);
-                bl.Add(b);
-                return;
-            }
-
             for (int i = 0; i < bl.Count; i++)
             {
                 if (b.getRenderLayer() <= bl.ElementAt(i).getRenderLayer() || isTypeTransparent(bl.ElementAt(i).getRenderType()))
                 {
-                    b.tryToFitInBatchModel(m);
                     bl.Insert(i, b);
                     return;
                 }
@@ -287,7 +273,7 @@ namespace RabbetGameEngine.SubRendering
         {
             if (batches.Count == 0)//adding first batch
             {
-                Batch b = BatchUtil.getBatchForType(RenderType.spriteCylinder).addTexture(tex);
+                Batch b = BatchUtil.getBatchForType(RenderType.spriteCylinder);
                 b.tryToFitInBatchSprite3D(s);
                 batches.Add(b);
                 return;
@@ -298,14 +284,14 @@ namespace RabbetGameEngine.SubRendering
                 Batch batchAt = batches.ElementAt(i);
                 if (batchAt.getRenderType() == RenderType.spriteCylinder)
                 {
-                    if ((batchAt.containsTexture(tex) || batchAt.tryAddTexture(tex)) && batchAt.tryToFitInBatchSprite3D(s))
+                    if (batchAt.tryToFitInBatchSprite3D(s, tex))
                         return;//successfull batch adding
                 }
 
                 if (i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
-                    Batch b = BatchUtil.getBatchForType(RenderType.spriteCylinder).addTexture(tex);
-                    b.tryToFitInBatchSprite3D(s);
+                    Batch b = BatchUtil.getBatchForType(RenderType.spriteCylinder);
+                    b.tryToFitInBatchSprite3D(s, tex);
                     batches.Insert(0, b);
                     return;
                 }
@@ -377,14 +363,18 @@ namespace RabbetGameEngine.SubRendering
         /// </summary>
         public static void deleteAll()
         {
+            Application.infoPrint("BatchManager deleting " + batchCount + " batches...");
             foreach(Batch b in batches)
             {
                 b.deleteVAO();
             }
+            Application.infoPrint("Done");
+            Application.infoPrint("BatchManager deleting " + guiBatchCount + " batches...");
             foreach (Batch b in guiBatches)
             {
                 b.deleteVAO();
             }
+            Application.infoPrint("Done");
         }
 
         public static int batchCount { get => batches.Count; }

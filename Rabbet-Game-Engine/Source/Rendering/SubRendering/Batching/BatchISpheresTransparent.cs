@@ -70,7 +70,8 @@ namespace RabbetGameEngine.SubRendering
         public override void drawBatch(World thePlanet)
         {
             vao.bind();
-            batchShader.use();
+            batchShader.use(); 
+            batchShader.setUniformMat4F("viewMatrix", thePlanet.getViewMatrix());
             batchShader.setUniformVec3F("cameraPos", Renderer.camPos);
             GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, pointsItterator);
             vao.unBind();

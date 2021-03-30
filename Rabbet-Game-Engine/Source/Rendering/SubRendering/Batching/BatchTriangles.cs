@@ -6,6 +6,7 @@ namespace RabbetGameEngine.SubRendering
 {
     public class BatchTriangles : Batch
     {
+        //Not implemented
         public BatchTriangles(int renderLayer = 0) : base(RenderType.triangles, renderLayer)
         {
         }
@@ -26,7 +27,7 @@ namespace RabbetGameEngine.SubRendering
             vao.drawType = PrimitiveType.Triangles;
         }
 
-        public override bool tryToFitInBatchModel(Model mod)
+        public override bool tryToFitInBatchModel(Model mod, Texture tex = null)
         {
             return false;
         }
@@ -50,6 +51,7 @@ namespace RabbetGameEngine.SubRendering
             vao.bind();
             bindAllTextures();
             batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", thePlanet.getViewMatrix());
             GL.DrawElements(PrimitiveType.Triangles, requestedIndicesCount, DrawElementsType.UnsignedInt, indices);
             vao.unBind();
             GL.ActiveTexture(TextureUnit.Texture0);

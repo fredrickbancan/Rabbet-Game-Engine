@@ -96,10 +96,12 @@ namespace RabbetGameEngine
 
         public static void deleteAll()
         {
-            foreach(Shader shader in shaders.Values)
+            Application.infoPrint("ShaderUtil deleting " + shaders.Count + " loaded shaders...");
+            foreach (Shader shader in shaders.Values)
             {
                 shader.Dispose();
             }
+            Application.infoPrint("Done");
         }
     }
 }

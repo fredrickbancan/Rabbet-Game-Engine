@@ -195,6 +195,16 @@ namespace RabbetGameEngine
             GL.Uniform1(getUniformLocation(name), val);
         }
 
+        public void setUniformFArray(string name, float[] vals)
+        {
+            GL.Uniform1(getUniformLocation(name), vals.Length, ref vals[0]);
+        }
+
+        public void setUniformIArray(string name, int[] vals)
+        {
+            GL.Uniform1(getUniformLocation(name), vals.Length, ref vals[0]);
+        }
+
         private int getUniformLocation(string name)
         {
             int result;

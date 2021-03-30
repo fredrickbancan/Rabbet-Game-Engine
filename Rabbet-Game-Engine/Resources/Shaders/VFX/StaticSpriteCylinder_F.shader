@@ -5,7 +5,8 @@ layout(location = 0) in vec4 spritePos;
 layout(location = 1) in vec4 spriteColor;
 layout(location = 2) in vec3 spriteScale;
 layout(location = 3) in vec4 spriteUVMinMax;
-layout(location = 4) in vec2 corner;//instanced quad corner
+layout(location = 4) in float textureIndex;
+layout(location = 5) in vec2 corner;//instanced quad corner
 
 uniform float fogStart = 1000.0;
 uniform float fogEnd = 1000.0;

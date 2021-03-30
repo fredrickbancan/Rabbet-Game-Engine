@@ -37,7 +37,7 @@ namespace RabbetGameEngine.SubRendering
             vao.drawType = PrimitiveType.Triangles;
         }
 
-        public override bool tryToFitInBatchModel(Model mod)
+        public override bool tryToFitInBatchModel(Model mod, Texture tex = null)
         {
             return true;
         }
@@ -61,6 +61,7 @@ namespace RabbetGameEngine.SubRendering
             vao.bind();
             bindAllTextures();
             batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", thePlanet.getViewMatrix());
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             GL.MultiDrawArraysIndirect(PrimitiveType.Triangles, System.IntPtr.Zero, requestedObjectItterator, sizeof(uint));
             vao.unBind();

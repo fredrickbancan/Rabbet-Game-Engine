@@ -4,7 +4,7 @@ using RabbetGameEngine.Rendering;
 namespace RabbetGameEngine.SubRendering
 {
     public class BatchQuads : Batch
-    {
+    { //Not implemented
         public BatchQuads(int renderLayer = 0) : base(RenderType.quads, renderLayer)
         {
         }
@@ -24,7 +24,7 @@ namespace RabbetGameEngine.SubRendering
             vao.drawType = PrimitiveType.Triangles;
         }
 
-        public override bool tryToFitInBatchModel(Model mod)
+        public override bool tryToFitInBatchModel(Model mod, Texture tex = null)
         {
             return false;
         }
@@ -48,6 +48,7 @@ namespace RabbetGameEngine.SubRendering
             vao.bind();
             bindAllTextures();
             batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", thePlanet.getViewMatrix());
             GL.DrawArrays(PrimitiveType.Triangles, 0, requestedVerticesCount);
             vao.unBind();
             GL.ActiveTexture(TextureUnit.Texture0);

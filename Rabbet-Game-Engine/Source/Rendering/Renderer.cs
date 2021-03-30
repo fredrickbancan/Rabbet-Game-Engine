@@ -134,7 +134,7 @@ namespace RabbetGameEngine
         public static void doWorldRenderUpdate()
         {
             Profiler.startSection("renderUpdate");
-            BatchManager.preWorldRenderUpdate();
+            BatchManager.preWorldRenderUpdate(GameInstance.get.currentWorld);
             SkyboxRenderer.onUpdate();
             if (GameInstance.get.currentWorld != null)
             {
@@ -147,7 +147,7 @@ namespace RabbetGameEngine
         public static void doGUIRenderUpdate()
         {
             Profiler.startSection("guiRenderUpdate");
-            BatchManager.preGUIRenderUpdate();
+            BatchManager.preGUIRenderUpdate(GameInstance.get.currentWorld);
             GUIManager.requestRender();
             BatchManager.postGUIRenderUpdate();
             Profiler.endCurrentSection();

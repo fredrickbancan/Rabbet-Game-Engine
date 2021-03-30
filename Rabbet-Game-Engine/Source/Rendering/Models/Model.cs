@@ -20,6 +20,15 @@ namespace RabbetGameEngine.Models
             this.indices = indices;
         }
 
+        public Model setTextureIndex(int id)
+        {
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                vertices[i].textureIndex = id;
+            }
+            return this;
+        }
+
         /*sets all vertex colors to this color*/
         public Model setColor(Color color)
         {

@@ -3,7 +3,6 @@
 layout(location = 0) in vec4 position;
 layout(location = 1) in vec4 vertexColor;
 layout(location = 2) in vec2 uv;
-layout(location = 3) in vec3 textPos;
 
 uniform float barrelDistortion;   // s: 0 = perspective, 1 = stereographic
 uniform float cylRatio;           // c: cylindrical distortion ratio. 1 = spherical

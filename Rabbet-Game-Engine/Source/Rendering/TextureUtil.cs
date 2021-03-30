@@ -98,10 +98,12 @@ namespace RabbetGameEngine
 
         public static void deleteAll()
         {
+            Application.infoPrint("TextureUtil deleting " + textures.Count + " loaded textures...");
             foreach (Texture tex in textures.Values)
             {
                 tex.Dispose();
             }
+            Application.infoPrint("Done");
         }
     }
 }

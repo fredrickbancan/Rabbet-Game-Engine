@@ -5,7 +5,7 @@ using RabbetGameEngine.Rendering;
 namespace RabbetGameEngine.SubRendering
 {
     public class BatchLerpLines : Batch
-    {
+    { //Not implemented
         public BatchLerpLines(int renderLayer = 0) : base(RenderType.lerpLines, renderLayer)
         {
         }
@@ -37,7 +37,7 @@ namespace RabbetGameEngine.SubRendering
             vao.drawType = PrimitiveType.Lines;
         }
 
-        public override bool tryToFitInBatchModel(Model mod)
+        public override bool tryToFitInBatchModel(Model mod, Texture tex = null)
         {
             return false;
         }
@@ -60,6 +60,7 @@ namespace RabbetGameEngine.SubRendering
         {
             vao.bind();
             batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", thePlanet.getViewMatrix());
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             GL.MultiDrawElementsIndirect(PrimitiveType.Lines, DrawElementsType.UnsignedInt, System.IntPtr.Zero, requestedObjectItterator, 0);
             vao.unBind();

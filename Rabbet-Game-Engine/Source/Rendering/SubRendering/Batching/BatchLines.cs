@@ -24,7 +24,7 @@ namespace RabbetGameEngine.SubRendering
             vao.drawType = PrimitiveType.Lines;
         }
 
-        public override bool tryToFitInBatchModel(Model mod)
+        public override bool tryToFitInBatchModel(Model mod, Texture tex = null)
         {
             int n = vertices.Length;
             if (!BatchUtil.canFitOrResize(ref vertices, mod.vertices.Length, requestedVerticesCount, maxVertexCount)) return false;
@@ -70,6 +70,7 @@ namespace RabbetGameEngine.SubRendering
         {
             vao.bind();
             batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", thePlanet.getViewMatrix());
             GL.DrawElements(PrimitiveType.Lines, requestedIndicesCount, DrawElementsType.UnsignedInt, 0);
             vao.unBind();
         }

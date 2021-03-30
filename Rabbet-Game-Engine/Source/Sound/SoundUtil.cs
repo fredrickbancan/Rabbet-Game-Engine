@@ -99,13 +99,15 @@ namespace RabbetGameEngine.Sound
 
         public static void deleteAll()
         {
-            foreach(List<Sound> sc in allSounds.Values)
+            Application.infoPrint("SoundUtil deleting " + allSounds.Count + " loaded sound files...");
+            foreach (List<Sound> sc in allSounds.Values)
             {
                 foreach(Sound s in sc)
                 {
                     s.delete();
                 }
             }
+            Application.infoPrint("Done");
         }
     }
 }

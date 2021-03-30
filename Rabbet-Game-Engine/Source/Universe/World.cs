@@ -54,6 +54,7 @@ namespace RabbetGameEngine
         /// </summary>
         private float dayNightPercent = 0;
         private int entityIDItterator = 0;//increases with each ent added, used as an ID for each world entity.
+        private EntityPlayer playerEntity = null;
         public Dictionary<int, Entity> entities = new Dictionary<int, Entity>();//the int is the given ID for the entity
         public List<VFX> vfxList = new List<VFX>();
         public List<Entity> projectiles = new List<Entity>();
@@ -389,6 +390,7 @@ namespace RabbetGameEngine
                 }
                 else if (entAt.getIsMarkedForRemoval())
                 {
+                    if (entAt.getIsPlayer()) playerEntity = null;
                     entAt.setCurrentPlanet(null);
                     entities.Remove(entities.ElementAt(i).Key);
                     i--;
@@ -532,6 +534,7 @@ namespace RabbetGameEngine
             }
             else
             {
+                if (theEntity.getIsPlayer()) playerEntity = (EntityPlayer)theEntity;
                 entities.Add(entityIDItterator++, theEntity);
                 if (GameSettings.entityLabels)
                 {
@@ -559,6 +562,12 @@ namespace RabbetGameEngine
                     v.ceaseToExist();
                 }
             }
+        }
+
+        public Matrix4 getViewMatrix()
+        {
+            if (playerEntity != null) return playerEntity.getViewMatrix();
+            return Matrix4.LookAt(new Vector3(0,2,0), new Vector3(0,0,-1), new Vector3(0,1,0));
         }
 
         public int getEntityCount()

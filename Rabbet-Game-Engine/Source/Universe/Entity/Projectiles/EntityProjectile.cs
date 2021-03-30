@@ -19,6 +19,7 @@ namespace RabbetGameEngine
         public override void onTick()
         {
             base.onTick();
+
             if(hasCollided)
             {
                 onCollide();

@@ -8,7 +8,7 @@ uniform vec3 sunPos;
 uniform vec2 viewPortSize;
 void main()
 {
-	float sunRadius = 0.75;
+	float sunRadius = 0.25;
 	gl_Position = projectionMatrix * viewMatrix * vec4(sunPos, 1);
 	gl_PointSize = viewPortSize.y * sunRadius;
 }

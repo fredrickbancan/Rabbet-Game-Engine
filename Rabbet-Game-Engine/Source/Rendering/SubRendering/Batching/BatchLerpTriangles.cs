@@ -15,15 +15,19 @@ namespace RabbetGameEngine.SubRendering
             ShaderUtil.tryGetShader(ShaderUtil.lerpTrianglesName, out batchShader);
             batchShader.use();
             batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+            batchShader.setUniformIArray("uTextures", getUniformTextureSamplerArrayInts(RenderConstants.MAX_BATCH_TEXTURES));
             maxBufferSizeBytes /= 4;
             vertices = new Vertex[RenderConstants.INIT_BATCH_ARRAY_SIZE];
             indices = new uint[RenderConstants.INIT_BATCH_ARRAY_SIZE];
             modelMatrices = new Matrix4[RenderConstants.INIT_BATCH_ARRAY_SIZE];
             drawCommands = new DrawCommand[RenderConstants.INIT_BATCH_ARRAY_SIZE];
+
             VertexBufferLayout l10 = new VertexBufferLayout();
             Vertex.configureLayout(l10);
             vao.addBufferDynamic(RenderConstants.INIT_BATCH_ARRAY_SIZE * Vertex.SIZE_BYTES, l10);
+
             vao.addIndicesBufferDynamic(RenderConstants.INIT_BATCH_ARRAY_SIZE);
+
             VertexBufferLayout matl3 = new VertexBufferLayout();
             matl3.add(VertexAttribPointerType.Float, 4);
             matl3.add(VertexAttribPointerType.Float, 4);
@@ -39,8 +43,10 @@ namespace RabbetGameEngine.SubRendering
             vao.drawType = PrimitiveType.Triangles;
         }
 
-        public override bool tryToFitInBatchModel(Model mod)
+        public override bool tryToFitInBatchModel(Model mod, Texture tex = null)
         {
+            if (!tryAddModelTexAndApplyIndex(mod, tex)) return false;
+
             int n = vertices.Length;
             if (!BatchUtil.canFitOrResize(ref vertices, mod.vertices.Length, requestedVerticesCount, maxVertexCount)) return false;
             int p = modelMatrices.Length;
@@ -97,8 +103,9 @@ namespace RabbetGameEngine.SubRendering
         public override void drawBatch(World thePlanet)
         {
             vao.bind();
-            bindAllTextures();
+            bindAllTextures(); 
             batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", thePlanet.getViewMatrix());
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             GL.MultiDrawElementsIndirect(PrimitiveType.Triangles, DrawElementsType.UnsignedInt, System.IntPtr.Zero, requestedObjectItterator, 0);
             vao.unBind();

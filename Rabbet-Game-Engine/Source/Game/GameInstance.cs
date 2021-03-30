@@ -28,7 +28,7 @@ namespace RabbetGameEngine
         private static bool gamePaused = false;
         public EntityPlayer thePlayer;
         public World currentWorld;
-
+        private static bool isClosing = false;
         /// <summary>
         /// Will be true if there has been atleast one onTick() call since last frame.
         /// </summary>
@@ -142,7 +142,7 @@ namespace RabbetGameEngine
         {
             Profiler.startRoot();
             base.OnRenderFrame(args);
-
+            if (isClosing) return;
             Input.updateInput();
             try
             {
@@ -189,6 +189,7 @@ namespace RabbetGameEngine
                 currentWorld.onLeavingPlanet();
             Renderer.onClosing();
             SoundManager.onClosing();
+            isClosing = true;
         }
 
         protected override void OnFocusedChanged(FocusedChangedEventArgs e)

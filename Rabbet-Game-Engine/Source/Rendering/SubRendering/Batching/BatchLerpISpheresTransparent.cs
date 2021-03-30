@@ -74,7 +74,8 @@ namespace RabbetGameEngine.SubRendering
         public override void drawBatch(World thePlanet)
         {
             vao.bind();
-            batchShader.use();
+            batchShader.use(); 
+            batchShader.setUniformMat4F("viewMatrix", thePlanet.getViewMatrix());
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             GL.DrawArrays(PrimitiveType.Points, 0, pointsItterator / 2);
             vao.unBind();

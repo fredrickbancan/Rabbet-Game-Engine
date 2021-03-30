@@ -176,28 +176,36 @@ namespace RabbetGameEngine.Sound
         {
             if (!initialized) return;
 
-            foreach(PlayingSound s in sounds)
+            Application.infoPrint("SoundManager stopping all sounds...");
+            foreach (PlayingSound s in sounds)
             {
                 s.stopPlaying();
             }
+            Application.infoPrint("Done");
 
+            Application.infoPrint("SoundManager deleting " + usedSourceIDs.Count + " used source IDs...");
             foreach (int id in usedSourceIDs)
             {
                 AL.DeleteSource(id);
             }
+            Application.infoPrint("Done");
 
+            Application.infoPrint("SoundManager destroying context...");
             if (context != ALContext.Null)
             {
                 ALC.MakeContextCurrent(ALContext.Null);
                 ALC.DestroyContext(context);
                 context = ALContext.Null;
             }
+            Application.infoPrint("Done");
 
-            if(device != ALDevice.Null)
+            Application.infoPrint("SoundManager closing device...");
+            if (device != ALDevice.Null)
             {
                 ALC.CloseDevice(device);
                 device = ALDevice.Null;
             }
+            Application.infoPrint("Done");
 
             SoundUtil.deleteAll();
         }

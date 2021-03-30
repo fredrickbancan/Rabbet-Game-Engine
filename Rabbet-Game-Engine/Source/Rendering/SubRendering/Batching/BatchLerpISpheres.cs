@@ -18,7 +18,7 @@ namespace RabbetGameEngine.SubRendering
             batchedPoints = new PointParticle[RenderConstants.INIT_BATCH_ARRAY_SIZE];
             VertexBufferLayout l9 = new VertexBufferLayout();
             PointParticle.configureLayout(l9);
-            PointParticle.configureLayout(l9);
+            PointParticle.configureLayout(l9); 
             vao.addBufferDynamic(RenderConstants.INIT_BATCH_ARRAY_SIZE * PointParticle.SIZE_BYTES, l9);
             vao.drawType = PrimitiveType.Points;
         }
@@ -75,6 +75,7 @@ namespace RabbetGameEngine.SubRendering
         {
             vao.bind();
             batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", thePlanet.getViewMatrix());
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             GL.DrawArrays(PrimitiveType.Points, 0, pointsItterator / 2);
             vao.unBind();

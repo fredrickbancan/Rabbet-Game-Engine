@@ -18,9 +18,12 @@ namespace RabbetGameEngine
             base.onTick();
 
             //rotating projectile based on velocity to simulate areodynamics
-            Vector3 velocityNormalVec = Vector3.Normalize(velocity);
-            yaw = (float)((Math.Atan2(velocityNormalVec.Z, velocityNormalVec.X) * 180) / Math.PI );
-            pitch = (float)(Math.Atan2(velocityNormalVec.Y, velocityNormalVec.Xz.Length) * (180D / Math.PI));
+            if(velocity.Length >= 0.00001F)
+            {
+                Vector3 velocityNormalVec = Vector3.Normalize(velocity);
+                yaw = (float)((Math.Atan2(velocityNormalVec.Z, velocityNormalVec.X) * 180) / Math.PI);
+                pitch = (float)(Math.Atan2(velocityNormalVec.Y, velocityNormalVec.Xz.Length) * (180D / Math.PI));
+            }
         }
 
         public override void ceaseToExist()

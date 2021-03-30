@@ -96,6 +96,7 @@ namespace RabbetGameEngine
             return new StaticRenderObject(data, transparency);
         }
 
+        //TODO: change to taking world param
         public void draw(Matrix4 viewMatrix, Vector3 fogColor)
         {
             VAO.bind();
