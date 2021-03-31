@@ -8,7 +8,7 @@ uniform vec3 sunPos;
 uniform vec2 viewPortSize;
 void main()
 {
-	float sunRadius = 0.25;
+	float sunRadius = 0.5;
 	gl_Position = projectionMatrix * viewMatrix * vec4(sunPos, 1);
 	gl_PointSize = viewPortSize.y * sunRadius;
 }
@@ -21,6 +21,6 @@ void main()
 {
     vec2 centerVec = gl_PointCoord - vec2(0.5F);
     float coordLength = length(centerVec);
-	float fade = pow(sqrt(1.05 - coordLength), 32);
+	float fade = pow(sqrt(1.025 - coordLength), 24);
 	color = vec4(sunColor, fade);
 }

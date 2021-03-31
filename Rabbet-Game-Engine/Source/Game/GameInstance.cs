@@ -46,6 +46,7 @@ namespace RabbetGameEngine
 
         protected override void OnLoad()
         {
+            if (isClosing || IsExiting) return;
             Application.infoPrint("loading.");
             try
             {
@@ -86,24 +87,28 @@ namespace RabbetGameEngine
 
         public void onError()
         {
+            if (isClosing || IsExiting) return;
             this.WindowState = WindowState.Normal;
-            Renderer.onClosing();
+            Close();
         }
 
         protected override void OnMouseWheel(MouseWheelEventArgs e)
         {
+            if (isClosing || IsExiting) return;
             base.OnMouseWheel(e);
             Input.onMouseWheel(e);
         }
 
         protected override void OnKeyDown(KeyboardKeyEventArgs e)
         {
+            if (isClosing || IsExiting) return;
             base.OnKeyDown(e);
             Input.onKeyDown(e);
         }
 
         protected override void OnMouseDown(MouseButtonEventArgs e)
         {
+            if (isClosing || IsExiting) return;
             base.OnMouseDown(e);
             Input.onMouseDown(e);
         }
@@ -140,9 +145,9 @@ namespace RabbetGameEngine
         /*overriding OpenTk render update function, called every frame.*/
         protected override void OnRenderFrame(FrameEventArgs args)
         {
+            if (isClosing || IsExiting) return;
             Profiler.startRoot();
             base.OnRenderFrame(args);
-            if (isClosing) return;
             Input.updateInput();
             try
             {
@@ -177,6 +182,7 @@ namespace RabbetGameEngine
         /*Overriding OpenTK resize function, called every time the game window is resized*/
         protected override void OnResize(ResizeEventArgs e)
         {
+            if (isClosing || IsExiting) return;
             base.OnResize(e);
             windowWidth = this.ClientRectangle.Size.X;
             windowHeight = this.ClientRectangle.Size.Y;
@@ -189,11 +195,11 @@ namespace RabbetGameEngine
                 currentWorld.onLeavingPlanet();
             Renderer.onClosing();
             SoundManager.onClosing();
-            isClosing = true;
         }
 
         protected override void OnFocusedChanged(FocusedChangedEventArgs e)
         {
+            if (isClosing || IsExiting) return;
             //pausing the game if the window focus changes
             pauseGame();
             base.OnFocusedChanged(e);
@@ -253,6 +259,12 @@ namespace RabbetGameEngine
         private void setDPIScale()
         {
             TryGetCurrentMonitorDpi(out _, out dpiY);
+        }
+
+        public override void Close()
+        {
+            isClosing = true;
+            base.Close();
         }
 
         public static int gameWindowWidth { get => windowWidth; }

@@ -93,9 +93,9 @@ namespace RabbetGameEngine
         {
             totalMoons = rand.Next(1, 4);
             moons = new SkyMoon[totalMoons];
-            float moonColorStrength = 0.072F;
-            float maxMoonRadius = 0.045F;
-            float minMoonRadius = 0.02F;
+            float moonColorStrength = 0.082F;
+            float maxMoonRadius = 0.025F;
+            float minMoonRadius = 0.015F;
             float spacing = 1.0F / (float)totalMoons * 0.2F;
             for (int i = 0; i < totalMoons; i++)
             {

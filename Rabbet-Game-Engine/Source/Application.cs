@@ -19,22 +19,14 @@ namespace RabbetGameEngine
         private static TickTimer ramUsageTimer;
         static void Main(string[] args)
         {
-            try
-            {
-                NativeWindowSettings w = new NativeWindowSettings();
-                w.StartFocused = true;
-                w.StartVisible = true;
-                w.Profile = ContextProfile.Core;
-                GameWindowSettings g = new GameWindowSettings();
-                GameInstance game = new GameInstance(g, w);
-                ramUsageTimer = new TickTimer(2.48F, true, false);
-                game.Run();
-            }
-            catch(Exception e)
-            {
-                Application.error("Failed to run game, Exception: " + e.Message + "\nStack Trace: " + e.StackTrace);
-            }
-            
+            NativeWindowSettings w = new NativeWindowSettings();
+            w.StartFocused = true;
+            w.StartVisible = true;
+            w.Profile = ContextProfile.Core;
+            GameWindowSettings g = new GameWindowSettings();
+            GameInstance game = new GameInstance(g, w);
+            ramUsageTimer = new TickTimer(2.48F, true, false);
+            game.Run();
         }
         
         public static void updateRamUsage()

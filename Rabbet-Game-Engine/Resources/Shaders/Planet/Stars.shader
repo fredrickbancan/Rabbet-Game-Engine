@@ -22,7 +22,7 @@ void main()
     float r = 1.0 - (dot((modelMatrix * position).xyz, sunDir) + 1.0) * 0.5;
     vColor.a =  r;
     float h = sunDir.y + 1;
-    vColor.a *= 1 - clamp(h * 0.75,0,1);
+    vColor.a *= 1 - clamp(h,0,1);
 }
 
 
