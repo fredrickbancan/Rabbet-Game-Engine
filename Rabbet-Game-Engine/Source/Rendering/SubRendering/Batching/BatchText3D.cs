@@ -15,6 +15,7 @@ namespace RabbetGameEngine.SubRendering
             ShaderUtil.tryGetShader(ShaderUtil.text3DName, out batchShader);
             batchShader.use();
             batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
+            batchShader.setUniformIArray("uTextures", getUniformTextureSamplerArrayInts(RenderConstants.MAX_BATCH_TEXTURES));
             maxBufferSizeBytes /= 4;
             vertices = new Vertex[RenderConstants.INIT_BATCH_ARRAY_SIZE];
             indices = QuadCombiner.getIndicesForQuadCount(RenderConstants.INIT_BATCH_ARRAY_SIZE / 6);
@@ -35,6 +36,8 @@ namespace RabbetGameEngine.SubRendering
 
         public override bool tryToFitInBatchModel(Model mod, Texture tex = null)
         {
+            if (!tryAddModelTexAndApplyIndex(mod, tex)) return false;
+
             int n = vertices.Length;
             if (!BatchUtil.canFitOrResize(ref vertices, mod.vertices.Length, requestedVerticesCount, maxVertexCount)) return false;
             int p = positions.Length;

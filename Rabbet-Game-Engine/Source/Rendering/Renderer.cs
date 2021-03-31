@@ -157,7 +157,7 @@ namespace RabbetGameEngine
         private static void preRender()
         {
             if(useFrameBuffer)
-            FrameBuffer.prepareToRenderToOffScreenTexture();
+            FrameBuffer.bind();
             GL.Clear(ClearBufferMask.DepthBufferBit);
             privateTotalDrawCallCount = 0;
         }
@@ -191,7 +191,7 @@ namespace RabbetGameEngine
             if(useFrameBuffer)
             {
                 Profiler.startSection("renderGUI");
-                FrameBuffer.renderOffScreenTexture();
+                FrameBuffer.doFinalScreenQuadRender();
                 BatchManager.drawAllGUI();
                 Profiler.endCurrentSection();
             }

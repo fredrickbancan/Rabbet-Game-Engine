@@ -12,6 +12,7 @@ uniform float fogEnd = 1000.0;
 
 out vec4 vColor;
 out float visibility;
+out float vTextureIndex;
 out vec2 fTexCoord;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
@@ -48,6 +49,7 @@ void main()
 
     vColor = vertexColor;
     fTexCoord = texCoord;
+    vTextureIndex = textureIndex;
 }
 
 /*#############################################################################################################################################################################################*/
@@ -56,15 +58,17 @@ void main()
 layout(location = 0) out vec4 fragColor;
 
 in float visibility;
+in float vTextureIndex;
 in vec4 vColor;
 in vec2 fTexCoord;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform vec3 fogColor;
-uniform sampler2D uTexture;
+uniform sampler2D uTextures[8];
 void main()
 {
-    vec4 textureColor = texture(uTexture, fTexCoord) * vColor;
+    int i = int(ceil(vTextureIndex));
+    vec4 textureColor = texture(uTextures[i], fTexCoord) * vColor;
     if (textureColor.a < 0.01F)
     {
         discard;//cutout

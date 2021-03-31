@@ -36,13 +36,24 @@ void main()
 in vec3 vUV;
 in vec2 vUVDot;
 layout(location = 0) out vec4 color;
+layout(location = 1) out vec4 brightColor;//for bloom 
 
 uniform sampler2D renderedTexture;
 uniform vec3 cameraFrontVec;
-uniform float brightness;
+uniform float gamma;
+uniform float exposure = 5.0;//TODO: implement automatic eye adjust exposure
 void main()
 {
     vec3 uv = dot(vUVDot, vUVDot) * vec3(-0.5, -0.5, -1.0) + vUV;
-	color = texture(renderedTexture, uv.xy / uv.z) * brightness;
-	color.a = 1.0;
+	vec3 hdrColor = texture(renderedTexture, uv.xy / uv.z).rgb;
+    //exposure tone mapping
+    vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);
+    // gamma correction 
+    mapped = pow(mapped, vec3(1.0 / gamma));
+    color = vec4(mapped, 1.0);
+
+    // check whether fragment output is higher than threshold, if so output as brightness color for bloom
+    float brightness = dot(color.rgb, vec3(0.2126, 0.7152, 0.0722));
+    brightColor = brightness > 1.0 ? vec4(color.rgb, 1.0) : vec4(0, 0, 0, 1.0);
+    brightColor = vec4(1,0,0,1);
 }

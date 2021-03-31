@@ -189,14 +189,6 @@ namespace RabbetGameEngine
             Renderer.onResize();
         }
 
-        protected override void OnUnload()
-        {
-            if (currentWorld != null)
-                currentWorld.onLeavingPlanet();
-            Renderer.onClosing();
-            SoundManager.onClosing();
-        }
-
         protected override void OnFocusedChanged(FocusedChangedEventArgs e)
         {
             if (isClosing || IsExiting) return;
@@ -264,6 +256,10 @@ namespace RabbetGameEngine
         public override void Close()
         {
             isClosing = true;
+            if (currentWorld != null)
+                currentWorld.onLeavingPlanet();
+            Renderer.onClosing();
+            SoundManager.onClosing();
             base.Close();
         }
 
