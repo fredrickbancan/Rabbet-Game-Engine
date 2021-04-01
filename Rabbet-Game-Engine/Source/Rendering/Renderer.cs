@@ -80,7 +80,7 @@ namespace RabbetGameEngine
             GL.LineWidth(lineWidthPixels);
             staticDraws = new Dictionary<string, StaticRenderObject>();
             SkyboxRenderer.init();
-            FrameBuffer.init();
+            PostProcessing.init();
 
             MonitorHandle m = GameInstance.get.CurrentMonitor;
             VideoMode mode = *GLFW.GetVideoMode(m.ToUnsafePtr<Monitor>());
@@ -103,7 +103,7 @@ namespace RabbetGameEngine
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov.floatValue), GameInstance.aspectRatio, 0.1F, 1000.0F);
             orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 100.0F);
             GUIManager.onWindowResize();
-            FrameBuffer.onResize();
+            PostProcessing.onResize();
             BatchManager.onWindowResize();
         }
 
@@ -157,14 +157,14 @@ namespace RabbetGameEngine
         private static void preRender()
         {
             if(useFrameBuffer)
-            FrameBuffer.bind();
+            PostProcessing.prepare();
             GL.Clear(ClearBufferMask.DepthBufferBit);
             privateTotalDrawCallCount = 0;
         }
 
         public static void onVideoSettingsChanged()
         {
-            FrameBuffer.onVideoSettingsChanged();
+            PostProcessing.onVideoSettingsChanged();
             BatchManager.onVideoSettingsChanged();
         }
         public static void renderAll()
@@ -191,7 +191,7 @@ namespace RabbetGameEngine
             if(useFrameBuffer)
             {
                 Profiler.startSection("renderGUI");
-                FrameBuffer.doFinalScreenQuadRender();
+                PostProcessing.doPostProcessing();
                 BatchManager.drawAllGUI();
                 Profiler.endCurrentSection();
             }
@@ -270,14 +270,14 @@ namespace RabbetGameEngine
             ShaderUtil.deleteAll();
             TextureUtil.deleteAll();
             SkyboxRenderer.deleteVAO();
-            FrameBuffer.onClosing();
+            PostProcessing.onClosing();
         }
         public static Matrix4 projMatrix { get => projectionMatrix; }
         public static int totalDraws { get { return privateTotalDrawCallCount; } set { privateTotalDrawCallCount = value; } }
         public static Matrix4 orthoMatrix { get => orthographicMatrix; }
         public static Vector3 camPos { get => GameInstance.get.thePlayer.getLerpEyePos(); }
         public static int defaultLineWidthInPixels { get => lineWidthPixels; }
-        public static Vector2 viewPortSize { get => useFrameBuffer ? FrameBuffer.size : new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight);}
+        public static Vector2 viewPortSize { get => useFrameBuffer ? PostProcessing.size : new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight);}
 
     }
 }

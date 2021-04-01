@@ -23,4 +23,5 @@ void main()
     float coordLength = length(centerVec);
 	float fade = pow(sqrt(1.025 - coordLength), 24);
 	color = vec4(sunColor, fade);
+	if (color.a <= 0.001) discard;
 }

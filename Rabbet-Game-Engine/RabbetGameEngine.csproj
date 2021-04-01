@@ -34,6 +34,11 @@
 	  </EmbeddedResource>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Remove="Resources\Shaders\FrameBuffer_GBlur.shader" />
+	  <None Remove="Resources\Shaders\FrameBuffer_Result.shader" />
+	</ItemGroup>
+
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 	  <Exec Command="XCOPY &quot;$(SolutionDir)Resources\Libraries\OpenAL\*&quot; &quot;$(TargetDir)&quot; /Y" />
 	</Target>

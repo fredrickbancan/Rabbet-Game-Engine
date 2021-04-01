@@ -63,4 +63,5 @@ void main()
     float coordLength = dot(coords, coords);
     color = vColor;
     color.a *= pow(0.9 - sqrt(coordLength ), 3);
+    if (color.a <= 0.001) discard;
 }

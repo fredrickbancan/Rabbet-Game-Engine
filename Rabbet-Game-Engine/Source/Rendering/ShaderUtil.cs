@@ -7,6 +7,8 @@ namespace RabbetGameEngine
       throughout the game without having to be re-loaded and re-allocated.*/
     public static class ShaderUtil
     {
+        public static readonly string frameBufferGBlurName = "FrameBuffer_GBlur";
+        public static readonly string frameBufferResultName = "FrameBuffer_Result";
         public static readonly string frameBufferMainName = "FrameBuffer_Main";
         public static readonly string sunName = "Sun";
         public static readonly string skyboxName = "Skybox";
