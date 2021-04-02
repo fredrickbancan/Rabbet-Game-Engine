@@ -47,7 +47,7 @@ namespace RabbetGameEngine
         private static int privateTotalDrawCallCount;
         private static Matrix4 projectionMatrix;
         private static Matrix4 orthographicMatrix;
-        private static bool useFrameBuffer = true;
+        private static bool usePostProcessing = true;
         private static int lineWidthPixels = 0;
         private static bool initialized = false;
         /// <summary>
@@ -156,8 +156,8 @@ namespace RabbetGameEngine
         /*Called before all draw calls*/
         private static void preRender()
         {
-            if(useFrameBuffer)
-            PostProcessing.prepare();
+            if(usePostProcessing)
+            PostProcessing.beforeRender();
             GL.Clear(ClearBufferMask.DepthBufferBit);
             privateTotalDrawCallCount = 0;
         }
@@ -174,7 +174,7 @@ namespace RabbetGameEngine
             SkyboxRenderer.drawSkybox(GameInstance.get.thePlayer.getViewMatrix());
             drawAllStaticRenderObjects();
             BatchManager.drawAllWorld();
-            if(!useFrameBuffer)
+            if(!usePostProcessing)
             {
                 Profiler.startSection("renderGUI");
                 BatchManager.drawAllGUI();
@@ -188,7 +188,7 @@ namespace RabbetGameEngine
         private static void postRender()
         {
             GameInstance.get.SwapBuffers();
-            if(useFrameBuffer)
+            if(usePostProcessing)
             {
                 Profiler.startSection("renderGUI");
                 PostProcessing.doPostProcessing();
@@ -277,7 +277,7 @@ namespace RabbetGameEngine
         public static Matrix4 orthoMatrix { get => orthographicMatrix; }
         public static Vector3 camPos { get => GameInstance.get.thePlayer.getLerpEyePos(); }
         public static int defaultLineWidthInPixels { get => lineWidthPixels; }
-        public static Vector2 viewPortSize { get => useFrameBuffer ? PostProcessing.size : new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight);}
+        public static Vector2 viewPortSize { get => usePostProcessing ? PostProcessing.viewPortSize : new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight);}
 
     }
 }

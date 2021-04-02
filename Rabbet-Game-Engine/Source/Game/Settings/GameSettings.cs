@@ -15,7 +15,8 @@ namespace RabbetGameEngine
         public static readonly float defaultBarrelDistortionStrength = 0;
         public static readonly float barrelDistortionCylRatio = 2.0F;
 
-        public static readonly float defaultGamma = 0.5F;
+        public static readonly float defaultExposure = 1.0F;
+        public static readonly float defaultGamma = 2.2F;
         public static readonly float defaultMouseSensitivity = 0.05F;
 
         public static readonly float defaultMasterVolume = 0.2F;
@@ -65,7 +66,8 @@ namespace RabbetGameEngine
 
         public static Setting fov = new Setting("Field of View", SettingType.FLOAT, videoSettings).setRange(60.0F, 120.0F).setDisplayRange(60.0F, 120.0F).setFloatValue(defaultFov);
         public static Setting maxDrawDistance = new Setting("Draw Distance", SettingType.FLOAT, videoSettings).setRange(128.0F, 2048.0F).setDisplayRange(128.0F, 2048.0F).setFloatValue(defaultMaxDrawDistance);
-        public static Setting gamma = new Setting("Gamma", SettingType.FLOAT, videoSettings).setRange(0.1F, 1.0F).setDisplayRange(1.0F, 100.0F).setFloatValue(defaultGamma);
+        public static Setting gamma = new Setting("Gamma", SettingType.FLOAT, videoSettings).setRange(0.5F, 2.2F).setDisplayRange(0.5F, 2.2F).setFloatValue(defaultGamma);
+        public static Setting exposure = new Setting("Exposure", SettingType.FLOAT, videoSettings).setRange(0.1F, 5.0F).setDisplayRange(0.1F, 5.0F).setFloatValue(defaultExposure);
         public static Setting barrelDistortion = new Setting("Barrel Distortion Strength", SettingType.FLOAT, videoSettings).setRange(0.0F, 5.0F).setDisplayRange(0.0F, 500.0F).setFloatValue(defaultBarrelDistortionStrength);//when changed, value should be set to fov * 0.01F * value. Needs to be updated with FOV
         public static Setting renderScale = new Setting("Render Scale", SettingType.LIST_FLOAT, videoSettings).setListTitles(renderScaleTitles).setListFloats(superSampleFloats).setListIndex(defaultRenderScaleIndex);
         public static Setting vsync = new Setting("Vertical Sync", SettingType.BOOL, videoSettings).setBoolValue(defaultVsync);

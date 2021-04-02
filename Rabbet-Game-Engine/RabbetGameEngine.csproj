@@ -35,8 +35,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="Resources\Shaders\FrameBuffer_GBlur.shader" />
-	  <None Remove="Resources\Shaders\FrameBuffer_Result.shader" />
+	  <None Remove="Resources\Shaders\Filter_GBlur.shader" />
+	  <None Remove="Resources\Shaders\FrameBuffer_Final.shader" />
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
