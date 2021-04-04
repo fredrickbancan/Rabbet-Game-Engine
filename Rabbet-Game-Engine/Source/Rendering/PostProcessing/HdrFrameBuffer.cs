@@ -66,6 +66,13 @@ namespace RabbetGameEngine
             GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthAttachment, RenderbufferTarget.Renderbuffer, fboDepthID);
         }
 
+        /// <summary>
+        /// Resizes this framebuffer to the provided dimensions.
+        /// This function also (subsequently) binds this framebuffer and all of its tex outputs textures (with output at the end of list bound)
+        /// and this FBO's depth buffer if applicable.
+        /// </summary>
+        /// <param name="width">desired with in pixels</param>
+        /// <param name="height">desired height in pixels</param>
         public virtual void resize(int width, int height)
         {
             this.width = width;
@@ -91,6 +98,20 @@ namespace RabbetGameEngine
             GL.Viewport(0, 0, width, height);
         }
 
+        /// <summary>
+        /// Binds the output texture in this FBO's output texture array at the provided index.
+        /// </summary>
+        /// <returns>The texture id of the new bound texture</returns>
+        public virtual int bindOutputTexture(int index = 0)
+        {
+            GL.BindTexture(TextureTarget.Texture2D, texOutputs[index]);
+            return texOutputs[index];
+        }
+
+        /// <summary>
+        /// returns the id of the output texture in this FBO's output texture array at the provided index.
+        /// </summary>
+        /// <returns>The texture id of the output texture at index</returns>
         public virtual int getOutputTexture(int index = 0)
         {
             return texOutputs[index];

@@ -20,7 +20,6 @@ namespace RabbetGameEngine
         private Color horizonColorDusk;
         private Color skyColor;
         private Color skyAmbientColor;
-        private Color sunColor;
         private Color sunColorDawn;
         private Color sunColorDusk;
         private Vector3 sunDirection;
@@ -70,18 +69,15 @@ namespace RabbetGameEngine
         public World(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
-            horizonColor = Color.lightOrange;
-            horizonColorDawn = Color.lightOrange.reduceVibrancy(-0.5F);
-            horizonColorDusk = Color.dusk.reduceVibrancy(-0.5F);
-            skyAmbientColor = Color.darkBlue.copy().reduceVibrancy(0.5F);
+            horizonColorDawn = Color.lightOrange.reduceVibrancy(-1.5F);
+            horizonColorDusk = Color.orange.reduceVibrancy(-0.5F);
+            skyAmbientColor = Color.skyBlue.reduceVibrancy(-1.5F).setBrightPercent(0.2F);
             fogColor = Color.lightGrey;
             skyColor = Color.skyBlue;
-            sunColor = Color.lightYellow;
-            sunColorDawn = Color.lightYellow;
-            sunColorDusk = Color.flame;
-            //dayNightCycleMinutes = rand.Next(15,61);
+            sunColorDawn = Color.lightOrange;
+            sunColorDusk = Color.lightOrange;
             totalDayNightTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(dayNightCycleMinutes * 60);
-            dayNightTicks =(int) ((float)(totalDayNightTicks / 4) * 2.8F);//setting to sunset
+            dayNightTicks =(int) ((float)(totalDayNightTicks / 4) * 2F);//setting to sunset
             setDrawDistanceAndFog(1500.0F);
             buildMoons();
             buildStars();
@@ -166,16 +162,16 @@ namespace RabbetGameEngine
         }
         public Vector3 getHorizonColor()
         { 
-            return horizonColor.mix(Color.white, MathUtil.normalizeClamped(0.5F, 1, sunHeight * sunHeight * sunHeight)).setBrightPercent(MathHelper.Clamp(sunHeight * 4F, 0, 1)).toNormalVec3();
+            return Color.mix(horizonColorDawn, horizonColorDusk, Math.Clamp(dayNightPercent * 2.0F, 0.0F, 1.0F)).toNormalVec3();
         }
         public Vector3 getSkyColor()
         {
-            return skyColor.setBrightPercent(MathHelper.Clamp(sunHeight * 1.5F,0,1)).toNormalVec3();
+            return skyColor.reduceVibrancy(MathF.Pow(sunHeight, 4) * 0.25F).toNormalVec3();
         }
 
         public Vector3 getSkyAmbientColor()
         {
-            return skyAmbientColor.mix(skyColor, MathUtil.normalizeClamped(0.5F, 0.75F, sunHeight * sunHeight)).setBrightPercent(MathHelper.Clamp(sunHeight * sunHeight + ambientBrightness * 10, 0, 1)).toNormalVec3();
+            return skyAmbientColor.toNormalVec3();
         }
         public Vector3 getSunDirection()
         {
@@ -184,7 +180,7 @@ namespace RabbetGameEngine
     
         public Vector3 getSunColor()
         {
-            return sunColor.copy().reduceVibrancy(MathUtil.normalizeClamped(0.5F, 1, sunHeight * 0.85F)).toNormalVec3();
+            return Color.mix(sunColorDawn, sunColorDusk, MathUtil.normalizeClamped(0.0F, 1F, dayNightPercent)).toNormalVec3();
         }
 
         /// <summary>
@@ -321,7 +317,6 @@ namespace RabbetGameEngine
 
             dayNightPercent = MathUtil.normalizeClamped(0, totalDayNightTicks, dayNightTicks);
             horizonColor = horizonColorDawn.mix(horizonColorDusk, MathUtil.normalizeClamped(0.25F, 0.75F, dayNightPercent));
-            sunColor = sunColorDawn.mix(sunColorDusk, MathUtil.normalizeClamped(0.25F, 0.75F, dayNightPercent));
             sunAngle = MathUtil.radians(dayNightPercent * 360.0F) - MathUtil.radians(90.0F);
             sunDirection = new Vector3(MathF.Cos(sunAngle), MathF.Sin(sunAngle), 0.0F).Normalized();
             sunHeight = (MathF.Sin(sunAngle) + 1) * 0.5F;

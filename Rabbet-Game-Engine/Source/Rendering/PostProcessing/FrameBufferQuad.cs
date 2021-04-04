@@ -5,7 +5,7 @@ namespace RabbetGameEngine
     /// <summary>
     /// Simple static object for quickly rendering a full screen quad. Usefull for post processing.
     /// </summary>
-    public static class FullScreenQuad
+    public static class FrameBufferQuad
     {
         private static Vertex[] vertices;
         private static VertexArrayObject vao;
@@ -37,7 +37,8 @@ namespace RabbetGameEngine
         /// </summary>
         public static void draw()
         {
-            GL.DrawArrays(PrimitiveType.Quads, 0, 4);
+            GL.DrawArrays(PrimitiveType.TriangleStrip, 0, 4);
+            Renderer.totalFBODraws++;
         }
 
         public static void delete()

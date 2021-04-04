@@ -16,7 +16,7 @@ namespace RabbetGameEngine
         public static readonly float barrelDistortionCylRatio = 2.0F;
 
         public static readonly float defaultExposure = 1.0F;
-        public static readonly float defaultGamma = 2.2F;
+        public static readonly float defaultGamma = 1.0F;
         public static readonly float defaultMouseSensitivity = 0.05F;
 
         public static readonly float defaultMasterVolume = 0.2F;

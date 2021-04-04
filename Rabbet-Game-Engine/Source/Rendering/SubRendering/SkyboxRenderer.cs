@@ -5,6 +5,7 @@ using RabbetGameEngine.SubRendering;
 
 namespace RabbetGameEngine
 {
+    //TODO: add onvideosettingschanged func
     public static class SkyboxRenderer
     {
         private static Texture ditherTex = null;
@@ -17,7 +18,6 @@ namespace RabbetGameEngine
         private static Shader horizonShroudShader = null;
         private static Shader starsShader = null;
         private static Shader moonsShader = null;
-        private static Shader moonGlowShader = null;
         private static VertexArrayObject skyVAO = null;
         private static VertexArrayObject shroudVAO = null;
         private static VertexArrayObject starsVAO = null;
@@ -68,9 +68,6 @@ namespace RabbetGameEngine
             ShaderUtil.tryGetShader(ShaderUtil.skyboxShroudName, out horizonShroudShader);
             ShaderUtil.tryGetShader(ShaderUtil.starsName, out starsShader);
             ShaderUtil.tryGetShader(ShaderUtil.moonsName, out moonsShader);
-
-            ShaderUtil.tryGetShader(ShaderUtil.moonGlowName, out moonGlowShader);
-            moonGlowShader.use();
             TextureUtil.tryGetTexture("dither", out ditherTex);
             TextureUtil.tryGetTexture("moons", out moonsTex);
             moonsTex.use();
@@ -136,17 +133,6 @@ namespace RabbetGameEngine
             }
             Matrix4 proj = Renderer.projMatrix;
             Matrix4 view = viewMatrix.ClearTranslation();
-            //drawing skybox
-            skyVAO.bind();
-            skyboxShader.use();
-            skyboxShader.setUniformMat4F("projectionMatrix", proj);
-            skyboxShader.setUniformMat4F("viewMatrix", view);
-            GL.DepthRange(0.999999f, 1);
-            GL.ActiveTexture(TextureUnit.Texture1);
-            ditherTex.use();
-            GL.DrawElements(PrimitiveType.Triangles, skyboxModel.indices.Length, DrawElementsType.UnsignedInt, 0);
-            GL.ActiveTexture(TextureUnit.Texture0);
-            Renderer.totalDraws++;
 
             //drawing horizon shroud
             shroudVAO.bind();
@@ -156,6 +142,19 @@ namespace RabbetGameEngine
             GL.DepthRange(0.99995f, 0.99995f);
             GL.DrawElements(PrimitiveType.Triangles, shroudModel.indices.Length, DrawElementsType.UnsignedInt, 0);
             Renderer.totalDraws++;
+
+            //drawing skybox
+            skyVAO.bind();
+            skyboxShader.use();
+            skyboxShader.setUniformMat4F("projectionMatrix", proj);
+            skyboxShader.setUniformMat4F("viewMatrix", view);
+            GL.DepthRange(0.999995f, 1);
+            GL.ActiveTexture(TextureUnit.Texture1);
+            ditherTex.use();
+            GL.DrawElements(PrimitiveType.Triangles, skyboxModel.indices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.ActiveTexture(TextureUnit.Texture0);
+            Renderer.totalDraws++;
+
 
             //drawing moons
             moonsVAO.bind();
@@ -168,7 +167,7 @@ namespace RabbetGameEngine
             Renderer.totalDraws++;
 
             GL.DepthMask(false);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);//additive blending
             //drawing stars
             starsVAO.bind(); 
             starsShader.use();
@@ -178,22 +177,16 @@ namespace RabbetGameEngine
             GL.DrawArrays(PrimitiveType.Points, 0, skyboxToDraw.totalStars);
             Renderer.totalDraws++;
 
+            //TODO: Make sun drawn as a quad not a point. will help to reduce distortion.
             //drawing sun
+            moonsVAO.bind();
             sunShader.use();
             sunShader.setUniformMat4F("projectionMatrix", proj);
             sunShader.setUniformMat4F("viewMatrix", view);
             GL.DepthRange(0.999995f, 0.9999951f);
-            GL.DrawArrays(PrimitiveType.Points, 0, 1);
+            GL.DrawArrays(PrimitiveType.TriangleStrip, 0, 4);
             Renderer.totalDraws++;
 
-            //drawing moon glow
-            moonsVAO.bind();
-            moonGlowShader.use();
-            moonGlowShader.setUniformMat4F("projectionMatrix", proj);
-            moonGlowShader.setUniformMat4F("viewMatrix", view);
-            GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, skyboxToDraw.totalMoons);
-            GL.DepthRange(0.999994f, 0.0999941f);
-            Renderer.totalDraws++;
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.DepthMask(true);
             GL.DepthRange(0, 1);
@@ -203,7 +196,7 @@ namespace RabbetGameEngine
         public static void onUpdate()
         {
             skyboxShader.use();
-            skyboxShader.setUniformVec3F("skyTop", skyboxToDraw.getSkyColor());
+            skyboxShader.setUniformVec3F("skyColor", skyboxToDraw.getSkyColor());
             skyboxShader.setUniformVec3F("skyAmbient", skyboxToDraw.getSkyAmbientColor());
             skyboxShader.setUniformVec3F("skyHorizon", skyboxToDraw.getHorizonColor());
             skyboxShader.setUniformVec3F("fogColor", skyboxToDraw.getFogColor());
@@ -233,8 +226,6 @@ namespace RabbetGameEngine
                 moonsVAO.updateBuffer(0, moonBuffer, skyboxToDraw.totalMoons * Sprite3D.sizeInBytes);
                 moonsShader.use();
                 moonsShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
-                moonGlowShader.use();
-                moonGlowShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
             }
         }
 

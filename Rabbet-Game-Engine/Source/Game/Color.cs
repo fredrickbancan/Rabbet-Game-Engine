@@ -92,6 +92,10 @@ namespace RabbetGameEngine
         {
             return new Color(MathUtil.lerp(r, other.r, ratio), MathUtil.lerp(g, other.g, ratio), MathUtil.lerp(b, other.b, ratio), a);
         }
+        public static Color mix(Color colorA, Color colorB, float ratio)
+        {
+            return new Color(MathUtil.lerp(colorA.r, colorB.r, ratio), MathUtil.lerp(colorA.g, colorB.g, ratio), MathUtil.lerp(colorA.b, colorB.b, ratio), MathUtil.lerp(colorA.a, colorB.a, ratio));
+        }
 
         public Color setAlphaPercent(float percentage)
         {

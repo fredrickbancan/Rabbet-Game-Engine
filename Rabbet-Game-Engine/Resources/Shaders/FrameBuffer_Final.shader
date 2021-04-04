@@ -22,11 +22,12 @@ uniform sampler2D renderedTexture;
 uniform sampler2D bloomTexture;
 uniform float exposure;//TODO: implement automatic eye adjust exposure
 uniform float gamma;
+uniform float bloomScale = 1.0;
 void main()
 {
 	vec3 hdrColor = texture2D(renderedTexture, fTexCoord).rgb;
 	vec3 bloomColor = texture2D(bloomTexture, fTexCoord).rgb;
-    hdrColor += bloomColor;//additive blending
+    hdrColor += bloomColor * bloomScale;//additive blending
 
     //exposure tone mapping
     vec3 result = vec3(1.0) - exp(-hdrColor * exposure);

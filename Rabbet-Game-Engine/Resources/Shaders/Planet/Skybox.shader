@@ -10,11 +10,11 @@ uniform mat4 projectionMatrix;
 //matrix for camera transformations.
 uniform mat4 viewMatrix;
 
-out vec4 worldSpacePos;
+out vec3 worldSpacePos;
 
 void main()
 {
-	worldSpacePos = position;
+	worldSpacePos = position.xyz;
 	gl_Position = projectionMatrix * viewMatrix * position;
 }
 
@@ -23,39 +23,42 @@ void main()
 #shader fragment
 #version 330 core
 out vec4 color;
-in vec4 worldSpacePos;
-uniform vec3 skyTop;
+in vec3 worldSpacePos;
+uniform vec3 skyColor;
 uniform vec3 skyAmbient;
 uniform vec3 skyHorizon;
 uniform vec3 fogColor;
 uniform vec3 sunDir;
+uniform float minSkyLuminosity = 0.2;
+uniform float maxSkyLuminosity = 3.0;
 uniform sampler2D ditherTex;
 
 void main()
 {
-	vec3 fragDir = normalize(worldSpacePos.xyz);
+	vec3 fragDir = normalize(worldSpacePos);
+	if (fragDir.y < -0.01) discard;
 	
-	if (fragDir.y > 0)
-	{
-		vec3 skyTopHdr = normalize(skyTop);
-		vec3 skyAmbientHdr = normalize(skyAmbient);
-		vec3 skyHorizonHdr = normalize(skyHorizon);
+	vec3 hazeTone = vec3(1.0 / maxSkyLuminosity); 
+	float sunHeight = clamp( sunDir.y + 0.35, 0, 1);
+	float sunProximity = clamp(dot(sunDir, fragDir), 0, 1);
+	sunProximity *= sunProximity;
+	float b = (1 - (sunProximity * (1 - sunHeight * 0.25)));
+	float horizonStrength = pow( 1 - fragDir.y, 7 * b * clamp(1 - pow(sunHeight, 8), 0.5, 1.0) );
+	float hazeStrength = pow(horizonStrength, 5 * b);
 
-		float sunDirDot = dot(vec3(0, 1, 0), sunDir);
-		float fragDirDot = (dot(sunDir, fragDir) + 1) * 0.5;
-		vec3 skyGradient = mix(skyAmbientHdr, skyTopHdr, fragDirDot * fragDirDot);
+	horizonStrength *= clamp(pow(sunHeight, 0.4), 0.25, 1.0);
+	hazeStrength *= clamp(pow(sunHeight, 0.4), 0.25, 1.0);
 
-		float horizonRatio = 1 - fragDirDot;
-		horizonRatio += fragDir.y * 1.5;
-		horizonRatio += clamp(-sunDir.y, 0, 1);//make horizon color fade to nothing when sun goes over horizon
-		vec3 skyHorizonModified = mix(skyHorizonHdr, skyGradient, clamp(horizonRatio, 0, 1));
-		color.rgb = mix(skyHorizonModified, skyGradient, clamp(horizonRatio,0,1));
+	vec3 skyGradient = mix(skyAmbient, skyColor, horizonStrength);
 
-		//set sky brightness based on sun height
-		color.rgb *= 1 + ((sunDirDot + 1) * 0.5) * 2.0;
+	vec3 hazeColor = mix(skyHorizon, hazeTone, b);
+	skyGradient = mix(skyGradient, hazeColor, hazeStrength);
 
-		color += vec4(texture2D(ditherTex, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0 / 128.0));//dithering
 
-		color.a = 1;
-	}
+
+
+	skyGradient *= mix(minSkyLuminosity, maxSkyLuminosity, pow(sunHeight,3 * b));//set sky brightness based on time of day
+	color.rgb = skyGradient;
+	color += vec4(texture2D(ditherTex, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0 / 128.0));//dithering
+	color.a = 1.0;
 }

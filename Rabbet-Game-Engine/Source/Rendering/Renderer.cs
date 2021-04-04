@@ -45,6 +45,7 @@ namespace RabbetGameEngine
     public static class Renderer
     {
         private static int privateTotalDrawCallCount;
+        private static int privateTotalFBODrawCallCount;
         private static Matrix4 projectionMatrix;
         private static Matrix4 orthographicMatrix;
         private static bool usePostProcessing = true;
@@ -160,6 +161,7 @@ namespace RabbetGameEngine
             PostProcessing.beforeRender();
             GL.Clear(ClearBufferMask.DepthBufferBit);
             privateTotalDrawCallCount = 0;
+            privateTotalFBODrawCallCount = 0;
         }
 
         public static void onVideoSettingsChanged()
@@ -187,7 +189,6 @@ namespace RabbetGameEngine
         /*Called after all draw calls*/
         private static void postRender()
         {
-            GameInstance.get.SwapBuffers();
             if(usePostProcessing)
             {
                 Profiler.startSection("renderGUI");
@@ -195,6 +196,7 @@ namespace RabbetGameEngine
                 BatchManager.drawAllGUI();
                 Profiler.endCurrentSection();
             }
+            GameInstance.get.SwapBuffers();
         }
 
         public static void addStaticDrawTriangles(string name, string textureName, Model data)
@@ -274,6 +276,7 @@ namespace RabbetGameEngine
         }
         public static Matrix4 projMatrix { get => projectionMatrix; }
         public static int totalDraws { get { return privateTotalDrawCallCount; } set { privateTotalDrawCallCount = value; } }
+        public static int totalFBODraws { get { return privateTotalFBODrawCallCount; } set { privateTotalFBODrawCallCount = value; } }
         public static Matrix4 orthoMatrix { get => orthographicMatrix; }
         public static Vector3 camPos { get => GameInstance.get.thePlayer.getLerpEyePos(); }
         public static int defaultLineWidthInPixels { get => lineWidthPixels; }

@@ -36,7 +36,9 @@
 
 	<ItemGroup>
 	  <None Remove="Resources\Shaders\Filter_GBlur.shader" />
+	  <None Remove="Resources\Shaders\FrameBuffer_CombineAverage.shader" />
 	  <None Remove="Resources\Shaders\FrameBuffer_Final.shader" />
+	  <None Remove="Resources\Shaders\FrameBuffer_PassThrough.shader" />
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

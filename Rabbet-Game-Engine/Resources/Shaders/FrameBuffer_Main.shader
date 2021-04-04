@@ -15,8 +15,6 @@ void main()
 #shader fragment
 #version 330 core
 
-in vec3 vUV;
-in vec2 vUVDot;
 in vec2 fTexCoord;
 layout(location = 0) out vec4 color;
 layout(location = 1) out vec4 bloomColor;//for bloom 
@@ -31,6 +29,6 @@ void main()
     color = vec4(hdrColor, 1.0);
 
     // check whether hdr brightness is higher than threshold, if so output as brightness color for bloom
-    float brightness = dot(hdrColor, threshHold);
-    bloomColor = vec4(hdrColor * brightness, 1.0);
+    float brightness = abs(dot(hdrColor, threshHold));
+    bloomColor = vec4(hdrColor * pow(brightness, 4), 1.0);
 }

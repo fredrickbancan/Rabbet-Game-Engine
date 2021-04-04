@@ -52,6 +52,7 @@ void main()
     vColor.a = (d * d) * 1.25F;
     float h = (sunDir.y + 1) * 0.5F;
     vColor.a *= 1 - h * h;
+    vColor.rgb *= 1 + clamp(dot(sunDir, -spritePos.xyz) * 16, 0, 1);//double brightness when moon is opposite to sun
 	gl_Position = projectionMatrix * viewMatrix * lookAtZeroRotationNoFlip(spriteScale.x);
 }
 

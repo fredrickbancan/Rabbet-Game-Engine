@@ -9,13 +9,14 @@ namespace RabbetGameEngine
     {
         public static readonly string filterGBlurName = "Filter_GBlur";
         public static readonly string frameBufferFinalName = "FrameBuffer_Final";
+        public static readonly string frameBufferPassThroughName = "FrameBuffer_PassThrough";
+        public static readonly string frameBufferCombineAverageName = "FrameBuffer_CombineAverage";
         public static readonly string frameBufferMainName = "FrameBuffer_Main";
         public static readonly string sunName = "Sun";
         public static readonly string skyboxName = "Skybox";
         public static readonly string skyboxShroudName = "SkyboxShroud";
         public static readonly string starsName = "Stars";
         public static readonly string moonsName = "Moons";
-        public static readonly string moonGlowName = "MoonGlow";
         public static readonly string guiCutoutName = "GuiCutout";
         public static readonly string guiLinesName = "GuiLines";
         public static readonly string guiTransparentName = "GuiTransparent";
