@@ -59,5 +59,5 @@ void main()
     float d = dot(coords, coords);
 	float fade = smoothstep(0.0, 1.0, pow(sqrt(1.25 - d), 64));
 	if (fade <= 0.001) discard;
-	color = vec4(sunColor * 1.5, fade);
+	color = vec4(sunColor * 2.5, fade);
 }

@@ -22,8 +22,8 @@ void main()
     vec3 worldPos = (modelMatrix * position).xyz;
     float r = 1.0 - (dot(worldPos, sunDir) + 1.0) * 0.5;
     float starHeight = (worldPos.y + 1) * 0.5;
-    float sunHeight = (sunDir.y + 1) * 0.5;//0 at midnight, 1 at midday
-    float dayRatio = clamp(sunHeight * sunHeight * 4.0, 0, 1);
+    float sunHeight = (sunDir.y + 1) * 0.5;
+    float dayRatio = clamp(sunHeight * sunHeight * 16.0, 0, 1);
     vColor.a = (r * r) * clamp(starHeight * 2.0, 0, 1) * (1 - dayRatio);
 }
 

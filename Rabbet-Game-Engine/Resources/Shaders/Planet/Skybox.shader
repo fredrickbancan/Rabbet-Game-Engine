@@ -29,8 +29,8 @@ uniform vec3 skyAmbient;
 uniform vec3 skyHorizon;
 uniform vec3 fogColor;
 uniform vec3 sunDir;
-uniform float minSkyLuminosity = 0.2;
-uniform float maxSkyLuminosity = 3.0;
+uniform float minSkyLuminosity = 0.01;
+uniform float maxSkyLuminosity = 1.5;
 uniform sampler2D ditherTex;
 
 void main()
@@ -38,26 +38,21 @@ void main()
 	vec3 fragDir = normalize(worldSpacePos);
 	if (fragDir.y < -0.01) discard;
 	
-	vec3 hazeTone = vec3(1.0 / maxSkyLuminosity); 
-	float sunHeight = clamp( sunDir.y + 0.35, 0, 1);
-	float sunProximity = clamp(dot(sunDir, fragDir), 0, 1);
-	sunProximity *= sunProximity;
-	float b = (1 - (sunProximity * (1 - sunHeight * 0.25)));
-	float horizonStrength = pow( 1 - fragDir.y, 7 * b * clamp(1 - pow(sunHeight, 8), 0.5, 1.0) );
-	float hazeStrength = pow(horizonStrength, 5 * b);
-
-	horizonStrength *= clamp(pow(sunHeight, 0.4), 0.25, 1.0);
-	hazeStrength *= clamp(pow(sunHeight, 0.4), 0.25, 1.0);
-
-	vec3 skyGradient = mix(skyAmbient, skyColor, horizonStrength);
-
-	vec3 hazeColor = mix(skyHorizon, hazeTone, b);
-	skyGradient = mix(skyGradient, hazeColor, hazeStrength);
+	vec3 hazeTone = vec3(1.0 / maxSkyLuminosity);
+	float sunHeight = (sunDir.y + 1) * 0.5;
+	float sunProximity = (dot(sunDir, fragDir) + 1.01) * 0.5;
+	float n = pow(sunProximity, 2) * (1-fragDir.y*0.5);
+	float horizonStrength = pow(1 - fragDir.y, 32 * clamp(1-sunHeight, 0.05, 1.0) * (1-n));
+	horizonStrength *= pow(sunHeight, 0.5);
 
 
+	vec3 skyGradient = mix(skyAmbient/maxSkyLuminosity, skyColor, horizonStrength);
+
+	vec3 hazeColor = mix(hazeTone, skyHorizon * (1+(maxSkyLuminosity * sunProximity)) * 0.5, sunProximity * clamp(2-sunHeight*2,0,1) * (1 - fragDir.y * 5.0) );
+	skyGradient = mix(skyGradient, hazeColor, pow(1 - fragDir.y, 8 * (1-n)));
 
 
-	skyGradient *= mix(minSkyLuminosity, maxSkyLuminosity, pow(sunHeight,3 * b));//set sky brightness based on time of day
+	skyGradient *= mix(maxSkyLuminosity, minSkyLuminosity, 1-sunHeight);//set sky brightness based on time of day
 	color.rgb = skyGradient;
 	color += vec4(texture2D(ditherTex, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0 / 128.0));//dithering
 	color.a = 1.0;

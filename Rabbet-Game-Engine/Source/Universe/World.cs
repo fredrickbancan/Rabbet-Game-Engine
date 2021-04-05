@@ -69,13 +69,13 @@ namespace RabbetGameEngine
         public World(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
-            horizonColorDawn = Color.lightOrange.reduceVibrancy(-1.5F);
-            horizonColorDusk = Color.orange.reduceVibrancy(-0.5F);
+            horizonColorDawn = Color.lightOrange.reduceVibrancy(-0.5F);
+            horizonColorDusk = Color.lightOrange.reduceVibrancy(-0.5F);
             skyAmbientColor = Color.skyBlue.reduceVibrancy(-1.5F).setBrightPercent(0.2F);
             fogColor = Color.lightGrey;
             skyColor = Color.skyBlue;
             sunColorDawn = Color.lightOrange;
-            sunColorDusk = Color.lightOrange;
+            sunColorDusk = Color.flame.reduceVibrancy(-0.5F);
             totalDayNightTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(dayNightCycleMinutes * 60);
             dayNightTicks =(int) ((float)(totalDayNightTicks / 4) * 2F);//setting to sunset
             setDrawDistanceAndFog(1500.0F);
@@ -166,7 +166,7 @@ namespace RabbetGameEngine
         }
         public Vector3 getSkyColor()
         {
-            return skyColor.reduceVibrancy(MathF.Pow(sunHeight, 4) * 0.25F).toNormalVec3();
+            return skyColor.toNormalVec3();
         }
 
         public Vector3 getSkyAmbientColor()
@@ -180,7 +180,7 @@ namespace RabbetGameEngine
     
         public Vector3 getSunColor()
         {
-            return Color.mix(sunColorDawn, sunColorDusk, MathUtil.normalizeClamped(0.0F, 1F, dayNightPercent)).toNormalVec3();
+            return Color.mix(sunColorDawn, sunColorDusk, MathUtil.normalizeClamped(0.0F, 1F, dayNightPercent)).reduceVibrancy(sunHeight - 0.5F).toNormalVec3();
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace RabbetGameEngine
 
             Model batchedGround = TriangleCombiner.combineData(unbatchedGroundQuads);
 
-            Renderer.addStaticDrawTriangles("ground", groundTextureName, batchedGround);
+           // Renderer.addStaticDrawTriangles("ground", groundTextureName, batchedGround);
 
             //adding world colliders
             this.addWorldAABB(new AABB(new Vector3(-640, -2, -640), new Vector3(640, 0, 640)));//AABB for ground

@@ -65,7 +65,7 @@ namespace RabbetGameEngine
                 thePlayer = new EntityPlayer(currentWorld, "Steve", new Vector3(0, 3, 2));
                 for (int i = 0; i < 65; i++)
                 {
-                    currentWorld.spawnEntityInWorld(new EntityCactus(currentWorld, new Vector3(-privateRand.Next(-26, 27), 2.5F, -privateRand.Next(-26, 27))));
+                   // currentWorld.spawnEntityInWorld(new EntityCactus(currentWorld, new Vector3(-privateRand.Next(-26, 27), 2.5F, -privateRand.Next(-26, 27))));
                 }
                 currentWorld.spawnEntityInWorld(thePlayer);
 

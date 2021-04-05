@@ -3,8 +3,6 @@ using OpenTK.Mathematics;
 
 namespace RabbetGameEngine
 {
-    //TODO: add Blurring and bloom as an object oriented class for cleaner and faster code.
-    //TODO: Add HDR and Bloom
     public static class PostProcessing
     {
         private static HdrFrameBuffer mainFBO;

@@ -128,7 +128,7 @@ namespace RabbetGameEngine
 
             for (int i = 0; i < numLayers; i++)
             {
-                texID = doBlur(texID, i, 10);//make blur layers based on previous layer result
+                texID = doBlur(texID, i, 8);//make blur layers based on previous layer result
             }
 
             return combineLayers();
