@@ -14,14 +14,14 @@ namespace RabbetGameEngine
 {
     public class World
     {
+        public static readonly float minSkyLuminosity = 0.02F;
+        public static readonly float maxSkyLuminosity = 2.05F;
         private Color fogColor;
+        private Color horizonColorAmbient;
         private Color horizonColor;
-        private Color horizonColorDawn;
-        private Color horizonColorDusk;
         private Color skyColor;
         private Color skyAmbientColor;
-        private Color sunColorDawn;
-        private Color sunColorDusk;
+        private Color sunColor;
         private Vector3 sunDirection;
         private float sunAngle = 0;
         private float ambientBrightness = 0.05F;
@@ -69,13 +69,12 @@ namespace RabbetGameEngine
         public World(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
-            horizonColorDawn = Color.lightOrange.reduceVibrancy(-0.5F);
-            horizonColorDusk = Color.lightOrange.reduceVibrancy(-0.5F);
-            skyAmbientColor = Color.skyBlue.reduceVibrancy(-1.5F).setBrightPercent(0.2F);
-            fogColor = Color.lightGrey;
+            horizonColor = Color.orange;
+            horizonColorAmbient = Color.dusk;
+            skyAmbientColor = Color.skyBlue.reduceVibrancy(-1F).setBrightPercent(0.5F);
             skyColor = Color.skyBlue;
-            sunColorDawn = Color.lightOrange;
-            sunColorDusk = Color.flame.reduceVibrancy(-0.5F);
+            fogColor = Color.lightGrey;
+            sunColor = Color.lightOrange.reduceVibrancy(-0.5F);
             totalDayNightTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(dayNightCycleMinutes * 60);
             dayNightTicks =(int) ((float)(totalDayNightTicks / 4) * 2F);//setting to sunset
             setDrawDistanceAndFog(1500.0F);
@@ -158,12 +157,26 @@ namespace RabbetGameEngine
         public Vector3 getFogColor()
         {
             //TODO: make fog color match horizon in direction player is looking.
-            return skyColor.mix(Color.white, 0.8F).setBrightPercent(getGlobalBrightness()*0.8F).toNormalVec3();
+            return skyColor.mix(Color.white, 0.8F).setBrightPercent(getGlobalBrightness()*0.8F).toNormalVec3() * getSkyLuminosity();
         }
+
+        public float getSkyLuminosity()
+        {
+            float sunHeight = (sunDirection.Y + 1.0F) * 0.5F;
+            float nightFactor = MathUtil.clamp(1.0F - sunHeight, 0.05F, 1.0F);//0.05 to 1.0 depending how close the sun is to being down
+            return MathUtil.lerpF(minSkyLuminosity, maxSkyLuminosity, 1.0F - System.MathF.Pow(nightFactor, 0.15F));
+        }
+
         public Vector3 getHorizonColor()
         { 
-            return Color.mix(horizonColorDawn, horizonColorDusk, Math.Clamp(dayNightPercent * 2.0F, 0.0F, 1.0F)).toNormalVec3();
+            return horizonColor.toNormalVec3();
         }
+
+        public Vector3 getHorizonAmbientColor()
+        {
+            return horizonColorAmbient.toNormalVec3();
+        }
+
         public Vector3 getSkyColor()
         {
             return skyColor.toNormalVec3();
@@ -180,12 +193,14 @@ namespace RabbetGameEngine
     
         public Vector3 getSunColor()
         {
-            return Color.mix(sunColorDawn, sunColorDusk, MathUtil.normalizeClamped(0.0F, 1F, dayNightPercent)).reduceVibrancy(sunHeight - 0.5F).toNormalVec3();
+            return sunColor.reduceVibrancy(sunHeight - 0.5F).toNormalVec3();
         }
 
-        /// <summary>
-        /// Returns float between 0 and 1 for brighness. 1 is fullbright.
-        /// </summary>
+        public string get24HourTimeString()
+        {
+            return ((int)(24.0F * dayNightPercent)).ToString("00.#") + ":" + ((int)(60.0F * (dayNightPercent * 24.0F)) % 60).ToString("00.#");
+        }
+
         public float getGlobalBrightness()
         {
             return MathHelper.Clamp(MathF.Pow(sunHeight, 4) + ambientBrightness, 0, 1);
@@ -316,7 +331,7 @@ namespace RabbetGameEngine
             }
 
             dayNightPercent = MathUtil.normalizeClamped(0, totalDayNightTicks, dayNightTicks);
-            horizonColor = horizonColorDawn.mix(horizonColorDusk, MathUtil.normalizeClamped(0.25F, 0.75F, dayNightPercent));
+            horizonColor = horizonColorAmbient.mix(horizonColor, MathUtil.normalizeClamped(0.25F, 0.75F, dayNightPercent));
             sunAngle = MathUtil.radians(dayNightPercent * 360.0F) - MathUtil.radians(90.0F);
             sunDirection = new Vector3(MathF.Cos(sunAngle), MathF.Sin(sunAngle), 0.0F).Normalized();
             sunHeight = (MathF.Sin(sunAngle) + 1) * 0.5F;

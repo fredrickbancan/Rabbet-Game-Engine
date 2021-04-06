@@ -62,6 +62,8 @@ namespace RabbetGameEngine
             ShaderUtil.tryGetShader(ShaderUtil.skyboxName, out skyboxShader);
             skyboxShader.use();
             skyboxShader.setUniform1I("ditherTex", 1);
+            skyboxShader.setUniform1F("minSkyLuminosity", World.minSkyLuminosity);
+            skyboxShader.setUniform1F("maxSkyLuminosity", World.maxSkyLuminosity);
             ShaderUtil.tryGetShader(ShaderUtil.sunName, out sunShader);
             sunShader.use();
 
@@ -195,10 +197,14 @@ namespace RabbetGameEngine
 
         public static void onUpdate()
         {
+            if (skyboxToDraw == null) return;
+
             skyboxShader.use();
             skyboxShader.setUniformVec3F("skyColor", skyboxToDraw.getSkyColor());
+            skyboxShader.setUniform1F("skyLuminosity", skyboxToDraw.getSkyLuminosity());//not realy used
             skyboxShader.setUniformVec3F("skyAmbient", skyboxToDraw.getSkyAmbientColor());
             skyboxShader.setUniformVec3F("skyHorizon", skyboxToDraw.getHorizonColor());
+            skyboxShader.setUniformVec3F("skyHorizonAmbient", skyboxToDraw.getHorizonAmbientColor());
             skyboxShader.setUniformVec3F("fogColor", skyboxToDraw.getFogColor());
             skyboxShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
 
@@ -208,25 +214,23 @@ namespace RabbetGameEngine
             sunShader.use();
             sunShader.setUniformVec3F("sunPos", skyboxToDraw.getSunDirection());
             sunShader.setUniformVec3F("sunColor", skyboxToDraw.getSunColor());
-            sunShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
 
-            if (skyboxToDraw != null)
+            starsShader.use();
+            starsShader.setUniformMat4F("modelMatrix", MathUtil.dirVectorToRotationNoFlip(skyboxToDraw.getSunDirection()));
+            starsShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
+            starsShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
+
+            SkyMoon[] m = skyboxToDraw.getMoons();
+            for (int i = 0; i < skyboxToDraw.totalMoons; i++)
             {
-                starsShader.use();
-                starsShader.setUniformMat4F("modelMatrix", MathUtil.dirVectorToRotationNoFlip(skyboxToDraw.getSunDirection()));
-                starsShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
-                starsShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
-              
-                SkyMoon[] m = skyboxToDraw.getMoons();
-                for (int i = 0; i < skyboxToDraw.totalMoons; i++)
-                {
-                    moonBuffer[(skyboxToDraw.totalMoons-1) - i] = m[i].sprite;//reverse order to prevent alpha blending of overlapping moons
-                }
-                moonsVAO.bind();
-                moonsVAO.updateBuffer(0, moonBuffer, skyboxToDraw.totalMoons * Sprite3D.sizeInBytes);
-                moonsShader.use();
-                moonsShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
+                moonBuffer[(skyboxToDraw.totalMoons - 1) - i] = m[i].sprite;//reverse order to prevent alpha blending of overlapping moons
             }
+            moonsVAO.bind();
+            moonsVAO.updateBuffer(0, moonBuffer, skyboxToDraw.totalMoons * Sprite3D.sizeInBytes);
+
+            moonsShader.use();
+            moonsShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
+
         }
 
         public static void deleteVAO()

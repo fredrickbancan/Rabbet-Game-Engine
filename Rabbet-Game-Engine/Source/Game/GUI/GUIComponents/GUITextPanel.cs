@@ -24,6 +24,9 @@ namespace RabbetGameEngine
             setSize(0, 0, dpiRelative); 
         }
 
+        /// <summary>
+        /// repositions this panel on the screen if needed and re-builds text meshes for rendering.
+        /// </summary>
         public override void updateRenderData()
         {
             base.updateRenderData();
@@ -52,6 +55,9 @@ namespace RabbetGameEngine
             return this;
         }
 
+        /// <summary>
+        /// clears this panels lines of text and their associated colors
+        /// </summary>
         public GUITextPanel clear()
         {
             lines.Clear();

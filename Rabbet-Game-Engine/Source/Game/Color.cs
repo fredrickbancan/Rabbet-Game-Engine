@@ -23,7 +23,7 @@ namespace RabbetGameEngine
         public static readonly Color lightYellow = new Color(255, 255, 135);
         public static readonly Color yellow = new Color(255, 255, 0);
         public static readonly Color darkYellow = new Color(153, 153, 0);
-        public static readonly Color lightOrange = new Color(255, 175, 85);
+        public static readonly Color lightOrange = new Color(255, 160, 54);
         public static readonly Color orange = new Color(255, 135, 0);
         public static readonly Color darkOrange = new Color(175, 110, 0);
         public static readonly Color ember = new Color(255, 100, 0);

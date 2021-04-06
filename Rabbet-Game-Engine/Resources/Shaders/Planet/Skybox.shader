@@ -27,33 +27,32 @@ in vec3 worldSpacePos;
 uniform vec3 skyColor;
 uniform vec3 skyAmbient;
 uniform vec3 skyHorizon;
+uniform vec3 skyHorizonAmbient;
 uniform vec3 fogColor;
 uniform vec3 sunDir;
-uniform float minSkyLuminosity = 0.01;
-uniform float maxSkyLuminosity = 1.5;
+uniform float skyLuminosity;
+uniform float minSkyLuminosity;
+uniform float maxSkyLuminosity;
 uniform sampler2D ditherTex;
 
 void main()
 {
 	vec3 fragDir = normalize(worldSpacePos);
-	if (fragDir.y < -0.01) discard;
+	if (fragDir.y < -0.01F) discard;
+	float sunHeight = (sunDir.y + 1.0F) * 0.5F;//0.0 at midnight, 1.0 at midday
+	float sunProximity = (dot(sunDir, fragDir) + 1.01F) * 0.5F;//0.0 to 1.0 depending how close to the sun the fragment is
+	float nightFactor = clamp(1.0F - sunHeight, 0.05F, 1.0F);//0.05 to 1.0 depending how close the sun is to being down
+	float horizonIntensityFactor = sunProximity * (1.0F-fragDir.y);//0.0 to 1.0 based on closeness to sun and horizon
+	float skyGradientFactor = pow(1.0F - fragDir.y, 32.0F * nightFactor * (1.0F-horizonIntensityFactor));//controls gradient for sky color
+	float horizonGradientFactor = pow(skyGradientFactor, 2);//controls gradient for horizon color
+	float horizonAmbientGradientFactor = pow(horizonGradientFactor, 2);//controls gradient for ambient horizon color (color closest to sea level)
 	
-	vec3 hazeTone = vec3(1.0 / maxSkyLuminosity);
-	float sunHeight = (sunDir.y + 1) * 0.5;
-	float sunProximity = (dot(sunDir, fragDir) + 1.01) * 0.5;
-	float n = pow(sunProximity, 2) * (1-fragDir.y*0.5);
-	float horizonStrength = pow(1 - fragDir.y, 32 * clamp(1-sunHeight, 0.05, 1.0) * (1-n));
-	horizonStrength *= pow(sunHeight, 0.5);
+	vec3 skyMixed = mix(skyAmbient, skyColor, skyGradientFactor * horizonIntensityFactor * sunHeight);//calculate color of sky
+	vec3 haze = mix(fogColor, vec3(1.0), horizonIntensityFactor * sunHeight);//calculate color of horizon haze
 
-
-	vec3 skyGradient = mix(skyAmbient/maxSkyLuminosity, skyColor, horizonStrength);
-
-	vec3 hazeColor = mix(hazeTone, skyHorizon * (1+(maxSkyLuminosity * sunProximity)) * 0.5, sunProximity * clamp(2-sunHeight*2,0,1) * (1 - fragDir.y * 5.0) );
-	skyGradient = mix(skyGradient, hazeColor, pow(1 - fragDir.y, 8 * (1-n)));
-
-
-	skyGradient *= mix(maxSkyLuminosity, minSkyLuminosity, 1-sunHeight);//set sky brightness based on time of day
-	color.rgb = skyGradient;
+	float atmosBright = mix(minSkyLuminosity, maxSkyLuminosity, 1.0F - pow(nightFactor, 0.15) * (1.0F -  sunProximity * pow(sunHeight, 0.5F)));//calculate brightness for sky colors
+	vec3 horizonMixed = mix(skyMixed * atmosBright, haze * clamp(atmosBright, 1.0F, maxSkyLuminosity), horizonGradientFactor);
+	color.rgb = horizonMixed;
 	color += vec4(texture2D(ditherTex, gl_FragCoord.xy / 8.0).r / 32.0 - (1.0 / 128.0));//dithering
 	color.a = 1.0;
 }

@@ -20,5 +20,5 @@ out vec4 fragColor;
 uniform vec3 fogColor;
 void main()
 {
-	fragColor = vec4(fogColor,1);
+	fragColor = vec4(0,0,0,1);
 }

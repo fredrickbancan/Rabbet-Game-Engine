@@ -13,7 +13,7 @@ layout(location = 6) in vec2 corner;//instanced quad corner
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform vec3 sunPos;
-uniform vec2 viewPortSize;
+
 out vec2 coords;
 vec4 lookAtZeroRotationNoFlip(float rad)
 {
@@ -59,5 +59,5 @@ void main()
     float d = dot(coords, coords);
 	float fade = smoothstep(0.0, 1.0, pow(sqrt(1.25 - d), 64));
 	if (fade <= 0.001) discard;
-	color = vec4(sunColor * 2.5, fade);
+	color = vec4(sunColor * 2.5, 0);//temp disable
 }
