@@ -35,11 +35,11 @@ namespace RabbetGameEngine.Sound
 
             AL.Source(srcID, ALSourcei.Buffer, snd.getBufferID());
             AL.Source(srcID, ALSourceb.SourceRelative, true);
-            AL.Source(srcID, ALSource3f.Position, 0,0,-0.1F);
+            AL.Source(srcID, ALSource3f.Position, 0,0,-1.0F);
             volume = MathHelper.Clamp(volume, 0, 1);
             AL.Source(srcID, ALSourcef.Gain, volume * GameSettings.masterVolume.floatValue);
             AL.Source(srcID, ALSourcef.Pitch, speed);
-            AL.Source(srcID, ALSourcei.SourceType, 4136 /*ALSourceType.Static*/);
+            AL.Source(srcID, ALSourcei.SourceType, (int)ALSourceType.Static);
             AL.SourcePlay(srcID);
             isPositional = false;
         }
@@ -113,14 +113,17 @@ namespace RabbetGameEngine.Sound
             isPositional = true;
         }
 
-        public void onTick(EntityPlayer listener, long currentMills)
+        public void onTick(long currentMills)
         {
             if(!loopingSound)
             { 
                 finishedPlaying = (currentMills - timeStampMills) > (soundLengthMills + extraPlayMills);
             }
+        }
 
-            if(isPositional && !finishedPlaying)
+        public void onFrame(EntityPlayer listener)
+        {
+            if (isPositional && !finishedPlaying)
             {
                 setGainBasedOnDistance(listener.getEyePosition());
                 setPanBasedOnAngle(listener.getEyePosition(), listener.getRightVector());
@@ -149,10 +152,15 @@ namespace RabbetGameEngine.Sound
 
         private void setPanBasedOnAngle(Vector3 lPos, Vector3 lRight)
         {
-            Vector3 to = Vector3.Normalize(sndPos - lPos);
-            float dot = Vector3.Dot(lRight, to);
-            dot *= 0.5F;
-            AL.Source(srcID, ALSource3f.Position, dot, 0, -1);
+            Vector3 sndPosNoY = sndPos;
+            sndPosNoY.Y = 0;
+            lPos.Y = 0;
+            Vector3 to = Vector3.Normalize(sndPosNoY - lPos);//vec from listener to source
+            float pan = (Vector3.Dot(lRight, to) + 1.0F) * 0.5F;//0 left, 1 right
+            float x = -System.MathF.Cos(pan * System.MathF.PI);
+            x = x < 0 ? -System.MathF.Pow(x * x, 3) : System.MathF.Pow(x * x, 3);
+            //Controlling this emulates better sound positioning
+            AL.Source(srcID, ALSource3f.Position, x * 0.5F, 0, -1.0F);
         }
 
         public void stopPlaying()

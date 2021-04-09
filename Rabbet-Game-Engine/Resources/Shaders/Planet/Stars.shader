@@ -40,5 +40,6 @@ void main()
     float coordLength = length(centerVec);
     float fade = pow(sqrt(1.05 - coordLength), 32);//making each star a fading point
     fragColor = vec4(vColor.rgb, vColor.a * fade);
-    if (fragColor.a <= 0.001) discard;
+    if (fragColor.a <= 0.001 || length(vColor.rgb) < 0.01) discard;
+    discard;//temp disable
 }

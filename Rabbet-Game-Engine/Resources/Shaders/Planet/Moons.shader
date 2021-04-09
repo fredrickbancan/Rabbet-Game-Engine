@@ -73,4 +73,5 @@ void main()
 	}
 	vec4 textureColor = texture(uTexture, uv) * vColor;
 	color = textureColor;
+    discard;//temp disable
 }

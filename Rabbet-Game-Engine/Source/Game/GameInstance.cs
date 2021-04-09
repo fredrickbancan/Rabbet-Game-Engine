@@ -72,8 +72,10 @@ namespace RabbetGameEngine
                 //temp sound examples
                 SoundManager.playSoundLoopingAt("waterroll", new Vector3(16, 1, 16), 0.5F);
                 currentWorld.spawnVFXInWorld(new VFXStaticText3D("waterroll", GameSettings.defaultFont, "waterroll.ogg, 50% volume", new Vector3(16, 2.5F, 16), 5.0F, Color.white));
+                currentWorld.spawnVFXInWorld(new VFXSinglePoint(new Vector3(16, 1.0F, 16), Color.hotPink, 0.15F, 9999999.0F, true, false));
                 SoundManager.playSoundLoopingAt("waterroll_large", new Vector3(-16, 1, -16), 1.0F);
                 currentWorld.spawnVFXInWorld(new VFXStaticText3D("waterroll_large", GameSettings.defaultFont, "waterroll_large.ogg, 100% volume", new Vector3(-16, 2.5F, -16), 5.0F, Color.white));
+                currentWorld.spawnVFXInWorld(new VFXSinglePoint(new Vector3(-16, 1.0F, -16), Color.hotPink, 0.15F, 9999999.0F, true, false));
 
                 Input.setCursorHiddenAndGrabbed(true);
                 Application.infoPrint("Initialized.");

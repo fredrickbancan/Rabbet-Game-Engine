@@ -41,7 +41,7 @@
             {
                noclipPanel.setDefaultLineColor(Color.darkRed).clear().addLine("Noclip: OFF");
             }
-            timePanel.clear().addLine(GameInstance.get.currentWorld.get24HourTimeString());
+            timePanel.clear().addLine(GameInstance.get.currentWorld.get12HourTimeString());
             timePanel.updateRenderData();
             flyPanel.updateRenderData();
             noclipPanel.updateRenderData();

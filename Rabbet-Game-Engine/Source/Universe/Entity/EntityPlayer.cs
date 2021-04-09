@@ -48,6 +48,16 @@ namespace RabbetGameEngine
             return pos + EntityPlayer.eyeOffset;
         }
 
+        public override Vector3 getRightVector()
+        {
+            return camera.getRightVector();
+        }
+
+        public override Vector3 getFrontVector()
+        {
+            return camera.getFrontVector();
+        }
+
         public Vector3 getLerpEyePos()
         {
             return this.getLerpPos() + EntityPlayer.eyeOffset;

@@ -14,8 +14,8 @@ namespace RabbetGameEngine
 {
     public class World
     {
-        public static readonly float minSkyLuminosity = 0.02F;
-        public static readonly float maxSkyLuminosity = 2.05F;
+        public static readonly float minSkyLuminosity = 0.03F;
+        public static readonly float maxSkyLuminosity = 1.33F;
         private Color fogColor;
         private Color horizonColorAmbient;
         private Color horizonColor;
@@ -72,7 +72,7 @@ namespace RabbetGameEngine
             horizonColor = Color.orange;
             horizonColorAmbient = Color.dusk;
             skyAmbientColor = Color.skyBlue.reduceVibrancy(-1F).setBrightPercent(0.5F);
-            skyColor = Color.skyBlue;
+            skyColor = Color.skyBlue.reduceVibrancy(-0.5F);
             fogColor = Color.lightGrey;
             sunColor = Color.lightOrange.reduceVibrancy(-0.5F);
             totalDayNightTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(dayNightCycleMinutes * 60);
@@ -123,22 +123,28 @@ namespace RabbetGameEngine
         {
             totalStars = rand.Next(4000,4501);
             PointParticle[] points = new PointParticle[totalStars];
-            float starColorStrength = 0.3072F;
+            float starColorStrength = 0.2F;
             float maxStarRadius = 0.01F;
+            float minStarRadius = 0.0025F;
+            float minStarLuminance = maxSkyLuminosity * 0.3F;
+            float maxStarLuminance = maxSkyLuminosity * 0.5F;
+            float luminance;
+            float radius;
+            Vector3 pos;
+            Vector4 color;
             for (int i = 0; i < totalStars; i++)
             {
-                Vector3 pos = new Vector3(0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble());
-                points[i] = new PointParticle(
-                    pos.Normalized(),
-                    new Vector4(1.0F - (float)rand.NextDouble() * starColorStrength, 1.0F - (float)rand.NextDouble() * starColorStrength, 1.0F - (float)rand.NextDouble() * starColorStrength, 1.0F - (float)rand.NextDouble() * (starColorStrength * 1.5F)),
-                    (float)rand.NextDouble() * maxStarRadius + 0.0025F,
-                    false
-                    );
+                luminance = MathUtil.lerpF(minStarLuminance, maxStarLuminance, (float)rand.NextDouble());
+                pos = new Vector3(0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble());
+                radius = (float)rand.NextDouble() * maxStarRadius + minStarRadius;
+                color = new Vector4(luminance - (float)rand.NextDouble() * starColorStrength, luminance - (float)rand.NextDouble() * starColorStrength, luminance - (float)rand.NextDouble() * starColorStrength, 1.0F);
+                
+                points[i] = new PointParticle( pos.Normalized(), color, radius, false);
             }
             Vector3 galaxyPlaneNormal = new Vector3(0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble()).Normalized();
             float galaxyClusterStrength = 0.95F;
 
-            float distToPlane = 0;
+            float distToPlane;
             for(int i = 0; i < totalStars/1.5F; i++)
             {
                 distToPlane = Vector3.Dot(galaxyPlaneNormal, points[i].pos);
@@ -157,7 +163,7 @@ namespace RabbetGameEngine
         public Vector3 getFogColor()
         {
             //TODO: make fog color match horizon in direction player is looking.
-            return skyColor.mix(Color.white, 0.8F).setBrightPercent(getGlobalBrightness()*0.8F).toNormalVec3() * getSkyLuminosity();
+            return fogColor.toNormalVec3();
         }
 
         public float getSkyLuminosity()
@@ -200,7 +206,12 @@ namespace RabbetGameEngine
         {
             return ((int)(24.0F * dayNightPercent)).ToString("00.#") + ":" + ((int)(60.0F * (dayNightPercent * 24.0F)) % 60).ToString("00.#");
         }
-
+        public string get12HourTimeString()
+        {
+            int twelveHour = (int)(24.0F * dayNightPercent) % 12;
+            twelveHour = twelveHour < 1 ? 12 : twelveHour;//make range from 12 - 12
+            return twelveHour.ToString("0.#") + ":" + ((int)(60.0F * (dayNightPercent * 24.0F)) % 60).ToString("00.#") + (isDawn() ? " am" : " pm");
+        }
         public float getGlobalBrightness()
         {
             return MathHelper.Clamp(MathF.Pow(sunHeight, 4) + ambientBrightness, 0, 1);

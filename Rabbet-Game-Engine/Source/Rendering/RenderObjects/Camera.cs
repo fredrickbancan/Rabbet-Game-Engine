@@ -56,8 +56,8 @@ namespace RabbetGameEngine
             camDirectionVector.Y =(float) Math.Sin(MathUtil.radians(pitch));
             camDirectionVector.Z =(float) (Math.Sin(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
             camFrontVector = Vector3.Normalize(camDirectionVector);
-            camRightVector = Vector3.Normalize(Vector3.Cross(up, camDirectionVector));
-            camUpVector = Vector3.Cross(camDirectionVector, camRightVector);
+            camRightVector = -Vector3.Normalize(Vector3.Cross(up, camDirectionVector));
+            camUpVector = Vector3.Cross(camDirectionVector, -camRightVector);
 
             Vector3 parentLerpPos = child.getLerpEyePos();
             viewMatrix = Matrix4.LookAt(parentLerpPos, parentLerpPos + camFrontVector, camUpVector);
@@ -80,6 +80,11 @@ namespace RabbetGameEngine
         public Vector3 getFrontVector()
         {
             return camFrontVector;
+        }
+
+        public Vector3 getRightVector()
+        {
+            return camRightVector;
         }
 
         public float getYaw()

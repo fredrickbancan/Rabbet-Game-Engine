@@ -51,7 +51,7 @@ namespace RabbetGameEngine.Sound
                 freeSourceIDs = new List<int>();
                 busySourceIDs = new List<int>();
                 usedSourceIDs = new List<int>();
-                AL.DistanceModel(ALDistanceModel.None);
+                AL.DistanceModel(ALDistanceModel.LinearDistance);
                 initialized = true;
             }
 
@@ -90,20 +90,26 @@ namespace RabbetGameEngine.Sound
         public static void onFrame()
         {
             if (!initialized) return;
+            EntityPlayer p = GameInstance.get.thePlayer;
+            for (int i = 0; i < sounds.Count; i++)
+            {
+                PlayingSound s = sounds.ElementAt(i);
 
+                s.onFrame(p);
+            }
         }
+
         public static void onUpdate()
         {
             if (!initialized) return;
 
             long ms = TicksAndFrames.getRealTimeMills();
-            EntityPlayer p = GameInstance.get.thePlayer;
 
             for (int i = 0; i < sounds.Count; i++)
             {
                 PlayingSound s = sounds.ElementAt(i);
 
-                s.onTick(p, ms);
+                s.onTick(ms);
 
                 if (s.finishedPlaying)
                 {
