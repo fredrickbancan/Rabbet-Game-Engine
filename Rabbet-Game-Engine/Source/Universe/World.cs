@@ -69,10 +69,10 @@ namespace RabbetGameEngine
         public World(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
-            horizonColor = Color.orange;
-            horizonColorAmbient = Color.dusk;
+            horizonColor = Color.lightOrange.reduceVibrancy(-1.5F);
+            horizonColorAmbient = Color.dusk.reduceVibrancy(-0.5F);
             skyAmbientColor = Color.skyBlue.reduceVibrancy(-1F).setBrightPercent(0.5F);
-            skyColor = Color.skyBlue.reduceVibrancy(-0.5F);
+            skyColor = Color.skyBlue.reduceVibrancy(-1.5F);
             fogColor = Color.lightGrey;
             sunColor = Color.lightOrange.reduceVibrancy(-0.5F);
             totalDayNightTicks = (int)TicksAndFrames.getNumOfTicksForSeconds(dayNightCycleMinutes * 60);
@@ -126,8 +126,8 @@ namespace RabbetGameEngine
             float starColorStrength = 0.2F;
             float maxStarRadius = 0.01F;
             float minStarRadius = 0.0025F;
-            float minStarLuminance = maxSkyLuminosity * 0.3F;
-            float maxStarLuminance = maxSkyLuminosity * 0.5F;
+            float minStarLuminance = maxSkyLuminosity * 0.35F;
+            float maxStarLuminance = maxSkyLuminosity * 0.72F;
             float luminance;
             float radius;
             Vector3 pos;
@@ -142,7 +142,7 @@ namespace RabbetGameEngine
                 points[i] = new PointParticle( pos.Normalized(), color, radius, false);
             }
             Vector3 galaxyPlaneNormal = new Vector3(0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble(), 0.5F - (float)rand.NextDouble()).Normalized();
-            float galaxyClusterStrength = 0.95F;
+            float galaxyClusterStrength = 0.85F;
 
             float distToPlane;
             for(int i = 0; i < totalStars/1.5F; i++)
@@ -342,7 +342,6 @@ namespace RabbetGameEngine
             }
 
             dayNightPercent = MathUtil.normalizeClamped(0, totalDayNightTicks, dayNightTicks);
-            horizonColor = horizonColorAmbient.mix(horizonColor, MathUtil.normalizeClamped(0.25F, 0.75F, dayNightPercent));
             sunAngle = MathUtil.radians(dayNightPercent * 360.0F) - MathUtil.radians(90.0F);
             sunDirection = new Vector3(MathF.Cos(sunAngle), MathF.Sin(sunAngle), 0.0F).Normalized();
             sunHeight = (MathF.Sin(sunAngle) + 1) * 0.5F;

@@ -49,7 +49,7 @@ void main()
     uv.y = corner.y < 0.0 ? -spriteUVMinMax.y : -spriteUVMinMax.w;
     vColor = spriteColor;
     float d = 1 - (dot(sunDir, spritePos.xyz) + 1) * 0.5F;
-    vColor.a = (d * d) * 1.25F;
+    vColor.a = (d * d);
     float h = (sunDir.y + 1) * 0.5F;
     vColor.a *= 1 - h * h;
     vColor.rgb *= 1 + clamp(dot(sunDir, -spritePos.xyz) * 16, 0, 1);//double brightness when moon is opposite to sun
@@ -73,5 +73,4 @@ void main()
 	}
 	vec4 textureColor = texture(uTexture, uv) * vColor;
 	color = textureColor;
-    discard;//temp disable
 }

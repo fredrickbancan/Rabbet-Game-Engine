@@ -42,15 +42,17 @@ void main()
 	float sunProximity = (dot(sunDir, fragDir) + 1.01F) * 0.5F;//0.0 to 1.0 depending how close to the sun the fragment is
 	float nightFactor = clamp(1.0F - sunHeight, 0.05F, 1.0F);//0.05 to 1.0 depending how close the sun is to being down
 	float horizonIntensityFactor = sunProximity * (1.0F-fragDir.y);//0.0 to 1.0 based on closeness to sun and horizon
+	float p = 1 - ((1-sunProximity) * (1-sunHeight));
+
 	vec3 skyTop = skyColor;
 	vec3 skyBottom = mix(skyColor, vec3(1.0F), 0.72F * (1.0F - nightFactor * 0.5F));
 	vec3 skyMixed = mix(skyTop, skyBottom, pow(1.0F - fragDir.y, 1.0F + nightFactor * 7.0F));//calculate color of sky
+	skyMixed = mix(skyMixed, skyHorizon * maxSkyLuminosity, pow(horizonIntensityFactor, 2.0F * (1 - sunHeight * (1-fragDir.y) * 0.3333F)));
+	skyMixed = mix(skyMixed, skyHorizonAmbient * maxSkyLuminosity, pow(horizonIntensityFactor, 7.5F * (1-sunHeight * 0.6F)));
 
 
-	float atmosBright = mix(minSkyLuminosity, maxSkyLuminosity, clamp(pow(1-nightFactor, 4.0F) * 16.0F, 0.0F, 1.0F) );//calculate brightness for sky colors
-
-	float hDot = (dot(fragDir.xz, sunDir.xz) + 1.01F) * 0.5F;
-	atmosBright *= 0.05F + (pow(hDot, (1-sunHeight) * fragDir.y) * 0.95F);
+	//change brightness
+	float atmosBright = mix(minSkyLuminosity, maxSkyLuminosity, clamp(pow(1-nightFactor, 4.0F) * 16.0F, 0.0F, 1.0F) * p);//calculate brightness for sky colors
 	color.rgb = skyMixed * atmosBright;
 
 

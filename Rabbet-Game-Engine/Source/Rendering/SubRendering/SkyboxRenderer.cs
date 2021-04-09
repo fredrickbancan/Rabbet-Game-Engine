@@ -157,6 +157,7 @@ namespace RabbetGameEngine
             GL.ActiveTexture(TextureUnit.Texture0);
             Renderer.totalDraws++;
 
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);//additive blending
 
             //drawing moons
             moonsVAO.bind();
@@ -169,7 +170,6 @@ namespace RabbetGameEngine
             Renderer.totalDraws++;
 
             GL.DepthMask(false);
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);//additive blending
             //drawing stars
             starsVAO.bind(); 
             starsShader.use();
@@ -201,8 +201,6 @@ namespace RabbetGameEngine
 
             skyboxShader.use();
             skyboxShader.setUniformVec3F("skyColor", skyboxToDraw.getSkyColor());
-            skyboxShader.setUniform1F("skyLuminosity", skyboxToDraw.getSkyLuminosity());//not realy used
-            skyboxShader.setUniformVec3F("skyAmbient", skyboxToDraw.getSkyAmbientColor());
             skyboxShader.setUniformVec3F("skyHorizon", skyboxToDraw.getHorizonColor());
             skyboxShader.setUniformVec3F("skyHorizonAmbient", skyboxToDraw.getHorizonAmbientColor());
             skyboxShader.setUniformVec3F("fogColor", skyboxToDraw.getFogColor());

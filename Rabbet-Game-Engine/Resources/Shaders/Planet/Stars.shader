@@ -23,8 +23,8 @@ void main()
     float r = 1.0 - (dot(worldPos, sunDir) + 1.0) * 0.5;
     float starHeight = (worldPos.y + 1) * 0.5;
     float sunHeight = (sunDir.y + 1) * 0.5;
-    float dayRatio = clamp(sunHeight * sunHeight * 16.0, 0, 1);
-    vColor.a = (r * r) * clamp(starHeight * 2.0, 0, 1) * (1 - dayRatio);
+    float dayRatio = clamp(sunHeight * sunHeight * 8.0, 0, 1);
+    vColor.a = (r * r) * 1-dayRatio;
 }
 
 
@@ -41,5 +41,4 @@ void main()
     float fade = pow(sqrt(1.05 - coordLength), 32);//making each star a fading point
     fragColor = vec4(vColor.rgb, vColor.a * fade);
     if (fragColor.a <= 0.001 || length(vColor.rgb) < 0.01) discard;
-    discard;//temp disable
 }
