@@ -1,7 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using System;
 
-namespace RabbetGameEngine.Models
+namespace RabbetGameEngine
 {
     public class PointCloudModel
     {

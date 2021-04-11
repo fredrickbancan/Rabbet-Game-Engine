@@ -7,11 +7,7 @@ layout(location = 2) in float radius;
 layout(location = 3) in float aoc;
 layout(location = 4) in vec2 corner;//instanced quad corner
 
-uniform float fogStart = 1000.0;
-uniform float fogEnd = 1000.0;
-
 out vec4 vColor;
-out float visibility;
 out vec4 worldPos;
 out float rad;
 out vec2 coords;
@@ -65,14 +61,7 @@ void main()
     coords = corner * 2.0;
     rad = radius;
     worldPos = position;
-    vec4 positionRelativeToCam = viewMatrix * lookAtCamRotation(worldPos, rad);
-    gl_Position = projectionMatrix * positionRelativeToCam;
-
-    float distanceFromCam = length(positionRelativeToCam.xyz);
-    visibility = (distanceFromCam - fogStart) / (fogEnd - fogStart);
-    visibility = clamp(visibility, 0.0, 1.0);
-    visibility = 1.0 - visibility;
-    visibility *= visibility;
+    gl_Position = projectionMatrix * viewMatrix * lookAtCamRotation(worldPos, rad);
 
     vColor =pointColor;
     fAoc = aoc;
@@ -82,7 +71,7 @@ void main()
 #shader fragment
 #version 330 core
 layout(location = 0) out vec4 fragColor;
-in float visibility;
+
 in vec4 vColor;
 in float fAoc;
 in vec4 worldPos;
@@ -90,7 +79,6 @@ in float rad;
 in vec2 coords;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
-uniform vec3 fogColor;
 
 float ambientOcclusion;//variable for applying a shadowing effect towards the edges of the point to give the illusion of a sphereical shape
 
@@ -133,9 +121,5 @@ void main()
         colorModified.g *= ambientOcclusion;
         colorModified.b *= ambientOcclusion;
     }
-
-
-    //add fog effect to frag
-    fragColor.rgb = mix(fogColor, colorModified, visibility);
     fragColor.a = 1;
 }

@@ -90,19 +90,18 @@ namespace RabbetGameEngine.Sound
         public static void onFrame()
         {
             if (!initialized) return;
-            EntityPlayer p = GameInstance.get.thePlayer;
+          /*  EntityPlayer p = GameInstance.get.thePlayer;
             for (int i = 0; i < sounds.Count; i++)
             {
                 PlayingSound s = sounds.ElementAt(i);
 
                 s.onFrame(p);
-            }
+            }*/
         }
 
         public static void onUpdate()
         {
             if (!initialized) return;
-
             long ms = TicksAndFrames.getRealTimeMills();
 
             for (int i = 0; i < sounds.Count; i++)

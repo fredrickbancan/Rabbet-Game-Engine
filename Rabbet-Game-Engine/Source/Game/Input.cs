@@ -48,12 +48,6 @@ namespace RabbetGameEngine
                     toggleBoolean(ref GameSettings.drawHitboxes);
                 }
                 
-                if (singleKeyPress(Keys.F2))
-                {
-                    toggleBoolean(ref GameSettings.entityLabels);
-                    GameInstance.get.onToggleEntityLabels();
-                }
-
                 if (singleKeyPress(Keys.F3))
                 {
                     toggleBoolean(ref GameSettings.debugScreen);

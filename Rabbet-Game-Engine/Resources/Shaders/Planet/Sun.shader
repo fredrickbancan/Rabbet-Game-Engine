@@ -43,7 +43,7 @@ vec4 lookAtZeroRotationNoFlip(float rad)
 
 void main()
 {
-	float sunRadius = 0.5;
+	float sunRadius = 1.0F;
     coords = corner * 2.0;
 
     gl_Position = projectionMatrix * viewMatrix * lookAtZeroRotationNoFlip(sunRadius);
@@ -57,7 +57,13 @@ uniform vec3 sunColor;
 void main()
 {
     float l = length(coords);
-    float fade = clamp(pow(1.15 - l, 64), 0, 1);
-	if (fade <= 0.001) discard;
-	color = vec4(sunColor * 2.5, fade);
+    if (l <= 0.05F)
+    {
+        color = vec4(sunColor * 2.5F, 1.0F);
+    }
+    else
+    {
+        float alpha = clamp(1 - l, 0, 1);
+        color = vec4(sunColor * 1.03572F, pow(alpha, 8.0F));
+    }
 }

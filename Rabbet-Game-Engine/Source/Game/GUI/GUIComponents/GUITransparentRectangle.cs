@@ -1,4 +1,4 @@
-﻿using RabbetGameEngine.Models;
+﻿using RabbetGameEngine;
 
 namespace RabbetGameEngine
 {

@@ -1,6 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using RabbetGameEngine.Models;
+using RabbetGameEngine;
 using RabbetGameEngine.Rendering;
 namespace RabbetGameEngine.SubRendering
 {
@@ -51,9 +51,6 @@ namespace RabbetGameEngine.SubRendering
         {
             batchShader.use();
             batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
-            batchShader.setUniformVec3F("fogColor", thePlanet.getFogColor());
-            batchShader.setUniform1F("fogStart", thePlanet.getFogStart());
-            batchShader.setUniform1F("fogEnd", thePlanet.getFogEnd());
         }
 
         public override void drawBatch(World thePlanet)
@@ -61,7 +58,6 @@ namespace RabbetGameEngine.SubRendering
             vao.bind();
             bindAllTextures();
             batchShader.use();
-            batchShader.setUniformMat4F("viewMatrix", thePlanet.getViewMatrix());
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             GL.MultiDrawArraysIndirect(PrimitiveType.Triangles, System.IntPtr.Zero, requestedObjectItterator, sizeof(uint));
             vao.unBind();

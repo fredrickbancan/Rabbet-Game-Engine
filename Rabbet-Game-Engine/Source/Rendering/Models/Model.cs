@@ -1,7 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using System;
 
-namespace RabbetGameEngine.Models
+namespace RabbetGameEngine
 {
     /// <summary>
     /// a collection of model data (vertices, indices, model matrix and previous model matix.)

@@ -1,8 +1,6 @@
 ﻿using OpenTK.Mathematics;
-using RabbetGameEngine.Models;
-using RabbetGameEngine.SubRendering;
 
-namespace RabbetGameEngine.VisualEffects
+namespace RabbetGameEngine
 {
     public class VFXPointCloud : VFX
     {
@@ -11,11 +9,18 @@ namespace RabbetGameEngine.VisualEffects
         protected float pointRadius;
         protected bool pointAmbientOcclusion = false;//if ambient occlusion is true, the point will be rendered with a spherical ambient occlusion giving the illusion of a sphere instead of a 2d circular point
         protected float colorAlpha;
+        protected float scale = 1;//scale of the VFX
+        protected float scaleVelocity; //how much to expand the VFX model every tick, should be converted from expansion every second
+        protected float scaleAcceleration; //how much to expand the VFX model every tick, should be converted from expansion every second
+        protected float scaleResistance = 0.03572F; //multiplyer decelerates the expansion of this VFX every tick
+        protected float scaleXModifyer = 1;
+        protected float scaleYModifyer = 1;
+        protected float scaleZModifyer = 1;
         protected Matrix4 modelMatrix = Matrix4.Identity;
         protected Matrix4 prevTickModelMatrix = Matrix4.Identity;
         protected bool transparency = false;
 
-        public VFXPointCloud(Vector3 pos, Color color, bool transparency, bool ambientOcclusion, float maxExistingSeconds, float radius, float alpha) : base(pos, 1.0F, "none", null, maxExistingSeconds, transparency ? RenderType.lerpISpheresTransparent : RenderType.lerpISpheres)
+        public VFXPointCloud(World w, Vector3 pos, Color color, bool transparency, bool ambientOcclusion, float maxExistingSeconds, float radius, float alpha) : base(w, pos, maxExistingSeconds, transparency ? RenderType.lerpISpheresTransparent : RenderType.lerpISpheres)
         {
             this.transparency = transparency;
             if(!transparency)
@@ -29,8 +34,6 @@ namespace RabbetGameEngine.VisualEffects
             pointColor = color;
             pointRadius = radius;
             pointAmbientOcclusion = ambientOcclusion;
-            this.modelMatrix = Matrix4.CreateScale(new Vector3(scale * scaleXModifyer, scale * scaleYModifyer, scale * scaleZModifyer)) * MathUtil.createRotation(new Vector3(pitch, -yaw - 90, roll)) * Matrix4.CreateTranslation(pos);
-            this.prevTickModelMatrix = this.modelMatrix;
         }
 
         /*Builds the vertices for the point cloud to be rendered. By default this method will build a randomized point cloud
@@ -45,7 +48,6 @@ namespace RabbetGameEngine.VisualEffects
             }
 
             cloudModel = new PointCloudModel(points);
-            hasModel = true;
             return this;
         }
 
@@ -67,36 +69,39 @@ namespace RabbetGameEngine.VisualEffects
             return nonRandBrightColor;
         }
 
-        public virtual void setPointCloudModel(PointCloudModel mod)
+        public void setPointCloudModel(PointCloudModel mod)
         {
             this.cloudModel = mod;
         }
 
-        public override void preTick()
+        public void setExpansionResistance(float amount)
         {
-            if(cloudModel != null)
-            cloudModel.preTick();
-            base.preTick();
+            scaleResistance = amount;
         }
 
-        protected override void updateVFXModel()
+        public void setExpansionAccel(float expansionEverySecond)
         {
-            this.prevTickModelMatrix = this.modelMatrix;
-            scaleVelocity += scaleAcceleration - scaleResistance * scaleVelocity; //decrease expansion rate
-            scale += scaleVelocity;
-            this.modelMatrix = Matrix4.CreateScale(new Vector3(scale * scaleXModifyer, scale * scaleYModifyer, scale * scaleZModifyer)) * MathUtil.createRotation(new Vector3(pitch, -yaw - 90,roll)) * Matrix4.CreateTranslation(pos);
-       
-            //temp, sandboxing.
-            if (transparency)
-            {
-                this.colorAlpha *= 1 - (float)GameInstance.rand.NextDouble() * 0.15F;
-                if (colorAlpha < 0.01F)
-                {
-                    ceaseToExist();
-                }
-                cloudModel.setAlpha(colorAlpha);
-                cloudModel.scaleRadii(0.99F);
-            }
+            scaleAcceleration = expansionEverySecond;
+        }
+
+        public void setExpansionVelocity(float expansionvel)
+        {
+            scaleVelocity = expansionvel;
+        }
+
+        public void setExpansionXModifyer(float modifyer)
+        {
+            scaleXModifyer = modifyer;
+        }
+
+        public void setExpansionYModifyer(float modifyer)
+        {
+            scaleYModifyer = modifyer;
+        }
+
+        public void setExpansionZModifyer(float modifyer)
+        {
+            scaleZModifyer = modifyer;
         }
 
         public override void sendRenderRequest()

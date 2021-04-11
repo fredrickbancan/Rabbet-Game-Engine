@@ -3,10 +3,8 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using RabbetGameEngine.Debugging;
-using RabbetGameEngine.Models;
 using RabbetGameEngine.SubRendering;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RabbetGameEngine
 {
@@ -135,14 +133,12 @@ namespace RabbetGameEngine
         public static void doWorldRenderUpdate()
         {
             Profiler.startSection("renderUpdate");
+            Profiler.startTickSection("renderUpdate");
             BatchManager.preWorldRenderUpdate(GameInstance.get.currentWorld);
             SkyboxRenderer.onUpdate();
-            if (GameInstance.get.currentWorld != null)
-            {
-                GameInstance.get.currentWorld.onRenderUpdate();
-            }
             BatchManager.postWorldRenderUpdate();
-            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov.floatValue), GameInstance.aspectRatio, 0.1F, GameInstance.get.getDrawDistance());
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov.floatValue), GameInstance.aspectRatio, 0.1F, 1000.0F);
+            Profiler.endCurrentTickSection();
             Profiler.endCurrentSection();
         }
         public static void doGUIRenderUpdate()
@@ -173,7 +169,7 @@ namespace RabbetGameEngine
         {
             preRender();
             Profiler.startSection("renderWorld");
-            SkyboxRenderer.drawSkybox(GameInstance.get.thePlayer.getViewMatrix());
+            //SkyboxRenderer.drawSkybox(GameInstance.get.thePlayer.getViewMatrix());
             drawAllStaticRenderObjects();
             BatchManager.drawAllWorld();
             if(!usePostProcessing)
@@ -242,7 +238,7 @@ namespace RabbetGameEngine
         {
             for(int i = 0; i < staticDraws.Count; ++i)
             { 
-                staticDraws.ElementAt(i).Value.draw(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentWorld.getFogColor());
+                //staticDraws.ElementAt(i).Value.draw(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentWorld.getFogColor());
                 totalDraws++;
             }
         }
@@ -278,7 +274,6 @@ namespace RabbetGameEngine
         public static int totalDraws { get { return privateTotalDrawCallCount; } set { privateTotalDrawCallCount = value; } }
         public static int totalFBODraws { get { return privateTotalFBODrawCallCount; } set { privateTotalFBODrawCallCount = value; } }
         public static Matrix4 orthoMatrix { get => orthographicMatrix; }
-        public static Vector3 camPos { get => GameInstance.get.thePlayer.getLerpEyePos(); }
         public static int defaultLineWidthInPixels { get => lineWidthPixels; }
         public static Vector2 viewPortSize { get => usePostProcessing ? PostProcessing.viewPortSize : new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight);}
 

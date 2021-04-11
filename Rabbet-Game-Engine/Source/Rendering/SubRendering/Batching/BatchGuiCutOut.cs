@@ -1,5 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using RabbetGameEngine.Models;
+using RabbetGameEngine;
 using RabbetGameEngine.Rendering;
 using System;
 
@@ -73,7 +73,6 @@ namespace RabbetGameEngine.SubRendering
             vao.bind();
             bindAllTextures();
             batchShader.use();
-            batchShader.setUniformMat4F("viewMatrix", GameInstance.get.thePlayer.getViewMatrix());
             GL.DepthMask(false);
             GL.DepthRange(0, 0.005F);
             GL.DrawElements(PrimitiveType.Triangles,requestedVerticesCount + (requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);

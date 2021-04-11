@@ -37,7 +37,7 @@ namespace RabbetGameEngine
         }
         
 
-        public void onTick()
+        public void onTick(float timeStep)
         {
             cycleTicks++;
             if(cycleTicks >= maxCycleTicks)

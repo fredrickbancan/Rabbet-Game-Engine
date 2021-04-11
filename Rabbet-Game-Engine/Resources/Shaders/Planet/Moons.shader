@@ -63,7 +63,7 @@ in vec4 vColor;
 in vec2 uv;
 in vec2 coords;
 uniform sampler2D uTexture;
-
+//TODO: Add normals to fragments to approximate cresent moons
 void main()
 {
     float d = dot(coords, coords);

@@ -1,5 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using RabbetGameEngine.Models;
+using RabbetGameEngine;
 using RabbetGameEngine.Rendering;
 
 namespace RabbetGameEngine.SubRendering

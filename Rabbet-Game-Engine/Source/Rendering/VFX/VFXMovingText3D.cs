@@ -1,8 +1,7 @@
 ﻿using OpenTK.Mathematics;
-using RabbetGameEngine.Models;
 using RabbetGameEngine.Text;
 
-namespace RabbetGameEngine.VisualEffects
+namespace RabbetGameEngine
 {
     public class VFXMovingText3D : VFX
     {
@@ -17,7 +16,7 @@ namespace RabbetGameEngine.VisualEffects
         /// <summary>
         /// A vfx which is text in 3d space. Can move however does not have interpolation.
         /// </summary>
-        public VFXMovingText3D(PositionalObject parent, string name, string font, string content, Vector3 offset, float textSize, Color color) : base(parent.getPosition(), textSize, font, null, 0, RenderType.lerpText3D)
+        public VFXMovingText3D(World w, PositionalObject parent, string name, string font, string content, Vector3 offset, float textSize, Color color) : base(w, parent.getPosition(), 0, RenderType.lerpText3D)
         {
             TextUtil.tryGetFont(font, out this.font);
             this.setVFXName(name);
@@ -30,7 +29,7 @@ namespace RabbetGameEngine.VisualEffects
             textModel.prevWorldPos = this.parent.getPrevTickPosition() + offset;
         }
 
-        public override void onTick()
+        public override void onTick(float timeStep)
         {
             pos = parent.getPosition();
             textModel.worldPos = this.parent.getPosition() + offset;
@@ -39,7 +38,7 @@ namespace RabbetGameEngine.VisualEffects
 
         public override void sendRenderRequest()
         {
-            Renderer.requestRender(renderType, vfxTexture, textModel.copyModel().scaleVertices(new Vector3(scale, scale, 1.0F)));
+            //Renderer.requestRender(renderType, vfxTexture, textModel.copyModel().scaleVertices(new Vector3(scale, scale, 1.0F)));
         }
     }
 }

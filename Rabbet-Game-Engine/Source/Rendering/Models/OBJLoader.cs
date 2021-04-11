@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace RabbetGameEngine.Models
+namespace RabbetGameEngine
 {
     /*This class will be responsable for loading models and converting them to vertex arrays for use with rendering.*/
     public static class OBJLoader

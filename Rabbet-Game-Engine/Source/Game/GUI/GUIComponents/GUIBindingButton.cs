@@ -1,7 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using RabbetGameEngine.Models;
+using RabbetGameEngine;
 using RabbetGameEngine.Text;
 using System;
 

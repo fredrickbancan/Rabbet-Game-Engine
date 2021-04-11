@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RabbetGameEngine.Models
+namespace RabbetGameEngine
 {
     public static class PlanePrefab
     {

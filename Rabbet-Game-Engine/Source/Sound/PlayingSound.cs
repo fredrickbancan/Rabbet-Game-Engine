@@ -62,9 +62,9 @@ namespace RabbetGameEngine.Sound
             AL.Source(srcID, ALSourcef.Pitch, speed);
             AL.Source(srcID, ALSourcei.SourceType, 4136 /*ALSourceType.Static*/);
 
-            EntityPlayer p = GameInstance.get.thePlayer;
+            /*EntityPlayer p = GameInstance.get.thePlayer;
             setGainBasedOnDistance(p.getEyePosition());
-            setPanBasedOnAngle(p.getEyePosition(), p.getRightVector());
+            setPanBasedOnAngle(p.getEyePosition(), p.getRightVector());*/
             AL.SourcePlay(srcID);
             isPositional = true;
         }
@@ -106,9 +106,9 @@ namespace RabbetGameEngine.Sound
             AL.Source(srcID, ALSourcef.Pitch, speed);
             AL.Source(srcID, ALSourcei.SourceType, 4136 /*ALSourceType.Static*/);
 
-            EntityPlayer p = GameInstance.get.thePlayer;
+           /* EntityPlayer p = GameInstance.get.thePlayer;
             setGainBasedOnDistance(p.getEyePosition());
-            setPanBasedOnAngle(p.getEyePosition(), p.getRightVector());
+            setPanBasedOnAngle(p.getEyePosition(), p.getRightVector());*/
             AL.SourcePlay(srcID);
             isPositional = true;
         }
@@ -121,12 +121,12 @@ namespace RabbetGameEngine.Sound
             }
         }
 
-        public void onFrame(EntityPlayer listener)
+        public void onFrame()
         {
             if (isPositional && !finishedPlaying)
             {
-                setGainBasedOnDistance(listener.getEyePosition());
-                setPanBasedOnAngle(listener.getEyePosition(), listener.getRightVector());
+               // setGainBasedOnDistance(listener.getEyePosition());
+              //  setPanBasedOnAngle(listener.getEyePosition(), listener.getRightVector());
             }
         }
 

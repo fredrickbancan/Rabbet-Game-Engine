@@ -45,10 +45,6 @@ namespace RabbetGameEngine
         public static void updateSinglePressInput(KeyboardState keyboard)
         {
 
-            if (Input.singleKeyPress(Keys.V))
-            {
-                GameInstance.get.thePlayer.toggleFlying();
-            }
         }
 
         /*if key is down, adds action to player.*/

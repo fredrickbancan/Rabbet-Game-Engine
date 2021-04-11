@@ -25,7 +25,6 @@ namespace RabbetGameEngine
         public static readonly float defaultMaxDrawDistance = 128;
         public static bool displayFps = true;
         public static bool debugScreen = false;
-        public static bool entityLabels = false;
         public static bool drawHitboxes = false;
         public static bool fullscreen = false;
         public static bool noclip = false;

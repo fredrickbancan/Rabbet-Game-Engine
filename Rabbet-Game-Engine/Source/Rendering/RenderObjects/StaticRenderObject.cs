@@ -1,6 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using RabbetGameEngine.Models;
+using RabbetGameEngine;
 
 namespace RabbetGameEngine
 {
@@ -108,8 +108,6 @@ namespace RabbetGameEngine
             shader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);
             shader.setUniformVec3F("fogColor", fogColor);
-            shader.setUniform1F("fogStart", GameInstance.get.currentWorld.getFogStart());
-            shader.setUniform1F("fogEnd", GameInstance.get.currentWorld.getFogEnd());
             shader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
 
             switch(type)

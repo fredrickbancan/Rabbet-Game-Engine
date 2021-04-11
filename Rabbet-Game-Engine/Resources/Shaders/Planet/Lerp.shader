@@ -8,12 +8,9 @@ layout(location = 3) in float textureIndex;
 layout(location = 4) in mat4 modelMatrix;
 layout(location = 8) in mat4 prevTickModelMatrix;
 
-uniform float fogStart = 1000.0;
-uniform float fogEnd = 1000.0;
-
 out vec2 vTexCoord;
 out vec4 vColor;
-out float visibility;//for fog
+out float vTextureIndex;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
@@ -23,19 +20,11 @@ void main()
 {
 	//lerp matrix between ticks
 	mat4 lerpMatrix = prevTickModelMatrix + (modelMatrix - prevTickModelMatrix) * percentageToNextTick;
-
-	vec4 positionRelativeToCam = viewMatrix * lerpMatrix * position;
-
-	gl_Position = projectionMatrix * positionRelativeToCam;
-
-	float distanceFromCam = length(positionRelativeToCam.xyz);
-	visibility = (distanceFromCam - fogStart) / (fogEnd - fogStart);
-	visibility = clamp(visibility, 0.0, 1.0);
-	visibility = 1.0 - visibility;
-	visibility *= visibility;
+	gl_Position = projectionMatrix * viewMatrix * lerpMatrix * position;
 
 	vColor = vertexColor;
 	vTexCoord = texCoord;
+	vTextureIndex = textureIndex;
 }
 
 /*#############################################################################################################################################################################################*/
@@ -43,23 +32,20 @@ void main()
 #version 330 core
 in vec2 vTexCoord;
 in vec4 vColor;
+in float vTextureIndex;
 in float visibility;
 out vec4 fragColor;
 
-uniform sampler2D uTexture;
+uniform sampler2D uTextures[8];
 uniform int frame = 0;
-uniform vec3 fogColor;
-
 
 void main()
 {
-	vec4 textureColor = texture(uTexture, vTexCoord) * vColor;
-
-	fragColor = mix(vec4(fogColor, textureColor.a), textureColor, visibility);
-
-	//this avoids alpha sorting issues with fully transparent surfaces
-	if (fragColor.a < 0.01)
+	int i = int(ceil(vTextureIndex));
+	vec4 textureColor = texture(uTextures[i], vTexCoord) * vColor;
+	if (textureColor.a < 0.01F)
 	{
-		discard;
+		discard;//cutout
 	}
+	fragColor.a = 1.0F;
 }

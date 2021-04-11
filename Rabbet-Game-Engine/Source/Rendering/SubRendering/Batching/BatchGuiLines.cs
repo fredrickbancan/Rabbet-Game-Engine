@@ -1,5 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using RabbetGameEngine.Models;
+using RabbetGameEngine;
 using RabbetGameEngine.Rendering;
 using System;
 
@@ -54,7 +54,6 @@ namespace RabbetGameEngine.SubRendering
         {
             vao.bind();
             batchShader.use();
-            batchShader.setUniformMat4F("viewMatrix", GameInstance.get.thePlayer.getViewMatrix());
             GL.LineWidth(GUIManager.guiLineWidth);
             GL.DepthMask(false);
             GL.DepthRange(0, 0.005F);

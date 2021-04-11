@@ -7,11 +7,7 @@ layout(location = 2) in vec2 texCoord;
 layout(location = 3) in float textureIndex;
 layout(location = 4) in vec3 textPos;
 
-uniform float fogStart = 1000.0;
-uniform float fogEnd = 1000.0;
-
 out vec4 vColor;
-out float visibility;
 out float vTextureIndex;
 out vec2 fTexCoord;
 uniform mat4 projectionMatrix;
@@ -38,14 +34,8 @@ void main()
     modelViewBillboard[2][0] = 0;
     modelViewBillboard[2][1] = 0;
     modelViewBillboard[2][2] = 1;
-    vec4 positionRelativeToCam = modelViewBillboard * position;
-    gl_Position = projectionMatrix * positionRelativeToCam;
 
-    float distanceFromCam = length(positionRelativeToCam.xyz);
-    visibility = (distanceFromCam - fogStart) / (fogEnd - fogStart);
-    visibility = clamp(visibility, 0.0, 1.0);
-    visibility = 1.0 - visibility;
-    visibility *= visibility;
+    gl_Position = projectionMatrix * modelViewBillboard * position;
 
     vColor = vertexColor;
     fTexCoord = texCoord;
@@ -55,16 +45,16 @@ void main()
 /*#############################################################################################################################################################################################*/
 #shader fragment
 #version 330 core
+
 layout(location = 0) out vec4 fragColor;
 
-in float visibility;
 in float vTextureIndex;
 in vec4 vColor;
 in vec2 fTexCoord;
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
-uniform vec3 fogColor;
 uniform sampler2D uTextures[8];
+
 void main()
 {
     int i = int(ceil(vTextureIndex));
@@ -73,6 +63,5 @@ void main()
     {
         discard;//cutout
     }
-    fragColor.rgb = mix(fogColor, textureColor.rgb, visibility);
     fragColor.a = 1;
 }

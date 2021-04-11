@@ -46,9 +46,9 @@ void main()
 
 	vec3 skyTop = skyColor;
 	vec3 skyBottom = mix(skyColor, vec3(1.0F), 0.72F * (1.0F - nightFactor * 0.5F));
-	vec3 skyMixed = mix(skyTop, skyBottom, pow(1.0F - fragDir.y, 1.0F + nightFactor * 7.0F));//calculate color of sky
-	skyMixed = mix(skyMixed, skyHorizon * maxSkyLuminosity, pow(horizonIntensityFactor, 2.0F * (1 - sunHeight * (1-fragDir.y) * 0.3333F)));
-	skyMixed = mix(skyMixed, skyHorizonAmbient * maxSkyLuminosity, pow(horizonIntensityFactor, 7.5F * (1-sunHeight * 0.6F)));
+	vec3 skyMixed = mix(skyTop, skyBottom, pow(1.0F - (fragDir.y * 0.8), 1.0F + nightFactor * 7.0F));//calculate color of sky
+	skyMixed = mix(skyMixed, skyHorizon * maxSkyLuminosity, pow(horizonIntensityFactor, 1.4F ));
+	skyMixed = mix(skyMixed, skyHorizonAmbient * maxSkyLuminosity, pow(horizonIntensityFactor, 9.0F));
 
 
 	//change brightness

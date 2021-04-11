@@ -14,22 +14,20 @@ namespace RabbetGameEngine
         private Vector3 camRightVector;
         private Vector3 camTargetVector;
         private Vector3 camDirectionVector;
-        private EntityPlayer child;
 
         /*Class for a camera contpitched by a mouse. The camera will be attached to a player entity. The 
           camera movement will control the players yaw and head yaw, which will then contpitch which
           direction the player moves in.*/
-        public Camera(EntityPlayer childEntity)
+        public Camera(World w)
         {
-            this.child = childEntity;
-            this.yaw = child.getYaw();
+           // this.yaw = child.getYaw();
             camTargetVector = new Vector3(0.0F);
-            camDirectionVector = Vector3.Normalize(child.getEyePosition() - camTargetVector);
+           // camDirectionVector = Vector3.Normalize(child.getEyePosition() - camTargetVector);
             up = new Vector3(0.0F, 1.0F, 0.0F);
             camRightVector = Vector3.Normalize(Vector3.Cross(up, camDirectionVector));
             camFrontVector = new Vector3(0.0F, 0.0F, -1.0F);
             camUpVector = Vector3.Cross(camDirectionVector, camRightVector);
-            viewMatrix = Matrix4.LookAt(child.getEyePosition(), camTargetVector, up);
+           // viewMatrix = Matrix4.LookAt(child.getEyePosition(), camTargetVector, up);
         }
 
         /*Called every FRAME (not tick), will update view matrix depending on interpolated player position.
@@ -49,8 +47,8 @@ namespace RabbetGameEngine
             }
 
             //the camera controls the players entity yaw and headpitch
-            child.setYaw(yaw);
-            child.setHeadPitch(pitch);
+          //  child.setYaw(yaw);
+           // child.setHeadPitch(pitch);
 
             camDirectionVector.X =(float) (Math.Cos(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
             camDirectionVector.Y =(float) Math.Sin(MathUtil.radians(pitch));
@@ -59,11 +57,11 @@ namespace RabbetGameEngine
             camRightVector = -Vector3.Normalize(Vector3.Cross(up, camDirectionVector));
             camUpVector = Vector3.Cross(camDirectionVector, -camRightVector);
 
-            Vector3 parentLerpPos = child.getLerpEyePos();
-            viewMatrix = Matrix4.LookAt(parentLerpPos, parentLerpPos + camFrontVector, camUpVector);
+           // Vector3 parentLerpPos = child.getLerpEyePos();
+          //  viewMatrix = Matrix4.LookAt(parentLerpPos, parentLerpPos + camFrontVector, camUpVector);
         }
 
-        public void onTick()
+        public void onTick(float timeStep)
         {
         }
 

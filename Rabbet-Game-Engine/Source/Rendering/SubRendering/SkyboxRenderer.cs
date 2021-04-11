@@ -1,6 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using RabbetGameEngine.Models;
+using RabbetGameEngine;
 using RabbetGameEngine.SubRendering;
 
 namespace RabbetGameEngine
@@ -10,7 +10,7 @@ namespace RabbetGameEngine
     {
         private static Texture ditherTex = null;
         private static Texture moonsTex = null;
-        private static World skyboxToDraw = null;
+        private static Sky skyToDraw = null;
         private static Model skyboxModel = null;
         private static Model shroudModel = null;
         private static Shader skyboxShader = null;
@@ -62,8 +62,8 @@ namespace RabbetGameEngine
             ShaderUtil.tryGetShader(ShaderUtil.skyboxName, out skyboxShader);
             skyboxShader.use();
             skyboxShader.setUniform1I("ditherTex", 1);
-            skyboxShader.setUniform1F("minSkyLuminosity", World.minSkyLuminosity);
-            skyboxShader.setUniform1F("maxSkyLuminosity", World.maxSkyLuminosity);
+            skyboxShader.setUniform1F("minSkyLuminosity", Sky.minSkyLuminosity);
+            skyboxShader.setUniform1F("maxSkyLuminosity", Sky.maxSkyLuminosity);
             ShaderUtil.tryGetShader(ShaderUtil.sunName, out sunShader);
             sunShader.use();
 
@@ -76,9 +76,9 @@ namespace RabbetGameEngine
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
         }
 
-        public static void setSkyboxToDraw(World p)
+        public static void setSkyboxToDraw(Sky theSky)
         {
-            skyboxToDraw = p;
+            skyToDraw = theSky;
             if(starsVAO != null)
             {
                 starsVAO.delete();
@@ -87,7 +87,7 @@ namespace RabbetGameEngine
             starsVAO.beginBuilding();
             VertexBufferLayout sl = new VertexBufferLayout();
             PointParticle.configureLayout(sl);
-            starsVAO.addBuffer(p.getStars().points, PointParticle.SIZE_BYTES, sl);
+            starsVAO.addBuffer(theSky.getStars().points, PointParticle.SIZE_BYTES, sl);
             starsVAO.finishBuilding();
 
             if (moonsVAO != null)
@@ -95,28 +95,28 @@ namespace RabbetGameEngine
                 moonsVAO.delete();
             }
 
-            moonBuffer = new Sprite3D[p.totalMoons];
-            SkyMoon[] m = p.getMoons();
-            for (int i = 0; i < p.totalMoons; i++)
+            moonBuffer = new Sprite3D[theSky.moonCount];
+            SkyMoon[] m = theSky.getMoons();
+            for (int i = 0; i < theSky.moonCount; i++)
             {
-                moonBuffer[(p.totalMoons - 1) - i] = m[i].sprite;//reverse order to prevent alpha blending of overlapping moons
+                moonBuffer[(theSky.moonCount - 1) - i] = m[i].sprite;//reverse order to prevent alpha blending of overlapping moons
             }
 
-            Vector2[] axies = new Vector2[p.totalMoons];
+            Vector2[] axies = new Vector2[theSky.moonCount];
 
-            for (int i = 0; i < p.totalMoons; i++)
+            for (int i = 0; i < theSky.moonCount; i++)
             {
                 Vector2 dir = m[i].orbitDirection;
                 Vector2 axis = new Vector2(dir.Y, dir.X);
-                axies[p.totalMoons-1-i] = axis;
+                axies[theSky.moonCount-1-i] = axis;
             }
             moonsVAO = new VertexArrayObject();
             moonsVAO.beginBuilding();
             VertexBufferLayout ml = new VertexBufferLayout();
             Sprite3D.configureLayout(ml);
             ml.instancedData = true;
-            moonsVAO.addBufferDynamic(p.totalMoons * Sprite3D.sizeInBytes, ml);
-            moonsVAO.updateBuffer(0, moonBuffer, p.totalMoons * Sprite3D.sizeInBytes);
+            moonsVAO.addBufferDynamic(theSky.moonCount * Sprite3D.sizeInBytes, ml);
+            moonsVAO.updateBuffer(0, moonBuffer, theSky.moonCount * Sprite3D.sizeInBytes);
             VertexBufferLayout al = new VertexBufferLayout();
             al.add(VertexAttribPointerType.Float, 2);
             al.instancedData = true;
@@ -129,7 +129,7 @@ namespace RabbetGameEngine
 
         public static void drawSkybox(Matrix4 viewMatrix)
         {
-            if(skyboxToDraw == null)
+            if(skyToDraw == null)
             {
                 return;
             }
@@ -166,7 +166,7 @@ namespace RabbetGameEngine
             moonsShader.setUniformMat4F("projectionMatrix", proj);
             moonsShader.setUniformMat4F("viewMatrix", view);
             GL.DepthRange(0.99996f, 0.999995f);
-            GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, skyboxToDraw.totalMoons);
+            GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, skyToDraw.moonCount);
             Renderer.totalDraws++;
 
             GL.DepthMask(false);
@@ -176,7 +176,7 @@ namespace RabbetGameEngine
             starsShader.setUniformMat4F("projectionMatrix", proj);
             starsShader.setUniformMat4F("viewMatrix", view);
             GL.DepthRange(0.999996f, 0.999996f);
-            GL.DrawArrays(PrimitiveType.Points, 0, skyboxToDraw.totalStars);
+            GL.DrawArrays(PrimitiveType.Points, 0, skyToDraw.starCount);
             Renderer.totalDraws++;
 
             //TODO: Make sun drawn as a quad not a point. will help to reduce distortion.
@@ -197,37 +197,37 @@ namespace RabbetGameEngine
 
         public static void onUpdate()
         {
-            if (skyboxToDraw == null) return;
+            if (skyToDraw == null) return;
 
             skyboxShader.use();
-            skyboxShader.setUniformVec3F("skyColor", skyboxToDraw.getSkyColor());
-            skyboxShader.setUniformVec3F("skyHorizon", skyboxToDraw.getHorizonColor());
-            skyboxShader.setUniformVec3F("skyHorizonAmbient", skyboxToDraw.getHorizonAmbientColor());
-            skyboxShader.setUniformVec3F("fogColor", skyboxToDraw.getFogColor());
-            skyboxShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
+            skyboxShader.setUniformVec3F("skyColor", skyToDraw.getSkyColor());
+            skyboxShader.setUniformVec3F("skyHorizon", skyToDraw.getHorizonColor());
+            skyboxShader.setUniformVec3F("skyHorizonAmbient", skyToDraw.getHorizonAmbientColor());
+            skyboxShader.setUniformVec3F("fogColor", skyToDraw.getFogColor());
+            skyboxShader.setUniformVec3F("sunDir", skyToDraw.getSunDirection());
 
             horizonShroudShader.use();
-            horizonShroudShader.setUniformVec3F("fogColor", skyboxToDraw.getFogColor());
+            horizonShroudShader.setUniformVec3F("fogColor", skyToDraw.getFogColor());
 
             sunShader.use();
-            sunShader.setUniformVec3F("sunPos", skyboxToDraw.getSunDirection());
-            sunShader.setUniformVec3F("sunColor", skyboxToDraw.getSunColor());
+            sunShader.setUniformVec3F("sunPos", skyToDraw.getSunDirection());
+            sunShader.setUniformVec3F("sunColor", skyToDraw.getSunColor());
 
             starsShader.use();
-            starsShader.setUniformMat4F("modelMatrix", MathUtil.dirVectorToRotationNoFlip(skyboxToDraw.getSunDirection()));
+            starsShader.setUniformMat4F("modelMatrix", MathUtil.dirVectorToRotationNoFlip(skyToDraw.getSunDirection()));
             starsShader.setUniformVec2F("viewPortSize", Renderer.viewPortSize);
-            starsShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
+            starsShader.setUniformVec3F("sunDir", skyToDraw.getSunDirection());
 
-            SkyMoon[] m = skyboxToDraw.getMoons();
-            for (int i = 0; i < skyboxToDraw.totalMoons; i++)
+            SkyMoon[] m = skyToDraw.getMoons();
+            for (int i = 0; i < skyToDraw.moonCount; i++)
             {
-                moonBuffer[(skyboxToDraw.totalMoons - 1) - i] = m[i].sprite;//reverse order to prevent alpha blending of overlapping moons
+                moonBuffer[(skyToDraw.moonCount - 1) - i] = m[i].sprite;//reverse order to prevent alpha blending of overlapping moons
             }
             moonsVAO.bind();
-            moonsVAO.updateBuffer(0, moonBuffer, skyboxToDraw.totalMoons * Sprite3D.sizeInBytes);
+            moonsVAO.updateBuffer(0, moonBuffer, skyToDraw.moonCount * Sprite3D.sizeInBytes);
 
             moonsShader.use();
-            moonsShader.setUniformVec3F("sunDir", skyboxToDraw.getSunDirection());
+            moonsShader.setUniformVec3F("sunDir", skyToDraw.getSunDirection());
 
         }
 

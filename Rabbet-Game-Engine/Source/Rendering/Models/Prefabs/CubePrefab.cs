@@ -1,7 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using RabbetGameEngine.SubRendering;
 using System;
-namespace RabbetGameEngine.Models
+namespace RabbetGameEngine
 {
     public static class CubePrefab
     {

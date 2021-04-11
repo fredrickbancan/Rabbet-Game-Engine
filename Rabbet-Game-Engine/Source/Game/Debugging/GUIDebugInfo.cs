@@ -1,9 +1,4 @@
-﻿using OpenTK.Mathematics;
-using RabbetGameEngine.Debugging;
-using RabbetGameEngine.Sound;
-using RabbetGameEngine.SubRendering;
-
-namespace RabbetGameEngine
+﻿namespace RabbetGameEngine
 {
     public class GUIDebugInfo : GUI
     {
@@ -26,7 +21,7 @@ namespace RabbetGameEngine
         public override void onUpdate()
         {
             base.onUpdate();
-            if (GameInstance.get.thePlayer != null && GameInstance.get.currentWorld != null)
+          /*  if (GameInstance.get.thePlayer != null && GameInstance.get.currentWorld != null)
             {
                 profileAveragesText.clear();
                 Profiler.getFrameProfilingData(profileAveragesText.lines, profileAveragesText.lineColors);
@@ -52,7 +47,7 @@ namespace RabbetGameEngine
                 infoText.addLine("Sounds: " + SoundManager.getPlayingSoundsCount());
                 infoText.addLine("Memory Usage: " + Application.ramUsageInBytes / 1000000L + " MB");
                 infoText.build();
-            }
+            }*/
         }
     }
 }
