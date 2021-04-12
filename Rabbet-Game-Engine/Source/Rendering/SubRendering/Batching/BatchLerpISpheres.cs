@@ -1,7 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using RabbetGameEngine;
 using RabbetGameEngine.Rendering;
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     public class BatchLerpISpheres : Batch
     {
@@ -72,6 +71,7 @@ namespace RabbetGameEngine.SubRendering
         {
             vao.bind();
             batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", Renderer.viewMatrix);
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             GL.DrawArrays(PrimitiveType.Points, 0, pointsItterator / 2);
             vao.unBind();

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     public static class BatchUtil
     {

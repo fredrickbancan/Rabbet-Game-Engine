@@ -19,7 +19,10 @@ namespace RabbetGameEngine
 
         public void onTick(float timeStep)
         {
+            Profiler.startTickSection("tickWorld");
             theSky.onTick(timeStep);
+
+            Profiler.endCurrentTickSection();
         }
 
         public Sky sky

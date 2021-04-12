@@ -1,8 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using RabbetGameEngine;
 using RabbetGameEngine.Rendering;
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     public class BatchLerpLines : Batch
     { //Not implemented
@@ -57,6 +56,7 @@ namespace RabbetGameEngine.SubRendering
         {
             vao.bind();
             batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", Renderer.viewMatrix);
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             GL.MultiDrawElementsIndirect(PrimitiveType.Lines, DrawElementsType.UnsignedInt, System.IntPtr.Zero, requestedObjectItterator, 0);
             vao.unBind();

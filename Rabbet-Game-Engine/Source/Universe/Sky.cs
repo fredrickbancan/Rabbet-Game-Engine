@@ -1,5 +1,5 @@
 ﻿using OpenTK.Mathematics;
-using RabbetGameEngine.Debugging;
+
 using System;
 
 namespace RabbetGameEngine
@@ -91,10 +91,10 @@ namespace RabbetGameEngine
             totalStars = rand.Next(4000, 4501);
             PointParticle[] points = new PointParticle[totalStars];
             float starColorStrength = 0.2F;
-            float maxStarRadius = 0.01F;
-            float minStarRadius = 0.0025F;
-            float minStarLuminance = maxSkyLuminosity * 0.35F;
-            float maxStarLuminance = maxSkyLuminosity * 0.72F;
+            float maxStarRadius = 0.015F;
+            float minStarRadius = 0.001F;
+            float minStarLuminance = maxSkyLuminosity * 0.45F;
+            float maxStarLuminance = maxSkyLuminosity * 0.82F;
             float luminance;
             float radius;
             Vector3 pos;
@@ -191,8 +191,8 @@ namespace RabbetGameEngine
             Profiler.startSection("skyUpdate");
             Profiler.startTickSection("skyUpdate");
             updateDayNightCycle(timeStep);
-            Profiler.endCurrentSection();
             Profiler.endCurrentTickSection();
+            Profiler.endCurrentSection();
         }
 
 

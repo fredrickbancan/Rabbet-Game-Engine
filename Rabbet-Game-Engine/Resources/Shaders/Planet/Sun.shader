@@ -59,11 +59,11 @@ void main()
     float l = length(coords);
     if (l <= 0.05F)
     {
-        color = vec4(sunColor * 2.5F, 1.0F);
+        color = vec4(sunColor * 10.0F, 0.5F);
     }
     else
     {
         float alpha = clamp(1 - l, 0, 1);
-        color = vec4(sunColor * 1.03572F, pow(alpha, 8.0F));
+        color = vec4(sunColor * 5.0F, pow(alpha, 4.0F) * 0.5F);
     }
 }

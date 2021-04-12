@@ -1,7 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
-using RabbetGameEngine.Debugging;
-using RabbetGameEngine.Sound;
+
+
 using System.Collections.Generic;
 
 //TODO: Make so transparent gui elements can be rendered with blur so they look like frosted glass
@@ -58,8 +58,7 @@ namespace RabbetGameEngine
 
         public static void doUpdate()
         {
-            Profiler.startSection("guiUpdate");
-            Profiler.startSection("overlayGUI");
+            Profiler.startTickSection("guiUpdate");
             if(currentDisplayedGUI != null)
             {
                 currentDisplayedGUI.onUpdate();
@@ -69,13 +68,11 @@ namespace RabbetGameEngine
             {
                 GameInstance.get.unPauseGame();
             }
-            Profiler.endStartSection("persistentGUI");
             foreach (GUI g in persistentGUIs.Values)
             {
                 g.onUpdate();
             }
-            Profiler.endCurrentSection();
-            Profiler.endCurrentSection();
+            Profiler.endCurrentTickSection();
         }
 
         public static void onWindowResize()

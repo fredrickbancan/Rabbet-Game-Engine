@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RabbetGameEngine.Sound
+namespace RabbetGameEngine
 {
     //TODO: Implement openal in a way where theres no complications with .dll files
     //TODO: Add support for sounds from moving objects

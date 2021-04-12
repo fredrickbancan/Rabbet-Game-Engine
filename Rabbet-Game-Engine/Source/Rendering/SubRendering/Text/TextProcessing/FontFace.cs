@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace RabbetGameEngine.Text
+namespace RabbetGameEngine
 {
     /*This class is responsable for reading the .fnt files for each font, and generating a dictionary of characters for the text renderers to access.*/
     public class FontFace

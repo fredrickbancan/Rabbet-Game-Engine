@@ -1,9 +1,8 @@
 ﻿using OpenTK.Mathematics;
-using RabbetGameEngine;
 using System;
 using System.Collections.Generic;
 using System.Text;
-namespace RabbetGameEngine.Text
+namespace RabbetGameEngine
 {
     public static class TextModelBuilder2D
     {

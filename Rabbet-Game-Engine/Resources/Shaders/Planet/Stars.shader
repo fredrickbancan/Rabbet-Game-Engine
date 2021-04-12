@@ -38,7 +38,7 @@ void main()
 {
     vec2 centerVec = gl_PointCoord - vec2(0.5);
     float coordLength = length(centerVec);
-    float fade = pow(sqrt(1.05 - coordLength), 32);//making each star a fading point
+    float fade = pow(sqrt(1.05 - coordLength), 64);//making each star a fading point
     fragColor = vec4(vColor.rgb, vColor.a * fade);
     if (fragColor.a <= 0.001 || length(vColor.rgb) < 0.01) discard;
 }

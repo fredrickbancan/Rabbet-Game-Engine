@@ -1,8 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using RabbetGameEngine;
 using RabbetGameEngine.Rendering;
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     public class BatchText3D : Batch
     {
@@ -91,6 +90,7 @@ namespace RabbetGameEngine.SubRendering
             vao.bind();
             bindAllTextures();
             batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", Renderer.viewMatrix);
             GL.MultiDrawElementsIndirect(PrimitiveType.Triangles, DrawElementsType.UnsignedInt, System.IntPtr.Zero, requestedObjectItterator, 0);
             vao.unBind();
             GL.ActiveTexture(TextureUnit.Texture0);

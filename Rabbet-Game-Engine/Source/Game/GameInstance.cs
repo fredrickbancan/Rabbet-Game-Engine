@@ -2,9 +2,7 @@
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
-using RabbetGameEngine.Debugging;
-using RabbetGameEngine.Sound;
-using RabbetGameEngine.Text;
+
 using System;
 using System.Drawing;
 
@@ -15,7 +13,8 @@ namespace RabbetGameEngine
     {
         public static int temp = 0;
         private static GameInstance instance;
-        private static Random privateRand;
+        private static Random nonCRand;
+        private static FlyCamera defaultCam;
         public static int windowWidth;
         public static int windowHeight;
         public static int screenWidth;
@@ -46,7 +45,7 @@ namespace RabbetGameEngine
             Application.infoPrint("loading.");
             try
             {
-                privateRand = new Random();
+                nonCRand = new Random();
                 TicksAndFrames.init(30);
                 ResourceUtil.init();
                 GameSettings.loadSettings();
@@ -56,8 +55,10 @@ namespace RabbetGameEngine
                 windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
                 GUIManager.addPersistentGUI(new GUIHud());
                 currentWorld = new World(0xdeadbeef);
-
                 Input.setCursorHiddenAndGrabbed(true);
+                Input.updateInput();
+                defaultCam = new FlyCamera(new Vector3(0, 0, 0));
+                Renderer.setCamera(defaultCam);
                 Application.infoPrint("Initialized.");
             }
             catch (Exception e)
@@ -109,13 +110,14 @@ namespace RabbetGameEngine
             Input.updateInput();
             try
             {
-                Profiler.startSection("tickLoop");
-                Profiler.startTick();
-                Profiler.startSection("tickWorld");
-                Profiler.startTickSection("tickWorld");
-
                 doneOneTick = false;
+                Profiler.startTick();
+                Profiler.startSection("tickLoop");
+                Profiler.startTickSection("tickLoop");
                 TicksAndFrames.doOnTickUntillRealtimeSync(onTick);
+                Profiler.endCurrentTickSection();
+                Profiler.endCurrentSection();
+
                 if (doneOneTick)
                 {
                     //This area will be called at MAXIMUM of the tick rate. Meaning it will not be called multiple times in a laggy situation.
@@ -126,17 +128,14 @@ namespace RabbetGameEngine
                     SoundManager.onUpdate();
                     PlayerController.resetActions();
                 }
-
-                Profiler.endCurrentTickSection();
-                Profiler.endCurrentSection();
                 Profiler.endTick();
                 Profiler.onTick();
-                Profiler.endCurrentSection();
             }
             catch (Exception e)
             {
                 Application.error("Failed to run game tick, Exception: " + e.Message + "\nStack Trace: " + e.StackTrace);
             }
+            defaultCam.onFrame(TicksAndFrames.getPercentageToNextTick());
             SoundManager.onFrame();
             TicksAndFrames.updateFPS();
             GUIManager.onFrame();
@@ -171,6 +170,7 @@ namespace RabbetGameEngine
                 windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
             if (!gamePaused)
                 currentWorld.onTick(TicksAndFrames.spt);
+            defaultCam.onTick(TicksAndFrames.spt);
             doneOneTick = true;//do last, ensures that certain functions are only called once per tick loop
         }
 
@@ -206,7 +206,7 @@ namespace RabbetGameEngine
         public static Vector2 gameWindowCenter { get => windowCenter; }
         public static float aspectRatio { get => (float)windowWidth / (float)windowHeight; }
 
-        public static Random rand { get => privateRand; }
+        public static Random rand { get => nonCRand; }
 
         public static int realScreenWidth { get => screenWidth; }
         public static int realScreenHeight { get => screenHeight; }

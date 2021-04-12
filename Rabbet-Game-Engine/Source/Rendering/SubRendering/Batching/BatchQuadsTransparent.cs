@@ -1,7 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using RabbetGameEngine;
 using RabbetGameEngine.Rendering;
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     public class BatchQuadsTransparent : Batch
     { //Not implemented
@@ -45,6 +44,7 @@ namespace RabbetGameEngine.SubRendering
             vao.bind();
             bindAllTextures();
             batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", Renderer.viewMatrix);
             GL.DrawArrays(PrimitiveType.Triangles, 0, requestedVerticesCount);
             vao.unBind();
             GL.ActiveTexture(TextureUnit.Texture0);

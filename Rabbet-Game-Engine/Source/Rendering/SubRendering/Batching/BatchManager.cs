@@ -1,8 +1,8 @@
-﻿using RabbetGameEngine;
+﻿using OpenTK.Graphics.OpenGL;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     //TODO: Implement a limit for number of textures in a single batch, and implement ablility for batches to have multiple textures.
     public static class BatchManager
@@ -326,6 +326,7 @@ namespace RabbetGameEngine.SubRendering
 
         public static void drawAllWorld()
         {
+           
             World w = GameInstance.get.currentWorld;
             foreach (Batch b in batches)
             {
@@ -335,12 +336,14 @@ namespace RabbetGameEngine.SubRendering
         }
         public static void drawAllGUI()
         {
+            GL.Disable(EnableCap.DepthTest);
             World w = GameInstance.get.currentWorld;
             foreach (Batch b in guiBatches)
             {
                 b.drawBatch(w);
                 Renderer.totalDraws++;
             }
+            GL.Enable(EnableCap.DepthTest);
         }
 
         public static bool isTypeTransparent(RenderType type)

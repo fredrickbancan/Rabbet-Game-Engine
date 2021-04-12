@@ -1,7 +1,7 @@
 ﻿using OpenTK.Audio.OpenAL;
 using OpenTK.Mathematics;
 
-namespace RabbetGameEngine.Sound
+namespace RabbetGameEngine
 {
     public class PlayingSound
     {

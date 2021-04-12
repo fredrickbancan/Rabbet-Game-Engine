@@ -1,7 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using RabbetGameEngine;
-using RabbetGameEngine.SubRendering;
 
 namespace RabbetGameEngine
 {
@@ -76,7 +74,7 @@ namespace RabbetGameEngine
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
         }
 
-        public static void setSkyboxToDraw(Sky theSky)
+        public static void setSkyboxToDraw (Sky theSky)
         {
             skyToDraw = theSky;
             if(starsVAO != null)
@@ -129,12 +127,12 @@ namespace RabbetGameEngine
 
         public static void drawSkybox(Matrix4 viewMatrix)
         {
-            if(skyToDraw == null)
+            if (skyToDraw == null)
             {
                 return;
             }
             Matrix4 proj = Renderer.projMatrix;
-            Matrix4 view = viewMatrix.ClearTranslation();
+            Matrix4 view = viewMatrix;
 
             //drawing horizon shroud
             shroudVAO.bind();
@@ -171,7 +169,7 @@ namespace RabbetGameEngine
 
             GL.DepthMask(false);
             //drawing stars
-            starsVAO.bind(); 
+            starsVAO.bind();
             starsShader.use();
             starsShader.setUniformMat4F("projectionMatrix", proj);
             starsShader.setUniformMat4F("viewMatrix", view);
@@ -179,7 +177,8 @@ namespace RabbetGameEngine
             GL.DrawArrays(PrimitiveType.Points, 0, skyToDraw.starCount);
             Renderer.totalDraws++;
 
-            //TODO: Make sun drawn as a quad not a point. will help to reduce distortion.
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+
             //drawing sun
             moonsVAO.bind();
             sunShader.use();
@@ -189,7 +188,6 @@ namespace RabbetGameEngine
             GL.DrawArrays(PrimitiveType.TriangleStrip, 0, 4);
             Renderer.totalDraws++;
 
-            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
             GL.DepthMask(true);
             GL.DepthRange(0, 1);
         }

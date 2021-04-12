@@ -38,7 +38,7 @@ void main()
 	int y = 1 - x;
 	vec2 offset = vec2(x,y) * texelSize;
 
-	switch (layer)
+	switch (clamp(layer, 0, 1))
 	{
 	case 0:
 		result = texture2D(srcTex, fTexCoord) * weights_9t[0];

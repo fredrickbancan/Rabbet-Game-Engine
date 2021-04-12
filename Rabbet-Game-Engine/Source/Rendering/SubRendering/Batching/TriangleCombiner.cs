@@ -1,6 +1,6 @@
 ﻿using RabbetGameEngine;
 
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     /*This class is responsable for batching together multiple modeldrawables, using their indices.
       This allows multiple models with different indices and trinagles to be batched into one draw call.*/

@@ -30,5 +30,5 @@ void main()
 
     // check whether hdr brightness is higher than threshold, if so output as brightness color for bloom
     float brightness = abs(dot(hdrColor, threshHold));
-    bloomColor = vec4(hdrColor * pow(brightness, 4), 1.0);
+    bloomColor = vec4(hdrColor * pow(brightness, 0.72F), 1.0);
 }

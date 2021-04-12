@@ -1,8 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using RabbetGameEngine;
 using RabbetGameEngine.Rendering;
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     public class BatchLerpQuads : Batch
     {
@@ -58,6 +57,7 @@ namespace RabbetGameEngine.SubRendering
             vao.bind();
             bindAllTextures();
             batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", Renderer.viewMatrix);
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             GL.MultiDrawArraysIndirect(PrimitiveType.Triangles, System.IntPtr.Zero, requestedObjectItterator, sizeof(uint));
             vao.unBind();

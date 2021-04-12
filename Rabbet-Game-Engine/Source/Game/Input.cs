@@ -98,6 +98,10 @@ namespace RabbetGameEngine
             return keyboardState.IsKeyDown(key) && !previouskeyboardState.IsKeyDown(key);
         }
 
+        public static bool keyIsDown(Keys key)
+        {
+            return keyboardState.IsKeyDown(key);
+        }
         public static bool singleMouseButtonPress(MouseButton key)
         {
             return mouseState.IsButtonDown(key) && !previousMouseState.IsButtonDown(key);

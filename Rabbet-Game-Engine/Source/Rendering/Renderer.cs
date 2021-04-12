@@ -2,8 +2,7 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using RabbetGameEngine.Debugging;
-using RabbetGameEngine.SubRendering;
+
 using System.Collections.Generic;
 
 namespace RabbetGameEngine
@@ -49,6 +48,8 @@ namespace RabbetGameEngine
         private static bool usePostProcessing = true;
         private static int lineWidthPixels = 0;
         private static bool initialized = false;
+        private static Camera renderCam = null;
+
         /// <summary>
         /// A list of all requested static renders
         /// </summary>
@@ -79,7 +80,6 @@ namespace RabbetGameEngine
             GL.LineWidth(lineWidthPixels);
             staticDraws = new Dictionary<string, StaticRenderObject>();
             SkyboxRenderer.init();
-            PostProcessing.init();
 
             MonitorHandle m = GameInstance.get.CurrentMonitor;
             VideoMode mode = *GLFW.GetVideoMode(m.ToUnsafePtr<Monitor>());
@@ -91,6 +91,7 @@ namespace RabbetGameEngine
             GameInstance.windowWidth = GameInstance.get.ClientRectangle.Size.X;
             GameInstance.windowHeight = GameInstance.get.ClientRectangle.Size.Y;
             GameInstance.get.Context.MakeCurrent();
+            if(usePostProcessing)PostProcessing.init();
             onResize();
             initialized = true;
         }
@@ -99,11 +100,16 @@ namespace RabbetGameEngine
         public static void onResize()
         {
             GL.Viewport(GameInstance.get.getGameWindowSize());
-            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov.floatValue), GameInstance.aspectRatio, 0.1F, 1000.0F);
-            orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.1F, 100.0F);
+            projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov.floatValue), GameInstance.aspectRatio, 0.01F, 1000.0F);
+            orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.01F, 100.0F);
             GUIManager.onWindowResize();
-            PostProcessing.onResize();
+            if(usePostProcessing)PostProcessing.onResize();
             BatchManager.onWindowResize();
+        }
+
+        public static void setCamera(Camera cam)
+        {
+            renderCam = cam;
         }
 
         public static void requestRender(RenderType type, Texture tex, Model mod, int renderLayer = 0)
@@ -132,14 +138,12 @@ namespace RabbetGameEngine
         }
         public static void doWorldRenderUpdate()
         {
-            Profiler.startSection("renderUpdate");
-            Profiler.startTickSection("renderUpdate");
+            Profiler.startTickSection("worldRenderUpdate");
             BatchManager.preWorldRenderUpdate(GameInstance.get.currentWorld);
             SkyboxRenderer.onUpdate();
             BatchManager.postWorldRenderUpdate();
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov.floatValue), GameInstance.aspectRatio, 0.1F, 1000.0F);
             Profiler.endCurrentTickSection();
-            Profiler.endCurrentSection();
         }
         public static void doGUIRenderUpdate()
         {
@@ -155,21 +159,21 @@ namespace RabbetGameEngine
         {
             if(usePostProcessing)
             PostProcessing.beforeRender();
-            GL.Clear(ClearBufferMask.DepthBufferBit);
+            GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
             privateTotalDrawCallCount = 0;
             privateTotalFBODrawCallCount = 0;
         }
 
         public static void onVideoSettingsChanged()
         {
-            PostProcessing.onVideoSettingsChanged();
+            if(usePostProcessing)PostProcessing.onVideoSettingsChanged();
             BatchManager.onVideoSettingsChanged();
         }
         public static void renderAll()
         {
             preRender();
             Profiler.startSection("renderWorld");
-            //SkyboxRenderer.drawSkybox(GameInstance.get.thePlayer.getViewMatrix());
+            SkyboxRenderer.drawSkybox(viewMatrix);
             drawAllStaticRenderObjects();
             BatchManager.drawAllWorld();
             if(!usePostProcessing)
@@ -187,8 +191,9 @@ namespace RabbetGameEngine
         {
             if(usePostProcessing)
             {
-                Profiler.startSection("renderGUI");
+                Profiler.startSection("postProcessing");
                 PostProcessing.doPostProcessing();
+                Profiler.endStartSection("renderGUI");
                 BatchManager.drawAllGUI();
                 Profiler.endCurrentSection();
             }
@@ -271,6 +276,8 @@ namespace RabbetGameEngine
             PostProcessing.onClosing();
         }
         public static Matrix4 projMatrix { get => projectionMatrix; }
+        public static Matrix4 viewMatrix { get => renderCam.getViewMatrix(); }
+        public static Vector3 camPos { get => renderCam.getCamPos(); }
         public static int totalDraws { get { return privateTotalDrawCallCount; } set { privateTotalDrawCallCount = value; } }
         public static int totalFBODraws { get { return privateTotalFBODrawCallCount; } set { privateTotalFBODrawCallCount = value; } }
         public static Matrix4 orthoMatrix { get => orthographicMatrix; }

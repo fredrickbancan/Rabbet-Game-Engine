@@ -2,7 +2,7 @@
 using RabbetGameEngine;
 using RabbetGameEngine.Rendering;
 
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     public class BatchGuiText : Batch
     {

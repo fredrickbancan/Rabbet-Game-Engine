@@ -3,7 +3,7 @@ using OpenTK.Audio.OpenAL;
 using System;
 using System.Collections.Generic;
 
-namespace RabbetGameEngine.Sound
+namespace RabbetGameEngine
 {
     public class Sound
     {

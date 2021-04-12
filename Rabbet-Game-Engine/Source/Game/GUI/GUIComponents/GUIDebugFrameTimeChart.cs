@@ -1,6 +1,5 @@
 ﻿using OpenTK.Mathematics;
-using RabbetGameEngine;
-using RabbetGameEngine.Text;
+
 
 namespace RabbetGameEngine
 {

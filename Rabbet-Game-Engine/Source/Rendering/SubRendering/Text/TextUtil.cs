@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace RabbetGameEngine.Text
+namespace RabbetGameEngine
 {
     public static class TextUtil
     {

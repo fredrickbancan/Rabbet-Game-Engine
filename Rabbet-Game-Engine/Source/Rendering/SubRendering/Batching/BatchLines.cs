@@ -1,7 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using RabbetGameEngine;
 using RabbetGameEngine.Rendering;
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     public class BatchLines : Batch
     {
@@ -67,6 +66,7 @@ namespace RabbetGameEngine.SubRendering
         {
             vao.bind();
             batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", Renderer.viewMatrix);
             GL.DrawElements(PrimitiveType.Lines, requestedIndicesCount, DrawElementsType.UnsignedInt, 0);
             vao.unBind();
         }

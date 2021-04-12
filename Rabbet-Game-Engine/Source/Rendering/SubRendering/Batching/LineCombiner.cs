@@ -1,6 +1,6 @@
 ﻿using RabbetGameEngine;
 
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     /*Class for Taking in  an even amount of vertices and batches them with indices which allow line rendering.*/
     public static class LineCombiner

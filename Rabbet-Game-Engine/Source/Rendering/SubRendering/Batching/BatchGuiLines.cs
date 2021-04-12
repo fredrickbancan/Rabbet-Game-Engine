@@ -3,7 +3,7 @@ using RabbetGameEngine;
 using RabbetGameEngine.Rendering;
 using System;
 
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     public class BatchGuiLines : Batch
     {

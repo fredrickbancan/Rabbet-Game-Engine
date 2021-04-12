@@ -1,4 +1,4 @@
-﻿namespace RabbetGameEngine.Text
+﻿namespace RabbetGameEngine
 {
     public class Character
 	{

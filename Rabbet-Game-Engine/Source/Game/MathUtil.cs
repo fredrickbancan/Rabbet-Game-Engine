@@ -40,6 +40,10 @@ namespace RabbetGameEngine
             if (val > max) val = max;
             return val;
         }
+        public static Vector3 lerp(Vector3 src, Vector3 dest, float factor)
+        {
+            return src + (dest - src) * factor;
+        }
 
         public static float lerp(float src, float dest, float factor)
         {

@@ -1,6 +1,6 @@
 ﻿using RabbetGameEngine;
 
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
 
     /*This class will take in multiple Models (Made of quads, containing multiple xyz, rgb, uv and indicies arrays) and combine them into one*

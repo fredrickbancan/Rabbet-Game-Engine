@@ -3,10 +3,13 @@ using RabbetGameEngine.Rendering;
 
 namespace RabbetGameEngine
 {
+    //TODO: this can be optimized with more fbos for each layer so they dont have to be resized each frame.
     public class GaussianBlurFilter : IPostFilter
     {
         private const int numLayers = 2;
-        private const int resolution = 1024;
+        private const float resolutionFactor = 0.5F;
+        private int resWidth;
+        private int resHeight;
         private HdrFrameBuffer[] ppfbos;//Ping pong frame buffers for blurring
         private HdrFrameBuffer[] layerFbos;//FrameBuffers for containing the result of each layer to be applied to result
         private HdrFrameBuffer resultFBO;
@@ -24,8 +27,11 @@ namespace RabbetGameEngine
             }
         }
 
-        public void init()
+        public void init(int initialResWidth, int initialResHeight)
         {
+            resWidth = (int)((float)initialResWidth * resolutionFactor);
+            resHeight= (int)((float)initialResHeight * resolutionFactor);
+
             if(numLayers >= RenderConstants.MAX_BATCH_TEXTURES)
             {
                 Application.error("Gaussian blur filter can not process " + numLayers + " layers because it exceeds the maximum textures!");
@@ -36,15 +42,15 @@ namespace RabbetGameEngine
 
             for (int i = 0; i < 2; i++)
             {
-                ppfbos[i] = new HdrFrameBuffer(resolution, resolution, TextureMinFilter.Linear, TextureMagFilter.Linear, false);
+                ppfbos[i] = new HdrFrameBuffer(resWidth, resHeight, TextureMinFilter.Linear, TextureMagFilter.Linear, false);
             }
 
             for (int i = 0; i < numLayers; i++)
             {
-                layerFbos[i] = new HdrFrameBuffer(resolution, resolution, TextureMinFilter.Linear, TextureMagFilter.Linear, false);
+                layerFbos[i] = new HdrFrameBuffer(resWidth, resHeight, TextureMinFilter.Linear, TextureMagFilter.Linear, false);
             }
 
-            resultFBO = new HdrFrameBuffer(resolution, resolution, TextureMinFilter.Linear, TextureMagFilter.Linear, false);
+            resultFBO = new HdrFrameBuffer(resWidth, resHeight, TextureMinFilter.Linear, TextureMagFilter.Linear, false);
 
             ShaderUtil.tryGetShader(ShaderUtil.filterGBlurName, out gBlurShader);
             ShaderUtil.tryGetShader(ShaderUtil.frameBufferPassThroughName, out passThroughShader);
@@ -74,17 +80,18 @@ namespace RabbetGameEngine
             return result;
         }
 
-        private void resizeBuf(int index, int size)
+        private void resizeBuf(int index, int sizeWidth, int sizeHeight)
         {
-            ppfbos[index].resize(size, size);
+            ppfbos[index].resize(sizeWidth, sizeHeight);
         }
 
         private int doBlur(int srcTex, int layer, int itterations)
         {
-            //1024px * it * 9tap , 256px * it * 21tap, etc
 
-            int layerResolution = resolution >> layer * 2;//quater size for each layer for bigger blur and less itterations
-            for (int i = 0; i < 2; i++) ppfbos[i].resize(layerResolution, layerResolution);
+            int layerResWidth = resWidth >> layer * 2;//quater size for each layer for bigger blur and less itterations
+            int layerResHeight = resHeight >> layer * 2;
+
+            for (int i = 0; i < 2; i++) ppfbos[i].resize(layerResWidth, layerResHeight);
             bool firstIter = true;
             int evenItterBool = 0;//1 if itteration is even else 0
 
@@ -121,14 +128,14 @@ namespace RabbetGameEngine
             return resultFBO.getOutputTexture();
         }
         
-        public int processImage(int textureID)
+        public int processImage(int textureID, int width, int height)
         {
             FrameBufferQuad.bindVao();
             int texID = textureID;
 
             for (int i = 0; i < numLayers; i++)
             {
-                texID = doBlur(texID, i, 8);//make blur layers based on previous layer result
+                texID = doBlur(texID, i, 6);//make blur layers based on previous layer result
             }
 
             return combineLayers();
@@ -136,12 +143,17 @@ namespace RabbetGameEngine
 
         public int getResultWidth()
         {
-            return resolution;
+            return resWidth;
         }
 
         public int getResultHeight()
         {
-            return resolution;
+            return resHeight;
+        }
+
+        public void onResize(int newResWidth, int newResHeight)
+        {
+           
         }
     }
 }

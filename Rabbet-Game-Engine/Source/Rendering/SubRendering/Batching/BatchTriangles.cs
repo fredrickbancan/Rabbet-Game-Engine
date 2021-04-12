@@ -1,7 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using RabbetGameEngine.Rendering;
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     public class BatchTriangles : Batch
     {
@@ -47,6 +47,7 @@ namespace RabbetGameEngine.SubRendering
             vao.bind();
             bindAllTextures();
             batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", Renderer.viewMatrix);
             GL.DrawElements(PrimitiveType.Triangles, requestedIndicesCount, DrawElementsType.UnsignedInt, indices);
             vao.unBind();
             GL.ActiveTexture(TextureUnit.Texture0);

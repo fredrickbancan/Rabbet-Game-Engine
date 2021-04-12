@@ -4,7 +4,7 @@ using RabbetGameEngine;
 using RabbetGameEngine.Rendering;
 using System;
 
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     //TODO: replace look at camera function in iSphere shaders with new faster one. (found in mathutil and in moons.shader)
     public class Batch

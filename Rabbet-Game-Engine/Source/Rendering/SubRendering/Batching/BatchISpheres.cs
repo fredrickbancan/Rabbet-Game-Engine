@@ -1,6 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using RabbetGameEngine.Rendering;
-namespace RabbetGameEngine.SubRendering
+namespace RabbetGameEngine
 {
     public class BatchISpheres : Batch
     {
@@ -64,7 +64,8 @@ namespace RabbetGameEngine.SubRendering
         public override void drawBatch(World thePlanet)
         {
             vao.bind();
-            batchShader.use(); 
+            batchShader.use();
+            batchShader.setUniformMat4F("viewMatrix", Renderer.viewMatrix);
             GL.DrawArraysInstanced(PrimitiveType.TriangleStrip, 0, 4, pointsItterator);
             vao.unBind();
         }

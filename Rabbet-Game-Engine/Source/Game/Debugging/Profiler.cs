@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RabbetGameEngine.Debugging
+namespace RabbetGameEngine
 {
     /// <summary>
     /// This class is responsable for debugging, measuring and testing performance of the subsystems in this program.

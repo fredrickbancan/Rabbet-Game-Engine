@@ -44,11 +44,11 @@ void main()
 	float horizonIntensityFactor = sunProximity * (1.0F-fragDir.y);//0.0 to 1.0 based on closeness to sun and horizon
 	float p = 1 - ((1-sunProximity) * (1-sunHeight));
 
-	vec3 skyTop = skyColor;
-	vec3 skyBottom = mix(skyColor, vec3(1.0F), 0.72F * (1.0F - nightFactor * 0.5F));
-	vec3 skyMixed = mix(skyTop, skyBottom, pow(1.0F - (fragDir.y * 0.8), 1.0F + nightFactor * 7.0F));//calculate color of sky
-	skyMixed = mix(skyMixed, skyHorizon * maxSkyLuminosity, pow(horizonIntensityFactor, 1.4F ));
-	skyMixed = mix(skyMixed, skyHorizonAmbient * maxSkyLuminosity, pow(horizonIntensityFactor, 9.0F));
+	vec3 skyTop = skyColor * 0.6F;
+	vec3 skyBottom = vec3(1.0F);// mix(skyColor, vec3(1.0F), 1.0F - nightFactor);
+	vec3 skyMixed = mix(skyTop, skyBottom, pow(1.0F - fragDir.y * 0.5F, 6.0F + nightFactor * 8.0F));//calculate color of sky
+	skyMixed = mix(skyMixed, skyHorizon, pow(horizonIntensityFactor, 3.141F));
+	skyMixed = mix(skyMixed, skyHorizonAmbient, pow(horizonIntensityFactor, 6.282F));
 
 
 	//change brightness
