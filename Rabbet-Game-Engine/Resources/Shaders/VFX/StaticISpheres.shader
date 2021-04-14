@@ -63,7 +63,7 @@ void main()
     worldPos = position;
     gl_Position = projectionMatrix * viewMatrix * lookAtCamRotation(worldPos, rad);
 
-    vColor =pointColor;
+    vColor = pointColor;
     fAoc = aoc;
 }
 

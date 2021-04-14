@@ -175,6 +175,7 @@ namespace RabbetGameEngine
             Profiler.startSection("renderWorld");
             SkyboxRenderer.drawSkybox(viewMatrix);
             drawAllStaticRenderObjects();
+            ChunkRenderer.renderAllChunksInWorld(GameInstance.get.currentWorld);
             BatchManager.drawAllWorld();
             if(!usePostProcessing)
             {

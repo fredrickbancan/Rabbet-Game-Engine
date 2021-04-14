@@ -60,7 +60,9 @@ namespace RabbetGameEngine
             FrameBufferQuad.bindVao();
             FrameBufferQuad.draw();
 
+            Profiler.startSection("bloom");
             int blurredBloomTex = blurFilter.processImage(mainFBO.getOutputTexture(1), mainFBWidth, mainFBHeight);
+            Profiler.endCurrentSection();
 
             //Render final result to full screen quad at full res
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);

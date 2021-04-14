@@ -7,6 +7,7 @@ namespace RabbetGameEngine
       throughout the game without having to be re-loaded and re-allocated.*/
     public static class ShaderUtil
     {
+        public static readonly string voxelName = "Voxels";
         public static readonly string filterGBlurName = "Filter_GBlur";
         public static readonly string frameBufferFinalName = "FrameBuffer_Final";
         public static readonly string frameBufferPassThroughName = "FrameBuffer_PassThrough";
