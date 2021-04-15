@@ -19,14 +19,13 @@ int unpackVoxelID()
     return int(data >> 24U);
 }
 
-vec3 unpackChunkPos()
+vec3 unpackChunkPos()//what the fuck is going on
 {
-   // uint index = (data & uint(0x00FFFFFF)) >> 6U;
-    uint index = data >> 6U;
+    uint index = (data & uint(0x00FFFFFF)) >> 6U; 
     uint x = index >> 12U;
     uint z = (index >> 6U) & chunkSizeMinusOne;
-    uint y = index;
-    return vec3(0, y, 0) * voxelSize + halfVoxelSize;
+    uint y = index & chunkSizeMinusOne;
+    return vec3(0, int(y), 0) * voxelSize + halfVoxelSize;
 }
 
 int unpackLightLevel()

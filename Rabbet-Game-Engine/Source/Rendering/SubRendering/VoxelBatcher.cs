@@ -47,8 +47,8 @@
                             continue;
 
                         voxelBuffer[addedVoxelItterator].setID(v.id);
-                        voxelBuffer[addedVoxelItterator].setChunkIndex(x << Chunk.CHUNK_X_SHIFT | z << Chunk.CHUNK_Z_SHIFT | y);
                         voxelBuffer[addedVoxelItterator].setLightLevel(v.lightLevel);
+                        voxelBuffer[addedVoxelItterator].setChunkIndex(x << Chunk.CHUNK_X_SHIFT | z << Chunk.CHUNK_Z_SHIFT | y);
                         addedVoxelItterator++;
                     }
             vaoNeedsUpdate = true;
