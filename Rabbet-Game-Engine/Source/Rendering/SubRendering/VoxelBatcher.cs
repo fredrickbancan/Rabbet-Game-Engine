@@ -16,11 +16,6 @@
         {
             this.parentChunk = parentChunk;
             voxelBuffer = new Voxel[Chunk.CHUNK_SIZE_CUBED];
-
-            //initialze each voxel chunk index
-            for (int i = 0; i < Chunk.CHUNK_SIZE_CUBED; i++)
-                voxelBuffer[i].setChunkIndex(i);
-
             buildVAO();
         }
 
@@ -46,13 +41,16 @@
                 for (int z = 0; z < Chunk.CHUNK_SIZE; z++)
                     for (int y = 0; y < Chunk.CHUNK_SIZE; y++)
                     {
-                        VoxelType vt = VoxelType.getVoxelById(parentChunk.getVoxelAt(x, y, z));
+                        CheapVoxel v = parentChunk.getCheapVoxelAt(x, y, z);
+                        VoxelType vt = VoxelType.getVoxelById(v.id);
                         if (vt == null) 
                             continue;
-                        if (parentChunk.isVoxelVisible(x, y, z)) 
-                            voxelBuffer[addedVoxelItterator++].setID(vt.id);
-                    }
 
+                        voxelBuffer[addedVoxelItterator].setID(v.id);
+                        voxelBuffer[addedVoxelItterator].setChunkIndex(x << Chunk.CHUNK_X_SHIFT | z << Chunk.CHUNK_Z_SHIFT | y);
+                        voxelBuffer[addedVoxelItterator].setLightLevel(v.lightLevel);
+                        addedVoxelItterator++;
+                    }
             vaoNeedsUpdate = true;
         }
 

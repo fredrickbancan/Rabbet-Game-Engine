@@ -15,11 +15,20 @@ namespace RabbetGameEngine
             GEOMETRY,
             FRAGMENT
         };
-        private struct shaderProgramSource // simple struct for reading both shaders from one file
+        private class ShaderProgramSource // simple struct for reading both shaders from one file
         {
             public string vertexSource;
             public string geometrySource;
             public string fragmentSource;
+            public bool hasGeometryShader;
+
+            public ShaderProgramSource()
+            {
+                vertexSource = debugDefaultVertexShader;
+                fragmentSource = debugDefaultFragmentShader;
+                geometrySource = "";
+                hasGeometryShader = false;
+            }
         };
 
         public static readonly string debugDefaultVertexShader = 
@@ -47,21 +56,18 @@ namespace RabbetGameEngine
                 return;
             }
             debugShaderPath = filePath;
-            shaderProgramSource source = parseShaderFile(filePath);
+            ShaderProgramSource source = parseShaderFile(filePath);
             this.id = createShader(source);
             foundUniforms = new Dictionary<string, int>();
         }
 
         private void setDebugShader()
         {
-            shaderProgramSource source;
-            source.vertexSource = debugDefaultVertexShader;
-            source.geometrySource = "";
-            source.fragmentSource = debugDefaultFragmentShader;
+            ShaderProgramSource source = new ShaderProgramSource();
             this.id = createShader(source);
             foundUniforms = new Dictionary<string, int>();
         }
-        private shaderProgramSource parseShaderFile(string path)
+        private ShaderProgramSource parseShaderFile(string path)
         {
             shaderType type = shaderType.NONE;
             string currentLine = "";
@@ -113,20 +119,21 @@ namespace RabbetGameEngine
                 vertexSource = "";
                 fragmentSource = debugDefaultFragmentShader;
             }
-            shaderProgramSource result;
+            ShaderProgramSource result = new ShaderProgramSource();
             result.vertexSource = vertexSource;
             result.geometrySource = geometrySource;
+            result.hasGeometryShader = geometrySource != "";
             result.fragmentSource = fragmentSource;
             return result;
         }
 
-        private int createShader(shaderProgramSource source)//creates a shader program from both the fragment and vertex shader source provided in the struct, returns program id
+        private int createShader(ShaderProgramSource source)//creates a shader program from both the fragment and vertex shader source provided in the struct, returns program id
         {
             int program = GL.CreateProgram();
             int vsh = compileShader(OpenTK.Graphics.OpenGL.ShaderType.VertexShader, source.vertexSource);
             int fsh = compileShader(OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, source.fragmentSource);
             int gsh = 0;
-            if (source.geometrySource != "")
+            if (source.hasGeometryShader)
             {
                 gsh = compileShader(OpenTK.Graphics.OpenGL.ShaderType.GeometryShader, source.geometrySource);
                 GL.AttachShader(program, gsh);
@@ -136,7 +143,7 @@ namespace RabbetGameEngine
             GL.LinkProgram(program);
             GL.ValidateProgram(program);
             GL.DeleteShader(vsh);
-            if (gsh != 0)
+            if (source.hasGeometryShader)
             {
                 GL.DeleteShader(gsh);
             }

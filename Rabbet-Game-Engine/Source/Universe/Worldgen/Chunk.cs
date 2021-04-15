@@ -11,6 +11,7 @@ namespace RabbetGameEngine
         public static readonly int CHUNK_SIZE_MINUS_ONE = CHUNK_SIZE - 1;
         public static readonly int CHUNK_SIZE_SQUARED = 4096;
         public static readonly int CHUNK_SIZE_CUBED = 262144;
+        public static readonly float CHUNK_PHYSICAL_SIZE = CHUNK_SIZE * Voxel.VOXEL_PHYSICAL_SIZE;
 
         /// <summary>
         /// useful for indexing flat 3d array
@@ -34,8 +35,6 @@ namespace RabbetGameEngine
             chunkPos.Z = z;
             chunkData = new CheapVoxel[CHUNK_SIZE_CUBED];
             voxelBatcher = new VoxelBatcher(this);
-            setVoxelAt(0, 0, 0, 1);
-            voxelBatcher.updateVoxelMesh();
         }
 
         /// <summary>
@@ -44,8 +43,19 @@ namespace RabbetGameEngine
         /// </summary>
         public void setVoxelAt(int x, int y, int z, byte id)
         {
+            if (x < 0 || y < 0 || z < 0) return;
             int index = x << CHUNK_X_SHIFT | z << CHUNK_Z_SHIFT | y;
             if(index < CHUNK_SIZE_CUBED) chunkData[index].id = id;
+        }
+
+        /// <summary>
+        /// sets the light level of the coord to provided light level. light level must range from 0 to 63
+        /// </summary>
+        public void setLightLevelAt(int x, int y, int z, byte level)
+        {
+            if (x < 0 || y < 0 || z < 0) return;
+            int index = x << CHUNK_X_SHIFT | z << CHUNK_Z_SHIFT | y;
+            if (index <= CHUNK_SIZE_CUBED) chunkData[index].lightLevel = (byte)(level & 63);
         }
 
         /// <summary>
@@ -59,14 +69,20 @@ namespace RabbetGameEngine
             return index >= CHUNK_SIZE_CUBED ? (byte)0 : chunkData[index].id;
         }
         
-        public bool isVoxelVisible(int x, int y, int z)
+        /// <summary>
+        /// gives the cheapvoxel at provided coords
+        /// </summary>
+        public CheapVoxel getCheapVoxelAt(int x, int y, int z)
         {
-            return !(VoxelType.isVoxelOpaque(getVoxelAt(x + 1, y, z)) &&
-                VoxelType.isVoxelOpaque(getVoxelAt(x - 1, y, z)) &&
-                VoxelType.isVoxelOpaque(getVoxelAt(x, y + 1, z)) &&
-                VoxelType.isVoxelOpaque(getVoxelAt(x, y - 1, z)) &&
-                VoxelType.isVoxelOpaque(getVoxelAt(x, y, z + 1)) && 
-                VoxelType.isVoxelOpaque(getVoxelAt(x, y, z - 1)));
+            if (x < 0 || y < 0 || z < 0) return new CheapVoxel();
+            int index = x << CHUNK_X_SHIFT | z << CHUNK_Z_SHIFT | y;
+            return chunkData[index];
+        }
+
+        public void load()
+        {
+
+            voxelBatcher.updateVoxelMesh();
         }
 
         public void unLoad()

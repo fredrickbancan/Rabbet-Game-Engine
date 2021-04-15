@@ -7,12 +7,13 @@ namespace RabbetGameEngine
     public class Terrain
     {
         //radius of chunks to initially generate around origin/spawn
-        public static readonly int spawnChunkRadius = 8;
+        public static readonly int spawnChunkRadius = 2;
 
         private Dictionary<Vector3i, Chunk> chunkMap = null;
-        
+        private Random genRand;
         public Terrain(Random rand)
         {
+            genRand = rand;
             chunkMap = new Dictionary<Vector3i, Chunk>();
         }
 
@@ -66,13 +67,33 @@ namespace RabbetGameEngine
             return new Vector3i((int)pos.X, (int)pos.Y, (int)(pos.Z));
         }
 
+        private void debugRandom(Chunk c)
+        {
+            /* for (int x = 0; x < Chunk.CHUNK_SIZE; x++)
+                 for (int z = 0; z < Chunk.CHUNK_SIZE; z++)
+                     for (int y = 0; y < Chunk.CHUNK_SIZE; y++)
+                     {
+                         if (genRand.Next(64)==0)
+                             c.setVoxelAt(x,y,z,1);
+                        c.setLightLevelAt(x, y, z, (byte)genRand.Next(64));
+                     }*/
+            for(int x = 0; x < 64; x++)
+            {
+                c.setLightLevelAt(0, x, 0, 63);
+                c.setVoxelAt(0, x, 0, 1);
+            }
+        }
+
         public void generateSpawnChunks(Vector3 spawnPos)
         {
             Vector3i origin = getChunkCoord(spawnPos);
             for (int x = 0; x < spawnChunkRadius; x++)
                 for (int z = 0; z < spawnChunkRadius; z++)
                 {
-                    chunkMap.Add(new Vector3i(x - spawnChunkRadius/2, 0, z - spawnChunkRadius / 2), new Chunk(x - spawnChunkRadius / 2, 0, z - spawnChunkRadius / 2));
+                    Chunk c = new Chunk(x, 0, z);
+                    debugRandom(c);
+                    c.load();
+                    chunkMap.Add(new Vector3i(x, 0, z), c);
                 }
         }
         public void unLoad()

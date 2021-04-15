@@ -279,6 +279,7 @@ namespace RabbetGameEngine
         public static Matrix4 projMatrix { get => projectionMatrix; }
         public static Matrix4 viewMatrix { get => renderCam.getViewMatrix(); }
         public static Vector3 camPos { get => renderCam.getCamPos(); }
+        public static Vector3 camDir { get => renderCam.getFrontVector(); }
         public static int totalDraws { get { return privateTotalDrawCallCount; } set { privateTotalDrawCallCount = value; } }
         public static int totalFBODraws { get { return privateTotalFBODrawCallCount; } set { privateTotalFBODrawCallCount = value; } }
         public static Matrix4 orthoMatrix { get => orthographicMatrix; }
