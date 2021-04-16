@@ -25,7 +25,7 @@ vec3 unpackChunkPos()//what the fuck is going on
     uint x = index >> 12U;
     uint z = (index >> 6U) & chunkSizeMinusOne;
     uint y = index & chunkSizeMinusOne;
-    return vec3(0, int(y), 0) * voxelSize + halfVoxelSize;
+    return vec3(x, y, z) * voxelSize + halfVoxelSize;
 }
 
 int unpackLightLevel()

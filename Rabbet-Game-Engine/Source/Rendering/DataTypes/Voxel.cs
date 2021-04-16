@@ -33,7 +33,6 @@
         {
             data &= 0xFF00003F;//clear index bits
             data |= (uint)index << 6;//set index bits
-            Application.debugPrint((data & 0x00FFFFFF) >> 6);
         }
 
         public void setLightLevel(byte lightLevel)
@@ -59,7 +58,7 @@
 
         public static void configureLayout(VertexBufferLayout vbl)
         {
-            vbl.add(OpenTK.Graphics.OpenGL.VertexAttribPointerType.UnsignedInt, 1);
+            vbl.add(OpenTK.Graphics.OpenGL.VertexAttribIntegerType.UnsignedInt, 1);
         }
     }
 }

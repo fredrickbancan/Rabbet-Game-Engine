@@ -69,19 +69,14 @@ namespace RabbetGameEngine
 
         private void debugRandom(Chunk c)
         {
-            /* for (int x = 0; x < Chunk.CHUNK_SIZE; x++)
+             for (int x = 0; x < Chunk.CHUNK_SIZE; x++)
                  for (int z = 0; z < Chunk.CHUNK_SIZE; z++)
                      for (int y = 0; y < Chunk.CHUNK_SIZE; y++)
                      {
                          if (genRand.Next(64)==0)
                              c.setVoxelAt(x,y,z,1);
                         c.setLightLevelAt(x, y, z, (byte)genRand.Next(64));
-                     }*/
-            for(int x = 0; x < 64; x++)
-            {
-                c.setLightLevelAt(0, x, 0, 63);
-                c.setVoxelAt(0, x, 0, 1);
-            }
+                     }
         }
 
         public void generateSpawnChunks(Vector3 spawnPos)

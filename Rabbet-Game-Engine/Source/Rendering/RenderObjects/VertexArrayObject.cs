@@ -116,12 +116,22 @@ namespace RabbetGameEngine
                 {
                     element = vbo.layout.elements.ElementAt(j);
                     GL.EnableVertexAttribArray(attribItterator);
-                    GL.VertexAttribPointer(attribItterator, element.count, element.type, element.normalized, vbo.layout.getStride(), offset);
+
+                    if(element.isInteger)
+                        GL.VertexAttribIPointer(attribItterator, element.count, (VertexAttribIntegerType)element.type,  vbo.layout.getStride(), (System.IntPtr)offset);
+                    else
+                        GL.VertexAttribPointer(attribItterator, element.count, (VertexAttribPointerType)element.type, element.normalized, vbo.layout.getStride(), offset);
+
                     if (vbo.layout.instancedData)
                     {
                         GL.VertexAttribDivisor(attribItterator, 1);
                     }
-                    offset += element.count * VertexBufferElement.getSizeOfType(element.type);
+
+                    if(element.isInteger)
+                        offset += element.count * VertexBufferElement.getSizeOfType((VertexAttribIntegerType)element.type);
+                    else
+                        offset += element.count * VertexBufferElement.getSizeOfType((VertexAttribPointerType)element.type);
+                    
                     attribItterator++;
                 }
             }
@@ -132,10 +142,19 @@ namespace RabbetGameEngine
                 instbo.bind();
                 for (int j = 0; j < instbo.layout.elements.Count; j++)
                 {
-                    element = instbo.layout.elements.ElementAt(j);
+                    element = instbo.layout.elements.ElementAt(j); 
                     GL.EnableVertexAttribArray(attribItterator);
-                    GL.VertexAttribPointer(attribItterator, element.count, element.type, element.normalized, instbo.layout.getStride(), offset);
-                    offset += element.count * VertexBufferElement.getSizeOfType(element.type);
+
+                    if (element.isInteger)
+                        GL.VertexAttribIPointer(attribItterator, element.count, (VertexAttribIntegerType)element.type, instbo.layout.getStride(), (System.IntPtr)offset);
+                        else
+                        GL.VertexAttribPointer(attribItterator, element.count, (VertexAttribPointerType)element.type, element.normalized, instbo.layout.getStride(), offset);
+                    
+                    if (element.isInteger)
+                        offset += element.count * VertexBufferElement.getSizeOfType((VertexAttribIntegerType)element.type);
+                    else
+                        offset += element.count * VertexBufferElement.getSizeOfType((VertexAttribPointerType)element.type);
+
                     attribItterator++;
                 }
             }
