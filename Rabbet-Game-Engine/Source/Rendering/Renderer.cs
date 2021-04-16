@@ -62,6 +62,7 @@ namespace RabbetGameEngine
             TextureUtil.loadAllFoundTextureFiles();
             MeshUtil.loadAllFoundModelFiles();
             BatchUtil.init();
+            VoxelBatcher.init();
             Application.infoPrint("OpenGL Version: " + GL.GetString(StringName.Version));
             Application.infoPrint("OpenGL Vendor: " + GL.GetString(StringName.Vendor));
             Application.infoPrint("Shading Language Version: " + GL.GetString(StringName.ShadingLanguageVersion));
@@ -271,6 +272,7 @@ namespace RabbetGameEngine
                 s.delete();
             }
             BatchManager.deleteAll();
+            VoxelBatcher.onClosing();
             ShaderUtil.deleteAll();
             TextureUtil.deleteAll();
             SkyboxRenderer.deleteVAO();

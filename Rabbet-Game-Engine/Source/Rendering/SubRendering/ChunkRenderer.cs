@@ -32,8 +32,7 @@ namespace RabbetGameEngine
             voxelShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             voxelShader.setUniformMat4F("viewMatrix", Renderer.viewMatrix);
             voxelShader.setUniformMat4F("modelMatrix", Matrix4.CreateTranslation((Vector3)c.chunkCoord * Chunk.CHUNK_PHYSICAL_SIZE));
-            voxelShader.setUniformVec3F("camPos", Renderer.camPos);
-            GL.DrawArrays(PrimitiveType.Points, 0, vb.visibleVoxelCount);
+            GL.DrawArrays(PrimitiveType.Triangles, 0, vb.visibleVoxelCount);
             chunkDrawCalls++;
         }
 

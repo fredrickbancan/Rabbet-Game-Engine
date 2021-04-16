@@ -3,6 +3,7 @@ using OpenTK.Mathematics;
 
 namespace RabbetGameEngine
 {
+    //TODO: Fix performance.
     public static class PostProcessing
     {
         private static HdrFrameBuffer offScreenFBO;//The FBO that the scene is rendered onto

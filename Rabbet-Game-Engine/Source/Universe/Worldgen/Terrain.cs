@@ -7,7 +7,7 @@ namespace RabbetGameEngine
     public class Terrain
     {
         //radius of chunks to initially generate around origin/spawn
-        public static readonly int spawnChunkRadius = 2;
+        public static readonly int spawnChunkRadius = 8;
 
         private Dictionary<Vector3i, Chunk> chunkMap = null;
         private Random genRand;
@@ -73,7 +73,7 @@ namespace RabbetGameEngine
                  for (int z = 0; z < Chunk.CHUNK_SIZE; z++)
                      for (int y = 0; y < Chunk.CHUNK_SIZE; y++)
                      {
-                         if (genRand.Next(64)==0)
+                         //if (genRand.Next(64)==0)
                              c.setVoxelAt(x,y,z,1);
                         c.setLightLevelAt(x, y, z, (byte)genRand.Next(64));
                      }
