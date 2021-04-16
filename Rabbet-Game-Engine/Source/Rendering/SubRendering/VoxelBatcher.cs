@@ -6,29 +6,32 @@
     /// </summary>
     public class VoxelBatcher
     {
-        public static readonly int MAX_CHUNK_VERTEX_COUNT = 3145728;
-        public static readonly int CHUNK_VERTEX_INDICES_COUNT = MAX_CHUNK_VERTEX_COUNT / 4 * 6;
-        private static uint[] VOXEL_INDICES;
+        public static readonly int MAX_CHUNK_FACE_COUNT = 786432;
+        public static readonly int CHUNK_VERTEX_INDICES_COUNT = MAX_CHUNK_FACE_COUNT * 6;
+        private static uint[] VOXEL_INDICES_BUFFER;//000000 111111 222222 333333 4444444 555555 666666
+        private static uint[] VOXEL_CORNER_ID_BUFFER;//012132 012132 012132 012132 012132 012132 012132
         private static IndexBufferObject VOXEL_VERTEX_IBO;
+        private static VertexBufferObject VOXEL_CORNER_ID_VBO;
         public static void init()
         {
-            //fill voxel indices
-            VOXEL_INDICES = new uint[CHUNK_VERTEX_INDICES_COUNT];
-            uint offset = 0;
-            //Building indicies array, will work with any number of quads under the max amount.
-            //Assuming all quads are actually quads.
-            for (uint i = 0; i < CHUNK_VERTEX_INDICES_COUNT; i += 6)
+            VOXEL_INDICES_BUFFER = new uint[CHUNK_VERTEX_INDICES_COUNT];
+            for (int i = 0; i < CHUNK_VERTEX_INDICES_COUNT; i += 6)
             {
-                VOXEL_INDICES[i + 0] = 0 + offset;
-                VOXEL_INDICES[i + 1] = 1 + offset;
-                VOXEL_INDICES[i + 2] = 2 + offset;
-                VOXEL_INDICES[i + 3] = 1 + offset;
-                VOXEL_INDICES[i + 4] = 3 + offset;
-                VOXEL_INDICES[i + 5] = 2 + offset;
-                offset += 4;
+                for (uint j = 0; j < 6; j++) VOXEL_INDICES_BUFFER[i + j] = j;
             }
             VOXEL_VERTEX_IBO = new IndexBufferObject();
-            VOXEL_VERTEX_IBO.initStatic(VOXEL_INDICES);
+            VOXEL_VERTEX_IBO.initStatic(VOXEL_INDICES_BUFFER);
+
+            VOXEL_CORNER_ID_BUFFER = new uint[CHUNK_VERTEX_INDICES_COUNT];
+            for (int i = 0; i < CHUNK_VERTEX_INDICES_COUNT; i += 6)
+            {
+                VOXEL_CORNER_ID_BUFFER[i + 0] = 0;
+                VOXEL_CORNER_ID_BUFFER[i + 1] = 1;
+                VOXEL_CORNER_ID_BUFFER[i + 2] = 2;
+                VOXEL_CORNER_ID_BUFFER[i + 3] = 1;
+                VOXEL_CORNER_ID_BUFFER[i + 4] = 3;
+                VOXEL_CORNER_ID_BUFFER[i + 5] = 2;
+            }
         }
 
         public static void onClosing()
@@ -37,25 +40,20 @@
         }
         private Chunk parentChunk = null;
         private VertexArrayObject voxelsVAO = null;
-        private VoxelVertex[] voxelBuffer = null;
+        private VoxelFace[] voxelBuffer = null;
         private bool vaoNeedsUpdate = true;
-        private int addedVoxelVertexCount = 0;
+        private int addedVoxelFaceCount = 0;
 
         public VoxelBatcher(Chunk parentChunk)
         {
             this.parentChunk = parentChunk;
-            voxelBuffer = new VoxelVertex[MAX_CHUNK_VERTEX_COUNT];
-            buildVAO();
-        }
-
-        private void buildVAO()
-        {
+            voxelBuffer = new VoxelFace[MAX_CHUNK_FACE_COUNT];
             voxelsVAO = new VertexArrayObject();
             voxelsVAO.bind();
             voxelsVAO.beginBuilding();
             VertexBufferLayout vbl = new VertexBufferLayout();
-            VoxelVertex.configureLayout(vbl);
-            voxelsVAO.addBufferDynamic(Chunk.CHUNK_SIZE_CUBED * VoxelVertex.SIZE_IN_BYTES, vbl);
+            VoxelFace.configureLayout(vbl);
+            voxelsVAO.addBufferDynamic(Chunk.CHUNK_SIZE_CUBED * VoxelFace.SIZE_IN_BYTES, vbl);
             voxelsVAO.finishBuilding();
         }
 
@@ -65,13 +63,16 @@
         /// </summary>
         public void updateVoxelMesh()
         {
-            addedVoxelVertexCount = 0;
+            addedVoxelFaceCount = 0;
             for (int x = 0; x < Chunk.CHUNK_SIZE; x++)
                 for (int z = 0; z < Chunk.CHUNK_SIZE; z++)
                     for (int y = 0; y < Chunk.CHUNK_SIZE; y++)
                     {
 
                     }
+            voxelBuffer[0] = new VoxelFace(1, 0, 0, 0, 31, 0, 0);
+            voxelBuffer[1] = new VoxelFace(1, 0, 1, 0, 31, 0, 0);
+            addedVoxelFaceCount = 2; 
             vaoNeedsUpdate = true;
         }
 
@@ -81,7 +82,7 @@
             VOXEL_VERTEX_IBO.bind();
             if (vaoNeedsUpdate)
             {
-                voxelsVAO.updateBuffer(0, voxelBuffer, addedVoxelVertexCount * VoxelVertex.SIZE_IN_BYTES);
+                voxelsVAO.updateBuffer(0, voxelBuffer, addedVoxelFaceCount * VoxelFace.SIZE_IN_BYTES);
                 vaoNeedsUpdate = false;
             }
         }
@@ -95,7 +96,7 @@
         public bool needsUpdate
         { get => vaoNeedsUpdate; }
 
-        public int visibleVoxelCount
-        { get => addedVoxelVertexCount; }
+        public int visibleVoxelFaceCount
+        { get => addedVoxelFaceCount; }
     }
 }

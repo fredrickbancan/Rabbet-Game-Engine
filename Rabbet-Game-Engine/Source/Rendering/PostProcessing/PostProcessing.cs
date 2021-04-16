@@ -61,9 +61,9 @@ namespace RabbetGameEngine
             FrameBufferQuad.bindVao();
             FrameBufferQuad.draw();
 
-            Profiler.startSection("bloom");
-            int blurredBloomTex = blurFilter.processImage(mainFBO.getOutputTexture(1), mainFBWidth, mainFBHeight);
-            Profiler.endCurrentSection();
+          //  Profiler.startSection("bloom");
+          //  int blurredBloomTex = blurFilter.processImage(mainFBO.getOutputTexture(1), mainFBWidth, mainFBHeight);
+          //  Profiler.endCurrentSection();
 
             //Render final result to full screen quad at full res
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
@@ -71,9 +71,9 @@ namespace RabbetGameEngine
             finalFrameBufferShader.use();
             GL.ActiveTexture(TextureUnit.Texture0);
             mainFBO.bindOutputTexture();
-            GL.ActiveTexture(TextureUnit.Texture1);
-            GL.BindTexture(TextureTarget.Texture2D, blurredBloomTex);
-            GL.ActiveTexture(TextureUnit.Texture0);
+          //  GL.ActiveTexture(TextureUnit.Texture1);
+          //  GL.BindTexture(TextureTarget.Texture2D, blurredBloomTex);
+          //  GL.ActiveTexture(TextureUnit.Texture0);
             FrameBufferQuad.draw();
 
             GL.Enable(EnableCap.DepthTest);

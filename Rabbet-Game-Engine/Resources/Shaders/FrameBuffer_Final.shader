@@ -26,8 +26,8 @@ uniform float bloomScale = 1.0;
 void main()
 {
 	vec3 hdrColor = texture2D(renderedTexture, fTexCoord).rgb;
-	vec3 bloomColor = texture2D(bloomTexture, fTexCoord).rgb;
-    hdrColor += bloomColor * bloomScale;//additive blending
+	//vec3 bloomColor = texture2D(bloomTexture, fTexCoord).rgb;
+   // hdrColor += bloomColor * bloomScale;//additive blending
 
     //exposure tone mapping
     vec3 result = vec3(1.0) - exp(-hdrColor * exposure);

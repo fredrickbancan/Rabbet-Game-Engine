@@ -1,6 +1,7 @@
 ﻿#shader vertex
 #version 330 core
 layout(location = 0) in uint data;
+layout(location = 1) in uint id;
 const float voxelSize = 0.25F;
 const float halfVoxelSize = voxelSize * 0.5F;
 const float maxVoxelLuminance = 1.25F;
@@ -12,29 +13,42 @@ uniform mat4 modelMatrix;
 uniform vec3 camPos;
 out float lightLevel;
 
-int unpackVoxelID()
-{
-    return int(data >> 24U);
-}
+const vec3[] testOffsets = vec3[]
+(
+    vec3(1,1,0),
+    vec3(-1,1,0),
+    vec3(1,-1,0),
+    vec3(-1,-1,0)
+    );
 
 vec3 unpackChunkPos()
 {
-    uint index = (data & uint(0x00FFFFFF)) >> 6U; 
-    uint x = index >> 12U;
-    uint z = (index >> 6U) & chunkSizeMinusOne;
+    uint index = (data & 0xFFFFC000U) >> 14;
+    uint x = index >> 12;
+    uint z = (index >> 6) & chunkSizeMinusOne;
     uint y = index & chunkSizeMinusOne;
     return vec3(x, y, z) * voxelSize + halfVoxelSize;
 }
 
 int unpackLightLevel()
 {
-    return int(data & uint(0x3F));
+    return int((data & 0x00003F00U) >> 8);
 }
 
+int unpackMetadata()
+{
+    return int((data & 0x000000E0U) >> 5);
+}
+
+int unpackOrientation()
+{
+    return int((data & 0x0000001CU) >> 2);
+}
 
 void main()
 {
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(unpackChunkPos(), 1.0F);
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(unpackChunkPos() + testOffsets[gl_VertexID & 3], 1.0F);
+    gl_PointSize = 100;
     lightLevel =  float(unpackLightLevel() + 1) / 64.0 * maxVoxelLuminance;
 }
 

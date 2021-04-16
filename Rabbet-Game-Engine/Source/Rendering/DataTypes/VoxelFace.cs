@@ -1,9 +1,9 @@
 ﻿namespace RabbetGameEngine
 {
-    public struct VoxelVertex
+    public struct VoxelFace
     {
         public static readonly int SIZE_IN_BYTES = 5;
-        private uint data;
+        private uint data;//last 2 bits are spare for now
         public byte id;
 
         /// <summary>
@@ -13,19 +13,17 @@
         /// <param name="x">the x position of this vertex in this chunk. Chunk relative. range = 0 to 63</param>
         /// <param name="y">the y position of this vertex in this chunk. Chunk relative. range = 0 to 63</param>
         /// <param name="z">the z position of this vertex in this chunk. Chunk relative. range = 0 to 63</param>
-        /// <param name="corner">signifies which corner of the quad face this vertex is. range = 0 to 3. 0 = top right, 1 = top left, 2 = bottom right, 3 = bottom left.</param>
-        /// <param name="normal">the normal of the face this vertex is on. range = 0 to 5 . 0 to 2 is positive x,y,z. 3 to 5 is negative x,y,z</param>
         /// <param name="lightLevel">the light level of the face this vertex is on. range = 0 to 63.</param>
         /// <param name="metadata">the metadata of this voxel. Used for texture atlas pages indexing. range = 0 to 7</param>
-        public VoxelVertex(byte voxelID, byte x, byte y, byte z, byte corner, byte normal, byte lightLevel, byte metadata)
+        /// <param name="orientation">the orientation of this face. Range = 0 to 5. 0 to 2 is positive facing xyz faces. 3 to 5 is negative facing xyz faces.</param>
+        public VoxelFace(byte voxelID, byte x, byte y, byte z, byte lightLevel, byte metadata, byte orientation)
         {
             data = 0U;
             id = voxelID;
             setPos(x, y, z);
-            setCorner(corner);
-            setNormal(normal);
             setLightLevel(lightLevel);
             setMetaData(metadata);
+            setOrientation(orientation);
         }
 
         public void setPos(byte x, byte y, byte z)
@@ -34,28 +32,22 @@
             data |= (uint)(x << Chunk.CHUNK_X_SHIFT | z << Chunk.CHUNK_Z_SHIFT | y) << 14;
         }
 
-        public void setCorner(byte c)
+        public void setOrientation(byte o)
         {
-            data &= 0xFFFFCFFFU;//clear corner bits
-            data |= (uint)c << 12;
-        }
-
-        public void setNormal(byte n)
-        {
-            data &= 0xFFFFF1FFU;//clear normal bits
-            data |= (uint)n << 9;
+            data &= 0xFFFFFFE3U;//clear orientation bits
+            data |= (uint)o << 2;
         }
 
         public void setLightLevel(byte level)
         {
-            data &= 0xFFFFFE07U;//clear light level bits
-            data |= (uint)level << 3;
+            data &= 0xFFFFC0FFU;//clear light level bits
+            data |= (uint)level << 8;
         }
 
         public void setMetaData(byte md)
         {
-            data &= 0xFFFFFFF8U;//clear metadata bits
-            data |= (uint)md;
+            data &= 0xFFFFFF1FU;//clear metadata bits
+            data |= (uint)md << 5;
         }
 
         public static void configureLayout(VertexBufferLayout vbl)
