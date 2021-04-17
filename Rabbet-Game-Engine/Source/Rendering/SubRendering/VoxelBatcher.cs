@@ -8,7 +8,7 @@
     {
         public static readonly int MAX_CHUNK_FACE_COUNT = 786432;
         public static readonly int CHUNK_VERTEX_INDICES_COUNT = MAX_CHUNK_FACE_COUNT * 6;
-        private static uint[] VOXEL_INDICES_BUFFER;//000000 111111 222222 333333 4444444 555555 666666
+        public static uint[] VOXEL_INDICES_BUFFER;//000000 111111 222222 333333 4444444 555555 666666
         private static uint[] VOXEL_CORNER_ID_BUFFER;//012132 012132 012132 012132 012132 012132 012132
         private static IndexBufferObject VOXEL_VERTEX_IBO;
         private static VertexBufferObject VOXEL_CORNER_ID_VBO;
@@ -21,17 +21,6 @@
             }
             VOXEL_VERTEX_IBO = new IndexBufferObject();
             VOXEL_VERTEX_IBO.initStatic(VOXEL_INDICES_BUFFER);
-
-            VOXEL_CORNER_ID_BUFFER = new uint[CHUNK_VERTEX_INDICES_COUNT];
-            for (int i = 0; i < CHUNK_VERTEX_INDICES_COUNT; i += 6)
-            {
-                VOXEL_CORNER_ID_BUFFER[i + 0] = 0;
-                VOXEL_CORNER_ID_BUFFER[i + 1] = 1;
-                VOXEL_CORNER_ID_BUFFER[i + 2] = 2;
-                VOXEL_CORNER_ID_BUFFER[i + 3] = 1;
-                VOXEL_CORNER_ID_BUFFER[i + 4] = 3;
-                VOXEL_CORNER_ID_BUFFER[i + 5] = 2;
-            }
         }
 
         public static void onClosing()
@@ -70,9 +59,11 @@
                     {
 
                     }
-            voxelBuffer[0] = new VoxelFace(1, 0, 0, 0, 31, 0, 0);
-            voxelBuffer[1] = new VoxelFace(1, 0, 1, 0, 31, 0, 0);
-            addedVoxelFaceCount = 2; 
+            voxelBuffer[0] = new VoxelFace(1, 0, 0, 0, 7, 0, 0);
+            voxelBuffer[1] = new VoxelFace(1, 0, 1, 0, 15, 0, 0);
+            voxelBuffer[2] = new VoxelFace(1, 0, 2, 0, 31, 0, 0);
+            voxelBuffer[3] = new VoxelFace(1, 0, 3, 0, 63, 0, 0);
+            addedVoxelFaceCount = 4; 
             vaoNeedsUpdate = true;
         }
 

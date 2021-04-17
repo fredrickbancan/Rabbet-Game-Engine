@@ -13,12 +13,13 @@ uniform mat4 modelMatrix;
 uniform vec3 camPos;
 out float lightLevel;
 
+const int[] cornerIDs = int[](0, 1, 2, 2, 3, 0);
 const vec3[] testOffsets = vec3[]
 (
-    vec3(1,1,0),
-    vec3(-1,1,0),
-    vec3(1,-1,0),
-    vec3(-1,-1,0)
+    vec3(0.5F, 0.5F,0),
+    vec3(-0.5F, 0.5F,0),
+    vec3(-0.5F,-0.5F,0),
+    vec3(0.5F,-0.5F,0)
     );
 
 vec3 unpackChunkPos()
@@ -27,7 +28,7 @@ vec3 unpackChunkPos()
     uint x = index >> 12;
     uint z = (index >> 6) & chunkSizeMinusOne;
     uint y = index & chunkSizeMinusOne;
-    return vec3(x, y, z) * voxelSize + halfVoxelSize;
+    return vec3(x, y, z) ;
 }
 
 int unpackLightLevel()
@@ -47,7 +48,8 @@ int unpackOrientation()
 
 void main()
 {
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(unpackChunkPos() + testOffsets[gl_VertexID & 3], 1.0F);
+    int cornerID = cornerIDs[gl_VertexID % 6];
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4((unpackChunkPos() + testOffsets[cornerID]) * voxelSize + halfVoxelSize, 1.0F);
     gl_PointSize = 100;
     lightLevel =  float(unpackLightLevel() + 1) / 64.0 * maxVoxelLuminance;
 }
