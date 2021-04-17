@@ -73,9 +73,9 @@ namespace RabbetGameEngine
                  for (int z = 0; z < Chunk.CHUNK_SIZE; z++)
                      for (int y = 0; y < Chunk.CHUNK_SIZE; y++)
                      {
-                         //if (genRand.Next(64)==0)
+                         if (genRand.Next(1000)!=0)
                              c.setVoxelAt(x,y,z,1);
-                        c.setLightLevelAt(x, y, z, (byte)genRand.Next(64));
+                       // c.setLightLevelAt(x, y, z, (byte)genRand.Next(64));
                      }
         }
 
@@ -85,7 +85,7 @@ namespace RabbetGameEngine
             for (int x = 0; x < spawnChunkRadius; x++)
                 for (int z = 0; z < spawnChunkRadius; z++)
                 {
-                    Chunk c = new Chunk(x, 0, z);
+                    Chunk c = new Chunk(this);
                     debugRandom(c);
                     c.load();
                     chunkMap.Add(new Vector3i(x, 0, z), c);

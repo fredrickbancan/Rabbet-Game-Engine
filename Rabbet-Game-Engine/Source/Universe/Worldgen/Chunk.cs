@@ -1,6 +1,4 @@
-﻿using OpenTK.Mathematics;
-
-namespace RabbetGameEngine
+﻿namespace RabbetGameEngine
 {
     public class Chunk
     {
@@ -12,6 +10,7 @@ namespace RabbetGameEngine
         public static readonly int CHUNK_SIZE_SQUARED = 4096;
         public static readonly int CHUNK_SIZE_CUBED = 262144;
         public static readonly float VOXEL_PHYSICAL_SIZE = 0.25F;
+        public static readonly float VOXEL_PHYSICAL_OFFSET = 0.125F;
         public static readonly float CHUNK_PHYSICAL_SIZE = CHUNK_SIZE * VOXEL_PHYSICAL_SIZE;
 
         /// <summary>
@@ -23,18 +22,16 @@ namespace RabbetGameEngine
         /// useful for indexing flat 3d array
         /// </summary>
         public static readonly int CHUNK_Z_SHIFT = 6;
-
-
         private byte[] voxels;
-        private Vector3i chunkPos;
+        private LightMap lightMap;
         private VoxelBatcher voxelBatcher = null;
-
-        public Chunk(int x, int y, int z)
+        private Terrain parentTerrain;
+        public Chunk(Terrain pt)
         {
-            chunkPos.X = x;
-            chunkPos.Y = y;
-            chunkPos.Z = z;
+           
+            parentTerrain = pt;
             voxels = new byte[CHUNK_SIZE_CUBED];
+            lightMap = new LightMap(CHUNK_SIZE_CUBED);
             voxelBatcher = new VoxelBatcher(this);
         }
 
@@ -54,7 +51,13 @@ namespace RabbetGameEngine
         /// </summary>
         public void setLightLevelAt(int x, int y, int z, byte level)
         {
+            lightMap.setLightLevelAt(x, y, z, level);
+        }
 
+
+        public byte getLightLevelAt(int x, int y, int z)
+        {
+            return lightMap.getLightLevelAt(x, y, z);
         }
 
         /// <summary>
@@ -67,20 +70,21 @@ namespace RabbetGameEngine
             int index = x << CHUNK_X_SHIFT | z << CHUNK_Z_SHIFT | y;
             return index >= CHUNK_SIZE_CUBED ? (byte)0 : voxels[index];
         }
-        
+
         /// <summary>
-        /// gives the cheapvoxel at provided coords
+        /// returns the voxel id at the provided chunk-relative coordinates 
+        /// Indexes array by x * (size * size) + z * size + y
+        /// If coords are outside of this chunk, will query parent terrain for coordinate.
         /// </summary>
-        public byte getCheapVoxelAt(int x, int y, int z)
+        public byte getVoxelAtSafe(int x, int y, int z)
         {
-            if (x < 0 || y < 0 || z < 0) return (byte)0;
+            if (x >= Chunk.CHUNK_SIZE || x < 0 || y >= Chunk.CHUNK_SIZE || y < 0 || z >= Chunk.CHUNK_SIZE || z < 0) return parentTerrain.getVoxelIdAt(x, y, z);
             int index = x << CHUNK_X_SHIFT | z << CHUNK_Z_SHIFT | y;
             return voxels[index];
         }
 
         public void load()
         {
-
             voxelBatcher.updateVoxelMesh();
         }
 
@@ -88,9 +92,6 @@ namespace RabbetGameEngine
         {
             voxelBatcher.deleteVAO();
         }
-
-        public Vector3i chunkCoord
-        { get => chunkPos; }
 
         public VoxelBatcher voxelMesh
         { get => voxelBatcher; }

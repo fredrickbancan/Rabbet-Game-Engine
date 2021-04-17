@@ -1,34 +1,23 @@
 ﻿#shader vertex
 #version 330 core
 layout(location = 0) in uint data;
-layout(location = 1) in uint id;
+//layout(location = 1) in byte id;
 const float voxelSize = 0.25F;
-const float halfVoxelSize = voxelSize * 0.5F;
+const float halfVoxelSize = 0.125F;
 const float maxVoxelLuminance = 1.25F;
 const uint chunkSize = 64U;
 const uint chunkSizeMinusOne = 63U;
-uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix;
-uniform mat4 modelMatrix;
-uniform vec3 camPos;
 out float lightLevel;
-
-const int[] cornerIDs = int[](0, 1, 2, 2, 3, 0);
-const vec3[] testOffsets = vec3[]
-(
-    vec3(0.5F, 0.5F,0),
-    vec3(-0.5F, 0.5F,0),
-    vec3(-0.5F,-0.5F,0),
-    vec3(0.5F,-0.5F,0)
-    );
+out vec3 worldPos;
+out int orientation;
 
 vec3 unpackChunkPos()
 {
-    uint index = (data & 0xFFFFC000U) >> 14;
-    uint x = index >> 12;
-    uint z = (index >> 6) & chunkSizeMinusOne;
+    uint index = (data & 0xFFFFC000U) >> 14U;
+    uint x = index >> 12U;
+    uint z = (index >> 6U) & chunkSizeMinusOne;
     uint y = index & chunkSizeMinusOne;
-    return vec3(x, y, z) ;
+    return vec3(x, y, z);
 }
 
 int unpackLightLevel()
@@ -48,12 +37,102 @@ int unpackOrientation()
 
 void main()
 {
-    int cornerID = cornerIDs[gl_VertexID % 6];
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4((unpackChunkPos() + testOffsets[cornerID]) * voxelSize + halfVoxelSize, 1.0F);
-    gl_PointSize = 100;
+    worldPos = unpackChunkPos() * voxelSize;
     lightLevel =  float(unpackLightLevel() + 1) / 64.0 * maxVoxelLuminance;
+    orientation = unpackOrientation() * 4;//pre-multplying by 4 for indexing offsets
 }
 
+/*#############################################################################################################################################################################################*/
+#shader tesscontrol
+#version 410
+layout(vertices = 4) out;
+const float voxelSize = 0.25F;
+const float halfVoxelSize = 0.125F;
+
+const vec3[] faceOffsets = vec3[]
+(
+    //posX face
+    vec3(0.5, 1, 1) * halfVoxelSize,
+    vec3(0.5, 1, -1)* halfVoxelSize,
+    vec3(0.5, -1, 1)* halfVoxelSize,
+    vec3(0.5, -1, -1)* halfVoxelSize,
+
+    //posY face
+    vec3(1, 0.5, 0)* halfVoxelSize,
+    vec3(-1, 0.5, 0)* halfVoxelSize,
+    vec3(1, 0.5, 0)* halfVoxelSize,
+    vec3(-1, 0.5, 0)* halfVoxelSize,
+
+    //posZ face
+    vec3(1, 1, 0.5)* halfVoxelSize,
+    vec3(-1, 1, 0.5)* halfVoxelSize,
+    vec3(1, -1, 0.5)* halfVoxelSize,
+    vec3(-1, -1, 0.5)* halfVoxelSize,
+
+    //negX face
+    vec3(-0.5, 1, 0)* halfVoxelSize,
+    vec3(-0.5, 1, 0)* halfVoxelSize,
+    vec3(-0.5, -1, 0)* halfVoxelSize,
+    vec3(-0.5, -1, 0)* halfVoxelSize,
+
+    //negY face
+    vec3(1, -0.5, 0)* halfVoxelSize,
+    vec3(-1, -0.5, 0)* halfVoxelSize,
+    vec3(1, -0.5, 0)* halfVoxelSize,
+    vec3(-1, -0.5, 0)* halfVoxelSize,
+
+    //negZ face
+    vec3(1, 1, -0.5)* halfVoxelSize,
+    vec3(-1, 1, -0.5)* halfVoxelSize,
+    vec3(1, -1, -0.5)* halfVoxelSize,
+    vec3(-1, -1, -0.5)* halfVoxelSize
+    );
+
+in float lightLevel[];
+in vec3 worldPos[];
+in int orientation[];
+
+out Tess
+{
+    vec3 worldPos;
+    float lightLevel;
+} Out[];
+
+void main(void)
+{
+    if (gl_InvocationID == 0)
+    {
+        gl_TessLevelInner[0] = 0;
+        gl_TessLevelInner[1] = 0;
+        gl_TessLevelOuter[0] = 1;
+        gl_TessLevelOuter[1] = 1;
+        gl_TessLevelOuter[2] = 1;
+        gl_TessLevelOuter[3] = 1;
+    }
+    Out[gl_InvocationID].lightLevel = lightLevel[0];
+    Out[gl_InvocationID].worldPos = worldPos[0] + faceOffsets[orientation[0] + gl_InvocationID];
+}
+
+/*#############################################################################################################################################################################################*/
+#shader tessevaluation
+#version 410
+layout(quads) in;
+uniform mat4 projViewModel;
+out float lightLevel;
+in Tess
+{
+    vec3 worldPos;
+    float lightLevel;
+} In[];
+
+void main(void)
+{
+    vec3 wpTop = mix(In[0].worldPos, In[1].worldPos, gl_TessCoord.x);
+    vec3 wpBottom = mix(In[2].worldPos, In[3].worldPos, gl_TessCoord.x);
+    vec3 newWorldPos = mix(wpTop, wpBottom, gl_TessCoord.y);
+    gl_Position = projViewModel * vec4(newWorldPos, 1.0F);
+    lightLevel = In[0].lightLevel;
+}
 
 /*#############################################################################################################################################################################################*/
 #shader fragment
@@ -64,4 +143,5 @@ in float lightLevel;
 void main()
 {
     fragColor = vec4(lightLevel, lightLevel, lightLevel,1.0);
+    //fragColor = vec4(1.0);
 }

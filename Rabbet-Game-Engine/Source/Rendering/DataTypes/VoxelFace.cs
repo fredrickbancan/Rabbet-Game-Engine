@@ -2,9 +2,9 @@
 {
     public struct VoxelFace
     {
-        public static readonly int SIZE_IN_BYTES = 5;
+        public static readonly int SIZE_IN_BYTES = 4;//5 including id byte
         private uint data;//last 2 bits are spare for now
-        public byte id;
+       // public byte id;
 
         /// <summary>
         /// Tightly packed vertex information for a voxel face vertex.
@@ -19,7 +19,7 @@
         public VoxelFace(byte voxelID, byte x, byte y, byte z, byte lightLevel, byte metadata, byte orientation)
         {
             data = 0U;
-            id = voxelID;
+          //  id = voxelID;
             setPos(x, y, z);
             setLightLevel(lightLevel);
             setMetaData(metadata);
@@ -53,7 +53,7 @@
         public static void configureLayout(VertexBufferLayout vbl)
         {
             vbl.add(OpenTK.Graphics.OpenGL.VertexAttribIntegerType.UnsignedInt, 1);
-            vbl.add(OpenTK.Graphics.OpenGL.VertexAttribIntegerType.UnsignedByte, 1);
+          //  vbl.add(OpenTK.Graphics.OpenGL.VertexAttribIntegerType.UnsignedByte, 1);
         }
     }
 }

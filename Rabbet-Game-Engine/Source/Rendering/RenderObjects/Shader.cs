@@ -13,21 +13,31 @@ namespace RabbetGameEngine
             NONE,
             VERTEX,
             GEOMETRY,
+            TESSCTRL,
+            TESSEVAL,
             FRAGMENT
         };
         private class ShaderProgramSource // simple struct for reading both shaders from one file
         {
             public string vertexSource;
             public string geometrySource;
+            public string tesselationCtrlSource;
+            public string tesselationEvalSource;
             public string fragmentSource;
             public bool hasGeometryShader;
+            public bool hasTesselationCtrlShader;
+            public bool hasTesselationEvalShader;
 
             public ShaderProgramSource()
             {
-                vertexSource = debugDefaultVertexShader;
-                fragmentSource = debugDefaultFragmentShader;
+                vertexSource = "";
+                fragmentSource = "";
                 geometrySource = "";
+                tesselationCtrlSource = "";
+                tesselationEvalSource = "";
                 hasGeometryShader = false;
+                hasTesselationCtrlShader = false;
+                hasTesselationEvalShader = false;
             }
         };
 
@@ -71,9 +81,7 @@ namespace RabbetGameEngine
         {
             shaderType type = shaderType.NONE;
             string currentLine = "";
-            string vertexSource = "";
-            string geometrySource = "";
-            string fragmentSource = "";
+            ShaderProgramSource result = new ShaderProgramSource();
             StreamReader reader;
             try
             {
@@ -94,19 +102,45 @@ namespace RabbetGameEngine
                         else if (currentLine.Contains("geometry"))
                         {
                             type = shaderType.GEOMETRY;
+                            result.hasGeometryShader = true;
+                        }
+                        else if (currentLine.Contains("tesscontrol"))
+                        {
+                            type = shaderType.TESSCTRL;
+                            result.hasTesselationCtrlShader = true;
+                        }
+                        else if (currentLine.Contains("tessevaluation"))
+                        {
+                            type = shaderType.TESSEVAL;
+                            result.hasTesselationEvalShader = true;
                         }
                     }
-                    else if (type == shaderType.VERTEX)
+                    else
                     {
-                        vertexSource += (currentLine + "\n");
-                    }
-                    else if (type == shaderType.FRAGMENT)
-                    {
-                        fragmentSource += (currentLine + "\n");
-                    }
-                    else if (type == shaderType.GEOMETRY)
-                    {
-                        geometrySource += (currentLine + "\n");
+
+                        switch (type)
+                        {
+                            case shaderType.NONE:
+                                break;
+                            case shaderType.VERTEX:
+                                result.vertexSource += (currentLine + "\n");
+                                break;
+                            case shaderType.GEOMETRY:
+                                result.geometrySource += (currentLine + "\n");
+                                break;
+                            case shaderType.TESSCTRL:
+                                result.tesselationCtrlSource += (currentLine + "\n");
+                                break;
+                            case shaderType.TESSEVAL:
+                                result.tesselationEvalSource += (currentLine + "\n");
+                                break;
+                            case shaderType.FRAGMENT:
+                                result.fragmentSource += (currentLine + "\n");
+                                break;
+
+                            default:
+                                break;
+                        }
                     }
                 }
                 reader.Close();
@@ -115,15 +149,10 @@ namespace RabbetGameEngine
             catch(Exception e)
             {
                 Application.error("Shader failed to load!\nException: " + e.Message + "\nShader path: " + path);
-                vertexSource = debugDefaultVertexShader;
-                vertexSource = "";
-                fragmentSource = debugDefaultFragmentShader;
+                result.vertexSource = debugDefaultVertexShader;
+                result.fragmentSource = debugDefaultFragmentShader;
+                result.hasTesselationEvalShader = result.hasTesselationCtrlShader = result.hasGeometryShader = false;
             }
-            ShaderProgramSource result = new ShaderProgramSource();
-            result.vertexSource = vertexSource;
-            result.geometrySource = geometrySource;
-            result.hasGeometryShader = geometrySource != "";
-            result.fragmentSource = fragmentSource;
             return result;
         }
 
@@ -133,20 +162,31 @@ namespace RabbetGameEngine
             int vsh = compileShader(OpenTK.Graphics.OpenGL.ShaderType.VertexShader, source.vertexSource);
             int fsh = compileShader(OpenTK.Graphics.OpenGL.ShaderType.FragmentShader, source.fragmentSource);
             int gsh = 0;
+            int tctrlsh = 0;
+            int tevalsh = 0;
             if (source.hasGeometryShader)
             {
                 gsh = compileShader(OpenTK.Graphics.OpenGL.ShaderType.GeometryShader, source.geometrySource);
                 GL.AttachShader(program, gsh);
+            }
+            if(source.hasTesselationCtrlShader)
+            {
+                tctrlsh = compileShader(OpenTK.Graphics.OpenGL.ShaderType.TessControlShader, source.tesselationCtrlSource);
+                GL.AttachShader(program, tctrlsh);
+            }
+            if(source.hasTesselationEvalShader)
+            {
+                tevalsh = compileShader(OpenTK.Graphics.OpenGL.ShaderType.TessEvaluationShader, source.tesselationEvalSource);
+                GL.AttachShader(program, tevalsh);
             }
             GL.AttachShader(program, vsh);
             GL.AttachShader(program, fsh);
             GL.LinkProgram(program);
             GL.ValidateProgram(program);
             GL.DeleteShader(vsh);
-            if (source.hasGeometryShader)
-            {
-                GL.DeleteShader(gsh);
-            }
+            if (source.hasGeometryShader)GL.DeleteShader(gsh);
+            if (source.hasTesselationCtrlShader)GL.DeleteShader(tctrlsh);
+            if (source.hasTesselationEvalShader)GL.DeleteShader(tevalsh);
             GL.DeleteShader(fsh);
 
             return program;
@@ -162,7 +202,7 @@ namespace RabbetGameEngine
             string infoLog = GL.GetShaderInfoLog(id);
             if (infoLog != System.String.Empty)
             {
-                Application.error("\n\nError when compiling shader!\ntype: " + (type == OpenTK.Graphics.OpenGL.ShaderType.VertexShader ? "vertex shader" : type == OpenTK.Graphics.OpenGL.ShaderType.GeometryShader ? "geometry shader" : "fragment shader") + "\nmessage log: " + infoLog + "\nShader File Path: " + debugShaderPath);
+                Application.error("\n\nError when compiling shader!\ntype: " + type.ToString() + "\nmessage log: " + infoLog + "\nShader File Path: " + debugShaderPath);
                 GL.DeleteProgram(id);
                 return 0;
             }

@@ -59,6 +59,21 @@ namespace RabbetGameEngine
                 Input.updateInput();
                 defaultCam = new FlyCamera(new Vector3(0, 0, 0));
                 Renderer.setCamera(defaultCam);
+                Chunk test = new Chunk(new Terrain(nonCRand));
+                test.setLightLevelAt(0, 0, 0, 63);
+                Application.debugPrint(test.getLightLevelAt(0,0,0));
+                test.setLightLevelAt(0, 1, 0, 1);
+                Application.debugPrint(test.getLightLevelAt(0,1,0));
+                test.setLightLevelAt(0, 2, 0, 2);
+                Application.debugPrint(test.getLightLevelAt(0,2,0));
+                test.setLightLevelAt(0, 3, 0, 3);
+                Application.debugPrint(test.getLightLevelAt(0, 3, 0));
+                test.setLightLevelAt(0, 4, 0, 4);
+                Application.debugPrint(test.getLightLevelAt(0, 4, 0));
+                test.setLightLevelAt(15, 15, 15, 62);
+                Application.debugPrint(test.getLightLevelAt(15, 15, 15));
+                test.setLightLevelAt(50, 50, 50, 63);
+                Application.debugPrint(test.getLightLevelAt(50, 50, 50));
                 Application.infoPrint("Initialized.");
             }
             catch (Exception e)

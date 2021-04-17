@@ -17,15 +17,15 @@ namespace RabbetGameEngine
 
         private int stride = 0;
 
-        public void add(VertexAttribPointerType type, int count, bool normalized = false)
+        public void add(VertexAttribPointerType type, int count, bool normalized = false, int divisor = 1)
         {
-            elements.Add(new VertexBufferElement(type, count, normalized));
+            elements.Add(new VertexBufferElement(type, count, normalized, divisor));
             stride += VertexBufferElement.getSizeOfType(type) * count;
         }
 
-        public void add(VertexAttribIntegerType type, int count)
+        public void add(VertexAttribIntegerType type, int count, int divisor = 1)
         {
-            elements.Add(new VertexBufferElement(type, count));
+            elements.Add(new VertexBufferElement(type, count, divisor));
             stride += VertexBufferElement.getSizeOfType(type) * count;
         }
 

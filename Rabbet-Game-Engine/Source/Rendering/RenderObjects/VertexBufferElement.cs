@@ -8,19 +8,22 @@ namespace RabbetGameEngine
         public int count;
         public bool normalized;
         public bool isInteger;
-        public VertexBufferElement(VertexAttribPointerType t, int c, bool n)
+        public int divisor;
+        public VertexBufferElement(VertexAttribPointerType t, int c, bool n, int divisor = 1)
         {
             type = (int)t;
             count = c;
             normalized = n;
             isInteger = false;
+            this.divisor = divisor;
         }
-        public VertexBufferElement(VertexAttribIntegerType t, int c)
+        public VertexBufferElement(VertexAttribIntegerType t, int c, int divisor = 1)
         {
             type = (int)t;
             count = c;
             normalized = false;
             isInteger = true;
+            this.divisor = divisor;
         }
 
         public static int getSizeOfType(VertexAttribPointerType type)

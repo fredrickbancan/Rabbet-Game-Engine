@@ -6,18 +6,17 @@
     /// </summary>
     public class VoxelBatcher
     {
-        public static readonly int MAX_CHUNK_FACE_COUNT = 786432;
-        public static readonly int CHUNK_VERTEX_INDICES_COUNT = MAX_CHUNK_FACE_COUNT * 6;
-        public static uint[] VOXEL_INDICES_BUFFER;//000000 111111 222222 333333 4444444 555555 666666
-        private static uint[] VOXEL_CORNER_ID_BUFFER;//012132 012132 012132 012132 012132 012132 012132
+        public static readonly int MAX_CHUNK_FACE_COUNT = 786432;//maciumum voxel faces that can be visible in a chunk
+        public static readonly int CHUNK_VERTEX_INDICES_COUNT = MAX_CHUNK_FACE_COUNT * 4;
+        public static uint[] VOXEL_INDICES_BUFFER;//0000 1111 2222 3333 4444 5555 6666
         private static IndexBufferObject VOXEL_VERTEX_IBO;
-        private static VertexBufferObject VOXEL_CORNER_ID_VBO;
+
         public static void init()
         {
             VOXEL_INDICES_BUFFER = new uint[CHUNK_VERTEX_INDICES_COUNT];
-            for (int i = 0; i < CHUNK_VERTEX_INDICES_COUNT; i += 6)
+            for (uint i = 0; i < CHUNK_VERTEX_INDICES_COUNT; i += 4U)
             {
-                for (uint j = 0; j < 6; j++) VOXEL_INDICES_BUFFER[i + j] = j;
+                for (int j = 0; j < 4; j++) VOXEL_INDICES_BUFFER[i + j] = i / 4U;
             }
             VOXEL_VERTEX_IBO = new IndexBufferObject();
             VOXEL_VERTEX_IBO.initStatic(VOXEL_INDICES_BUFFER);
@@ -29,14 +28,14 @@
         }
         private Chunk parentChunk = null;
         private VertexArrayObject voxelsVAO = null;
-        private VoxelFace[] voxelBuffer = null;
+        private VoxelFace[] voxelFaceBuffer = null;
         private bool vaoNeedsUpdate = true;
         private int addedVoxelFaceCount = 0;
 
         public VoxelBatcher(Chunk parentChunk)
         {
             this.parentChunk = parentChunk;
-            voxelBuffer = new VoxelFace[MAX_CHUNK_FACE_COUNT];
+            voxelFaceBuffer = new VoxelFace[MAX_CHUNK_FACE_COUNT];
             voxelsVAO = new VertexArrayObject();
             voxelsVAO.bind();
             voxelsVAO.beginBuilding();
@@ -53,18 +52,49 @@
         public void updateVoxelMesh()
         {
             addedVoxelFaceCount = 0;
+            int faceMask;//bottom 6 bits used as booleans for each voxel face.
+            int faceCountCounter;
+            int faceCount;
             for (int x = 0; x < Chunk.CHUNK_SIZE; x++)
                 for (int z = 0; z < Chunk.CHUNK_SIZE; z++)
                     for (int y = 0; y < Chunk.CHUNK_SIZE; y++)
                     {
+                        VoxelType vt = VoxelType.getVoxelById(parentChunk.getVoxelAt(x, y, z));
+                        if (vt == null) continue;
+                        /*  faceMask = 0;
+                          faceCount = 0;
+                          faceCountCounter = 0;
+                          //get orientation bits
+                          faceCountCounter = faceMask = getVisibleFacesForVoxel(x, y, z);
 
+                          //count faces shown
+                          while (faceCountCounter != 0) { faceCount += faceMask & 1; faceCountCounter >>= 1; }
+
+                          //add faces with orientation and values
+                          for(faceCountCounter = 0; faceCountCounter < faceCount; faceCountCounter++)
+                          {
+                              voxelFaceBuffer[addedVoxelFaceCount++] = new VoxelFace(vt.id, (byte)x, (byte)y, (byte)z, 0, 0, 0);
+                          }*/
+                        voxelFaceBuffer[addedVoxelFaceCount] = new VoxelFace(1,(byte)x,(byte)y, (byte)z,(byte)GameInstance.rand.Next(0,64),0,0);
+                        voxelFaceBuffer[addedVoxelFaceCount] = new VoxelFace(1,(byte)x,(byte)y, (byte)z,(byte)GameInstance.rand.Next(0,64),0,1);
+                        addedVoxelFaceCount++;
                     }
-            voxelBuffer[0] = new VoxelFace(1, 0, 0, 0, 7, 0, 0);
-            voxelBuffer[1] = new VoxelFace(1, 0, 1, 0, 15, 0, 0);
-            voxelBuffer[2] = new VoxelFace(1, 0, 2, 0, 31, 0, 0);
-            voxelBuffer[3] = new VoxelFace(1, 0, 3, 0, 63, 0, 0);
-            addedVoxelFaceCount = 4; 
             vaoNeedsUpdate = true;
+        }
+
+        /// <summary>
+        /// returns a bit mask for faces shown on the voxel at the provided coords
+        /// </summary>
+        private int getVisibleFacesForVoxel(int x, int y, int z)
+        {
+            int result = 0;
+            result |= 1 * System.Convert.ToInt32(VoxelType.isVoxelOpaque(parentChunk.getVoxelAtSafe(x + 1, y, z)));//check posx face
+            result |= 2 * System.Convert.ToInt32(VoxelType.isVoxelOpaque(parentChunk.getVoxelAtSafe(x, y + 1, z)));//check posy face
+            result |= 4 * System.Convert.ToInt32(VoxelType.isVoxelOpaque(parentChunk.getVoxelAtSafe(x, y, z + 1)));//check posz face
+            result |= 8 * System.Convert.ToInt32(VoxelType.isVoxelOpaque(parentChunk.getVoxelAtSafe(x - 1, y, z)));//check negx face
+            result |= 16 * System.Convert.ToInt32(VoxelType.isVoxelOpaque(parentChunk.getVoxelAtSafe(x, y - 1, z)));//check negy face
+            result |= 32 * System.Convert.ToInt32(VoxelType.isVoxelOpaque(parentChunk.getVoxelAtSafe(x, y, z - 1)));//check negz face
+            return result;
         }
 
         public void bindVAO()
@@ -73,7 +103,7 @@
             VOXEL_VERTEX_IBO.bind();
             if (vaoNeedsUpdate)
             {
-                voxelsVAO.updateBuffer(0, voxelBuffer, addedVoxelFaceCount * VoxelFace.SIZE_IN_BYTES);
+                voxelsVAO.updateBuffer(0, voxelFaceBuffer, addedVoxelFaceCount * VoxelFace.SIZE_IN_BYTES);
                 vaoNeedsUpdate = false;
             }
         }

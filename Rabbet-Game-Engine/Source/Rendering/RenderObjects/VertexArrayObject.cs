@@ -124,7 +124,7 @@ namespace RabbetGameEngine
 
                     if (vbo.layout.instancedData)
                     {
-                        GL.VertexAttribDivisor(attribItterator, 1);
+                        GL.VertexAttribDivisor(attribItterator, element.divisor);
                     }
 
                     if(element.isInteger)

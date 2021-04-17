@@ -16,23 +16,26 @@ namespace RabbetGameEngine
         public static void renderAllChunksInWorld(World w)
         {
             Profiler.startSection("renderChunks");
+            GL.PatchParameter(PatchParameterInt.PatchVertices, 4);
+        //    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
             chunkDrawCalls = 0;
+            voxelShader.use();
             Dictionary<Vector3i, Chunk> chunks = w.terrain.chunks;
-            foreach (Chunk c in chunks.Values)
-                renderChunk(c);
+            foreach (KeyValuePair<Vector3i, Chunk> kvp in chunks)
+            {
+                renderChunk(kvp.Key, kvp.Value);
+            }
 
+       //     GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
             Profiler.endCurrentSection();
         }
 
-        public static void renderChunk(Chunk c)
+        public static void renderChunk(Vector3i pos, Chunk c)
         {
+            voxelShader.setUniformMat4F("projViewModel", Matrix4.CreateTranslation(((Vector3)pos) * Chunk.CHUNK_PHYSICAL_SIZE) * Renderer.viewMatrix * Renderer.projMatrix);
             VoxelBatcher vb = c.voxelMesh;
             vb.bindVAO();
-            voxelShader.use();
-            voxelShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
-            voxelShader.setUniformMat4F("viewMatrix", Renderer.viewMatrix);
-            voxelShader.setUniformMat4F("modelMatrix", Matrix4.CreateTranslation((Vector3)c.chunkCoord * Chunk.CHUNK_PHYSICAL_SIZE));
-            GL.DrawArraysInstanced(PrimitiveType.Triangles, 0, 1, vb.visibleVoxelFaceCount * 6);
+            GL.DrawElements(PrimitiveType.Patches, vb.visibleVoxelFaceCount * 4, DrawElementsType.UnsignedInt, 0);
             chunkDrawCalls++;
         }
 
