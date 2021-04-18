@@ -120,7 +120,7 @@ namespace RabbetGameEngine
                     if(element.isInteger)
                         GL.VertexAttribIPointer(attribItterator, element.count, (VertexAttribIntegerType)element.type,  vbo.layout.getStride(), (System.IntPtr)offset);
                     else
-                        GL.VertexAttribPointer(attribItterator, element.count, (VertexAttribPointerType)element.type, element.normalized, vbo.layout.getStride(), offset);
+                        GL.VertexAttribPointer(attribItterator,  element.count, (VertexAttribPointerType)element.type, element.normalized, vbo.layout.getStride(), offset);
 
                     if (vbo.layout.instancedData)
                     {

@@ -103,7 +103,7 @@ namespace RabbetGameEngine
             shader.use();
             if (tex != null)
             {
-                tex.use();
+                tex.bind();
             }
             shader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
             shader.setUniformMat4F("viewMatrix", viewMatrix);

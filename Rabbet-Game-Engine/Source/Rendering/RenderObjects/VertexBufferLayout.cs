@@ -23,10 +23,10 @@ namespace RabbetGameEngine
             stride += VertexBufferElement.getSizeOfType(type) * count;
         }
 
-        public void add(VertexAttribIntegerType type, int count, int divisor = 1)
+        public void add(VertexAttribIntegerType type, int count, int overideStride = -1, int divisor = 1)
         {
             elements.Add(new VertexBufferElement(type, count, divisor));
-            stride += VertexBufferElement.getSizeOfType(type) * count;
+            stride +=  overideStride != -1 ? overideStride : VertexBufferElement.getSizeOfType(type) * count;
         }
 
         public int getStride()

@@ -67,7 +67,6 @@ namespace RabbetGameEngine
                 GL.ActiveTexture(TextureUnit.Texture0 + i);
                 layerFbos[i].bindOutputTexture();
             }
-            GL.ActiveTexture(TextureUnit.Texture0);
         }
 
         private int[] getUniformTextureSamplerArrayInts(int count)

@@ -2,10 +2,8 @@
 {
     public struct VoxelFace
     {
-        public static readonly int SIZE_IN_BYTES = 4;//5 including id byte
+        public static readonly int SIZE_IN_BYTES = 4;
         private uint data;//last 2 bits are spare for now
-       // public byte id;
-
         /// <summary>
         /// Tightly packed vertex information for a voxel face vertex.
         /// </summary>
@@ -16,14 +14,15 @@
         /// <param name="lightLevel">the light level of the face this vertex is on. range = 0 to 63.</param>
         /// <param name="metadata">the metadata of this voxel. Used for texture atlas pages indexing. range = 0 to 7</param>
         /// <param name="orientation">the orientation of this face. Range = 0 to 5. 0 to 2 is positive facing xyz faces. 3 to 5 is negative facing xyz faces.</param>
-        public VoxelFace(byte voxelID, byte x, byte y, byte z, byte lightLevel, byte metadata, byte orientation)
+        /// <param name="damage">the damage of this face. Range = 0 to 3.</param>
+        public VoxelFace(byte x, byte y, byte z, byte lightLevel, byte metadata, byte orientation, byte damage)
         {
             data = 0U;
-          //  id = voxelID;
             setPos(x, y, z);
             setLightLevel(lightLevel);
             setMetaData(metadata);
             setOrientation(orientation);
+            setDamage(damage);
         }
 
         public void setPos(byte x, byte y, byte z)
@@ -49,11 +48,15 @@
             data &= 0xFFFFFF1FU;//clear metadata bits
             data |= (uint)md << 5;
         }
+        public void setDamage(byte d)
+        {
+            data &= 0xFFFFFFFCU;//clear damage bits
+            data |= (uint)d;
+        }
 
         public static void configureLayout(VertexBufferLayout vbl)
         {
-            vbl.add(OpenTK.Graphics.OpenGL.VertexAttribIntegerType.UnsignedInt, 1);
-          //  vbl.add(OpenTK.Graphics.OpenGL.VertexAttribIntegerType.UnsignedByte, 1);
+            vbl.add(OpenTK.Graphics.OpenGL.VertexAttribIntegerType.UnsignedInt, 1, 0);
         }
     }
 }

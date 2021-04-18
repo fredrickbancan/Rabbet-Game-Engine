@@ -68,10 +68,11 @@ namespace RabbetGameEngine
         }
 
 
-        public void use()
+        public void bind(int index = 0)
         {
-            if(!isNone)
-                GL.BindTexture(TextureTarget.Texture2D, id);
+            if (isNone) return;
+            GL.ActiveTexture(TextureUnit.Texture0 + index);
+            GL.BindTexture(TextureTarget.Texture2D, id);
         }
         
         private int loadWhiteTexture()

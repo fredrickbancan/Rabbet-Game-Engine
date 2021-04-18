@@ -61,7 +61,6 @@ namespace RabbetGameEngine
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
             GL.MultiDrawArraysIndirect(PrimitiveType.Triangles, System.IntPtr.Zero, requestedObjectItterator, sizeof(uint));
             vao.unBind();
-            GL.ActiveTexture(TextureUnit.Texture0);
         }
     }
 }

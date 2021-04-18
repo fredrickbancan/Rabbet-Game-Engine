@@ -8,31 +8,34 @@ namespace RabbetGameEngine
     {
         private static Shader voxelShader = null;
         private static int chunkDrawCalls = 0;
+        private static Texture terrainTex;
         static ChunkRenderer()
         {
             ShaderUtil.tryGetShader(ShaderUtil.voxelName, out voxelShader);
+            voxelShader.use();
+            voxelShader.setUniform1I("voxelBuffer", 0);
+            TextureUtil.tryGetTexture("mcterrain", out terrainTex);
         }
 
         public static void renderAllChunksInWorld(World w)
         {
             Profiler.startSection("renderChunks");
             GL.PatchParameter(PatchParameterInt.PatchVertices, 4);
-        //    GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
             chunkDrawCalls = 0;
             voxelShader.use();
+            voxelShader.setUniform1I("voxelBuffer", 0);
+            terrainTex.bind();
             Dictionary<Vector3i, Chunk> chunks = w.terrain.chunks;
             foreach (KeyValuePair<Vector3i, Chunk> kvp in chunks)
             {
                 renderChunk(kvp.Key, kvp.Value);
             }
-
-       //     GL.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Fill);
             Profiler.endCurrentSection();
         }
 
         public static void renderChunk(Vector3i pos, Chunk c)
         {
-            voxelShader.setUniformMat4F("projViewModel", Matrix4.CreateTranslation(((Vector3)pos) * Chunk.CHUNK_PHYSICAL_SIZE) * Renderer.viewMatrix * Renderer.projMatrix);
+            voxelShader.setUniformMat4F("projViewModel", Matrix4.CreateTranslation((Vector3)pos * Chunk.CHUNK_PHYSICAL_SIZE)  * Renderer.viewMatrix * Renderer.projMatrix);
             VoxelBatcher vb = c.voxelMesh;
             vb.bindVAO();
             GL.DrawElements(PrimitiveType.Patches, vb.visibleVoxelFaceCount * 4, DrawElementsType.UnsignedInt, 0);

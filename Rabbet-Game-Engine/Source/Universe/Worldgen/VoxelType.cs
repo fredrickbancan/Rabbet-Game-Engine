@@ -14,8 +14,9 @@
 
         //declaring all voxel types. Voxel ids are assigned based on the order they are declared here.
         public static readonly VoxelType stone = new VoxelType(true);
-        public static readonly VoxelType grass = new VoxelType(true);
         public static readonly VoxelType dirt = new VoxelType(true);
+        public static readonly VoxelType grass = new VoxelType(true);
+        public static readonly VoxelType wood = new VoxelType(true);
 
         public static VoxelType getVoxelById(byte id)
         {
@@ -24,7 +25,7 @@
 
         public static bool isVoxelOpaque(byte id)
         {
-            return id == 0 ? true : voxelTypes[id].isOpaque;
+            return id == 0 ? false : voxelTypes[id].isOpaque;
         }
 
         public static int numVoxels

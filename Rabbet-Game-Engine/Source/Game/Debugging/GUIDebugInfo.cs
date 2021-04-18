@@ -36,6 +36,11 @@ namespace RabbetGameEngine
                 infoText.addLine("X: " + pPos.X.ToString("0.0 m"));
                 infoText.addLine("Y: " + pPos.Y.ToString("0.0 m"));
                 infoText.addLine("Z: " + pPos.Z.ToString("0.0 m"));
+
+                infoText.addLine("voxelX: " + (int)(pPos.X / Chunk.VOXEL_PHYSICAL_SIZE));
+                infoText.addLine("voxelY: " + (int)(pPos.Y / Chunk.VOXEL_PHYSICAL_SIZE));
+                infoText.addLine("voxelZ: " + (int)(pPos.Z / Chunk.VOXEL_PHYSICAL_SIZE));
+
                 infoText.addLine("Batches: " + BatchManager.batchCount);
                 infoText.addLine("GUI Batches: " + BatchManager.guiBatchCount);
                 infoText.addLine("Draw calls: " + Renderer.totalDraws);

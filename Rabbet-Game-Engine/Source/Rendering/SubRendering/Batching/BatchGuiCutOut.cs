@@ -79,7 +79,6 @@ namespace RabbetGameEngine
             GL.DepthRange(0, 1);
             GL.DepthMask(true);
             vao.unBind();
-            GL.ActiveTexture(TextureUnit.Texture0);
         }
     }
 }

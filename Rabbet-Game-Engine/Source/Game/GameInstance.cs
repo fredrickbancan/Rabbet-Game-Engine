@@ -57,23 +57,8 @@ namespace RabbetGameEngine
                 currentWorld = new World(0xdeadbeef);
                 Input.setCursorHiddenAndGrabbed(true);
                 Input.updateInput();
-                defaultCam = new FlyCamera(new Vector3(0, 0, 0));
+                defaultCam = new FlyCamera(new Vector3(0, 16, 0));
                 Renderer.setCamera(defaultCam);
-                Chunk test = new Chunk(new Terrain(nonCRand));
-                test.setLightLevelAt(0, 0, 0, 63);
-                Application.debugPrint(test.getLightLevelAt(0,0,0));
-                test.setLightLevelAt(0, 1, 0, 1);
-                Application.debugPrint(test.getLightLevelAt(0,1,0));
-                test.setLightLevelAt(0, 2, 0, 2);
-                Application.debugPrint(test.getLightLevelAt(0,2,0));
-                test.setLightLevelAt(0, 3, 0, 3);
-                Application.debugPrint(test.getLightLevelAt(0, 3, 0));
-                test.setLightLevelAt(0, 4, 0, 4);
-                Application.debugPrint(test.getLightLevelAt(0, 4, 0));
-                test.setLightLevelAt(15, 15, 15, 62);
-                Application.debugPrint(test.getLightLevelAt(15, 15, 15));
-                test.setLightLevelAt(50, 50, 50, 63);
-                Application.debugPrint(test.getLightLevelAt(50, 50, 50));
                 Application.infoPrint("Initialized.");
             }
             catch (Exception e)
@@ -123,6 +108,7 @@ namespace RabbetGameEngine
             Profiler.startRoot();
             base.OnRenderFrame(args);
             Input.updateInput();
+            defaultCam.onFrame(TicksAndFrames.getPercentageToNextTick());
             try
             {
                 doneOneTick = false;
@@ -150,7 +136,7 @@ namespace RabbetGameEngine
             {
                 Application.error("Failed to run game tick, Exception: " + e.Message + "\nStack Trace: " + e.StackTrace);
             }
-            defaultCam.onFrame(TicksAndFrames.getPercentageToNextTick());
+            currentWorld.onFrame(TicksAndFrames.getPercentageToNextTick());
             SoundManager.onFrame();
             TicksAndFrames.updateFPS();
             GUIManager.onFrame();
@@ -211,6 +197,7 @@ namespace RabbetGameEngine
         public override void Close()
         {
             isClosing = true;
+            if (currentWorld != null) currentWorld.unLoad();
             Renderer.onClosing();
             SoundManager.onClosing();
             base.Close();

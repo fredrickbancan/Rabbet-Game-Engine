@@ -1,6 +1,4 @@
-﻿using OpenTK.Graphics.OpenGL;
-using OpenTK.Mathematics;
-using RabbetGameEngine;
+﻿using OpenTK.Mathematics;
 using RabbetGameEngine.Rendering;
 using System;
 
@@ -189,8 +187,7 @@ namespace RabbetGameEngine
         {
             for (int i = 0; i < requestedTextures; i++)
             {
-                 GL.ActiveTexture(TextureUnit.Texture0 + i);
-                 batchTextures[i].use();
+                 batchTextures[i].bind(i);
             }
         }
 

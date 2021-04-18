@@ -1,4 +1,6 @@
-﻿namespace RabbetGameEngine
+﻿using OpenTK.Mathematics;
+
+namespace RabbetGameEngine
 {
     public class Chunk
     {
@@ -26,13 +28,17 @@
         private LightMap lightMap;
         private VoxelBatcher voxelBatcher = null;
         private Terrain parentTerrain;
-        public Chunk(Terrain pt)
+        private Vector3i coord;
+        private Vector3i worldCoord;
+        public Chunk(Vector3i coord, Terrain pt)
         {
-           
+            this.coord = coord;
+            worldCoord = coord * CHUNK_SIZE;
             parentTerrain = pt;
             voxels = new byte[CHUNK_SIZE_CUBED];
             lightMap = new LightMap(CHUNK_SIZE_CUBED);
             voxelBatcher = new VoxelBatcher(this);
+            parentTerrain.scheduleUpdateForChunk(this);
         }
 
         /// <summary>
@@ -60,6 +66,20 @@
             return lightMap.getLightLevelAt(x, y, z);
         }
 
+        public byte getLightLevelAtSafe(int x, int y, int z)
+        {
+            if (x >= CHUNK_SIZE || x < 0 || y >= CHUNK_SIZE || y < 0 || z >= CHUNK_SIZE || z < 0)
+                return parentTerrain.getLightLevelAtVoxelCoord(worldCoord.X + x, worldCoord.Y + y, worldCoord.Z + z);
+            return lightMap.getLightLevelAt(x, y, z);
+        }
+
+        public byte getLightLevelAtSafe(Vector3i pos)
+        {
+            if (pos.X >= CHUNK_SIZE || pos.X < 0 || pos.Y >= CHUNK_SIZE || pos.Y < 0 || pos.Z >= CHUNK_SIZE || pos.Z < 0)
+                return parentTerrain.getLightLevelAtVoxelCoord(worldCoord.X + pos.X, worldCoord.Y + pos.Y, worldCoord.Z + pos.Z);
+            return lightMap.getLightLevelAt(pos.X, pos.Y, pos.Z);
+        }
+
         /// <summary>
         /// returns the voxel id at the provided chunk-relative coordinates 
         /// Indexes array by x * (size * size) + z * size + y
@@ -78,12 +98,24 @@
         /// </summary>
         public byte getVoxelAtSafe(int x, int y, int z)
         {
-            if (x >= Chunk.CHUNK_SIZE || x < 0 || y >= Chunk.CHUNK_SIZE || y < 0 || z >= Chunk.CHUNK_SIZE || z < 0) return parentTerrain.getVoxelIdAt(x, y, z);
+            if (x >= CHUNK_SIZE || x < 0 || y >= CHUNK_SIZE || y < 0 || z >= CHUNK_SIZE || z < 0)
+                return parentTerrain.getVoxelIdAtVoxelCoord(worldCoord.X + x,worldCoord.Y + y,worldCoord.Z +  z);
             int index = x << CHUNK_X_SHIFT | z << CHUNK_Z_SHIFT | y;
             return voxels[index];
         }
 
-        public void load()
+        public byte getVoxelAtSafe(Vector3i pos)
+        {
+            if (pos.X >= CHUNK_SIZE || pos.X < 0 || pos.Y >= CHUNK_SIZE || pos.Y < 0 || pos.Z >= CHUNK_SIZE || pos.Z < 0)
+            {
+                pos += worldCoord;
+                return parentTerrain.getVoxelIdAtVoxelCoord(pos.X, pos.Y, pos.Z);
+            }
+            int index = pos.X << CHUNK_X_SHIFT | pos.Z << CHUNK_Z_SHIFT | pos.Y;
+            return voxels[index];
+        }
+
+        public void update()
         {
             voxelBatcher.updateVoxelMesh();
         }
@@ -92,6 +124,17 @@
         {
             voxelBatcher.deleteVAO();
         }
+
+        public byte[] getVoxels()
+        {
+            return voxels;
+        }
+
+        public Terrain terrainParent
+        { get => parentTerrain; }
+
+        public Vector3i coordinate
+        { get => coord; }
 
         public VoxelBatcher voxelMesh
         { get => voxelBatcher; }

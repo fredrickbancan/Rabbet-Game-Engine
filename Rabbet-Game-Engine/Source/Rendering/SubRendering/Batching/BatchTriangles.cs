@@ -50,7 +50,6 @@ namespace RabbetGameEngine
             batchShader.setUniformMat4F("viewMatrix", Renderer.viewMatrix);
             GL.DrawElements(PrimitiveType.Triangles, requestedIndicesCount, DrawElementsType.UnsignedInt, indices);
             vao.unBind();
-            GL.ActiveTexture(TextureUnit.Texture0);
         }
     }
 }

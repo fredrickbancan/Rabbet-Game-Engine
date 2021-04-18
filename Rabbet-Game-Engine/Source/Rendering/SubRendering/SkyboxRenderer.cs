@@ -70,7 +70,7 @@ namespace RabbetGameEngine
             ShaderUtil.tryGetShader(ShaderUtil.moonsName, out moonsShader);
             TextureUtil.tryGetTexture("dither", out ditherTex);
             TextureUtil.tryGetTexture("moons", out moonsTex);
-            moonsTex.use();
+            moonsTex.bind();
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
         }
 
@@ -149,17 +149,15 @@ namespace RabbetGameEngine
             skyboxShader.setUniformMat4F("projectionMatrix", proj);
             skyboxShader.setUniformMat4F("viewMatrix", view);
             GL.DepthRange(0.999995f, 1);
-            GL.ActiveTexture(TextureUnit.Texture1);
-            ditherTex.use();
+            ditherTex.bind(1);
             GL.DrawElements(PrimitiveType.Triangles, skyboxModel.indices.Length, DrawElementsType.UnsignedInt, 0);
-            GL.ActiveTexture(TextureUnit.Texture0);
             Renderer.totalDraws++;
 
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.One);//additive blending
 
             //drawing moons
             moonsVAO.bind();
-            moonsTex.use();
+            moonsTex.bind();
             moonsShader.use();
             moonsShader.setUniformMat4F("projectionMatrix", proj);
             moonsShader.setUniformMat4F("viewMatrix", view);
