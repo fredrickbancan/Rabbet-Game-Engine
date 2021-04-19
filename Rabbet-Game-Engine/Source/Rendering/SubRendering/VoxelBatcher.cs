@@ -1,6 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-
 namespace RabbetGameEngine
 {
     /// <summary>
@@ -48,8 +47,7 @@ namespace RabbetGameEngine
         private Chunk parentChunk = null;
         private VertexArrayObject voxelsVAO = null;
         private VoxelFace[] voxelFaceBuffer = null;
-        private int voxelBufferID;
-        private int voxelBufferTextureID;
+        private BufferTexture voxelBuffer = null;
         private bool vaoNeedsUpdate = true;
         private int addedVoxelFaceCount = 0;
 
@@ -64,15 +62,7 @@ namespace RabbetGameEngine
             VoxelFace.configureLayout(vfbl);
             voxelsVAO.addBufferDynamic(MAX_CHUNK_FACE_COUNT * VoxelFace.SIZE_IN_BYTES, vfbl);//buffer for face data
             voxelsVAO.finishBuilding();
-
-            voxelBufferID = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.TextureBuffer, voxelBufferID);
-            GL.BufferData(BufferTarget.TextureBuffer, Chunk.CHUNK_SIZE_CUBED, parentChunk.getVoxels(), BufferUsageHint.DynamicDraw);
-            voxelBufferTextureID = GL.GenTexture();
-            GL.BindTexture(TextureTarget.TextureBuffer, voxelBufferTextureID);
-            GL.TexBuffer(TextureBufferTarget.TextureBuffer, SizedInternalFormat.R8ui, voxelBufferID);
-
-            GL.BindBuffer(BufferTarget.TextureBuffer, 0);
+            voxelBuffer = new BufferTexture(Chunk.CHUNK_SIZE_CUBED, SizedInternalFormat.R8, BufferUsageHint.DynamicDraw);
         }
 
         /// <summary>
@@ -115,27 +105,21 @@ namespace RabbetGameEngine
         {
             voxelsVAO.bind();
             VOXEL_VERTEX_IBO.bind();
-            GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.TextureBuffer, voxelBufferTextureID);
+            voxelBuffer.bind();
             if (vaoNeedsUpdate)
             {
-                GL.BindBuffer(BufferTarget.TextureBuffer, voxelBufferID);
-                GL.BufferSubData(BufferTarget.TextureBuffer, System.IntPtr.Zero, Chunk.CHUNK_SIZE_CUBED, parentChunk.getVoxels());
-                GL.TexBuffer(TextureBufferTarget.TextureBuffer, SizedInternalFormat.R8ui, voxelBufferID);
+                voxelBuffer.updateBuffer(parentChunk.getVoxels(), Chunk.CHUNK_SIZE_CUBED);
                 voxelsVAO.updateBuffer(0, voxelFaceBuffer, addedVoxelFaceCount * VoxelFace.SIZE_IN_BYTES);
 
                 vaoNeedsUpdate = false;
             }
-            else
-            GL.TexBuffer(TextureBufferTarget.TextureBuffer, SizedInternalFormat.R8ui, voxelBufferID);
         }
 
 
         public void deleteVAO()
         {
             voxelsVAO.delete();
-            GL.DeleteTexture(voxelBufferTextureID);
-            GL.DeleteBuffer(voxelBufferID);
+            voxelBuffer.delete();
         }
 
         public bool needsUpdate

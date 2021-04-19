@@ -93,7 +93,7 @@ namespace RabbetGameEngine
                      for (int y = 0; y < Chunk.CHUNK_SIZE; y++)
                      {
                          if (genRand.Next(2) == 0)
-                             c.setVoxelAt(x,y,z,(byte)(4));
+                             c.setVoxelAt(x,y,z,(byte)genRand.Next(1, 5));
                         c.setLightLevelAt(x, y, z, (byte)genRand.Next(64));
                      }
         }

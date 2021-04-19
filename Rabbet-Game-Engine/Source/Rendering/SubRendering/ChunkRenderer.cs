@@ -12,19 +12,16 @@ namespace RabbetGameEngine
         static ChunkRenderer()
         {
             ShaderUtil.tryGetShader(ShaderUtil.voxelName, out voxelShader);
-            voxelShader.use();
-            voxelShader.setUniform1I("voxelBuffer", 0);
             TextureUtil.tryGetTexture("mcterrain", out terrainTex);
         }
 
         public static void renderAllChunksInWorld(World w)
         {
             Profiler.startSection("renderChunks");
-            GL.PatchParameter(PatchParameterInt.PatchVertices, 4);
             chunkDrawCalls = 0;
             voxelShader.use();
-            voxelShader.setUniform1I("voxelBuffer", 0);
-            terrainTex.bind();
+            terrainTex.bind(); 
+            GL.PatchParameter(PatchParameterInt.PatchVertices, 4);
             Dictionary<Vector3i, Chunk> chunks = w.terrain.chunks;
             foreach (KeyValuePair<Vector3i, Chunk> kvp in chunks)
             {

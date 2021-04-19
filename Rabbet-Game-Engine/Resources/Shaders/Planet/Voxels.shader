@@ -36,7 +36,7 @@ void main()
     lightLevel =  float(unpackLightLevel() + 1U) * lightLevelMultiplier;
     orientation = int(unpackOrientation()) * 4;//pre-multplying by 4 for indexing offsets
 
-    int voxID =  int(texelFetch(voxelBuffer, int(index)).r);
+    int voxID =  int(texelFetch(voxelBuffer, int(index)).r * 255.0);
     faceUV = vec2(voxID & 15, voxID >> 4) * voxelUvScale;
     faceUV.y = 1.0F - faceUV.y;//flip y
 }
@@ -150,7 +150,7 @@ void main(void)
 layout(location = 0) out vec4 fragColor;
 in float lightLevel;
 in vec2 uv;
-uniform sampler2D voxelTexture;
+uniform sampler2D voxelTexture; 
 void main()
 {
     fragColor = texture2D(voxelTexture, uv);
@@ -159,5 +159,5 @@ void main()
     fragColor.b *= lightLevel;
    // fragColor = vec4(lightLevel, lightLevel, lightLevel, 1.0F);
     if (fragColor.a < 0.01F)discard;
-    //fragColor.a = 1;
+    fragColor.a = 1;
 }

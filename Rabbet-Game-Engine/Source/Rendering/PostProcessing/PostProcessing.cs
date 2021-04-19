@@ -56,6 +56,7 @@ namespace RabbetGameEngine
 
             //draw scene on full screen quad to get outputs
             mainFBO.use();
+            GL.ActiveTexture(TextureUnit.Texture0);
             offScreenFBO.bindOutputTexture();
             mainFrameBufferShader.use();
             FrameBufferQuad.bindVao();
