@@ -27,7 +27,7 @@ namespace RabbetGameEngine
             addClickListener(onClick);
             bindingTitle = bind.title;
             setFontSize(0.15F);
-            backGround = new GUITransparentRectangle(posX, posY + 0.015F, sizeX + 0.075F, sizeY + 0.05F, Color.black.setAlphaF(0.7F), ComponentAnchor.CENTER, renderLayer-1);
+            backGround = new GUITransparentRectangle(posX, posY + 0.015F, sizeX + 0.075F, sizeY + 0.05F, Color.black.setAlphaF(0.7F), ComponentAnchor.CENTER, renderLayer - 1);
             popupOverlay = new GUITransparentOverlay(Color.black, 0.5F, renderLayer + 2);
             popupBackground = new GUITransparentRectangle(0, 0, 0.75F, 0.15F, Color.black.setAlphaF(0.8F), ComponentAnchor.CENTER, renderLayer + 3);
             popupText = new GUITextPanel(0, 0.01F, parentGUI.guiFont, ComponentAnchor.CENTER, renderLayer + 4);
@@ -55,7 +55,7 @@ namespace RabbetGameEngine
         public override void onFrame()
         {
             base.onFrame();
-            if(bindPopupEnabled)
+            if (bindPopupEnabled)
             {
                 isHovered = false;
                 Input.pause();
@@ -72,11 +72,11 @@ namespace RabbetGameEngine
             base.onKeyDown(e);
             if (bindPopupEnabled)
             {
-                if(e.Key == Keys.Escape)
+                if (e.Key == Keys.Escape)
                 {
                     bindPopupEnabled = false;
                 }
-                else if(e.Key < Keys.F1 || e.Key > Keys.F25)
+                else if (e.Key < Keys.F1 || e.Key > Keys.F25)
                 {
                     bindPopupEnabled = false;
                     bind.setKeyValue(e.Key);
@@ -102,11 +102,11 @@ namespace RabbetGameEngine
             {
                 bindPopupEnabled = false;
                 Application.debugPrint(scrolldelta);
-                if(scrolldelta < -0.00001F)
+                if (scrolldelta < -0.00001F)
                 {
                     bind.setScrollValue(ScrollDirection.MWDown);
                 }
-                else if(scrolldelta > 0.00001F)
+                else if (scrolldelta > 0.00001F)
                 {
                     bind.setScrollValue(ScrollDirection.MWUp);
                 }
@@ -142,7 +142,7 @@ namespace RabbetGameEngine
             base.requestRender();
             Renderer.requestRender(RenderType.guiText, parentGUI.guiFont.texture, bindTitleModel, renderLayer + 1);
 
-            if(bindPopupEnabled)
+            if (bindPopupEnabled)
             {
                 popupOverlay.requestRender();
                 popupBackground.requestRender();

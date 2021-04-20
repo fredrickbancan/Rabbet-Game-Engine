@@ -14,8 +14,8 @@ namespace RabbetGameEngine
         private static bool successfullyLoaded = false;
         private static List<Vertex> vertexResult;
         private static List<Vector3> positions;
-        private static List<Vector2> unorderedUVs; 
-        private static Vector2[] orderedUVs; 
+        private static List<Vector2> unorderedUVs;
+        private static Vector2[] orderedUVs;
         private static List<uint> indices;
 
         /*Takes in a obj file and returns a model. indices will be assigned the read indices. If processing fails, will return a default debug model*/
@@ -55,9 +55,9 @@ namespace RabbetGameEngine
         /*reads each line and processes it based on its tag, v is vertex position, vt is uv, and f is a face*/
         private static void processAllLines()
         {
-           while((currentLine = reader.ReadLine()) != null && !successfullyLoaded)
+            while ((currentLine = reader.ReadLine()) != null && !successfullyLoaded)
             {
-                if(currentLine.StartsWith("v "))
+                if (currentLine.StartsWith("v "))
                 {
                     processVertexPosition();
                 }
@@ -142,7 +142,7 @@ namespace RabbetGameEngine
         {
             List<float> result = new List<float>();
 
-            for(int i = 0; i < strings.Length; i++)
+            for (int i = 0; i < strings.Length; i++)
             {
                 if (float.TryParse(strings[i], out float outFloat))
                 {

@@ -1,6 +1,4 @@
-﻿using RabbetGameEngine;
-
-namespace RabbetGameEngine
+﻿namespace RabbetGameEngine
 {
     /*This class is responsable for batching together multiple modeldrawables, using their indices.
       This allows multiple models with different indices and trinagles to be batched into one draw call.*/
@@ -11,9 +9,9 @@ namespace RabbetGameEngine
         {
             int totalVerticesCount = 0;
             int totalIndicesCount = 0;
-            for(int i = 0; i < inputModels.Length; i++)
+            for (int i = 0; i < inputModels.Length; i++)
             {
-                if(inputModels[i] != null)
+                if (inputModels[i] != null)
                 {
                     totalVerticesCount += inputModels[i].vertices.Length;
                     totalIndicesCount += inputModels[i].indices.Length;
@@ -29,7 +27,7 @@ namespace RabbetGameEngine
 
             //fill resultvertices
             int prevModelVerticesIndex = 0;
-            for(int i = 0; i < inputModels.Length; i++)
+            for (int i = 0; i < inputModels.Length; i++)
             {
                 if (inputModels[i] != null)
                 {
@@ -87,7 +85,7 @@ namespace RabbetGameEngine
             {
                 resultIndices[inputModel.indices.Length + i] = (uint)(newModel.indices[i] + inputModel.vertices.Length);
             }
-            
+
             inputModel.vertices = resultVertices;
             inputModel.indices = resultIndices;
             return inputModel;

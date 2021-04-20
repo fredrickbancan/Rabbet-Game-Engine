@@ -29,7 +29,7 @@ namespace RabbetGameEngine
                 c.StereoSources = 127;
                 context = ALC.CreateContext(device, c);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Application.warn("Could not instantiate OpenAL context! Exception: " + e.Message + "\nSound will not be working.");
                 return;
@@ -68,7 +68,7 @@ namespace RabbetGameEngine
         {
             if (!initialized) return;
             Sound snd = SoundUtil.getSound(soundName);
-            if (snd.isStereo())  return; 
+            if (snd.isStereo()) return;
             sounds.Add(new PlayingSound(snd, volume, speed, pos, TicksAndFrames.getRealTimeMills()));
         }
 
@@ -83,20 +83,20 @@ namespace RabbetGameEngine
         {
             if (!initialized) return;
             Sound snd = SoundUtil.getSound(soundName);
-            if (snd.isStereo()) return; 
+            if (snd.isStereo()) return;
             sounds.Add(new PlayingSound(soundName, snd, volume, speed, pos));
         }
 
         public static void onFrame()
         {
             if (!initialized) return;
-          /*  EntityPlayer p = GameInstance.get.thePlayer;
-            for (int i = 0; i < sounds.Count; i++)
-            {
-                PlayingSound s = sounds.ElementAt(i);
+            /*  EntityPlayer p = GameInstance.get.thePlayer;
+              for (int i = 0; i < sounds.Count; i++)
+              {
+                  PlayingSound s = sounds.ElementAt(i);
 
-                s.onFrame(p);
-            }*/
+                  s.onFrame(p);
+              }*/
         }
 
         public static void onUpdate()
@@ -124,9 +124,9 @@ namespace RabbetGameEngine
         {
             foreach (PlayingSound s in sounds)
             {
-                if(s.loopingSound && !s.isPositional)
+                if (s.loopingSound && !s.isPositional)
                 {
-                    if(s.loopingSoundName == soundName)
+                    if (s.loopingSoundName == soundName)
                     {
                         s.finishedPlaying = true;
                     }
@@ -150,7 +150,7 @@ namespace RabbetGameEngine
 
         public static int getPlayingSoundsCount()
         {
-            if(!initialized)return 0;
+            if (!initialized) return 0;
             return sounds.Count;
         }
         public static int getSourceID()

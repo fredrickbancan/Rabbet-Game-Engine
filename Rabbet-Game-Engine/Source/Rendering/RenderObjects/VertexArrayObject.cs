@@ -23,7 +23,7 @@ namespace RabbetGameEngine
         private bool usesInstancing = false;
         private bool hasSetUpInstancing = false;
 
-        
+
         private int debugTotalAttributes = 0;
 
         /// <summary>
@@ -46,6 +46,10 @@ namespace RabbetGameEngine
             GL.BindVertexArray(vaoID);
         }
 
+        public int getName()
+        {
+            return vaoID;
+        }
         public void addIndicesBuffer(uint[] indices)
         {
             if (hasSetUpIndices) return;
@@ -69,7 +73,7 @@ namespace RabbetGameEngine
             if (hasSetUpIndices) return;
             ibo = new IndexBufferObject();
             ibo.initDynamic(initialCount * sizeof(uint));
-            hasSetUpIndices = true; 
+            hasSetUpIndices = true;
             usesIndices = true;
         }
 
@@ -82,7 +86,7 @@ namespace RabbetGameEngine
             usesIndirect = true;
         }
 
-        
+
         public void addBuffer<T2>(T2[] data, int sizeOfType, VertexBufferLayout layout) where T2 : struct
         {
             VertexBufferObject vbo = new VertexBufferObject(layout);
@@ -107,49 +111,49 @@ namespace RabbetGameEngine
             int offset = 0;
             VertexBufferElement element;
             VertexBufferObject vbo;
-            for(int i = 0; i <vbos.Count; i++)
+            for (int i = 0; i < vbos.Count; i++)
             {
                 vbo = vbos.ElementAt(i);
                 vbo.bind();
                 offset = 0;
-                for(int j = 0; j < vbo.layout.elements.Count; j++)
+                for (int j = 0; j < vbo.layout.elements.Count; j++)
                 {
                     element = vbo.layout.elements.ElementAt(j);
                     GL.EnableVertexAttribArray(attribItterator);
 
-                    if(element.isInteger)
-                        GL.VertexAttribIPointer(attribItterator, element.count, (VertexAttribIntegerType)element.type,  vbo.layout.getStride(), (System.IntPtr)offset);
+                    if (element.isInteger)
+                        GL.VertexAttribIPointer(attribItterator, element.count, (VertexAttribIntegerType)element.type, vbo.layout.getStride(), (System.IntPtr)offset);
                     else
-                        GL.VertexAttribPointer(attribItterator,  element.count, (VertexAttribPointerType)element.type, element.normalized, vbo.layout.getStride(), offset);
+                        GL.VertexAttribPointer(attribItterator, element.count, (VertexAttribPointerType)element.type, element.normalized, vbo.layout.getStride(), offset);
 
                     if (vbo.layout.instancedData)
                     {
                         GL.VertexAttribDivisor(attribItterator, element.divisor);
                     }
 
-                    if(element.isInteger)
+                    if (element.isInteger)
                         offset += element.count * VertexBufferElement.getSizeOfType((VertexAttribIntegerType)element.type);
                     else
                         offset += element.count * VertexBufferElement.getSizeOfType((VertexAttribPointerType)element.type);
-                    
+
                     attribItterator++;
                 }
             }
 
-            if(usesInstancing && hasSetUpInstancing)
+            if (usesInstancing && hasSetUpInstancing)
             {
                 offset = 0;
                 instbo.bind();
                 for (int j = 0; j < instbo.layout.elements.Count; j++)
                 {
-                    element = instbo.layout.elements.ElementAt(j); 
+                    element = instbo.layout.elements.ElementAt(j);
                     GL.EnableVertexAttribArray(attribItterator);
 
                     if (element.isInteger)
                         GL.VertexAttribIPointer(attribItterator, element.count, (VertexAttribIntegerType)element.type, instbo.layout.getStride(), (System.IntPtr)offset);
-                        else
+                    else
                         GL.VertexAttribPointer(attribItterator, element.count, (VertexAttribPointerType)element.type, element.normalized, instbo.layout.getStride(), offset);
-                    
+
                     if (element.isInteger)
                         offset += element.count * VertexBufferElement.getSizeOfType((VertexAttribIntegerType)element.type);
                     else
@@ -178,7 +182,7 @@ namespace RabbetGameEngine
 
         public void updateBuffer<T2>(int vboIndex, T2[] data, int sizeToUpdate) where T2 : struct
         {
-           vbos.ElementAt(vboIndex).updateBuffer(data, sizeToUpdate);
+            vbos.ElementAt(vboIndex).updateBuffer(data, sizeToUpdate);
         }
 
         public void updateIndices(uint[] data, int count)
@@ -197,11 +201,17 @@ namespace RabbetGameEngine
             if (usesIndices) ibo.bind();
             if (usesIndirect) indbo.bind();
             if (usesInstancing) instbo.bind();
-            foreach(VertexBufferObject vb in vbos)
+            foreach (VertexBufferObject vb in vbos)
             {
                 vb.bind();
             }
         }
+
+        public int getVBOIDAt(int index)
+        {
+            return vbos.ElementAt(index).id;
+        }
+
         public void unBind()
         {
             if (usesIndices) GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);

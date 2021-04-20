@@ -32,7 +32,7 @@ namespace RabbetGameEngine
         public static readonly int defaultRenderScaleIndex = 2;
 
         private static readonly string[] renderScaleTitles = new string[]
-        { 
+        {
             "0.25x",
             "0.5x",
             "1x",
@@ -67,7 +67,7 @@ namespace RabbetGameEngine
         public static Setting exposure = new Setting("Exposure", SettingType.FLOAT, videoSettings).setRange(0.1F, 5.0F).setDisplayRange(0.1F, 5.0F).setFloatValue(defaultExposure);
         public static Setting renderScale = new Setting("Render Scale", SettingType.LIST_FLOAT, videoSettings).setListTitles(renderScaleTitles).setListFloats(superSampleFloats).setListIndex(defaultRenderScaleIndex);
         public static Setting vsync = new Setting("Vertical Sync", SettingType.BOOL, videoSettings).setBoolValue(defaultVsync);
-       
+
         public static Setting masterVolume = new Setting("Master Volume", SettingType.FLOAT, audioSettings).setRange(0.0F, 1.0F).setDisplayRange(0.0F, 100.0F).setFloatValue(defaultMasterVolume);
 
         public static Setting mouseSensetivity = new Setting("Mouse Sensitivity", SettingType.FLOAT, controlsSettings).setRange(0.01F, 1.0F).setDisplayRange(1.0F, 100.0F).setFloatValue(defaultMouseSensitivity);
@@ -80,7 +80,7 @@ namespace RabbetGameEngine
         public static ControlBinding interactBind = new ControlBinding(EntityAction.interact, Keys.F);
         public static ControlBinding duckBind = new ControlBinding(EntityAction.duck, Keys.LeftControl);
         public static ControlBinding sprintBind = new ControlBinding(EntityAction.sprint, Keys.LeftShift);
-        public static ControlBinding attackBind = new ControlBinding(EntityAction.attack, MouseButton.Left); 
+        public static ControlBinding attackBind = new ControlBinding(EntityAction.attack, MouseButton.Left);
 
         public static void loadSettings()
         {
@@ -93,7 +93,7 @@ namespace RabbetGameEngine
         {
             videoSettingsChanged = false;
             GameInstance.get.onVideoSettingsChanged();
-            GameInstance.get.VSync =vsync.boolValue ? OpenTK.Windowing.Common.VSyncMode.On : OpenTK.Windowing.Common.VSyncMode.Off;
+            GameInstance.get.VSync = vsync.boolValue ? OpenTK.Windowing.Common.VSyncMode.On : OpenTK.Windowing.Common.VSyncMode.Off;
         }
 
         public static void applyAudioSettings()

@@ -1,5 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using RabbetGameEngine.Rendering;
+
 namespace RabbetGameEngine
 {
     public class BatchQuadsTransparent : Batch
@@ -30,7 +30,7 @@ namespace RabbetGameEngine
 
         public override void updateBuffers()
         {
-        
+
         }
 
         public override void updateUniforms(World thePlanet)

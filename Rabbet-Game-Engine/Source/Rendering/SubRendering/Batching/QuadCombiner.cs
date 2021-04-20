@@ -1,6 +1,4 @@
-﻿using RabbetGameEngine;
-
-namespace RabbetGameEngine
+﻿namespace RabbetGameEngine
 {
 
     /*This class will take in multiple Models (Made of quads, containing multiple xyz, rgb, uv and indicies arrays) and combine them into one*
@@ -36,7 +34,7 @@ namespace RabbetGameEngine
             {
                 if (modelsToCombine[i] != null)
                 {
-                    for(int j = 0; j < modelsToCombine[i].vertices.Length; j++)
+                    for (int j = 0; j < modelsToCombine[i].vertices.Length; j++)
                     {
                         newVertices[prevModelVertexIndex + j] = modelsToCombine[i].vertices[j];
                     }

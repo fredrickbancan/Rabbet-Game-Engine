@@ -28,7 +28,7 @@ namespace RabbetGameEngine
 
         public static int getSizeOfType(VertexAttribPointerType type)
         {
-            switch(type)
+            switch (type)
             {
                 case VertexAttribPointerType.Float: return 4;
                 case VertexAttribPointerType.UnsignedInt: return 4;
@@ -43,7 +43,7 @@ namespace RabbetGameEngine
 
         public static int getSizeOfType(VertexAttribIntegerType type)
         {
-            switch(type)
+            switch (type)
             {
                 case VertexAttribIntegerType.Byte: return 1;
                 case VertexAttribIntegerType.Int: return 4;

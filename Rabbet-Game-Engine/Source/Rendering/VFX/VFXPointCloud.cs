@@ -23,7 +23,7 @@ namespace RabbetGameEngine
         public VFXPointCloud(World w, Vector3 pos, Color color, bool transparency, bool ambientOcclusion, float maxExistingSeconds, float radius, float alpha) : base(w, pos, maxExistingSeconds, transparency ? RenderType.lerpISpheresTransparent : RenderType.lerpISpheres)
         {
             this.transparency = transparency;
-            if(!transparency)
+            if (!transparency)
             {
                 colorAlpha = 1.0F;
             }
@@ -42,7 +42,7 @@ namespace RabbetGameEngine
         public virtual VFXPointCloud constructRandomPointCloudModel(int count, float randomPointPositionSpread, bool randomBrightness)
         {
             PointParticle[] points = new PointParticle[count];
-            for(int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 points[i] = new PointParticle(getRandomParticleOffset(randomPointPositionSpread), getRandomPointColor(randomBrightness), pointRadius, pointAmbientOcclusion);
             }
@@ -53,12 +53,12 @@ namespace RabbetGameEngine
 
         protected Vector3 getRandomParticleOffset(float randomPointPositionSpread)
         {
-            return Vector3.Normalize(new Vector3( 0.5F - (float)GameInstance.rand.NextDouble(), 0.5F - (float)GameInstance.rand.NextDouble(), 0.5F - (float)GameInstance.rand.NextDouble())) * (randomPointPositionSpread / 2 +( randomPointPositionSpread / 4 + randomPointPositionSpread / 2 *  (float)GameInstance.rand.NextDouble()));
+            return Vector3.Normalize(new Vector3(0.5F - (float)GameInstance.rand.NextDouble(), 0.5F - (float)GameInstance.rand.NextDouble(), 0.5F - (float)GameInstance.rand.NextDouble())) * (randomPointPositionSpread / 2 + (randomPointPositionSpread / 4 + randomPointPositionSpread / 2 * (float)GameInstance.rand.NextDouble()));
         }
 
         protected Vector4 getRandomPointColor(bool randomBright)
         {
-            if(randomBright)
+            if (randomBright)
             {
                 Vector4 colorVec = pointColor.toNormalVec4();
                 float randomBrightnessAmount = 0.2F - 0.4F * (float)GameInstance.rand.NextDouble();
@@ -106,8 +106,8 @@ namespace RabbetGameEngine
 
         public override void sendRenderRequest()
         {
-            if(!removalFlag)
-            Renderer.requestRender(cloudModel.createTransformedCopy(modelMatrix, prevTickModelMatrix), this.transparency, true);
+            if (!removalFlag)
+                Renderer.requestRender(cloudModel.createTransformedCopy(modelMatrix, prevTickModelMatrix), this.transparency, true);
         }
     }
 }

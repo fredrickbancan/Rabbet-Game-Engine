@@ -1,12 +1,12 @@
 ﻿using OpenTK.Mathematics;
-using RabbetGameEngine.Rendering;
+
 using System;
 
 namespace RabbetGameEngine
 {
     //TODO: replace look at camera function in iSphere shaders with new faster one. (found in mathutil and in moons.shader)
     public class Batch
-    { 
+    {
         protected int maxBufferSizeBytes = RenderConstants.MAX_BATCH_BUFFER_SIZE_BYTES;
         protected int maxIndiciesCount;
         protected int maxVertexCount;
@@ -93,7 +93,7 @@ namespace RabbetGameEngine
 
         public Batch(RenderType type, int renderLayer = 0)
         {
-            this.renderLayer= renderLayer;
+            this.renderLayer = renderLayer;
             batchType = type;
             batchTextures = new Texture[RenderConstants.MAX_BATCH_TEXTURES];
             vao = new VertexArrayObject();
@@ -187,7 +187,7 @@ namespace RabbetGameEngine
         {
             for (int i = 0; i < requestedTextures; i++)
             {
-                 batchTextures[i].bind(i);
+                batchTextures[i].bind(i);
             }
         }
 
@@ -214,9 +214,9 @@ namespace RabbetGameEngine
         public void configureDrawCommandsForCurrentObject(int objIndCount, bool quads)
         {
             int n;
-            if((n = requestedObjectItterator + 1) >= drawCommands.Length)//resizing drawcommands
+            if ((n = requestedObjectItterator + 1) >= drawCommands.Length)//resizing drawcommands
             {
-                if((n*=2) >= maxDrawCommandCount)
+                if ((n *= 2) >= maxDrawCommandCount)
                 {
                     Array.Resize<DrawCommand>(ref drawCommands, maxDrawCommandCount);
                     vao.resizeIndirect(maxDrawCommandCount);
@@ -228,10 +228,10 @@ namespace RabbetGameEngine
                 }
             }
 
-            if(quads)
-            drawCommands[requestedObjectItterator] = new DrawCommand((uint)(objIndCount), (uint)(1), (uint)(0), (uint)(requestedVerticesCount), (uint)(requestedObjectItterator));
+            if (quads)
+                drawCommands[requestedObjectItterator] = new DrawCommand((uint)(objIndCount), (uint)(1), (uint)(0), (uint)(requestedVerticesCount), (uint)(requestedObjectItterator));
             else
-            drawCommands[requestedObjectItterator] = new DrawCommand((uint)(objIndCount), (uint)(1), (uint)(requestedIndicesCount), (uint)(requestedVerticesCount), (uint)(requestedObjectItterator));
+                drawCommands[requestedObjectItterator] = new DrawCommand((uint)(objIndCount), (uint)(1), (uint)(requestedIndicesCount), (uint)(requestedVerticesCount), (uint)(requestedObjectItterator));
         }
 
         /// <summary>
@@ -294,7 +294,7 @@ namespace RabbetGameEngine
                 return true;
 
             int index = 0;
-            if(containsTexture(tex, out index) || tryAddTexture(tex, out index))
+            if (containsTexture(tex, out index) || tryAddTexture(tex, out index))
             {
                 mod.setTextureIndex(index);
                 return true;
@@ -318,9 +318,9 @@ namespace RabbetGameEngine
 
         public bool containsTexture(Texture tex, out int index)
         {
-            for(int i = 0; i < requestedTextures; i++)
+            for (int i = 0; i < requestedTextures; i++)
             {
-                if(batchTextures[i] == tex)
+                if (batchTextures[i] == tex)
                 {
                     index = i;
                     return true;
@@ -366,7 +366,7 @@ namespace RabbetGameEngine
         public static int[] getUniformTextureSamplerArrayInts(int count)
         {
             int[] result = new int[count];
-            for(int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 result[i] = i;
             }

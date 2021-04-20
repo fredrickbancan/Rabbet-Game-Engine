@@ -5,7 +5,7 @@ namespace RabbetGameEngine
     public static class TextModelBuilder3D
     {
         private static readonly byte spaceAscii = 32;
-        
+
 
         /*Takes in an array of strings and converts them into an array of models. Each string in the array is treated as a new line of text.
           The lines start from the provided topleftorigin vector. Each model in the array is a line of text.*/
@@ -55,8 +55,8 @@ namespace RabbetGameEngine
 
             return result;
         }
-       
-        public static Vertex[] createVerticesFromChar(Character character, Vector4 color,Vector2 pixelCursorTopLeft)
+
+        public static Vertex[] createVerticesFromChar(Character character, Vector4 color, Vector2 pixelCursorTopLeft)
         {
             //get pixel values
             float x = pixelCursorTopLeft.X + character.getxOffsetPixels();

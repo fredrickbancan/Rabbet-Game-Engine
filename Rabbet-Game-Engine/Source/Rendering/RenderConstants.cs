@@ -1,4 +1,4 @@
-﻿namespace RabbetGameEngine.Rendering
+﻿namespace RabbetGameEngine
 {
     public static class RenderConstants
     {

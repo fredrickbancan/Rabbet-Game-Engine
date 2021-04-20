@@ -19,7 +19,7 @@
         {
             int index = x << Chunk.CHUNK_X_SHIFT | z << Chunk.CHUNK_Z_SHIFT | y;
             int storeIndex = index - index / 4;
-            if (index != 0 && index % 3 == 0) { storeLightLevelInPreviousLeftOverBits(storeIndex-1, l); return; }
+            if (index != 0 && index % 3 == 0) { storeLightLevelInPreviousLeftOverBits(storeIndex - 1, l); return; }
             data[storeIndex] |= (byte)(l & 63);
         }
 
@@ -27,7 +27,7 @@
         {
             int index = x << Chunk.CHUNK_X_SHIFT | z << Chunk.CHUNK_Z_SHIFT | y;
             int storeIndex = index - index / 4;
-            if (index != 0 && index % 3 == 0) return combinePreviousLeftOverBits(storeIndex-1);
+            if (index != 0 && index % 3 == 0) return combinePreviousLeftOverBits(storeIndex - 1);
             return (byte)(data[storeIndex] & 63);
         }
 

@@ -17,7 +17,7 @@ namespace RabbetGameEngine
         }
 
         public override void onFrame(float ptnt)
-        { 
+        {
             //get input and update pitch,yaw and movevec here
             if (moveVec.X == 0.0F) moveVec.X = System.Convert.ToInt32(Input.keyIsDown(Keys.D)) - System.Convert.ToInt32(Input.keyIsDown(Keys.A));
             if (moveVec.Z == 0.0F) moveVec.Z = System.Convert.ToInt32(Input.keyIsDown(Keys.W)) - System.Convert.ToInt32(Input.keyIsDown(Keys.S));

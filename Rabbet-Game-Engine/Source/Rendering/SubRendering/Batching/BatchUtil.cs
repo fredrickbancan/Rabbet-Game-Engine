@@ -72,9 +72,9 @@ namespace RabbetGameEngine
             {
                 return false;
             }
-            if(n >= dstIndices.Length)
+            if (n >= dstIndices.Length)
             {
-                if((n *= 2) >= maxDstSize)
+                if ((n *= 2) >= maxDstSize)
                 {
                     dstIndices = QuadCombiner.getIndicesForQuadCount(maxDstSize / 6);
                 }

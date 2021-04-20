@@ -10,13 +10,13 @@ namespace RabbetGameEngine
         private static KeyboardState currentKeyboardState;
         private static MouseState currentMouseState;
         /*Called every tick from Input.cs if a key is being pressed. for detecting player input*/
-        public static void updateInput(KeyboardState keyboard , MouseState mouse)
+        public static void updateInput(KeyboardState keyboard, MouseState mouse)
         {
             currentKeyboardState = keyboard;
             currentMouseState = mouse;
             for (int i = 0; i < GameSettings.bindings.Count; i++)
             {
-                switch(GameSettings.bindings[i].type)
+                switch (GameSettings.bindings[i].type)
                 {
                     case BindingType.KEY:
                         checkAndAddAction((Keys)GameSettings.bindings[i].code, GameSettings.bindings[i].act);
@@ -25,11 +25,11 @@ namespace RabbetGameEngine
                         checkAndAddAction((MouseButton)GameSettings.bindings[i].code, GameSettings.bindings[i].act);
                         break;
                     case BindingType.MWHEEL:
-                        if(currentMouseState.ScrollDelta.Y < -0.00001F && GameSettings.bindings[i].mWheelValue == ScrollDirection.MWDown)
+                        if (currentMouseState.ScrollDelta.Y < -0.00001F && GameSettings.bindings[i].mWheelValue == ScrollDirection.MWDown)
                         {
                             playerActions[(int)GameSettings.bindings[i].act] = true;
                         }
-                        else if(currentMouseState.ScrollDelta.Y > 0.00001F && GameSettings.bindings[i].mWheelValue == ScrollDirection.MWUp)
+                        else if (currentMouseState.ScrollDelta.Y > 0.00001F && GameSettings.bindings[i].mWheelValue == ScrollDirection.MWUp)
                         {
                             playerActions[(int)GameSettings.bindings[i].act] = true;
                         }
@@ -38,7 +38,7 @@ namespace RabbetGameEngine
             }
         }
 
-       
+
 
         /*Called if a new key is being pressed in a tick. Will only call for one tick if it is the same key.
           usefull for input such as opening menus, attacking, jumping, things that only need one key press.*/
@@ -50,7 +50,7 @@ namespace RabbetGameEngine
         /*if key is down, adds action to player.*/
         private static void checkAndAddAction(Keys key, EntityAction act)
         {
-            if(currentKeyboardState.IsKeyDown(key))
+            if (currentKeyboardState.IsKeyDown(key))
                 playerActions[(int)act] = true;
         }
         private static void checkAndAddAction(MouseButton button, EntityAction act)//for mouse buttons
@@ -62,7 +62,7 @@ namespace RabbetGameEngine
         /*can be called to determine if the player (user) is performing a certain action*/
         public static bool getDoingAction(EntityAction act)
         {
-           return playerActions[(int)act];
+            return playerActions[(int)act];
         }
 
         /*should be called at the end of each tick to reset inputs*/

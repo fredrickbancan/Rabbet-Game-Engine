@@ -88,8 +88,8 @@ namespace RabbetGameEngine
             rightEndRect.updateRenderData();
             background.updateRenderData();
             titleTextModel = TextModelBuilder2D.convertStringToModel(title, font, titleColor, new Vector3(screenPixelPos.X + titleOffset.X * GameInstance.gameWindowWidth, screenPixelPos.Y - titleOffset.Y * GameInstance.gameWindowHeight, -0.2F), titleFontSize, ComponentAnchor.CENTER);
-            minValTextModel = TextModelBuilder2D.convertStringToModel(minDisplayValString, font, minValColor, new Vector3(screenPixelPos.X - screenPixelSize.X*0.5F + minValTextOffset.X * GameInstance.gameWindowWidth, screenPixelPos.Y - minValTextOffset.Y * GameInstance.gameWindowHeight, -0.2F), minTextFontSize, ComponentAnchor.CENTER);
-            maxValTextModel = TextModelBuilder2D.convertStringToModel(maxDisplayValString, font, maxValColor, new Vector3(screenPixelPos.X + screenPixelSize.X*0.5F + maxValTextOffset.X * GameInstance.gameWindowWidth, screenPixelPos.Y - maxValTextOffset.Y * GameInstance.gameWindowHeight, -0.2F), maxTextFontSize, ComponentAnchor.CENTER);
+            minValTextModel = TextModelBuilder2D.convertStringToModel(minDisplayValString, font, minValColor, new Vector3(screenPixelPos.X - screenPixelSize.X * 0.5F + minValTextOffset.X * GameInstance.gameWindowWidth, screenPixelPos.Y - minValTextOffset.Y * GameInstance.gameWindowHeight, -0.2F), minTextFontSize, ComponentAnchor.CENTER);
+            maxValTextModel = TextModelBuilder2D.convertStringToModel(maxDisplayValString, font, maxValColor, new Vector3(screenPixelPos.X + screenPixelSize.X * 0.5F + maxValTextOffset.X * GameInstance.gameWindowWidth, screenPixelPos.Y - maxValTextOffset.Y * GameInstance.gameWindowHeight, -0.2F), maxTextFontSize, ComponentAnchor.CENTER);
             updateDisplayedCurrentVal();
         }
 
@@ -119,12 +119,12 @@ namespace RabbetGameEngine
             float prevSliderPos = sliderPos;
             sliderKnob.onUpdate();
 
-            if(sliderKnob.isHovered)
+            if (sliderKnob.isHovered)
             {
                 sliderKnob.isHovered = false;
-                if(Input.mouseleftButtonDown())
+                if (Input.mouseleftButtonDown())
                 {
-                    if(!sliderGrabbed)
+                    if (!sliderGrabbed)
                     {
                         onSliderKnobGrab();
                     }
@@ -133,8 +133,8 @@ namespace RabbetGameEngine
             }
 
             bool p = sliderGrabbed;
-            if(p)
-            sliderGrabbed = Input.mouseleftButtonDown();
+            if (p)
+                sliderGrabbed = Input.mouseleftButtonDown();
             if (p && !sliderGrabbed) onSliderKnobRelease();
 
             if (sliderGrabbed)
@@ -145,14 +145,14 @@ namespace RabbetGameEngine
                 float s = MathF.Abs(newPos - prevSliderPos);
                 if (s >= actuateEpsilon)
                 {
-                    if(newPos > 1.0F)
+                    if (newPos > 1.0F)
                     {
                         newPos = 1.0F;
                         sliderPos = newPos;
                         updateSlider();
                         if (prevSliderPos < 1.0F) onSlideMoved(sound);
                     }
-                    else if(newPos < 0.0F)
+                    else if (newPos < 0.0F)
                     {
                         newPos = 0.0F;
                         sliderPos = newPos;
@@ -210,7 +210,7 @@ namespace RabbetGameEngine
 
         public GUIValueSlider setDisplayRange(int min, int max)
         {
-            minDisplayValInt= min;
+            minDisplayValInt = min;
             minDisplayValString = min.ToString();
             maxDisplayValInt = max;
             maxDisplayValString = max.ToString();
@@ -257,8 +257,8 @@ namespace RabbetGameEngine
         private void onSlideMoved(bool sound)
         {
             updateDisplayedCurrentVal();
-            if(sound)
-            SoundManager.playSound("tick");
+            if (sound)
+                SoundManager.playSound("tick");
             foreach (System.Action<GUIValueSlider> a in slideMoveListeners)
             {
                 a(this);
@@ -274,7 +274,7 @@ namespace RabbetGameEngine
 
         public override void requestRender()
         {
-            if(!hidden)
+            if (!hidden)
             {
                 background.requestRender();
                 Renderer.requestRender(RenderType.guiText, font.texture, titleTextModel, renderLayer);

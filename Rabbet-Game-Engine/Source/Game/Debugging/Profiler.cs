@@ -88,7 +88,7 @@ namespace RabbetGameEngine
             lineColors.Add(Color.white);
             lines.Add("{");
             lineColors.Add(Color.white);
-            rootSection.getProfilingData(lines, lineColors, ""); 
+            rootSection.getProfilingData(lines, lineColors, "");
             lines.Add("}");
             lineColors.Add(Color.white);
         }
@@ -99,9 +99,9 @@ namespace RabbetGameEngine
             {
                 return;
             }
-            lines.Add("Profiler averages [tick times]"); 
+            lines.Add("Profiler averages [tick times]");
             lineColors.Add(Color.white);
-            lines.Add("{"); 
+            lines.Add("{");
             lineColors.Add(Color.white);
             rootTickSection.getProfilingData(lines, lineColors, "");
             lines.Add("}");
@@ -122,7 +122,7 @@ namespace RabbetGameEngine
             if (!GameSettings.debugScreen)
             {
                 return;
-            } 
+            }
             rootTickSection.updateAverages();
         }
 
@@ -152,7 +152,7 @@ namespace RabbetGameEngine
                 double avg = getAverageTimeSpentPerTick();
                 Color lineCol;
 
-                if(isTickProfile)
+                if (isTickProfile)
                 {
                     lineCol = (avg <= 1.0D) ? Color.green : (avg <= 2.5D) ? Color.yellow : Color.red;
                 }
@@ -163,7 +163,7 @@ namespace RabbetGameEngine
 
                 lines.Add(indentation + sectionName + subsections + ": " + avg.ToString("0.0000 ms"));
                 lineColors.Add(lineCol);
-                foreach(Section s in subSections.Values)
+                foreach (Section s in subSections.Values)
                 {
                     s.getProfilingData(lines, lineColors, indentation + "   ");
                 }
@@ -172,7 +172,7 @@ namespace RabbetGameEngine
             public int getSubSectionCount()
             {
                 int result = subSections.Count;
-                foreach(Section s in subSections.Values)
+                foreach (Section s in subSections.Values)
                 {
                     result += s.getSubSectionCount();
                 }
@@ -182,7 +182,7 @@ namespace RabbetGameEngine
             public void startSection(string sectionName, bool tickProfile)
             {
 
-                if(currentSection!=this)
+                if (currentSection != this)
                 {
                     currentSection.startSection(sectionName, tickProfile);
                     return;
@@ -211,7 +211,7 @@ namespace RabbetGameEngine
 
             public bool endCurrentSection()
             {
-                if(currentSection != this)
+                if (currentSection != this)
                 {
                     if (currentSection.endCurrentSection()) currentSection = this;
                     return false;
@@ -241,5 +241,5 @@ namespace RabbetGameEngine
 
         }
     }
-    
+
 }

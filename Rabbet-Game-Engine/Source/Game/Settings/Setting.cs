@@ -160,7 +160,7 @@ namespace RabbetGameEngine
         /// </summary>
         public void applySliderValue(GUIValueSlider g)
         {
-            if(type == SettingType.FLOAT)
+            if (type == SettingType.FLOAT)
             {
                 floatValue = g.getFloatValue();
             }
@@ -179,7 +179,7 @@ namespace RabbetGameEngine
             switch (type)
             {
                 case SettingType.LIST_STRING:
-                    if(listStrings != null && listIndex < listStrings.Length)
+                    if (listStrings != null && listIndex < listStrings.Length)
                     {
                         stringValue = listStrings[listIndex];
                     }
@@ -191,7 +191,7 @@ namespace RabbetGameEngine
                     }
                     break;
                 case SettingType.LIST_FLOAT:
-                    if (listFloats != null  && listIndex < listFloats.Length)
+                    if (listFloats != null && listIndex < listFloats.Length)
                     {
                         floatValue = listFloats[listIndex];
                     }

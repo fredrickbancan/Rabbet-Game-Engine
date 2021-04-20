@@ -116,15 +116,15 @@ namespace RabbetGameEngine
         {
             get
             {
-                return prevTickYaw + (yaw - prevTickYaw) * TicksAndFrames.getPercentageToNextTick(); 
+                return prevTickYaw + (yaw - prevTickYaw) * TicksAndFrames.getPercentageToNextTick();
             }
         }
 
         public float lerpRoll
         {
-            get 
+            get
             {
-                return prevTickRoll + (roll - prevTickRoll) * TicksAndFrames.getPercentageToNextTick(); 
+                return prevTickRoll + (roll - prevTickRoll) * TicksAndFrames.getPercentageToNextTick();
             }
         }
         public float posX { get => pos.X; set => pos.X = value; }

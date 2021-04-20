@@ -54,9 +54,9 @@ namespace RabbetGameEngine
             float halfWindowWidth = GameInstance.gameWindowWidth * 0.5F;
             float halfWindowHeight = GameInstance.gameWindowHeight * 0.5F;
             pixelBounds = new Vector4(screenPixelPos.X + halfWindowWidth - screenPixelSize.X * 0.5F, screenPixelPos.X + halfWindowWidth + screenPixelSize.X * 0.5F, halfWindowHeight - screenPixelPos.Y - screenPixelSize.Y * 0.5F, halfWindowHeight - screenPixelPos.Y + screenPixelSize.Y * 0.5F);
-            
-            if(title != null && titleFont != null)
-            titleTextModel = TextModelBuilder2D.convertStringToModel(title, titleFont, currentTitleColor.toNormalVec4(), new Vector3(screenPixelPos.X, screenPixelPos.Y, -0.2F), fontSize, ComponentAnchor.CENTER);
+
+            if (title != null && titleFont != null)
+                titleTextModel = TextModelBuilder2D.convertStringToModel(title, titleFont, currentTitleColor.toNormalVec4(), new Vector3(screenPixelPos.X, screenPixelPos.Y, -0.2F), fontSize, ComponentAnchor.CENTER);
         }
 
         public GUIButton setFontSize(float s)
@@ -75,9 +75,9 @@ namespace RabbetGameEngine
             Vector2 mPos = GameInstance.get.MousePosition;
             isHovered = mPos.X >= pixelBounds.X && mPos.X <= pixelBounds.Y && mPos.Y >= pixelBounds.Z && mPos.Y <= pixelBounds.W;
 
-            if(wasPreviouslyHovered != isHovered)
+            if (wasPreviouslyHovered != isHovered)
             {
-                if(isHovered)
+                if (isHovered)
                 {
                     onHoverEnter();
                     if (Input.mouseleftButtonDown()) clickDragged = true;
@@ -91,20 +91,20 @@ namespace RabbetGameEngine
                 }
             }
 
-            if(isHovered)
+            if (isHovered)
             {
                 bool wasPreviouslyPressed = isPressed;
                 isPressed = Input.mouseleftButtonDown();
-                if(wasPreviouslyPressed != isPressed)
+                if (wasPreviouslyPressed != isPressed)
                 {
-                    if(!isPressed)
+                    if (!isPressed)
                     {
-                        if(clickDragged)
+                        if (clickDragged)
                         {
                             clickDragged = false;
                         }
                         else
-                        onClick();
+                            onClick();
                     }
                 }
             }
@@ -116,7 +116,7 @@ namespace RabbetGameEngine
 
         private void onHoverEnter()
         {
-            foreach(System.Action a in hoverEnterListeners)
+            foreach (System.Action a in hoverEnterListeners)
             {
                 a();
             }
@@ -187,7 +187,7 @@ namespace RabbetGameEngine
         {
             disabled = true;
             currentTitleColor = Color.darkGrey;
-                titleTextModel.setColor(currentTitleColor.toNormalVec4());
+            titleTextModel.setColor(currentTitleColor.toNormalVec4());
             return this;
         }
         public GUIButton enable()
@@ -200,10 +200,10 @@ namespace RabbetGameEngine
 
         public override void requestRender()
         {
-            if(!hidden)
+            if (!hidden)
             {
-                Renderer.requestRender(RenderType.guiTransparent, componentTexture, componentQuadModel.copyModel().setColor(isHovered || disabled ? hoverColor.toNormalVec4() : color.toNormalVec4()).transformVertices(translationAndScale), renderLayer-1);
-               
+                Renderer.requestRender(RenderType.guiTransparent, componentTexture, componentQuadModel.copyModel().setColor(isHovered || disabled ? hoverColor.toNormalVec4() : color.toNormalVec4()).transformVertices(translationAndScale), renderLayer - 1);
+
                 if (title != null && titleFont != null)
                     Renderer.requestRender(RenderType.guiText, titleFont.texture, titleTextModel, renderLayer);
             }

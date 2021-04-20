@@ -34,9 +34,9 @@ namespace RabbetGameEngine
                 pitch = -89.999F;
             }
 
-            camDirectionVector.X =(float) (Math.Cos(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
-            camDirectionVector.Y =(float) Math.Sin(MathUtil.radians(pitch));
-            camDirectionVector.Z =(float) (Math.Sin(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
+            camDirectionVector.X = (float)(Math.Cos(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
+            camDirectionVector.Y = (float)Math.Sin(MathUtil.radians(pitch));
+            camDirectionVector.Z = (float)(Math.Sin(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
             camFrontVector = Vector3.Normalize(camDirectionVector);
             camRightVector = -Vector3.Normalize(Vector3.Cross(up, camDirectionVector));
             camUpVector = Vector3.Cross(camDirectionVector, -camRightVector);

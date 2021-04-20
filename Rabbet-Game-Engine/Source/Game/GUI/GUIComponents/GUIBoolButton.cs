@@ -25,7 +25,7 @@ namespace RabbetGameEngine
         private void onClick(GUIButton b)
         {
             boolValue = !boolValue;
-            foreach(Action<GUIBoolButton> a in valueChangedListeners)
+            foreach (Action<GUIBoolButton> a in valueChangedListeners)
             {
                 a(this);
             }

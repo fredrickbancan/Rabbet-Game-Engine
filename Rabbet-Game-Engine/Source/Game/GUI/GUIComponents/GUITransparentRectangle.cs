@@ -1,6 +1,4 @@
-﻿using RabbetGameEngine;
-
-namespace RabbetGameEngine
+﻿namespace RabbetGameEngine
 {
     public class GUITransparentRectangle : GUIComponent
     {

@@ -7,29 +7,29 @@ namespace RabbetGameEngine
         /// <summary>
         /// Size of chunk width, height and depth.
         /// </summary>
-        public static readonly int CHUNK_SIZE = 64;
+        public static readonly int CHUNK_SIZE = 32;
         public static readonly int CHUNK_SIZE_MINUS_ONE = CHUNK_SIZE - 1;
-        public static readonly int CHUNK_SIZE_SQUARED = 4096;
-        public static readonly int CHUNK_SIZE_CUBED = 262144;
-        public static readonly float VOXEL_PHYSICAL_SIZE = 0.25F;
-        public static readonly float VOXEL_PHYSICAL_OFFSET = 0.125F;
+        public static readonly int CHUNK_SIZE_SQUARED = 1024;
+        public static readonly int CHUNK_SIZE_CUBED = 32768;
+        public static readonly float VOXEL_PHYSICAL_SIZE = 0.5F;
+        public static readonly float VOXEL_PHYSICAL_OFFSET = 0.25F;
         public static readonly float CHUNK_PHYSICAL_SIZE = CHUNK_SIZE * VOXEL_PHYSICAL_SIZE;
 
         /// <summary>
         /// useful for indexing flat 3d array
         /// </summary>
-        public static readonly int CHUNK_X_SHIFT = 12;
+        public static readonly int CHUNK_X_SHIFT = 10;
 
         /// <summary>
         /// useful for indexing flat 3d array
         /// </summary>
-        public static readonly int CHUNK_Z_SHIFT = 6;
+        public static readonly int CHUNK_Z_SHIFT = 5;
         private byte[] voxels;
         private LightMap lightMap;
-        private VoxelBatcher voxelBatcher = null;
         private Terrain parentTerrain;
         private Vector3i coord;
         private Vector3i worldCoord;
+
         public Chunk(Vector3i coord, Terrain pt)
         {
             this.coord = coord;
@@ -37,8 +37,6 @@ namespace RabbetGameEngine
             parentTerrain = pt;
             voxels = new byte[CHUNK_SIZE_CUBED];
             lightMap = new LightMap(CHUNK_SIZE_CUBED);
-            voxelBatcher = new VoxelBatcher(this);
-            parentTerrain.scheduleUpdateForChunk(this);
         }
 
         /// <summary>
@@ -49,7 +47,7 @@ namespace RabbetGameEngine
         {
             if (x < 0 || y < 0 || z < 0) return;
             int index = x << CHUNK_X_SHIFT | z << CHUNK_Z_SHIFT | y;
-            if(index < CHUNK_SIZE_CUBED) voxels[index] = id;
+            if (index < CHUNK_SIZE_CUBED) voxels[index] = id;
         }
 
         /// <summary>
@@ -99,7 +97,7 @@ namespace RabbetGameEngine
         public byte getVoxelAtSafe(int x, int y, int z)
         {
             if (x >= CHUNK_SIZE || x < 0 || y >= CHUNK_SIZE || y < 0 || z >= CHUNK_SIZE || z < 0)
-                return parentTerrain.getVoxelIdAtVoxelCoord(worldCoord.X + x,worldCoord.Y + y,worldCoord.Z +  z);
+                return parentTerrain.getVoxelIdAtVoxelCoord(worldCoord.X + x, worldCoord.Y + y, worldCoord.Z + z);
             int index = x << CHUNK_X_SHIFT | z << CHUNK_Z_SHIFT | y;
             return voxels[index];
         }
@@ -117,14 +115,8 @@ namespace RabbetGameEngine
 
         public void update()
         {
-            voxelBatcher.updateVoxelMesh();
-        }
 
-        public void unLoad()
-        {
-            voxelBatcher.deleteVAO();
         }
-
         public byte[] getVoxels()
         {
             return voxels;
@@ -135,8 +127,5 @@ namespace RabbetGameEngine
 
         public Vector3i coordinate
         { get => coord; }
-
-        public VoxelBatcher voxelMesh
-        { get => voxelBatcher; }
     }
 }

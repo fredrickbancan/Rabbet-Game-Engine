@@ -20,7 +20,7 @@ namespace RabbetGameEngine
             lineColors = new List<Color>();
             this.anchor = anchor;
             this.renderLayer = renderLayer;
-            setSize(0, 0, dpiRelative); 
+            setSize(0, 0, dpiRelative);
         }
 
         /// <summary>
@@ -98,9 +98,9 @@ namespace RabbetGameEngine
 
         public override void requestRender()
         {
-            if(!hidden)
+            if (!hidden)
             {
-                for(int i = 0; i < models.Length; i++)
+                for (int i = 0; i < models.Length; i++)
                 {
                     Renderer.requestRender(RenderType.guiText, font.texture, models[i], renderLayer);
                 }

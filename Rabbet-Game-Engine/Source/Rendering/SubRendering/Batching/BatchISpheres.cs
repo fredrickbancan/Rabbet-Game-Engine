@@ -1,5 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using RabbetGameEngine.Rendering;
+
 namespace RabbetGameEngine
 {
     public class BatchISpheres : Batch

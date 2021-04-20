@@ -41,7 +41,7 @@ namespace RabbetGameEngine
         protected virtual void initBuffers()
         {
             fboID = GL.GenFramebuffer();
-            if(hasDepth) fboDepthID = GL.GenRenderbuffer();
+            if (hasDepth) fboDepthID = GL.GenRenderbuffer();
             texOutputs = new int[numTexOutputs];
             GL.GenTextures(numTexOutputs, texOutputs);
 

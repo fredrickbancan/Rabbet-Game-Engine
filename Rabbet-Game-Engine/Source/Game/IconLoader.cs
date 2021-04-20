@@ -41,7 +41,7 @@ namespace RabbetGameEngine
             }
             finally
             {
-                if(bmpData != null)
+                if (bmpData != null)
                 {
                     if (bitmap != null)
                     {
@@ -58,8 +58,8 @@ namespace RabbetGameEngine
                     ico.Dispose();
                 }
             }
-           
-            
+
+
         }
     }
 }

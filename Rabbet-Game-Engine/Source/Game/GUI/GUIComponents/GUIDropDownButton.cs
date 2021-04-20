@@ -31,7 +31,7 @@ namespace RabbetGameEngine
             dropDownBackground = new GUIButton(posX, posY, listButtonSizeX + 0.05F, listButtonSizeY * listTitles.Length + 0.05F, Color.black.setAlphaF(0.8F), "", font, anchor, renderLayer + 1).clearHoverEnterListeners().clearClickListeners().setHoverColor(Color.black.setAlphaF(0.8F));
             dropDownBackground.updateRenderData();
             dropDownButtons = new GUIButton[listTitles.Length];
-            for(int i = 0; i < listTitles.Length; i++)
+            for (int i = 0; i < listTitles.Length; i++)
             {
                 float yPos = dropDownBackground.getScreenPos().Y + (listTitles.Length * listButtonSizeY * 0.5F - i * listButtonSizeY - listButtonSizeY * 0.5F);
                 dropDownButtons[i] = new GUIButton(dropDownBackground.getScreenPos().X, yPos, listButtonSizeX, listButtonSizeY, Color.darkGrey, listTitles[i], font, ComponentAnchor.CENTER, renderLayer + 2).addClickListener(onDropDownButtonClick);
@@ -52,7 +52,7 @@ namespace RabbetGameEngine
 
         private void onClick(GUIButton g)
         {
-            if(!listEnabled)
+            if (!listEnabled)
             {
                 listEnabled = true;
                 GUIUtil.defaultOnButtonClick(g);
@@ -60,7 +60,7 @@ namespace RabbetGameEngine
         }
         private void onHoverEnter()
         {
-            if(!listEnabled)
+            if (!listEnabled)
             {
                 GUIUtil.defaultOnButtonHoverEnter();
             }
@@ -91,10 +91,10 @@ namespace RabbetGameEngine
         public override void requestRender()
         {
             base.requestRender();
-            if(listEnabled)
+            if (listEnabled)
             {
                 dropDownBackground.requestRender();
-                foreach(GUIButton b in dropDownButtons)
+                foreach (GUIButton b in dropDownButtons)
                 {
                     b.requestRender();
                 }
@@ -104,17 +104,17 @@ namespace RabbetGameEngine
         private void onDropDownButtonClick(GUIButton b)
         {
             valueChosen = true;
-            for(int i = 0; i < dropDownButtons.Length; i++)
+            for (int i = 0; i < dropDownButtons.Length; i++)
             {
                 dropDownButtons[i].enable();
-                if(b == dropDownButtons[i])
+                if (b == dropDownButtons[i])
                 {
                     setDropDownIndex(i);
                     parentGUI.onComponentValueChanged();
                 }
             }
 
-            foreach(Action<GUIDropDownButton> a in listeners)
+            foreach (Action<GUIDropDownButton> a in listeners)
             {
                 a(this);
             }

@@ -35,7 +35,7 @@ namespace RabbetGameEngine
 
             AL.Source(srcID, ALSourcei.Buffer, snd.getBufferID());
             AL.Source(srcID, ALSourceb.SourceRelative, true);
-            AL.Source(srcID, ALSource3f.Position, 0,0,-1.0F);
+            AL.Source(srcID, ALSource3f.Position, 0, 0, -1.0F);
             volume = MathHelper.Clamp(volume, 0, 1);
             AL.Source(srcID, ALSourcef.Gain, volume * GameSettings.masterVolume.floatValue);
             AL.Source(srcID, ALSourcef.Pitch, speed);
@@ -106,17 +106,17 @@ namespace RabbetGameEngine
             AL.Source(srcID, ALSourcef.Pitch, speed);
             AL.Source(srcID, ALSourcei.SourceType, 4136 /*ALSourceType.Static*/);
 
-           /* EntityPlayer p = GameInstance.get.thePlayer;
-            setGainBasedOnDistance(p.getEyePosition());
-            setPanBasedOnAngle(p.getEyePosition(), p.getRightVector());*/
+            /* EntityPlayer p = GameInstance.get.thePlayer;
+             setGainBasedOnDistance(p.getEyePosition());
+             setPanBasedOnAngle(p.getEyePosition(), p.getRightVector());*/
             AL.SourcePlay(srcID);
             isPositional = true;
         }
 
         public void onTick(long currentMills)
         {
-            if(!loopingSound)
-            { 
+            if (!loopingSound)
+            {
                 finishedPlaying = (currentMills - timeStampMills) > (soundLengthMills + extraPlayMills);
             }
         }
@@ -125,8 +125,8 @@ namespace RabbetGameEngine
         {
             if (isPositional && !finishedPlaying)
             {
-               // setGainBasedOnDistance(listener.getEyePosition());
-              //  setPanBasedOnAngle(listener.getEyePosition(), listener.getRightVector());
+                // setGainBasedOnDistance(listener.getEyePosition());
+                //  setPanBasedOnAngle(listener.getEyePosition(), listener.getRightVector());
             }
         }
 
@@ -135,7 +135,7 @@ namespace RabbetGameEngine
             float gain = 0;
             float dst = Vector3.Distance(sndPos, lPos);
 
-            if(dst >= maxDist)
+            if (dst >= maxDist)
             {
                 gain = 0.0F;
             }

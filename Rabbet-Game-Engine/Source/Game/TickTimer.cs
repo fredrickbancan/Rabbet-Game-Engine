@@ -90,7 +90,7 @@
 
             //this allows the timer to count ticks up untill the interval, so next time determinator is true, the function will be called instantly.
             running = !activated || determinator;//set running to false if activated or if determinator is also false.
-            
+
 
             return activated && determinator;
         }

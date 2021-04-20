@@ -30,7 +30,7 @@ namespace RabbetGameEngine
         {
             calSizeMult(dpiRelative);
             Model[] result = new Model[thestrings.Count];
-            for(int i = 0; i < thestrings.Count; i++)
+            for (int i = 0; i < thestrings.Count; i++)
             {
                 result[i] = new Model(convertStringToVertexArray(thestrings[i], font, color, pixelTranslation, fontSize, alignment, i, thestrings.Count - 1 - i), null);
             }
@@ -348,7 +348,7 @@ namespace RabbetGameEngine
 
             return result;
         }
-       
+
         private static Vertex[] createVerticesFromChar(Character character, Vector4 color, Vector3 pixelCursorTopLeft, float fontSize)
         {
             //get pixel values

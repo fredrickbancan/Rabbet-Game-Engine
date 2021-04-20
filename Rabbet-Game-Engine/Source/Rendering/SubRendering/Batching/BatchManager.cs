@@ -34,7 +34,7 @@ namespace RabbetGameEngine
 
         public static void postWorldRenderUpdate()
         {
-          //  Application.debugPrint("World Batches: " + batches.Count);
+            //  Application.debugPrint("World Batches: " + batches.Count);
             for (int i = 0; i < batches.Count; ++i)
             {
                 Batch batchAt = batches.ElementAt(i);
@@ -47,7 +47,7 @@ namespace RabbetGameEngine
                     --i;
                     continue;
                 }
-                
+
                 batchAt.postRenderUpdate();
             }
         }
@@ -55,7 +55,7 @@ namespace RabbetGameEngine
 
         public static void postGUIRenderUpdate()
         {
-         //  Application.debugPrint("Gui Batches: " + guiBatches.Count);
+            //  Application.debugPrint("Gui Batches: " + guiBatches.Count);
             for (int i = 0; i < guiBatches.Count; ++i)
             {
                 Batch batchAt = guiBatches.ElementAt(i);
@@ -90,16 +90,16 @@ namespace RabbetGameEngine
             for (int i = 0; i < bl.Count; ++i)
             {
                 Batch batchAt = bl.ElementAt(i);
-              
-                if(batchAt.getRenderType() == type && renderLayer == batchAt.getRenderLayer())//if there is a compatible batch, try to fit the model in.
+
+                if (batchAt.getRenderType() == type && renderLayer == batchAt.getRenderLayer())//if there is a compatible batch, try to fit the model in.
                 {
-                    if(batchAt.tryToFitInBatchModel(theModel, tex))
+                    if (batchAt.tryToFitInBatchModel(theModel, tex))
                     {
                         return;//successfull batch adding
                     }
                 }
 
-                if(i == bl.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
+                if (i == bl.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
                     Batch b = BatchUtil.getBatchForType(type, renderLayer);
                     b.tryToFitInBatchModel(theModel, tex);
@@ -112,20 +112,20 @@ namespace RabbetGameEngine
                     {
                         insertOpaqueBatchToStart(bl, b, theModel);
                     }
-                    
+
                     return;
                 }
             }
-            
+
         }
 
         private static void insertTransparentBatchToEnd(List<Batch> bl, Batch b, Model m)
         {
-            for(int i = bl.Count - 1; i >= 0; i--)
+            for (int i = bl.Count - 1; i >= 0; i--)
             {
-                if(bl.ElementAt(i).getRenderLayer() <= b.getRenderLayer())
+                if (bl.ElementAt(i).getRenderLayer() <= b.getRenderLayer())
                 {
-                    bl.Insert(i+1, b);
+                    bl.Insert(i + 1, b);
                     return;
                 }
             }
@@ -146,9 +146,9 @@ namespace RabbetGameEngine
         public static void requestRender(PointCloudModel pParticleModel, bool transparency, bool lerp)
         {
             RenderType type;
-            if(transparency)
+            if (transparency)
             {
-                if(!lerp)
+                if (!lerp)
                 {
                     type = RenderType.iSpheresTransparent;
                 }
@@ -198,13 +198,13 @@ namespace RabbetGameEngine
             RenderType type;
             if (transparency)
             {
-                    type = RenderType.iSpheresTransparent;
-                
+                type = RenderType.iSpheresTransparent;
+
             }
             else
             {
-                    type = RenderType.iSpheres;
-                
+                type = RenderType.iSpheres;
+
             }
             for (int i = 0; i < batches.Count; ++i)
             {
@@ -326,7 +326,7 @@ namespace RabbetGameEngine
 
         public static void drawAllWorld()
         {
-           
+
             World w = GameInstance.get.currentWorld;
             foreach (Batch b in batches)
             {
@@ -367,7 +367,7 @@ namespace RabbetGameEngine
         public static void deleteAll()
         {
             Application.infoPrint("BatchManager deleting " + batchCount + " batches...");
-            foreach(Batch b in batches)
+            foreach (Batch b in batches)
             {
                 b.deleteVAO();
             }

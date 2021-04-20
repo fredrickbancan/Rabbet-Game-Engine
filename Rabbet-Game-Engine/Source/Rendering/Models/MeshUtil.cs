@@ -53,11 +53,11 @@ namespace RabbetGameEngine
             return success;
         }
 
-        
+
         public static Model getMeshForModel(string modelName)
         {
             Model result;
-            if(!tryGetModel(modelName, out result))
+            if (!tryGetModel(modelName, out result))
             {
                 Application.error("MeshUtil could not find the requested model name: " + modelName);
             }

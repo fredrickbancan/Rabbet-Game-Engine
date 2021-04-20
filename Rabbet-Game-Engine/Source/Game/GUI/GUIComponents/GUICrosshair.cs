@@ -1,5 +1,4 @@
-﻿using RabbetGameEngine;
-namespace RabbetGameEngine
+﻿namespace RabbetGameEngine
 {
     public enum CrosshairType
     {
@@ -10,7 +9,7 @@ namespace RabbetGameEngine
         private string crosshairTextureName;
         private Color crosshairColor = Color.black;
 
-        public GUICrosshair(Color color, float crosshairSize = 0.05F, CrosshairType crosshairType = CrosshairType.normal) : base(0,0)
+        public GUICrosshair(Color color, float crosshairSize = 0.05F, CrosshairType crosshairType = CrosshairType.normal) : base(0, 0)
         {
             anchor = ComponentAnchor.CENTER;
             crosshairColor = color;
@@ -18,7 +17,7 @@ namespace RabbetGameEngine
             setModel(QuadPrefab.copyModel().setColor(crosshairColor));
         }
 
-        public GUICrosshair(float crosshairSize = 0.05F, CrosshairType crosshairType = CrosshairType.normal) : base(0,0)
+        public GUICrosshair(float crosshairSize = 0.05F, CrosshairType crosshairType = CrosshairType.normal) : base(0, 0)
         {
             anchor = ComponentAnchor.CENTER;
             setCrosshairTextureAndSize(crosshairType, crosshairSize);
@@ -27,9 +26,9 @@ namespace RabbetGameEngine
 
         protected virtual void setCrosshairTextureAndSize(CrosshairType type, float crosshairSize)
         {
-            switch(type)
+            switch (type)
             {
-               case CrosshairType.normal:
+                case CrosshairType.normal:
                     crosshairTextureName = "CrosshairNormal";
                     TextureUtil.tryGetTexture(crosshairTextureName, out this.componentTexture);
                     break;

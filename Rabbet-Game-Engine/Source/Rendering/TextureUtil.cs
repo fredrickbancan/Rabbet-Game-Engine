@@ -14,7 +14,9 @@ namespace RabbetGameEngine
         {
             textures = new Dictionary<string, Texture>();
             textures.Add("none", new Texture("none", false));//first texture will be the null texture
+            Application.checkGLErrors();
             textures.Add("debug", new Texture());//second texture will be the debug texture
+            Application.checkGLErrors();
             textures.Add("dither", new Texture("dither", false));//third texture will be the dithering texture
             textures.Add("white", new Texture("white", false));//fourth texture will be a flat white texture
             loadAllTexturesRecursive(ResourceUtil.getTextureFileDir());
@@ -64,13 +66,13 @@ namespace RabbetGameEngine
         /*Returns true if the requested texture was found in the global list*/
         public static bool tryGetTexture(string name, out Texture texture)
         {
-            name = name.ToLower(); 
-            if(name == "none")
+            name = name.ToLower();
+            if (name == "none")
             {
                 texture = textures.ElementAt(0).Value;
                 return false;
             }
-            if(name == "debug")
+            if (name == "debug")
             {
                 texture = textures.ElementAt(1).Value;
                 return true;

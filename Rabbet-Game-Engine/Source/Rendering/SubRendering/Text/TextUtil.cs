@@ -15,7 +15,7 @@ namespace RabbetGameEngine
         {
             name = name.ToLower();
             bool success = fonts.TryGetValue(name, out font);
-            if(!success)
+            if (!success)
             {
                 Application.error("TextUtil could not find font named: " + name + " in global list, returning null.");
             }
@@ -37,7 +37,7 @@ namespace RabbetGameEngine
                     }
                 }
             }
-            catch(IOException e)
+            catch (IOException e)
             {
                 Application.error(e.Message);
             }

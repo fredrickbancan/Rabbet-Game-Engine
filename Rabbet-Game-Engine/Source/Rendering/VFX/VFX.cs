@@ -50,7 +50,7 @@ namespace RabbetGameEngine
 
         public virtual void sendRenderRequest()
         {
-           
+
         }
 
         public virtual void ceaseToExist()

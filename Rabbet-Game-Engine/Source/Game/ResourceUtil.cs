@@ -22,7 +22,7 @@ namespace RabbetGameEngine
                 Directory.CreateDirectory(getSoundFileDir());
                 Directory.CreateDirectory(getScreenShotFileDir());
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Application.warn("Error initializing resource utilities! Error message: " + e.Message);
             }

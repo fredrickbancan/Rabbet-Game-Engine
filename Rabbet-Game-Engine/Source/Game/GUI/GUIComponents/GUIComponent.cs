@@ -1,6 +1,5 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
-using RabbetGameEngine;
 
 namespace RabbetGameEngine
 {
@@ -86,7 +85,7 @@ namespace RabbetGameEngine
             float halfWindowWidth = GameInstance.gameWindowWidth * 0.5F;
             float halfWindowHeight = GameInstance.gameWindowHeight * 0.5F;
             screenPixelSize = new Vector2(size.X * (dpiRelativeSize ? GameInstance.gameWindowHeight : GameInstance.gameWindowWidth), size.Y * GameInstance.gameWindowHeight);
-           
+
             switch (anchor)
             {
                 case ComponentAnchor.CENTER:
@@ -127,12 +126,12 @@ namespace RabbetGameEngine
                     break;
             }
 
-            translationAndScale = Matrix4.CreateScale(screenPixelSize.X, screenPixelSize.Y, 1) *  Matrix4.CreateTranslation(screenPixelPos.X, screenPixelPos.Y, -0.2F);
+            translationAndScale = Matrix4.CreateScale(screenPixelSize.X, screenPixelSize.Y, 1) * Matrix4.CreateTranslation(screenPixelPos.X, screenPixelPos.Y, -0.2F);
         }
 
         public virtual void onMouseWheel(float scrolldelta)
         {
-            
+
         }
 
         public virtual void setHide(bool flag)
@@ -152,7 +151,7 @@ namespace RabbetGameEngine
 
         public virtual void requestRender()
         {
-           
+
         }
 
         public void pause()

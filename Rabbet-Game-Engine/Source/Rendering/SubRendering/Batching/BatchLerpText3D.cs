@@ -1,9 +1,9 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using RabbetGameEngine.Rendering;
+
 namespace RabbetGameEngine
 {
-    public class BatchLerpText3D: Batch
+    public class BatchLerpText3D : Batch
     {
         public BatchLerpText3D(int renderLayer = 0) : base(RenderType.lerpText3D, renderLayer)
         {

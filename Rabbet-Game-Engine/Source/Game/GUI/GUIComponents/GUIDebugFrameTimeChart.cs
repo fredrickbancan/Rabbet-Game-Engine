@@ -47,7 +47,7 @@ namespace RabbetGameEngine
                 measureLines.vertices[i].pos.Y = measureLines.vertices[i + 1].pos.Y = (i / 2 + 1) * 50.0F - screenPixelSize.Y * 0.5F;
             }
         }
-    
+
 
         public override void updateRenderData()
         {
@@ -60,11 +60,11 @@ namespace RabbetGameEngine
             measureNum3 = TextModelBuilder2D.convertStringToModel("15ms", font, Color.grey.toNormalVec4(), new Vector3(screenPixelPos.X - screenPixelSize.X * 0.5F - 5.0F, screenPixelPos.Y - 100.0F, -0.2F), 0.15F, ComponentAnchor.CENTER_RIGHT);
             title = TextModelBuilder2D.convertStringToModel("Frame delta times", font, Color.grey.toNormalVec4(), new Vector3(screenPixelPos.X, screenPixelPos.Y - 75.0F, -0.2F), 0.15F, ComponentAnchor.CENTER);
         }
-    
+
 
         public override void onFrame()
         {
-            for(int j = 0; j < 400; j += 2)
+            for (int j = 0; j < 400; j += 2)
             {
                 graphLines.vertices[j + 1].color *= 0.99F;
                 graphLines.vertices[j + 1].color.W = 1;
@@ -90,9 +90,9 @@ namespace RabbetGameEngine
                 Renderer.requestRender(RenderType.guiText, font.texture, measureNum1, renderLayer);
                 Renderer.requestRender(RenderType.guiText, font.texture, measureNum2, renderLayer);
                 Renderer.requestRender(RenderType.guiText, font.texture, measureNum3, renderLayer);
-                Renderer.requestRender(RenderType.guiLines, componentTexture, graphLines.copyModel().translateVertices(translationAndScale.ExtractTranslation() - new Vector3(screenPixelSize.X * 0.5F , screenPixelSize.Y * 0.5F, 0)), renderLayer);
+                Renderer.requestRender(RenderType.guiLines, componentTexture, graphLines.copyModel().translateVertices(translationAndScale.ExtractTranslation() - new Vector3(screenPixelSize.X * 0.5F, screenPixelSize.Y * 0.5F, 0)), renderLayer);
             }
         }
     }
-    
+
 }

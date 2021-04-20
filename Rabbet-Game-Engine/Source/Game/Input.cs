@@ -15,7 +15,7 @@ namespace RabbetGameEngine
         private static MouseState mouseState;
 
         private static bool mouseGrabbed = false;
-        private static Vector2 mouseDelta = new Vector2(0,0);
+        private static Vector2 mouseDelta = new Vector2(0, 0);
         private static float prevScrollOffset = 0;
         /// <summary>
         /// if is true, inputs will not activate their default logic
@@ -47,11 +47,11 @@ namespace RabbetGameEngine
                 {
                     toggleBoolean(ref GameSettings.drawHitboxes);
                 }
-                
+
                 if (singleKeyPress(Keys.F3))
                 {
                     toggleBoolean(ref GameSettings.debugScreen);
-                    if(GameSettings.debugScreen)
+                    if (GameSettings.debugScreen)
                     {
                         GUIManager.addPersistentGUI(new GUIDebugInfo());
                     }
@@ -84,7 +84,7 @@ namespace RabbetGameEngine
         {
             if (!boolean)
             {
-                boolean  = true;
+                boolean = true;
             }
             else
             {
@@ -111,7 +111,7 @@ namespace RabbetGameEngine
         {
             GameInstance.get.CursorVisible = !flag;
             GameInstance.get.CursorGrabbed = flag;
-            if(!flag)
+            if (!flag)
             {
                 GameInstance.get.MousePosition = GameInstance.gameWindowCenter;
             }
@@ -120,9 +120,9 @@ namespace RabbetGameEngine
 
         private static void updateMouse()
         {
-            if(mouseGrabbed)
+            if (mouseGrabbed)
             {
-                mouseDelta =  GameInstance.get.MouseState.Delta;
+                mouseDelta = GameInstance.get.MouseState.Delta;
             }
             else
             {

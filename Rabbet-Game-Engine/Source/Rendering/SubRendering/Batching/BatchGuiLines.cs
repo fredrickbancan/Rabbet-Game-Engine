@@ -1,6 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using RabbetGameEngine;
-using RabbetGameEngine.Rendering;
+
 using System;
 
 namespace RabbetGameEngine
@@ -49,7 +48,7 @@ namespace RabbetGameEngine
             batchShader.use();
             batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
         }
-            
+
         public override void drawBatch(World thePlanet)
         {
             vao.bind();

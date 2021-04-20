@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 namespace RabbetGameEngine
 {
-    public struct Vertex
+    public struct Vertex//TODO: Optimize byte size for holding all attributes in smallest size possible
     {
         public Vector3 pos;
         public Vector4 color;
@@ -15,8 +15,8 @@ namespace RabbetGameEngine
         public static readonly byte uvLength = 2;
         public static readonly byte positionSize = 3 * sizeof(float);
         public static readonly byte colorSize = 4 * sizeof(float);
-        public static readonly byte uvSize= 2 * sizeof(float);
-        public static readonly byte textureIndexSize= sizeof(float);
+        public static readonly byte uvSize = 2 * sizeof(float);
+        public static readonly byte textureIndexSize = sizeof(float);
         public static readonly byte positionOffset = (byte)Marshal.OffsetOf(typeof(Vertex), "pos");
         public static readonly byte colorOffset = (byte)Marshal.OffsetOf(typeof(Vertex), "color");
         public static readonly byte uvOffset = (byte)Marshal.OffsetOf(typeof(Vertex), "uv");

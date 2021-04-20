@@ -19,7 +19,7 @@ namespace RabbetGameEngine
                 GL.ReadPixels(0, 0, width, height, PixelFormat.Bgr, PixelType.UnsignedByte, RGBData);
                 string n;
                 savePNG((n = ResourceUtil.getScreenShotFileDir(Application.getAppTimeStamp() + ".png")), width, height, RGBData);
-                Application.infoPrint("Saved screenshot to Screenshots folder, screenshot named: "  + n);
+                Application.infoPrint("Saved screenshot to Screenshots folder, screenshot named: " + n);
             }
             catch (Exception e)
             {

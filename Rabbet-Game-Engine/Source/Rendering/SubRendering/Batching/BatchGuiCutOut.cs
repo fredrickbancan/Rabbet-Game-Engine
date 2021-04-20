@@ -1,11 +1,10 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using RabbetGameEngine;
-using RabbetGameEngine.Rendering;
+
 using System;
 
 namespace RabbetGameEngine
 {
-    public class BatchGuiCutOut :  Batch
+    public class BatchGuiCutOut : Batch
     {
         public BatchGuiCutOut(int renderLayer = 0) : base(RenderType.guiCutout, renderLayer)
         {
@@ -75,7 +74,7 @@ namespace RabbetGameEngine
             batchShader.use();
             GL.DepthMask(false);
             GL.DepthRange(0, 0.005F);
-            GL.DrawElements(PrimitiveType.Triangles,requestedVerticesCount + (requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.Triangles, requestedVerticesCount + (requestedVerticesCount / 2), DrawElementsType.UnsignedInt, 0);
             GL.DepthRange(0, 1);
             GL.DepthMask(true);
             vao.unBind();

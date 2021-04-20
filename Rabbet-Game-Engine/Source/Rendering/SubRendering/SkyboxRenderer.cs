@@ -74,10 +74,10 @@ namespace RabbetGameEngine
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
         }
 
-        public static void setSkyboxToDraw (Sky theSky)
+        public static void setSkyboxToDraw(Sky theSky)
         {
             skyToDraw = theSky;
-            if(starsVAO != null)
+            if (starsVAO != null)
             {
                 starsVAO.delete();
             }
@@ -106,7 +106,7 @@ namespace RabbetGameEngine
             {
                 Vector2 dir = m[i].orbitDirection;
                 Vector2 axis = new Vector2(dir.Y, dir.X);
-                axies[theSky.moonCount-1-i] = axis;
+                axies[theSky.moonCount - 1 - i] = axis;
             }
             moonsVAO = new VertexArrayObject();
             moonsVAO.beginBuilding();
@@ -121,7 +121,7 @@ namespace RabbetGameEngine
             moonsVAO.addBuffer(axies, sizeof(float) * 2, al);
             VertexBufferLayout il = new VertexBufferLayout();
             il.add(VertexAttribPointerType.Float, 2);
-            moonsVAO.addInstanceBuffer(QuadPrefab.quadVertexPositions2D, sizeof(float)*2, il);
+            moonsVAO.addInstanceBuffer(QuadPrefab.quadVertexPositions2D, sizeof(float) * 2, il);
             moonsVAO.finishBuilding();
         }
 
@@ -231,12 +231,12 @@ namespace RabbetGameEngine
         {
             skyVAO.delete();
             shroudVAO.delete();
-            if(starsVAO != null)
+            if (starsVAO != null)
             {
                 starsVAO.delete();
             }
 
-            if(moonsVAO != null)
+            if (moonsVAO != null)
             {
                 moonsVAO.delete();
             }

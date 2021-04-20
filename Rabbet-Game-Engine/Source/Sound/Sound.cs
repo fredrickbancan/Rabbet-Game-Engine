@@ -15,9 +15,9 @@ namespace RabbetGameEngine
         private int bufferID;
         public Sound(string dir)
         {
-            if(dir == "debug")
+            if (dir == "debug")
             {
-                byte[]  data = new byte[1000];
+                byte[] data = new byte[1000];
                 GameInstance.rand.NextBytes(data);
                 sampleRate = 11025;
                 channels = 1;
@@ -33,7 +33,7 @@ namespace RabbetGameEngine
             }
         }
 
-       
+
         private void loadOGG(string dir)
         {
             try
@@ -47,11 +47,11 @@ namespace RabbetGameEngine
                 List<short> data = new List<short>();
                 float[] samplesBuffer = new float[totalSamples * channels];
                 int count = 0;
-                while((count = reader.ReadSamples(samplesBuffer, 0, samplesBuffer.Length)) > 0)
+                while ((count = reader.ReadSamples(samplesBuffer, 0, samplesBuffer.Length)) > 0)
                 {
                     for (int i = 0; i < count; i++)
                     {
-                        short temp = (short)(Math.Clamp( 32767f * samplesBuffer[i], -32767f, 32767f));
+                        short temp = (short)(Math.Clamp(32767f * samplesBuffer[i], -32767f, 32767f));
                         data.Add(temp);
                     }
                 }

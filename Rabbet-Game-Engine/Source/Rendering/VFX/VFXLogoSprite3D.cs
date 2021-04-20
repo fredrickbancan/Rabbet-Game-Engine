@@ -10,12 +10,12 @@ namespace RabbetGameEngine
         {
             spriteSize = size;
             sprite = new Sprite3D(pos, Color.white.toNormalVec4(), new Vector3(size.X, size.Y, 1.0F), new Vector4(0, 0, 1, 1));
-        //    tickable = false;
-          //  movable = false;
+            //    tickable = false;
+            //  movable = false;
         }
         public override void sendRenderRequest()
         {
-         //   Renderer.requestRender(sprite, vfxTexture);
+            //   Renderer.requestRender(sprite, vfxTexture);
         }
     }
 }

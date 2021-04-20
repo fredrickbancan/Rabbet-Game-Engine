@@ -1,5 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using RabbetGameEngine.Rendering;
+
 namespace RabbetGameEngine
 {
     public class BatchLerpISpheres : Batch
@@ -17,7 +17,7 @@ namespace RabbetGameEngine
             batchedPoints = new PointParticle[RenderConstants.INIT_BATCH_ARRAY_SIZE];
             VertexBufferLayout l9 = new VertexBufferLayout();
             PointParticle.configureLayout(l9);
-            PointParticle.configureLayout(l9); 
+            PointParticle.configureLayout(l9);
             vao.addBufferDynamic(RenderConstants.INIT_BATCH_ARRAY_SIZE * PointParticle.SIZE_BYTES, l9);
             vao.drawType = PrimitiveType.Points;
         }

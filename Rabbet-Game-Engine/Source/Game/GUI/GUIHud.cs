@@ -18,7 +18,7 @@
         {
             base.onUpdate();
             displayFps();
-          
+
             timePanel.clear().addLine(GameInstance.get.currentWorld.sky.get12HourTimeString());
             timePanel.updateRenderData();
         }

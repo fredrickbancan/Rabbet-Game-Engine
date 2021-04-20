@@ -1,6 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using RabbetGameEngine.Rendering;
+
 namespace RabbetGameEngine
 {
     public class BatchLerpTriangles : Batch
@@ -93,13 +93,13 @@ namespace RabbetGameEngine
         public override void updateUniforms(World thePlanet)
         {
             batchShader.use();
-            batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix); 
+            batchShader.setUniformMat4F("projectionMatrix", Renderer.projMatrix);
         }
 
         public override void drawBatch(World thePlanet)
         {
             vao.bind();
-            bindAllTextures(); 
+            bindAllTextures();
             batchShader.use();
             batchShader.setUniformMat4F("viewMatrix", Renderer.viewMatrix);
             batchShader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());

@@ -21,11 +21,11 @@ namespace RabbetGameEngine
             new Vector2(-0.5F, 0.5F),
             new Vector2(0.5F, 0.5F)
         };
-       public static readonly uint[] quadIndices = new uint[] //order of vertices in counter clockwise direction for both triangles of quad. counter clock wise is opengl default for front facing.
-        {
+        public static readonly uint[] quadIndices = new uint[] //order of vertices in counter clockwise direction for both triangles of quad. counter clock wise is opengl default for front facing.
+         {
             0, 1, 2,//first triangle    
             1, 3, 2 //second triangle
-        };
+         };
 
         /*generates a new model using copies of this models arrays.*/
         public static Model copyModel()

@@ -216,7 +216,7 @@ namespace RabbetGameEngine
                 moons[i].onTick(ts);
             }
         }
-        
+
         public int moonCount
         {
             get { return totalMoons; }

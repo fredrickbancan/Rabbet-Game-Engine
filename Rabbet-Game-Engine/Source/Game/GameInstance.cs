@@ -109,39 +109,29 @@ namespace RabbetGameEngine
             base.OnRenderFrame(args);
             Input.updateInput();
             defaultCam.onFrame(TicksAndFrames.getPercentageToNextTick());
-            try
+            Profiler.startSection("tickLoop");
+            doneOneTick = false;
+            TicksAndFrames.doOnTickUntillRealtimeSync(onTick);
+            if (doneOneTick)
             {
-                doneOneTick = false;
-                Profiler.startTick();
-                Profiler.startSection("tickLoop");
-                Profiler.startTickSection("tickLoop");
-                TicksAndFrames.doOnTickUntillRealtimeSync(onTick);
-                Profiler.endCurrentTickSection();
-                Profiler.endCurrentSection();
-
-                if (doneOneTick)
-                {
-                    //This area will be called at MAXIMUM of the tick rate. Meaning it will not be called multiple times in a laggy situation.
-                    //It is called after the ticks are looped.
-                    Application.updateRamUsage();
-                    GUIManager.doUpdate();
-                    Renderer.doWorldRenderUpdate();
-                    SoundManager.onUpdate();
-                    PlayerController.resetActions();
-                }
-                Profiler.endTick();
-                Profiler.onTick();
+                //This area will be called at MAXIMUM of the tick rate. Meaning it will not be called multiple times in a laggy situation.
+                //It is called after the ticks are looped.
+                Application.updateRamUsage();
+                GUIManager.doUpdate();
+                Renderer.doWorldRenderUpdate();
+                SoundManager.onUpdate();
+                PlayerController.resetActions();
             }
-            catch (Exception e)
-            {
-                Application.error("Failed to run game tick, Exception: " + e.Message + "\nStack Trace: " + e.StackTrace);
-            }
+            Profiler.endStartSection("onFrame");
             currentWorld.onFrame(TicksAndFrames.getPercentageToNextTick());
             SoundManager.onFrame();
             TicksAndFrames.updateFPS();
             GUIManager.onFrame();
             Renderer.doGUIRenderUpdate();
+            Profiler.endStartSection("onRender");
             Renderer.renderAll();
+            Profiler.endCurrentSection();
+
             Profiler.endRoot();
             Profiler.onFrame();
         }
@@ -167,11 +157,18 @@ namespace RabbetGameEngine
         /*Each itteration of game logic is done here*/
         private void onTick()
         {
+            Profiler.startTick();
+            Profiler.startTickSection("tickLoop");
+
             if (Bounds.Size.X > 0 && Bounds.Size.Y > 0)
                 windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
             if (!gamePaused)
                 currentWorld.onTick(TicksAndFrames.spt);
             defaultCam.onTick(TicksAndFrames.spt);
+
+            Profiler.endCurrentTickSection();
+            Profiler.onTick();
+            Profiler.endTick();
             doneOneTick = true;//do last, ensures that certain functions are only called once per tick loop
         }
 

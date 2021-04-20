@@ -48,7 +48,7 @@ namespace RabbetGameEngine
         }
         public Color(byte r, byte g, byte b, byte a = byte.MaxValue)
         {
-            baseColor = new Color4(r,g,b,a);
+            baseColor = new Color4(r, g, b, a);
         }
         public Color(float r, float g, float b, float a = 255.0F)
         {
@@ -103,7 +103,7 @@ namespace RabbetGameEngine
             baseColor.A *= percentage;
             return this;
         }
-        
+
         public Color setAlphaF(float a)
         {
             a = MathUtil.clamp(a, 0, 1);

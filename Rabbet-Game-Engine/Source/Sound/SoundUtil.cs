@@ -36,7 +36,7 @@ namespace RabbetGameEngine
                     loadAllSoundsRecursive(dir);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Application.error(e.Message);
             }
@@ -45,10 +45,10 @@ namespace RabbetGameEngine
         private static void tryAddNewSound(string soundDir)
         {
             string soundName = Path.GetFileName(soundDir).Replace(fileExtension, "");//removes directory
-            if(soundName.Contains(".random"))
+            if (soundName.Contains(".random"))
             {
                 string splitName = soundName.Split(".random")[0];
-                if(allSounds.TryGetValue(splitName, out List<Sound> value))
+                if (allSounds.TryGetValue(splitName, out List<Sound> value))
                 {
                     value.Add(new Sound(soundDir));
                 }
@@ -66,16 +66,16 @@ namespace RabbetGameEngine
         public static bool tryGetSound(string name, out Sound snd)
         {
             List<Sound> soundCollection = null;
-            if(!allSounds.TryGetValue(name, out soundCollection))
+            if (!allSounds.TryGetValue(name, out soundCollection))
             {
                 Application.warn("Could not find sound for requested sound name: " + name + " , Assigning debug sound.");
                 snd = allSounds.ElementAt(0).Value[0];//assign debug sound
                 return false;
             }
 
-            if(soundCollection.Count > 1)
+            if (soundCollection.Count > 1)
             {
-                snd =  soundCollection[GameInstance.rand.Next(0, soundCollection.Count)];
+                snd = soundCollection[GameInstance.rand.Next(0, soundCollection.Count)];
             }
             else
             {
@@ -102,7 +102,7 @@ namespace RabbetGameEngine
             Application.infoPrint("SoundUtil deleting " + allSounds.Count + " loaded sound files...");
             foreach (List<Sound> sc in allSounds.Values)
             {
-                foreach(Sound s in sc)
+                foreach (Sound s in sc)
                 {
                     s.delete();
                 }

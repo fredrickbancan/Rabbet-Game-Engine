@@ -1,5 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using RabbetGameEngine.Rendering;
+
 
 namespace RabbetGameEngine
 {
@@ -13,7 +13,7 @@ namespace RabbetGameEngine
         {
             ShaderUtil.tryGetShader(ShaderUtil.text2DName, out batchShader);
             batchShader.use();
-            batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix); 
+            batchShader.setUniformMat4F("orthoMatrix", Renderer.orthoMatrix);
             batchShader.setUniformIArray("uTextures", getUniformTextureSamplerArrayInts(RenderConstants.MAX_BATCH_TEXTURES));
             maxBufferSizeBytes /= 2;
             vertices = new Vertex[RenderConstants.INIT_BATCH_ARRAY_SIZE];

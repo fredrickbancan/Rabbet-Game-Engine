@@ -13,7 +13,7 @@ namespace RabbetGameEngine
         public string guiName = "";
         public GUI(string guiName, string textFont, uint maxCharCount = 1024)
         {
-            if(!TextUtil.tryGetFont(textFont, out guiFont))
+            if (!TextUtil.tryGetFont(textFont, out guiFont))
             {
                 Application.error("GUIScreen " + guiName + " could not load its provided font: " + textFont + ", it will have a null font!");
             }
@@ -22,7 +22,7 @@ namespace RabbetGameEngine
         }
         public void requestGUIRender()
         {
-            foreach(GUIComponent comp in components.Values)
+            foreach (GUIComponent comp in components.Values)
             {
                 comp.requestRender();
             }
@@ -32,7 +32,7 @@ namespace RabbetGameEngine
         /// </summary>
         public void addGuiComponent(string name, GUIComponent component)
         {
-            if(components.TryGetValue(name, out GUIComponent comp))
+            if (components.TryGetValue(name, out GUIComponent comp))
             {
                 components.Remove(name);
             }
@@ -68,7 +68,7 @@ namespace RabbetGameEngine
         {
             foreach (GUIComponent component in components.Values)
             {
-                if(!component.paused)
+                if (!component.paused)
                     component.onUpdate();
             }
         }
@@ -105,10 +105,10 @@ namespace RabbetGameEngine
 
         public void pauseAllExcept(GUIComponent g)
         {
-            foreach(GUIComponent c in components.Values)
+            foreach (GUIComponent c in components.Values)
             {
-                if(c != g)
-                c.pause();
+                if (c != g)
+                    c.pause();
             }
         }
 

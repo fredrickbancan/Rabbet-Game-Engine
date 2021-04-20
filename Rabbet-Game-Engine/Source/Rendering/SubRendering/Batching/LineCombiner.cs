@@ -1,6 +1,4 @@
-﻿using RabbetGameEngine;
-
-namespace RabbetGameEngine
+﻿namespace RabbetGameEngine
 {
     /*Class for Taking in  an even amount of vertices and batches them with indices which allow line rendering.*/
     public static class LineCombiner
@@ -67,7 +65,7 @@ namespace RabbetGameEngine
         public static uint[] getIndicesForLineCount(int count)
         {
             uint[] result = new uint[count * 2];
-            for(uint i = 0; i < result.Length; i++)
+            for (uint i = 0; i < result.Length; i++)
             {
                 result[i] = i;
             }

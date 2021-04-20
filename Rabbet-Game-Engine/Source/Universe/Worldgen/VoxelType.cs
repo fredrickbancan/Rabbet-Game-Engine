@@ -17,6 +17,10 @@
         public static readonly VoxelType dirt = new VoxelType(true);
         public static readonly VoxelType grass = new VoxelType(true);
         public static readonly VoxelType wood = new VoxelType(true);
+        public static readonly VoxelType step = new VoxelType(true);
+        public static readonly VoxelType step2 = new VoxelType(true);
+        public static readonly VoxelType brick = new VoxelType(true);
+        public static readonly VoxelType tnt = new VoxelType(true);
 
         public static VoxelType getVoxelById(byte id)
         {

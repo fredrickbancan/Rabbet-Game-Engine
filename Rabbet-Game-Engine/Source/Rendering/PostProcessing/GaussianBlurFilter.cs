@@ -1,5 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
-using RabbetGameEngine.Rendering;
+
 
 namespace RabbetGameEngine
 {
@@ -30,9 +30,9 @@ namespace RabbetGameEngine
         public void init(int initialResWidth, int initialResHeight)
         {
             resWidth = (int)((float)initialResWidth * resolutionFactor);
-            resHeight= (int)((float)initialResHeight * resolutionFactor);
+            resHeight = (int)((float)initialResHeight * resolutionFactor);
 
-            if(numLayers >= RenderConstants.MAX_BATCH_TEXTURES)
+            if (numLayers >= RenderConstants.MAX_BATCH_TEXTURES)
             {
                 Application.error("Gaussian blur filter can not process " + numLayers + " layers because it exceeds the maximum textures!");
             }
@@ -62,7 +62,7 @@ namespace RabbetGameEngine
 
         private void bindAllLayerTexturesToSlots()
         {
-            for(int i = 0; i < numLayers; i++)
+            for (int i = 0; i < numLayers; i++)
             {
                 GL.ActiveTexture(TextureUnit.Texture0 + i);
                 layerFbos[i].bindOutputTexture();
@@ -126,7 +126,7 @@ namespace RabbetGameEngine
             FrameBufferQuad.draw();
             return resultFBO.getOutputTexture();
         }
-        
+
         public int processImage(int textureID, int width, int height)
         {
             FrameBufferQuad.bindVao();
@@ -152,7 +152,7 @@ namespace RabbetGameEngine
 
         public void onResize(int newResWidth, int newResHeight)
         {
-           
+
         }
     }
 }

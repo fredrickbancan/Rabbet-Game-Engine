@@ -36,7 +36,7 @@ namespace RabbetGameEngine
             {
                 reader = new StreamReader(ResourceUtil.getFontFileDir(fontName + ".fnt"));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Application.error("Font could not open the provided directory file!\nException message: " + e.Message + "\nDirectory: " + debugDir);
                 successfull = false;
@@ -49,7 +49,7 @@ namespace RabbetGameEngine
                 loadCharacterData();
             }
             reader.Close();
-            if(!TextureUtil.tryGetTexture(fontName, out fontTexture))
+            if (!TextureUtil.tryGetTexture(fontName, out fontTexture))
             {
                 Application.error("Could not find texture for font named " + fontName);
             }
@@ -66,7 +66,7 @@ namespace RabbetGameEngine
             size = getValueFromLineData("size");
             dpiCorrection = 100.0F / (float)size;
         }
-        
+
         private void loadLineAndImageSize()
         {
             readNextLine();
@@ -80,10 +80,10 @@ namespace RabbetGameEngine
             readNextLine();
             readNextLine();
 
-            while(readNextLine())
+            while (readNextLine())
             {
                 Character character = loadCharacter();
-                if(character != null)
+                if (character != null)
                 {
                     finalFontData.Add(character.getId(), character);
                 }
@@ -93,7 +93,7 @@ namespace RabbetGameEngine
         private Character loadCharacter()
         {
             byte id = (byte)getValueFromLineData("id");
-            if(id == spaceAscii)
+            if (id == spaceAscii)
             {
                 spaceWidth = getValueFromLineData("xadvance") + paddingLeft + paddingRight;
                 spaceWidth *= dpiCorrection;
@@ -113,7 +113,7 @@ namespace RabbetGameEngine
             v = 1 - v;
             vMax = 1 - vMax;
             float uvEpsilon = 0.0005F;
-            return new Character(id, u + uvEpsilon, v , uMax - uvEpsilon, vMax , pixelsWidth * dpiCorrection, pixelsHeight * dpiCorrection, xOffsetPixels * dpiCorrection, yOffsetPixels * dpiCorrection, xAdvancePixels * dpiCorrection);
+            return new Character(id, u + uvEpsilon, v, uMax - uvEpsilon, vMax, pixelsWidth * dpiCorrection, pixelsHeight * dpiCorrection, xOffsetPixels * dpiCorrection, yOffsetPixels * dpiCorrection, xAdvancePixels * dpiCorrection);
         }
 
         /*resets line data and reads the next line of file, adds any relevant info to the lineData dictionary for processing.*/
@@ -126,22 +126,22 @@ namespace RabbetGameEngine
             {
                 line = reader.ReadLine();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Application.error("FontFile error reading line in readNextLine()!\nException message: " + e.Message);
                 successfull = false;
             }
 
-            if(line == null || line.Contains("kerning"))
+            if (line == null || line.Contains("kerning"))
             {
                 return false;
             }
 
             string[] pairs;
-            foreach(string pair in line.Split(splitter))
+            foreach (string pair in line.Split(splitter))
             {
                 pairs = pair.Split('=');
-                if(pairs.Length == 2)
+                if (pairs.Length == 2)
                 {
                     lineData.Add(pairs[0], pairs[1]);
                 }
@@ -152,7 +152,7 @@ namespace RabbetGameEngine
         private int getValueFromLineData(string key)
         {
             string stringResult;
-            if(!lineData.TryGetValue(key, out stringResult))
+            if (!lineData.TryGetValue(key, out stringResult))
             {
                 Application.error("FontFile.getValueFromLineData() could not find value for key: " + key);
                 successfull = false;
@@ -160,7 +160,7 @@ namespace RabbetGameEngine
             }
 
             int result;
-            if(!int.TryParse(stringResult, out result))
+            if (!int.TryParse(stringResult, out result))
             {
                 Application.error("FontFile.getValueFromLineData() could not parse value to byte from string: " + stringResult);
                 successfull = false;
@@ -174,7 +174,7 @@ namespace RabbetGameEngine
             string[] stringBytes;
 
             string resultstring;
-            if(!lineData.TryGetValue(key, out resultstring))
+            if (!lineData.TryGetValue(key, out resultstring))
             {
                 Application.error("FontFile.getValuesFromLineData() could not find value for key: " + key);
                 successfull = false;
@@ -184,10 +184,10 @@ namespace RabbetGameEngine
             stringBytes = resultstring.Split(numberSeperator);
 
             byte[] bytes = new byte[stringBytes.Length];
-            for(int i = 0; i < bytes.Length; i++)
+            for (int i = 0; i < bytes.Length; i++)
             {
                 byte result;
-                if(!Byte.TryParse(stringBytes[i], out result))
+                if (!Byte.TryParse(stringBytes[i], out result))
                 {
                     Application.error("FontFile.getValueFromLineData() could not parse value to byte from string: " + stringBytes[i]);
                     successfull = false;
@@ -226,7 +226,7 @@ namespace RabbetGameEngine
         public Character getCharacter(byte asciiId)
         {
             Character character;
-            if(!finalFontData.TryGetValue(asciiId, out character))
+            if (!finalFontData.TryGetValue(asciiId, out character))
             {
                 Application.error("FontFile.getCharacter() could not find character in Dictionary!\nascii ID: " + asciiId);
             }

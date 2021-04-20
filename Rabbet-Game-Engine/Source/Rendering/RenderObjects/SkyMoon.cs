@@ -35,12 +35,12 @@ namespace RabbetGameEngine
             float vMax = vMin + texFract;
             sprite.uvMinMax = new Vector4(uMin, vMin, uMax, vMax);
         }
-        
+
 
         public void onTick(float timeStep)
         {
             cycleTicks++;
-            if(cycleTicks >= maxCycleTicks)
+            if (cycleTicks >= maxCycleTicks)
             {
                 cycleTicks = 0;
             }

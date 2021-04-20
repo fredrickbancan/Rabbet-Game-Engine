@@ -36,13 +36,13 @@ namespace RabbetGameEngine
         }
         public Model setColor(Vector4 color)
         {
-            for(int i = 0; i < vertices.Length; i++)
+            for (int i = 0; i < vertices.Length; i++)
             {
                 vertices[i].color = color;
             }
             return this;
         }
-        
+
         /// <summary>
         /// transforms the vertices of this model by the provided model matrix.
         /// This must be used for models which will be drawn without sending the model matrix to the shader.
@@ -52,7 +52,7 @@ namespace RabbetGameEngine
         /// <returns>this (builder method)</returns>
         public Model transformVertices(Matrix4 modelMatrix)
         {
-            for(int i = 0; i < vertices.Length; ++i)
+            for (int i = 0; i < vertices.Length; ++i)
             {
                 vertices[i].pos = Vector3.TransformPerspective(vertices[i].pos, modelMatrix);
             }
@@ -63,7 +63,7 @@ namespace RabbetGameEngine
           and batch rendering it in multiple different locations with different transformations.*/
         public Model transformVertices(Vector3 scale, Vector3 rotate, Vector3 translate)
         {
-            for(int i = 0; i < vertices.Length; i ++)
+            for (int i = 0; i < vertices.Length; i++)
             {
                 MathUtil.scaleXYZFloats(scale, vertices[i].pos.X, vertices[i].pos.Y, vertices[i].pos.Z, out vertices[i].pos.X, out vertices[i].pos.Y, out vertices[i].pos.Z);
                 MathUtil.rotateXYZFloats(rotate, vertices[i].pos.X, vertices[i].pos.Y, vertices[i].pos.Z, out vertices[i].pos.X, out vertices[i].pos.Y, out vertices[i].pos.Z);
@@ -73,7 +73,7 @@ namespace RabbetGameEngine
         }
         public Model scaleVertices(Vector3 scale)
         {
-            for (int i = 0; i < vertices.Length; i ++)
+            for (int i = 0; i < vertices.Length; i++)
             {
                 MathUtil.scaleXYZFloats(scale, vertices[i].pos.X, vertices[i].pos.Y, vertices[i].pos.Z, out vertices[i].pos.X, out vertices[i].pos.Y, out vertices[i].pos.Z);
             }
@@ -119,7 +119,7 @@ namespace RabbetGameEngine
         /*generates a new model using copies of this models arrays.*/
         public Model copyModel()
         {
-            if(indices != null)
+            if (indices != null)
             {
                 Vertex[] verticesCopya = new Vertex[vertices.Length];
                 uint[] indicesCopy = new uint[indices.Length];

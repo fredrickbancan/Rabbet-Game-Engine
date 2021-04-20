@@ -1,6 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
-using RabbetGameEngine;
 
 namespace RabbetGameEngine
 {
@@ -17,7 +16,7 @@ namespace RabbetGameEngine
             TextureUtil.tryGetTexture(texture, out tex);
             type = drawType;
 
-            switch(type)
+            switch (type)
             {
                 case RenderType.triangles:
                     {
@@ -45,7 +44,7 @@ namespace RabbetGameEngine
                     break;
             }
 
-            if(data.indices != null)
+            if (data.indices != null)
             {
                 renderLength = data.indices.Length;
             }
@@ -88,7 +87,7 @@ namespace RabbetGameEngine
 
         public static StaticRenderObject createSROLines(Model data)
         {
-            return new StaticRenderObject("none",  data, RenderType.lines);
+            return new StaticRenderObject("none", data, RenderType.lines);
         }
 
         public static StaticRenderObject createSROPoints(PointParticle[] data, bool transparency)
@@ -110,7 +109,7 @@ namespace RabbetGameEngine
             shader.setUniformVec3F("fogColor", fogColor);
             shader.setUniform1F("percentageToNextTick", TicksAndFrames.getPercentageToNextTick());
 
-            switch(type)
+            switch (type)
             {
                 case RenderType.none:
                     return;

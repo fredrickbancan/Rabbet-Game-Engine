@@ -23,7 +23,7 @@ namespace RabbetGameEngine
 
     public static class GUIManager
     {
-        public static int guiLineWidth = (GameInstance.realScreenHeight / 1000) + 2;
+        public static int guiLineWidth = (GameInstance.realScreenHeight / 1000) + 1;
 
         public static Vector2 guiMapRes = new Vector2(1920, 1080);
 
@@ -59,7 +59,7 @@ namespace RabbetGameEngine
         public static void doUpdate()
         {
             Profiler.startTickSection("guiUpdate");
-            if(currentDisplayedGUI != null)
+            if (currentDisplayedGUI != null)
             {
                 currentDisplayedGUI.onUpdate();
                 GameInstance.get.pauseGame();
@@ -77,9 +77,9 @@ namespace RabbetGameEngine
 
         public static void onWindowResize()
         {
-            if(currentDisplayedGUI != null)
+            if (currentDisplayedGUI != null)
             {
-                foreach(GUI g in guiStack)
+                foreach (GUI g in guiStack)
                     g.onWindowResize();
             }
             foreach (GUI g in persistentGUIs.Values)
@@ -90,7 +90,7 @@ namespace RabbetGameEngine
 
         public static void requestRender()
         {
-            foreach(GUI g in persistentGUIs.Values)
+            foreach (GUI g in persistentGUIs.Values)
             {
                 g.requestGUIRender();
             }
@@ -109,7 +109,7 @@ namespace RabbetGameEngine
 
         public static void closeCurrentGUI()
         {
-            if(guiStack.TryPop(out _))
+            if (guiStack.TryPop(out _))
             {
                 SoundManager.playSound("buttonclick");
                 currentDisplayedGUI = guiStack.Count > 0 ? guiStack.Peek() : null;
@@ -123,7 +123,7 @@ namespace RabbetGameEngine
 
         public static void removePersistentGUI(string guiName)
         {
-            if(!persistentGUIs.Remove(guiName))
+            if (!persistentGUIs.Remove(guiName))
             {
                 Application.warn("GUIManager could not remove the requested gui named " + guiName);
             }

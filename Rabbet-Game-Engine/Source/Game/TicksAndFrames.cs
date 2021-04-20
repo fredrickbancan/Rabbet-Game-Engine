@@ -39,7 +39,7 @@ namespace RabbetGameEngine
             deltaFrameTime = (currentFrameTime - lastFrameTime) / 1000000D;
             timer += deltaFrameTime;
 
-            if(timer >= 1000D)
+            if (timer >= 1000D)
             {
                 framesPerSec = frames;
                 frames = 0;
@@ -50,7 +50,7 @@ namespace RabbetGameEngine
             frameTimes[frameTimeIndex++] = deltaFrameTime;
             frameTimeIndex = frameTimeIndex % 200;
         }
-        
+
         public static double[] getFrameTimes()
         {
             return frameTimes;
@@ -64,7 +64,7 @@ namespace RabbetGameEngine
         public static double getAverageFrameTime()
         {
             double total = 0D;
-            for(int i = 0; i < 200; i++)
+            for (int i = 0; i < 200; i++)
             {
                 total += frameTimes[i];
             }
@@ -78,24 +78,24 @@ namespace RabbetGameEngine
         /// <param name="onTickFunc">Reference to the onTick() function to be called</param>
         public static void doOnTickUntillRealtimeSync(System.Action onTickFunc)
         {
-            while((applicationTime + msPerTick) < getRealTimeMills())
+            while ((applicationTime + msPerTick) < getRealTimeMills())
             {
                 onTickFunc();
-               
+
                 applicationTime += (long)msPerTick;
-                if(getRealTimeMills() - applicationTime >= millInSec2FPS)
+                if (getRealTimeMills() - applicationTime >= millInSec2FPS)
                 {
                     applicationTime = getRealTimeMills() - (long)msPerTick;
                     break;
                 }
             }
-            if(!GameInstance.paused)
-            percentToNextTick = (double)(getRealTimeMills() - applicationTime) / msPerTick;
+            if (!GameInstance.paused)
+                percentToNextTick = (double)(getRealTimeMills() - applicationTime) / msPerTick;
         }
 
         public static float getNumOfTicksForSeconds(float seconds)
         {
-            return (float) (seconds * ticksPerSecond);
+            return (float)(seconds * ticksPerSecond);
         }
 
         public static float getPercentageToNextTick()

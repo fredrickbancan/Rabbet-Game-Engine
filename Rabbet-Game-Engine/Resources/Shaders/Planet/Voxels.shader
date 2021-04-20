@@ -1,6 +1,7 @@
 ﻿#shader vertex
 #version 330 core 
 layout(location = 0) in uint data;
+layout(location = 1) in uint id;
 const float voxelSize = 0.25F;
 const float halfVoxelSize = 0.125F;
 const float maxVoxelLuminance = 1.25F;
@@ -8,7 +9,6 @@ const float lightLevelMultiplier = 0.01953125F;// this value * 64 = maxVoxelLumi
 const float voxelUvScale = 0.0625F;
 const uint chunkSize = 64U;
 const uint chunkSizeMinusOne = 63U;
-uniform samplerBuffer voxelBuffer;
 out float lightLevel;
 out vec3 worldPos;
 out int orientation;
@@ -36,7 +36,7 @@ void main()
     lightLevel =  float(unpackLightLevel() + 1U) * lightLevelMultiplier;
     orientation = int(unpackOrientation()) * 4;//pre-multplying by 4 for indexing offsets
 
-    int voxID =  int(texelFetch(voxelBuffer, int(index)).r * 255.0);
+    int voxID =  int(id & 255U);
     faceUV = vec2(voxID & 15, voxID >> 4) * voxelUvScale;
     faceUV.y = 1.0F - faceUV.y;//flip y
 }

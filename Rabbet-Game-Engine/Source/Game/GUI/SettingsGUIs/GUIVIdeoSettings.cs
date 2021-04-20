@@ -37,7 +37,7 @@
             else applyButton.enable();
             applyButtonNeedsUpdate = applyButtonNeedsUpdate != GameSettings.videoSettingsChanged;
 
-            if(applyButtonNeedsUpdate)
+            if (applyButtonNeedsUpdate)
             {
                 applyButton.updateRenderData();
             }

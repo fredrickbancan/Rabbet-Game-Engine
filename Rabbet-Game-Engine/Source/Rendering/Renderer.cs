@@ -14,7 +14,7 @@ namespace RabbetGameEngine
         guiCutout,
         MARKER_TRANSPARENT_START,
         guiLines,
-        guiText, 
+        guiText,
         guiTransparent,
         MARKER_GUI_END,
         iSpheresTransparent,
@@ -45,7 +45,7 @@ namespace RabbetGameEngine
         private static int privateTotalFBODrawCallCount;
         private static Matrix4 projectionMatrix;
         private static Matrix4 orthographicMatrix;
-        private static bool usePostProcessing = true;
+        private static bool usePostProcessing = false;
         private static int lineWidthPixels = 0;
         private static bool initialized = false;
         private static Camera renderCam = null;
@@ -54,15 +54,23 @@ namespace RabbetGameEngine
         /// A list of all requested static renders
         /// </summary>
         private static Dictionary<string, StaticRenderObject> staticDraws;
-        
+
         /*Called before any rendering is done*/
         public static unsafe void init()
         {
+            Application.checkGLErrors();
             ShaderUtil.loadAllFoundShaderFiles();
+            Application.checkGLErrors();
             TextureUtil.loadAllFoundTextureFiles();
+            Application.checkGLErrors();
             MeshUtil.loadAllFoundModelFiles();
+            Application.checkGLErrors();
             BatchUtil.init();
-            VoxelBatcher.init();
+            Application.checkGLErrors();
+            ChunkRenderer.init();
+            Application.checkGLErrors();
+            TerrainRenderer.init();
+            Application.checkGLErrors();
             Application.infoPrint("OpenGL Version: " + GL.GetString(StringName.Version));
             Application.infoPrint("OpenGL Vendor: " + GL.GetString(StringName.Vendor));
             Application.infoPrint("Shading Language Version: " + GL.GetString(StringName.ShadingLanguageVersion));
@@ -72,7 +80,7 @@ namespace RabbetGameEngine
             GL.Viewport(GameInstance.get.getGameWindowSize());
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.CullFace);
-            GL.Enable(EnableCap.PointSprite);
+            //GL.Enable(EnableCap.PointSprite); //causes invalid enum error
             GL.Enable(EnableCap.ProgramPointSize);
             GL.Enable(EnableCap.VertexProgramPointSize);
             GL.Enable(EnableCap.Blend);
@@ -81,7 +89,7 @@ namespace RabbetGameEngine
             GL.LineWidth(lineWidthPixels);
             staticDraws = new Dictionary<string, StaticRenderObject>();
             SkyboxRenderer.init();
-
+            Application.checkGLErrors();
             MonitorHandle m = GameInstance.get.CurrentMonitor;
             VideoMode mode = *GLFW.GetVideoMode(m.ToUnsafePtr<Monitor>());
             GameInstance.screenWidth = mode.Width;
@@ -92,8 +100,10 @@ namespace RabbetGameEngine
             GameInstance.windowWidth = GameInstance.get.ClientRectangle.Size.X;
             GameInstance.windowHeight = GameInstance.get.ClientRectangle.Size.Y;
             GameInstance.get.Context.MakeCurrent();
-            if(usePostProcessing)PostProcessing.init();
-            onResize();
+            Application.checkGLErrors();
+            if (usePostProcessing) PostProcessing.init();
+            Application.checkGLErrors();
+            onResize(); 
             initialized = true;
         }
 
@@ -104,8 +114,9 @@ namespace RabbetGameEngine
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView((float)MathUtil.radians(GameSettings.fov.floatValue), GameInstance.aspectRatio, 0.01F, 1000.0F);
             orthographicMatrix = Matrix4.CreateOrthographic(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight, 0.01F, 100.0F);
             GUIManager.onWindowResize();
-            if(usePostProcessing)PostProcessing.onResize();
-            BatchManager.onWindowResize();
+            if (usePostProcessing) PostProcessing.onResize();
+            BatchManager.onWindowResize(); 
+            Application.checkGLErrors();
         }
 
         public static void setCamera(Camera cam)
@@ -149,17 +160,22 @@ namespace RabbetGameEngine
         public static void doGUIRenderUpdate()
         {
             Profiler.startSection("guiRenderUpdate");
+            Profiler.startSection("guiUpdateUniforms");
             BatchManager.preGUIRenderUpdate(GameInstance.get.currentWorld);
+            Profiler.endStartSection("guiRequestRender");
             GUIManager.requestRender();
+            Profiler.endStartSection("guiUpdateBuffers");
             BatchManager.postGUIRenderUpdate();
+            Profiler.endCurrentSection();
             Profiler.endCurrentSection();
         }
 
         /*Called before all draw calls*/
         private static void preRender()
         {
-            if(usePostProcessing)
-            PostProcessing.beforeRender();
+            if (usePostProcessing)
+                PostProcessing.beforeRender();
+            GL.ClearColor(0.2F, 0.4F, 0.3F, 1.0F);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
             privateTotalDrawCallCount = 0;
             privateTotalFBODrawCallCount = 0;
@@ -167,18 +183,18 @@ namespace RabbetGameEngine
 
         public static void onVideoSettingsChanged()
         {
-            if(usePostProcessing)PostProcessing.onVideoSettingsChanged();
+            if (usePostProcessing) PostProcessing.onVideoSettingsChanged();
             BatchManager.onVideoSettingsChanged();
         }
         public static void renderAll()
         {
             preRender();
             Profiler.startSection("renderWorld");
-            SkyboxRenderer.drawSkybox(viewMatrix);
+        //    SkyboxRenderer.drawSkybox(viewMatrix);
             drawAllStaticRenderObjects();
-            ChunkRenderer.renderAllChunksInWorld(GameInstance.get.currentWorld);
+            TerrainRenderer.renderAllChunksInWorld(GameInstance.get.currentWorld);
             BatchManager.drawAllWorld();
-            if(!usePostProcessing)
+            if (!usePostProcessing)
             {
                 Profiler.startSection("renderGUI");
                 BatchManager.drawAllGUI();
@@ -187,11 +203,11 @@ namespace RabbetGameEngine
             Profiler.endCurrentSection();
             postRender();
         }
-        
+
         /*Called after all draw calls*/
         private static void postRender()
         {
-            if(usePostProcessing)
+            if (usePostProcessing)
             {
                 Profiler.startSection("postProcessing");
                 PostProcessing.doPostProcessing();
@@ -199,7 +215,9 @@ namespace RabbetGameEngine
                 BatchManager.drawAllGUI();
                 Profiler.endCurrentSection();
             }
+            Profiler.startSection("swapBuffers");
             GameInstance.get.SwapBuffers();
+            Profiler.endCurrentSection();
         }
 
         public static void addStaticDrawTriangles(string name, string textureName, Model data)
@@ -243,8 +261,8 @@ namespace RabbetGameEngine
 
         private static void drawAllStaticRenderObjects()
         {
-            for(int i = 0; i < staticDraws.Count; ++i)
-            { 
+            for (int i = 0; i < staticDraws.Count; ++i)
+            {
                 //staticDraws.ElementAt(i).Value.draw(GameInstance.get.thePlayer.getViewMatrix(), GameInstance.get.currentWorld.getFogColor());
                 totalDraws++;
             }
@@ -272,7 +290,8 @@ namespace RabbetGameEngine
                 s.delete();
             }
             BatchManager.deleteAll();
-            VoxelBatcher.onClosing();
+            ChunkRenderer.onClosing();
+            TerrainRenderer.onClosing();
             ShaderUtil.deleteAll();
             TextureUtil.deleteAll();
             SkyboxRenderer.deleteVAO();
@@ -286,8 +305,7 @@ namespace RabbetGameEngine
         public static int totalFBODraws { get { return privateTotalFBODrawCallCount; } set { privateTotalFBODrawCallCount = value; } }
         public static Matrix4 orthoMatrix { get => orthographicMatrix; }
         public static int defaultLineWidthInPixels { get => lineWidthPixels; }
-        public static Vector2 viewPortSize { get => usePostProcessing ? PostProcessing.viewPortSize : new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight);}
+        public static Vector2 viewPortSize { get => usePostProcessing ? PostProcessing.viewPortSize : new Vector2(GameInstance.gameWindowWidth, GameInstance.gameWindowHeight); }
 
     }
 }
- 

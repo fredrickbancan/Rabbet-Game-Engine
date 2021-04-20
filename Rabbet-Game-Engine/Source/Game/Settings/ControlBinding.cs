@@ -54,7 +54,7 @@ namespace RabbetGameEngine
         }
 
 
-        public ControlBinding(EntityAction act,  MouseButton defaultButtonBinding)
+        public ControlBinding(EntityAction act, MouseButton defaultButtonBinding)
         {
             this.act = act;
             mButtonValue = defaultButtonBinding;
@@ -87,5 +87,5 @@ namespace RabbetGameEngine
             return this;
         }
     }
-    
+
 }

@@ -13,8 +13,8 @@ namespace RabbetGameEngine
         {
             this.points = points;
             this.lerp = lerp;
-            if(lerp)
-            this.prevPoints = new PointParticle[points.Length];
+            if (lerp)
+                this.prevPoints = new PointParticle[points.Length];
             preTick();
         }
 
@@ -50,7 +50,7 @@ namespace RabbetGameEngine
             }
             return this;
         }
-        
+
         /// <summary>
         /// stores the current state of all points in this cloud in the previous tick array.
         /// This allows for interpolation.
@@ -59,11 +59,11 @@ namespace RabbetGameEngine
         public void preTick()
         {
             if (!lerp) return;
-            if(hasChangedSinceLastUpdate)
-            for(int i = 0; i < points.Length; i++)
-            {
-                prevPoints[i] = points[i];
-            }
+            if (hasChangedSinceLastUpdate)
+                for (int i = 0; i < points.Length; i++)
+                {
+                    prevPoints[i] = points[i];
+                }
             hasChangedSinceLastUpdate = false;
         }
 
@@ -89,7 +89,7 @@ namespace RabbetGameEngine
         public PointCloudModel transformPoints(Vector3 scale, Vector3 rotate, Vector3 translate)
         {
             hasChangedSinceLastUpdate = true;
-            for (int i = 0; i < points.Length; i ++)
+            for (int i = 0; i < points.Length; i++)
             {
                 MathUtil.scaleXYZFloats(scale, points[i].pos.X, points[i].pos.Y, points[i].pos.Z, out points[i].pos.X, out points[i].pos.Y, out points[i].pos.Z);
                 MathUtil.rotateXYZFloats(rotate, points[i].pos.X, points[i].pos.Y, points[i].pos.Z, out points[i].pos.X, out points[i].pos.Y, out points[i].pos.Z);
@@ -100,7 +100,7 @@ namespace RabbetGameEngine
         public PointCloudModel scalePoints(Vector3 scale)
         {
             hasChangedSinceLastUpdate = true;
-            for (int i = 0; i < points.Length; i ++)
+            for (int i = 0; i < points.Length; i++)
             {
                 MathUtil.scaleXYZFloats(scale, points[i].pos.X, points[i].pos.Y, points[i].pos.Z, out points[i].pos.X, out points[i].pos.Y, out points[i].pos.Z);
             }
@@ -157,18 +157,18 @@ namespace RabbetGameEngine
         {
             PointCloudModel result;
             PointParticle[] resultPoints = new PointParticle[this.points.Length];
-            Array.Copy(points,resultPoints, points.Length);
+            Array.Copy(points, resultPoints, points.Length);
             for (int i = 0; i < resultPoints.Length; ++i)
             {
                 resultPoints[i].pos = Vector3.TransformPerspective(resultPoints[i].pos, modelMatrix);
             }
-            if(!lerp)
+            if (!lerp)
             {
                 result = new PointCloudModel(resultPoints, false);
                 return result;
             }
             PointParticle[] resultPrevPoints = new PointParticle[this.prevPoints.Length];
-            Array.Copy(prevPoints,resultPrevPoints, prevPoints.Length);
+            Array.Copy(prevPoints, resultPrevPoints, prevPoints.Length);
 
             for (int i = 0; i < resultPrevPoints.Length; ++i)
             {
