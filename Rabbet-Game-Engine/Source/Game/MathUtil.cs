@@ -157,11 +157,9 @@ namespace RabbetGameEngine
             return (cornerA.Z + cornerB.Z + cornerC.Z + cornerD.Z) / 4;
         }
 
-
-        /*Returns a vector 3 with the absolute values negated from one, only useful for axis aligned collisions*/
-        public static Vector3 oneMinusAbsolute(Vector3 vec)
+        public static Vector3 abs(Vector3 vec)
         {
-            return new Vector3(1F - System.Math.Abs(vec.X), 1F - System.Math.Abs(vec.Y), 1F - System.Math.Abs(vec.Z));
+            return new Vector3(System.Math.Abs(vec.X), System.Math.Abs(vec.Y), System.Math.Abs(vec.Z));
         }
 
         public static Matrix4 dirVectorToRotation(Vector3 dir)

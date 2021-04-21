@@ -326,7 +326,6 @@ namespace RabbetGameEngine
 
         public static void drawAllWorld()
         {
-
             World w = GameInstance.get.currentWorld;
             foreach (Batch b in batches)
             {
@@ -371,12 +370,14 @@ namespace RabbetGameEngine
             {
                 b.deleteVAO();
             }
+            batches.Clear();
             Application.infoPrint("Done");
             Application.infoPrint("BatchManager deleting " + guiBatchCount + " batches...");
             foreach (Batch b in guiBatches)
             {
                 b.deleteVAO();
             }
+            guiBatches.Clear();
             Application.infoPrint("Done");
         }
 

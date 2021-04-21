@@ -10,7 +10,7 @@ namespace RabbetGameEngine
         GUIDebugFrameTimeChart timeChart;
         public GUIDebugInfo() : base("debugInfo", "consolas")
         {
-            timeChart = new GUIDebugFrameTimeChart(0, 0, ComponentAnchor.BOTTOM_RIGHT);
+            timeChart = new GUIDebugFrameTimeChart(0, 0,  ComponentAnchor.BOTTOM_RIGHT, 1);
             addGuiComponent("frameTimeChart", timeChart);
             profileAveragesText = new GUITextPanel(0, -0.025F, guiFont, ComponentAnchor.TOP_LEFT).setDefaultLineColor(Color.white);
             profileAveragesText.setFontSize(0.15F);
@@ -37,9 +37,7 @@ namespace RabbetGameEngine
                 infoText.addLine("Y: " + pPos.Y.ToString("0.0 m"));
                 infoText.addLine("Z: " + pPos.Z.ToString("0.0 m"));
 
-                infoText.addLine("voxelX: " + (int)(pPos.X / Chunk.VOXEL_PHYSICAL_SIZE));
-                infoText.addLine("voxelY: " + (int)(pPos.Y / Chunk.VOXEL_PHYSICAL_SIZE));
-                infoText.addLine("voxelZ: " + (int)(pPos.Z / Chunk.VOXEL_PHYSICAL_SIZE));
+                infoText.addLine("Chunk Render Updates: " + TerrainRenderer.chunkUpdates);
 
                 infoText.addLine("Batches: " + BatchManager.batchCount);
                 infoText.addLine("GUI Batches: " + BatchManager.guiBatchCount);

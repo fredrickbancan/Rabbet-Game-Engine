@@ -15,7 +15,7 @@ namespace RabbetGameEngine
         protected Vector3 camRightVector;
         protected Vector3 camDirectionVector;
         protected Vector3 camPos;
-
+        protected WorldFrustum frustum;
         public Camera(Vector3 initialPos)
         {
             camPos = initialPos;
@@ -41,11 +41,22 @@ namespace RabbetGameEngine
             camRightVector = -Vector3.Normalize(Vector3.Cross(up, camDirectionVector));
             camUpVector = Vector3.Cross(camDirectionVector, -camRightVector);
             viewMatrix = Matrix4.LookAt(camPos, camPos + camFrontVector, camUpVector);
+            updateCameraWorldFrustum();
         }
 
         public virtual void onTick(float ts)
         {
 
+        }
+
+        public void updateCameraWorldFrustum()
+        {
+            frustum.transformPlanes(Renderer.projMatrix, viewMatrix);
+        }
+
+        public WorldFrustum getCameraWorldFrustum()
+        {
+            return frustum;
         }
 
         public Matrix4 getViewMatrix()

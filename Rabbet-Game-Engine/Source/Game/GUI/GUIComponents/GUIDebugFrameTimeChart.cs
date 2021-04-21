@@ -27,12 +27,12 @@ namespace RabbetGameEngine
             componentTexture = TextureUtil.getTexture("none");
             updateRenderData();
 
-            graphLines = new Model(new Vertex[400], null);
-            for (int i = 0; i < 400; i += 2)
+            graphLines = new Model(new Vertex[800], null);
+            for (int i = 0; i < 800; i += 2)
             {
                 graphLines.vertices[i].pos.X = i / 2 * GUIManager.guiLineWidth;
                 graphLines.vertices[i + 1].pos.X = i / 2 * GUIManager.guiLineWidth;
-                graphLines.vertices[i + 1].pos.Y = graphLines.vertices[i].pos.Y + (int)(100D * GameInstance.rand.NextDouble());
+                graphLines.vertices[i + 1].pos.Y = graphLines.vertices[i].pos.Y;
                 graphLines.vertices[i].color = Color.black.toNormalVec4();
                 graphLines.vertices[i + 1].color = Color.green.toNormalVec4();
             }
@@ -51,8 +51,8 @@ namespace RabbetGameEngine
 
         public override void updateRenderData()
         {
-            setSize(((float)GUIManager.guiLineWidth * 200.0F) / (float)GameInstance.gameWindowWidth, 500.0F / (float)GameInstance.gameWindowHeight, false);
-            backGround.setSize(((float)GUIManager.guiLineWidth * 200.0F + 60.0F) / (float)GameInstance.gameWindowWidth, 200.0F / (float)GameInstance.gameWindowHeight, false);
+            setSize(((float)GUIManager.guiLineWidth * 400.0F) / (float)GameInstance.gameWindowWidth, 500.0F / (float)GameInstance.gameWindowHeight, false);
+            backGround.setSize(((float)GUIManager.guiLineWidth * 400.0F + 60.0F) / (float)GameInstance.gameWindowWidth, 200.0F / (float)GameInstance.gameWindowHeight, false);
             backGround.updateRenderData();
             base.updateRenderData();
             measureNum1 = TextModelBuilder2D.convertStringToModel("5ms", font, Color.grey.toNormalVec4(), new Vector3(screenPixelPos.X - screenPixelSize.X * 0.5F - 5.0F, screenPixelPos.Y - 200.0F, -0.2F), 0.15F, ComponentAnchor.CENTER_RIGHT);
@@ -64,7 +64,7 @@ namespace RabbetGameEngine
 
         public override void onFrame()
         {
-            for (int j = 0; j < 400; j += 2)
+            for (int j = 0; j < 800; j += 2)
             {
                 graphLines.vertices[j + 1].color *= 0.99F;
                 graphLines.vertices[j + 1].color.W = 1;
@@ -72,7 +72,7 @@ namespace RabbetGameEngine
             double[] frameTimes = TicksAndFrames.getFrameTimes();
             int frameIndex = TicksAndFrames.getFrameIndex();
             int i = TicksAndFrames.getFrameIndex() * 2;
-            if (i < 400)
+            if (i < 800)
             {
                 Vector3 columnBasePos = graphLines.vertices[i].pos;
                 graphLines.vertices[i + 1].pos = new Vector3(columnBasePos.X, columnBasePos.Y + (float)(frameTimes[frameIndex] * 10.0D), columnBasePos.Z);

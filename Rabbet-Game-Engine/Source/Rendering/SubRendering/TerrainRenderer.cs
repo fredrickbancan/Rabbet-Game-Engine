@@ -1,6 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL;
 using OpenTK.Mathematics;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RabbetGameEngine
 {
@@ -9,13 +10,14 @@ namespace RabbetGameEngine
     //TODO: Fustrum cull chunks each frame
     public static class TerrainRenderer
     {
+        public static readonly long chunkUpdateTimeLimitNanos = 1000000L;
         private static Shader voxelShader = null;
         private static Texture terrainTex = null;
         private static Terrain theTerrain = null;
         private static List<ChunkRenderer> renderersNeedingUpdates = null;
         private static List<ChunkRenderer> chunkrenderers = null;
-        private static Dictionary<Vector3i, Chunk> chunksReference = null;
         private static int chunkDrawCalls = 0;
+        private static int tickChunkUpdates = 0;
 
         public static void init()
         {
@@ -28,22 +30,85 @@ namespace RabbetGameEngine
         public static void setTerrainToRender(Terrain t)
         {
             theTerrain = t;
-            chunksReference = t.chunks;
         }
 
-        public static void renderAllChunksInWorld(World w)
+        public static void addChunkToBeRendered(Chunk c)
         {
-         /*   Profiler.startSection("renderChunks");
+            chunkrenderers.Add(new ChunkRenderer(c));
+        }
+
+        public static void doRenderUpdate(Camera viewer)
+        {
+            Profiler.startTickSection("chunkUpdates");
+            updateAndSortChunkRenderers(viewer);
+            Profiler.endCurrentTickSection();
+        }
+
+        private static void updateAndSortChunkRenderers(Camera viewer)
+        {
+            Profiler.startTickSection("checkAndSortChunks");
+            //collect or remove chunk renderers that need updates
+            for(int i = 0; i < chunkrenderers.Count; i++)
+            {
+                ChunkRenderer cr = chunkrenderers.ElementAt(i);
+                if(cr.isChunkMarkedForRemoval())
+                {
+                    cr.delete();
+                    chunkrenderers.Remove(cr);
+                    renderersNeedingUpdates.Remove(cr);
+                    i--;
+                    continue;
+                }
+
+                if (cr.isChunkMarkedForRenderUpdate() && !renderersNeedingUpdates.Contains(cr)) renderersNeedingUpdates.Add(cr);
+            }
+
+            Profiler.endStartTickSection("chunkMeshing");
+            tickChunkUpdates = 0;
+            long startTime = 0;
+            long nanosDelta = 0;
+            for(int i = 0; i < renderersNeedingUpdates.Count && nanosDelta < chunkUpdateTimeLimitNanos; i++)
+            {
+                startTime = TicksAndFrames.nanoTime();
+                ChunkRenderer cm = renderersNeedingUpdates.ElementAt(i);
+
+                Profiler.startTickSection("chunkFrustumCheck");
+                if (WorldFrustum.isBoxNotWithinFrustum(viewer.getCameraWorldFrustum(), cm.boundingBox))
+                {
+                    Profiler.endCurrentTickSection();
+                    continue;
+                }
+                Profiler.endCurrentTickSection();
+
+                cm.updateVoxelMesh(new ChunkCache(theTerrain, cm.pos, 1, false));
+                renderersNeedingUpdates.RemoveAt(i--);
+                tickChunkUpdates++;
+                nanosDelta += TicksAndFrames.nanoTime() - startTime;
+            }
+            Profiler.endCurrentTickSection();
+        }
+
+        public static void renderTerrain(Camera viewer)
+        {
+            Profiler.startSection("renderChunks");
             chunkDrawCalls = 0;
+            GL.PatchParameter(PatchParameterInt.PatchVertices, 4);
             voxelShader.use();
             terrainTex.bind();
-            GL.PatchParameter(PatchParameterInt.PatchVertices, 4);
-            Dictionary<Vector3i, Chunk> chunks = w.terrain.chunks;
-            foreach (KeyValuePair<Vector3i, Chunk> kvp in chunks)
+            foreach( ChunkRenderer cr in chunkrenderers)
             {
-                renderChunk(kvp.Key, kvp.Value);
+                Profiler.startSection("chunkFrustumCheck");
+                if (!WorldFrustum.isBoxNotWithinFrustum(viewer.getCameraWorldFrustum(), cr.boundingBox))
+                {
+                    Profiler.endCurrentSection();
+                    renderChunk(cr.pos, cr);
+                }
+                else
+                {
+                    Profiler.endCurrentSection();
+                }
             }
-            Profiler.endCurrentSection();*/
+            Profiler.endCurrentSection();
         }
 
         public static void renderChunk(Vector3i pos, ChunkRenderer c)
@@ -58,9 +123,11 @@ namespace RabbetGameEngine
         {
             foreach(ChunkRenderer cr in chunkrenderers)
             {
-                cr.deleteVAO();
+                cr.delete();
             }
             chunkrenderers.Clear();
+            renderersNeedingUpdates.Clear();
+            theTerrain = null;
         }
 
         public static void onClosing()
@@ -68,6 +135,9 @@ namespace RabbetGameEngine
             unLoad();
             //delete any static render objects
         }
+
+        public static int chunkUpdates
+        { get => tickChunkUpdates; }
 
         public static int chunkDraws
         { get => chunkDrawCalls; set => chunkDrawCalls = value; }

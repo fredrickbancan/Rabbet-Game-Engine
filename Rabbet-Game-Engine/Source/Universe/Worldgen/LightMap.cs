@@ -12,7 +12,7 @@
 
         public LightMap(int size)
         {
-            data = new byte[(int)(System.MathF.Ceiling((float)size - (float)size / 4))];
+            data = new byte[(int)(System.MathF.Ceiling((float)size - (float)size / 4)) + 1];
         }
 
         public void setLightLevelAt(int x, int y, int z, byte l)

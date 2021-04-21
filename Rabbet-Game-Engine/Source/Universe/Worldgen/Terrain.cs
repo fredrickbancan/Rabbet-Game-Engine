@@ -7,7 +7,7 @@ namespace RabbetGameEngine
     public class Terrain
     {
         //radius of chunks to initially generate around origin/spawn
-        public static readonly int spawnChunkRadius = 1;
+        public static readonly int spawnChunkRadius = 8;
 
         private Dictionary<Vector3i, Chunk> chunkMap = null;
         private Random genRand;
@@ -19,50 +19,9 @@ namespace RabbetGameEngine
             TerrainRenderer.setTerrainToRender(this);
         }
 
-        /// <summary>
-        /// returns voxel type at the provided world coordinates. returns null for air or if coordinate is in null chunk.
-        /// </summary>
-        public VoxelType getVoxelAtVoxelCoord(int x, int y, int z)
+        public void onTick(float ts)
         {
-            Chunk c = getChunkAtVoxelCoord(x, y, z);
-            return c == null ? null : VoxelType.getVoxelById(c.getVoxelAt(x & Chunk.CHUNK_SIZE_MINUS_ONE, y & Chunk.CHUNK_SIZE_MINUS_ONE, z & Chunk.CHUNK_SIZE_MINUS_ONE));
-        }
 
-        /// <summary>
-        /// returns voxel ID at the provided world coordinates. returns 0 for air or if coordinate is in null chunk.
-        /// </summary>
-        public byte getVoxelIdAtVoxelCoord(int x, int y, int z)
-        {
-            Chunk c = getChunkAtVoxelCoord(x, y, z);
-            return c == null ? (byte)0 : c.getVoxelAt(x & Chunk.CHUNK_SIZE_MINUS_ONE, y & Chunk.CHUNK_SIZE_MINUS_ONE, z & Chunk.CHUNK_SIZE_MINUS_ONE);
-        }
-
-        public void setVoxelIdAtVoxelCoord(int x, int y, int z, byte id)
-        {
-            Chunk c = getChunkAtVoxelCoord(x, y, z);
-            if (c != null)
-                c.setVoxelAt(x & Chunk.CHUNK_SIZE_MINUS_ONE, y & Chunk.CHUNK_SIZE_MINUS_ONE, z & Chunk.CHUNK_SIZE_MINUS_ONE, id);
-        }
-
-        public byte getLightLevelAtVoxelCoord(int x, int y, int z)
-        {
-            Chunk c = getChunkAtVoxelCoord(x, y, z);
-            return c == null ? (byte)63 : c.getLightLevelAt(x & Chunk.CHUNK_SIZE_MINUS_ONE, y & Chunk.CHUNK_SIZE_MINUS_ONE, z & Chunk.CHUNK_SIZE_MINUS_ONE);
-        }
-
-        public void setLightLevelAtVoxelCoord(int x, int y, int z, byte l)
-        {
-            Chunk c = getChunkAtVoxelCoord(x, y, z);
-            if (c != null) c.setLightLevelAt(x & Chunk.CHUNK_SIZE_MINUS_ONE, y & Chunk.CHUNK_SIZE_MINUS_ONE, z & Chunk.CHUNK_SIZE_MINUS_ONE, l);
-        }
-
-        public Chunk getChunkAtVoxelCoord(int x, int y, int z)
-        {
-            if (chunkMap.TryGetValue(new Vector3i(x >> 6, y >> 6, z >> 6), out Chunk c))
-            {
-                return c;
-            }
-            return null;
         }
 
         private void debugRandom(Chunk c)
@@ -75,18 +34,40 @@ namespace RabbetGameEngine
                             c.setVoxelAt(x, y, z, (byte)genRand.Next(1, VoxelType.numVoxels + 1));
                         c.setLightLevelAt(x, y, z, (byte)genRand.Next(64));
                     }
+            c.markForRenderUpdate();
         }
 
-        public void generateSpawnChunks(Vector3 spawnPos)
+        public void generateSpawnChunks()
         {
             for (int x = -spawnChunkRadius; x < spawnChunkRadius; x++)
                 for (int z = -spawnChunkRadius; z < spawnChunkRadius; z++)
                 {
-                    Vector3i pos = new Vector3i(x, 0, z);
-                    Chunk c = new Chunk(pos, this);
-                    debugRandom(c);
-                    chunkMap.Add(pos, c);
+                    Vector3i coord = new Vector3i(x, 0, z);
+                    loadChunk(coord, new Chunk(coord));
                 }
+        }
+
+        private void loadChunk(Vector3i coord, Chunk c)
+        {
+            debugRandom(c);
+            TerrainRenderer.addChunkToBeRendered(c);
+            chunkMap.Add(coord, c);
+        }
+
+        /// <summary>
+        /// returns true if chunk is removed from chunkmap
+        /// </summary>
+        private bool unLoadChunk(Vector3i coord, Chunk c)
+        {
+            c.markForRemoval();
+            chunkMap.Remove(coord, out Chunk c1);
+            return c1 != null && c1 == c;
+        }
+
+        public Chunk getChunkAtChunkCoords(int x, int y, int z)
+        {
+            chunkMap.TryGetValue(new Vector3i(x, y, z), out Chunk c);
+            return c;
         }
 
         public void unLoad()

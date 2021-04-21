@@ -1,42 +1,45 @@
 ﻿#shader vertex
 #version 330 core 
 layout(location = 0) in uint data;
-layout(location = 1) in uint id;
-const float voxelSize = 0.25F;
-const float halfVoxelSize = 0.125F;
+const float voxelSize = 0.5F;
+const float halfVoxelSize = 0.25F;
 const float maxVoxelLuminance = 1.25F;
-const float lightLevelMultiplier = 0.01953125F;// this value * 64 = maxVoxelLuminance
+const float lightLevelMultiplier = maxVoxelLuminance / 64.0F;// this value * 64 = maxVoxelLuminance
 const float voxelUvScale = 0.0625F;
-const uint chunkSize = 64U;
-const uint chunkSizeMinusOne = 63U;
+const uint chunkSize = 32U;
+const uint chunkSizeMinusOne = 31U;
 out float lightLevel;
 out vec3 worldPos;
 out int orientation;
 out vec2 faceUV;
 
-uint unpackLightLevel()
+uint unpackIndex()
 {
-    return (data & 0x00003F00U) >> 8;
+    return data >> 17U;
 }
 
-uint unpackMetadata()
+uint unpackLightLevel()
 {
-    return (data & 0x000000E0U) >> 5;
+    return (data & 0x0001F8FFU) >> 11U;
 }
 
 uint unpackOrientation()
 {
-    return (data & 0x0000001CU) >> 2;
+    return (data & 0x000007FFU) >> 8;
 }
 
+uint unpackID()
+{
+    return (data & 0x000000FFU);
+}
 void main()
 {
-    uint index = (data & 0xFFFFC000U) >> 14U;
-    worldPos = vec3(index >> 12U, index & chunkSizeMinusOne, (index >> 6U) & chunkSizeMinusOne) * voxelSize;
+    uint index = unpackIndex();
+    worldPos = vec3(index >> 10U, index & chunkSizeMinusOne, (index >> 5U) & chunkSizeMinusOne) * voxelSize;
     lightLevel =  float(unpackLightLevel() + 1U) * lightLevelMultiplier;
     orientation = int(unpackOrientation()) * 4;//pre-multplying by 4 for indexing offsets
 
-    int voxID =  int(id & 255U);
+    int voxID =  int(unpackID());
     faceUV = vec2(voxID & 15, voxID >> 4) * voxelUvScale;
     faceUV.y = 1.0F - faceUV.y;//flip y
 }
@@ -45,8 +48,8 @@ void main()
 #shader tesscontrol
 #version 410
 layout(vertices = 4) out;
-const float voxelSize = 0.25F;
-const float halfVoxelSize = 0.125F;
+const float voxelSize = 0.5F;
+const float halfVoxelSize = 0.25F;
 const float voxelUvScale = 0.0625F;
 
 const vec3[] faceOffsets = vec3[]
