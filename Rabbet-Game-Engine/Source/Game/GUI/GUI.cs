@@ -20,11 +20,12 @@ namespace RabbetGameEngine
             this.guiName = guiName;
             this.maxCharCount = maxCharCount;
         }
-        public void requestGUIRender()
+
+        public void requestGUIRender(bool isFrameUpdate)
         {
             foreach (GUIComponent comp in components.Values)
             {
-                comp.requestRender();
+                if (isFrameUpdate == comp.updateEachFrame) comp.requestRender(isFrameUpdate);
             }
         }
         /// <summary>
@@ -64,21 +65,12 @@ namespace RabbetGameEngine
             }
         }
 
-        public virtual void onUpdate()
+        public virtual void onUpdate(bool isFrameUpdate)
         {
             foreach (GUIComponent component in components.Values)
             {
-                if (!component.paused)
+                if (!component.paused && isFrameUpdate == component.updateEachFrame)
                     component.onUpdate();
-            }
-        }
-
-        public virtual void onFrame()
-        {
-            foreach (GUIComponent component in components.Values)
-            {
-                if (!component.paused)
-                    component.onFrame();
             }
         }
 

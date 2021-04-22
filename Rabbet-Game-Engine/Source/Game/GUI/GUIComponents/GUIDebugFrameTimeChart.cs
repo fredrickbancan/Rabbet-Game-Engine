@@ -18,7 +18,7 @@ namespace RabbetGameEngine
         private Vector4 moderateFrameTimeColor = Color.yellow.toNormalVec4();
         private Vector4 badFrameTimeColor = Color.red.toNormalVec4();
 
-        public GUIDebugFrameTimeChart(float posX, float posY, ComponentAnchor anchor, int renderLayer = 0) : base(posX, posY, renderLayer)
+        public GUIDebugFrameTimeChart(float posX, float posY, ComponentAnchor anchor, int renderLayer = 0) : base(posX, posY, renderLayer, true)
         {
             this.anchor = anchor;
             backGround = new GUITransparentRectangle(posX, posY, ((float)GUIManager.guiLineWidth * 200.0F + 40.0F) / (float)GameInstance.gameWindowWidth, 200.0F / (float)GameInstance.gameWindowHeight, Color.black, anchor, renderLayer, false);
@@ -62,7 +62,7 @@ namespace RabbetGameEngine
         }
 
 
-        public override void onFrame()
+        public override void onUpdate()
         {
             for (int j = 0; j < 800; j += 2)
             {
@@ -80,17 +80,17 @@ namespace RabbetGameEngine
             }
         }
 
-        public override void requestRender()
+        public override void requestRender(bool isFrameUpdate)
         {
             if (!hidden)
             {
-                backGround.requestRender();
-                Renderer.requestRender(RenderType.guiLines, componentTexture, measureLines.copyModel().translateVertices(translationAndScale.ExtractTranslation()), renderLayer);
-                Renderer.requestRender(RenderType.guiText, font.texture, title, renderLayer);
-                Renderer.requestRender(RenderType.guiText, font.texture, measureNum1, renderLayer);
-                Renderer.requestRender(RenderType.guiText, font.texture, measureNum2, renderLayer);
-                Renderer.requestRender(RenderType.guiText, font.texture, measureNum3, renderLayer);
-                Renderer.requestRender(RenderType.guiLines, componentTexture, graphLines.copyModel().translateVertices(translationAndScale.ExtractTranslation() - new Vector3(screenPixelSize.X * 0.5F, screenPixelSize.Y * 0.5F, 0)), renderLayer);
+                backGround.requestRender(isFrameUpdate);
+                Renderer.requestRender(RenderType.guiLines, componentTexture, measureLines.copyModel().translateVertices(translationAndScale.ExtractTranslation()), renderLayer, isFrameUpdate);
+                Renderer.requestRender(RenderType.guiText, font.texture, title, renderLayer, isFrameUpdate);
+                Renderer.requestRender(RenderType.guiText, font.texture, measureNum1, renderLayer, isFrameUpdate);
+                Renderer.requestRender(RenderType.guiText, font.texture, measureNum2, renderLayer, isFrameUpdate);
+                Renderer.requestRender(RenderType.guiText, font.texture, measureNum3, renderLayer, isFrameUpdate);
+                Renderer.requestRender(RenderType.guiLines, componentTexture, graphLines.copyModel().translateVertices(translationAndScale.ExtractTranslation() - new Vector3(screenPixelSize.X * 0.5F, screenPixelSize.Y * 0.5F, 0)), renderLayer, isFrameUpdate);
             }
         }
     }

@@ -47,21 +47,21 @@ namespace RabbetGameEngine
             Profiler.startSection("guiUpdate");
             if (currentDisplayedGUI != null)
             {
-                currentDisplayedGUI.onFrame();
+                currentDisplayedGUI.onUpdate(true);
             }
             foreach (GUI g in persistentGUIs.Values)
             {
-                g.onFrame();
+                g.onUpdate(true);
             }
             Profiler.endCurrentSection();
         }
 
-        public static void doUpdate()
+        public static void onTick()
         {
             Profiler.startTickSection("guiUpdate");
             if (currentDisplayedGUI != null)
             {
-                currentDisplayedGUI.onUpdate();
+                currentDisplayedGUI.onUpdate(false);
                 GameInstance.get.pauseGame();
             }
             else
@@ -70,10 +70,11 @@ namespace RabbetGameEngine
             }
             foreach (GUI g in persistentGUIs.Values)
             {
-                g.onUpdate();
+                g.onUpdate(false);
             }
             Profiler.endCurrentTickSection();
         }
+
 
         public static void onWindowResize()
         {
@@ -88,15 +89,15 @@ namespace RabbetGameEngine
             }
         }
 
-        public static void requestRender()
+        public static void requestRender(bool isFrameUpdate)
         {
             foreach (GUI g in persistentGUIs.Values)
             {
-                g.requestGUIRender();
+                g.requestGUIRender(isFrameUpdate);
             }
             if (currentDisplayedGUI != null)
             {
-                currentDisplayedGUI.requestGUIRender();
+                currentDisplayedGUI.requestGUIRender(isFrameUpdate);
             }
 
         }

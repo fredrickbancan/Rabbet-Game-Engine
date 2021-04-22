@@ -15,7 +15,7 @@ namespace RabbetGameEngine
         private string[] listTitles;
         private GUI parentGUI = null;
         private bool valueChosen = false;
-        public GUIDropDownButton(GUI parentGUI, float posX, float posY, float sizeX, float sizeY, Color color, string title, string[] listTitles, FontFace font, ComponentAnchor anchor = ComponentAnchor.CENTER, int renderLayer = 0, string textureName = "white") : base(posX, posY, sizeX, sizeY, color, title, font, anchor, renderLayer, textureName)
+        public GUIDropDownButton(GUI parentGUI, float posX, float posY, float sizeX, float sizeY, Color color, string title, string[] listTitles, FontFace font, ComponentAnchor anchor = ComponentAnchor.CENTER, int renderLayer = 0, string textureName = "white") : base(posX, posY, sizeX, sizeY, color, title, font, anchor, renderLayer, textureName, true)
         {
             baseTitle = title;
             this.parentGUI = parentGUI;
@@ -88,15 +88,15 @@ namespace RabbetGameEngine
             }
         }
 
-        public override void requestRender()
+        public override void requestRender(bool isFrameUpdate)
         {
-            base.requestRender();
+            base.requestRender(isFrameUpdate);
             if (listEnabled)
             {
-                dropDownBackground.requestRender();
+                dropDownBackground.requestRender(isFrameUpdate);
                 foreach (GUIButton b in dropDownButtons)
                 {
-                    b.requestRender();
+                    b.requestRender(isFrameUpdate);
                 }
             }
         }

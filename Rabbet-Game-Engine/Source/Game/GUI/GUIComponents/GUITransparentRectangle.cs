@@ -10,12 +10,12 @@
             componentTexture = TextureUtil.getTexture(texture);
         }
 
-        public override void requestRender()
+        public override void requestRender(bool isFrameUpdate)
         {
-            base.requestRender();
+            base.requestRender(isFrameUpdate);
             if (!hidden)
             {
-                Renderer.requestRender(RenderType.guiTransparent, componentTexture, componentQuadModel.copyModel().transformVertices(translationAndScale), renderLayer);
+                Renderer.requestRender(RenderType.guiTransparent, componentTexture, componentQuadModel.copyModel().transformVertices(translationAndScale), renderLayer, isFrameUpdate);
             }
         }
     }

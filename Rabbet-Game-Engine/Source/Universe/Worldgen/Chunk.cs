@@ -14,6 +14,14 @@ namespace RabbetGameEngine
         public static readonly float CHUNK_PHYSICAL_SIZE = CHUNK_SIZE * VOXEL_PHYSICAL_SIZE;
         public static readonly int CHUNK_X_SHIFT = 10;
         public static readonly int CHUNK_Z_SHIFT = 5;
+        public static Vector3i worldToChunkPos(Vector3 vec)
+        {
+            return MathUtil.rightShift((Vector3i)(vec / Chunk.VOXEL_PHYSICAL_SIZE), CHUNK_Z_SHIFT);
+        }
+        public static Vector3i worldToVoxelPos(Vector3 vec)
+        {
+            return (Vector3i)(vec / Chunk.VOXEL_PHYSICAL_SIZE);
+        }
         private byte[] voxels;
         private LightMap lightMap;
         private Vector3i coord;

@@ -31,18 +31,21 @@
             GameSettings.videoSettingsChanged = true;
         }
 
-        public override void onUpdate()
+        public override void onUpdate(bool isFrameUpdate)
         {
-            if (!GameSettings.videoSettingsChanged) applyButton.disable();
-            else applyButton.enable();
-            applyButtonNeedsUpdate = applyButtonNeedsUpdate != GameSettings.videoSettingsChanged;
-
-            if (applyButtonNeedsUpdate)
+            if (!isFrameUpdate)
             {
-                applyButton.updateRenderData();
+                if (!GameSettings.videoSettingsChanged) applyButton.disable();
+                else applyButton.enable();
+                applyButtonNeedsUpdate = applyButtonNeedsUpdate != GameSettings.videoSettingsChanged;
+
+                if (applyButtonNeedsUpdate)
+                {
+                    applyButton.updateRenderData();
+                }
+                applyButtonNeedsUpdate = GameSettings.videoSettingsChanged;
             }
-            applyButtonNeedsUpdate = GameSettings.videoSettingsChanged;
-            base.onUpdate();
+            base.onUpdate(isFrameUpdate);
         }
 
         private void onApplyButtonClick(GUIButton g)

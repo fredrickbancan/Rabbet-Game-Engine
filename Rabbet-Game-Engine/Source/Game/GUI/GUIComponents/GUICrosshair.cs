@@ -41,11 +41,11 @@
             setSize(crosshairSize, crosshairSize);
         }
 
-        public override void requestRender()
+        public override void requestRender(bool isFrameUpdate)
         {
             if (!hidden)
             {
-                Renderer.requestRender(RenderType.guiCutout, this.componentTexture, this.componentQuadModel.copyModel().transformVertices(this.translationAndScale));
+                Renderer.requestRender(RenderType.guiCutout, this.componentTexture, this.componentQuadModel.copyModel().transformVertices(this.translationAndScale), renderLayer, isFrameUpdate);
             }
         }
 

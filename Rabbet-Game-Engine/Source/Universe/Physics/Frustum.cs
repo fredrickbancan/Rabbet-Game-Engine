@@ -53,8 +53,7 @@ namespace RabbetGameEngine
         Vector3 farCornerBottomRightWorld;
         Vector3 farCornerBottomLeftWorld;
 
-        //TODO: Fix. Currently does not seem to cull chunks properly.
-        public void transformPlanes(Matrix4 projectionMatrix, Matrix4 viewMatrix)
+        public void transformPlanes(Matrix4 projectionMatrix, Matrix4 viewMatrix, Vector3 camPos)
         {
             Matrix4 clipToWorld = Matrix4.Transpose(Matrix4.Invert(viewMatrix)) * Matrix4.Transpose(Matrix4.Invert(projectionMatrix));
 
@@ -68,15 +67,15 @@ namespace RabbetGameEngine
             Vector4 farCornerBottomRightClipWP = clipToWorld * farCornerBottomRightClip;
             Vector4 farCornerBottomLeftClipWP = clipToWorld * farCornerBottomLeftClip;
 
-            nearCornerTopRightWorld = nearCornerTopRightClipWP.Xyz * 1.0F / nearCornerTopRightClipWP.W;
-            nearCornerTopLeftWorld = nearCornerTopLeftClipWP.Xyz * 1.0F / nearCornerTopLeftClipWP.W;
-            nearCornerBottomRightWorld = nearCornerBottomRightClipWP.Xyz * 1.0F / nearCornerBottomRightClipWP.W;
-            nearCornerBottomLeftWorld = nearCornerBottomLeftClipWP.Xyz * 1.0F / nearCornerBottomLeftClipWP.W;
+            nearCornerTopRightWorld = nearCornerTopRightClipWP.Xyz * 1.0F / nearCornerTopRightClipWP.W + camPos;
+            nearCornerTopLeftWorld = nearCornerTopLeftClipWP.Xyz * 1.0F / nearCornerTopLeftClipWP.W + camPos;
+            nearCornerBottomRightWorld = nearCornerBottomRightClipWP.Xyz * 1.0F / nearCornerBottomRightClipWP.W + camPos;
+            nearCornerBottomLeftWorld = nearCornerBottomLeftClipWP.Xyz * 1.0F / nearCornerBottomLeftClipWP.W + camPos;
 
-            farCornerTopRightWorld = farCornerTopRightClipWP.Xyz * 1.0F / farCornerTopRightClipWP.W;
-            farCornerTopLeftWorld = farCornerTopLeftClipWP.Xyz * 1.0F / farCornerTopLeftClipWP.W;
-            farCornerBottomRightWorld = farCornerBottomRightClipWP.Xyz * 1.0F / farCornerBottomRightClipWP.W;
-            farCornerBottomLeftWorld = farCornerBottomLeftClipWP.Xyz * 1.0F / farCornerBottomLeftClipWP.W;
+            farCornerTopRightWorld = farCornerTopRightClipWP.Xyz * 1.0F / farCornerTopRightClipWP.W + camPos;
+            farCornerTopLeftWorld = farCornerTopLeftClipWP.Xyz * 1.0F / farCornerTopLeftClipWP.W + camPos;
+            farCornerBottomRightWorld = farCornerBottomRightClipWP.Xyz * 1.0F / farCornerBottomRightClipWP.W + camPos;
+            farCornerBottomLeftWorld = farCornerBottomLeftClipWP.Xyz * 1.0F / farCornerBottomLeftClipWP.W + camPos;
 
             Vector3 n, a, b;
 
@@ -127,12 +126,12 @@ namespace RabbetGameEngine
         public static bool isBoxNotWithinFrustum(WorldFrustum f, AABB box)
         {
             return
-               Plane.isBoxBehindPlane(box, f.nearPlane)   ||
+               Plane.isBoxBehindPlane(box, f.farPlane) ||
+               Plane.isBoxBehindPlane(box, f.topPlane) ||
+               Plane.isBoxBehindPlane(box, f.rightPlane) ||
+               Plane.isBoxBehindPlane(box, f.leftPlane) ||
                Plane.isBoxBehindPlane(box, f.bottomPlane) ||
-               Plane.isBoxBehindPlane(box, f.leftPlane)   ||
-               Plane.isBoxBehindPlane(box, f.rightPlane)  ||
-               Plane.isBoxBehindPlane(box, f.topPlane)    ||
-               Plane.isBoxBehindPlane(box, f.farPlane);
+               Plane.isBoxBehindPlane(box, f.nearPlane);
         }
 
     }

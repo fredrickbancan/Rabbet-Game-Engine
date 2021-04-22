@@ -30,7 +30,7 @@ namespace RabbetGameEngine
         /// Min and Max bounds of this button in window coordinates (minX, maxX, minY, maxY)
         /// </summary>
         protected Vector4 pixelBounds;
-        public GUIButton(float posX, float posY, float sizeX, float sizeY, Color color, string title, FontFace font, ComponentAnchor align = ComponentAnchor.CENTER_LEFT, int renderLayer = 0, string textureName = "white") : base(posX, posY, renderLayer)
+        public GUIButton(float posX, float posY, float sizeX, float sizeY, Color color, string title, FontFace font, ComponentAnchor align = ComponentAnchor.CENTER_LEFT, int renderLayer = 0, string textureName = "white", bool updateEachFrame = false) : base(posX, posY, renderLayer, updateEachFrame)
         {
             setHoverColor(Color.black.setAlphaF(0.8F));
             this.title = title;
@@ -198,14 +198,14 @@ namespace RabbetGameEngine
             return this;
         }
 
-        public override void requestRender()
+        public override void requestRender(bool isFrameUpdate)
         {
             if (!hidden)
             {
-                Renderer.requestRender(RenderType.guiTransparent, componentTexture, componentQuadModel.copyModel().setColor(isHovered || disabled ? hoverColor.toNormalVec4() : color.toNormalVec4()).transformVertices(translationAndScale), renderLayer - 1);
+                Renderer.requestRender(RenderType.guiTransparent, componentTexture, componentQuadModel.copyModel().setColor(isHovered || disabled ? hoverColor.toNormalVec4() : color.toNormalVec4()).transformVertices(translationAndScale), renderLayer - 1, isFrameUpdate);
 
                 if (title != null && titleFont != null)
-                    Renderer.requestRender(RenderType.guiText, titleFont.texture, titleTextModel, renderLayer);
+                    Renderer.requestRender(RenderType.guiText, titleFont.texture, titleTextModel, renderLayer, isFrameUpdate);
             }
         }
     }

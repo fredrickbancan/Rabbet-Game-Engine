@@ -5,7 +5,7 @@ namespace RabbetGameEngine
 {
     public class FlyCamera : Camera
     {
-        private float moveSpeed = 5.0F;
+        private float moveSpeed = 30.0F;
         private Vector3 prevTickMovePos;
         private Vector3 movePos;
         private Vector3 moveVec;

@@ -91,8 +91,11 @@ namespace RabbetGameEngine
 
         protected int renderLayer = 0;
 
-        public Batch(RenderType type, int renderLayer = 0)
+        public bool updateEachFrame = false;
+
+        public Batch(RenderType type, int renderLayer = 0, bool updateEachFrame = false)
         {
+            this.updateEachFrame = updateEachFrame;
             this.renderLayer = renderLayer;
             batchType = type;
             batchTextures = new Texture[RenderConstants.MAX_BATCH_TEXTURES];
@@ -357,6 +360,12 @@ namespace RabbetGameEngine
             batchTextures[requestedTextures++] = tex;
             texturesFull = requestedTextures >= RenderConstants.MAX_BATCH_TEXTURES;
             return true;
+        }
+
+        public Batch setUpdateEachFrame(bool flag)
+        {
+            updateEachFrame = flag;
+            return this;
         }
 
         /// <summary>

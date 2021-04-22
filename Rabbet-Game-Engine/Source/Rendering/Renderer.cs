@@ -124,9 +124,9 @@ namespace RabbetGameEngine
             renderCam = cam;
         }
 
-        public static void requestRender(RenderType type, Texture tex, Model mod, int renderLayer = 0)
+        public static void requestRender(RenderType type, Texture tex, Model mod, int renderLayer = 0, bool isFrameUpdate = false)
         {
-            BatchManager.requestRender(type, tex, mod, renderLayer);
+            BatchManager.requestRender(type, tex, mod, renderLayer, isFrameUpdate);
         }
 
         public static void requestRender(PointCloudModel mod, bool transparency, bool lerp)
@@ -158,17 +158,29 @@ namespace RabbetGameEngine
             BatchManager.postWorldRenderUpdate();
             Profiler.endCurrentTickSection();
         }
-        public static void doGUIRenderUpdate()
+        public static void doGUIRenderUpdateFrame()
         {
             Profiler.startSection("guiRenderUpdate");
             Profiler.startSection("guiUpdateUniforms");
-            BatchManager.preGUIRenderUpdate(GameInstance.get.currentWorld);
+            BatchManager.preGUIRenderUpdate(true, GameInstance.get.currentWorld);
             Profiler.endStartSection("guiRequestRender");
-            GUIManager.requestRender();
+            GUIManager.requestRender(true);
             Profiler.endStartSection("guiUpdateBuffers");
-            BatchManager.postGUIRenderUpdate();
+            BatchManager.postGUIRenderUpdate(true);
             Profiler.endCurrentSection();
             Profiler.endCurrentSection();
+        }
+        public static void doGUIRenderUpdateTick()
+        {
+            Profiler.startTickSection("guiRenderUpdate");
+            Profiler.startTickSection("guiUpdateUniforms");
+            BatchManager.preGUIRenderUpdate(false, GameInstance.get.currentWorld);
+            Profiler.endStartTickSection("guiRequestRender");
+            GUIManager.requestRender(false);
+            Profiler.endStartTickSection("guiUpdateBuffers");
+            BatchManager.postGUIRenderUpdate(false);
+            Profiler.endCurrentTickSection();
+            Profiler.endCurrentTickSection();
         }
 
         /*Called before all draw calls*/
@@ -196,13 +208,13 @@ namespace RabbetGameEngine
             TerrainRenderer.renderTerrain(renderCam);
             drawAllStaticRenderObjects();
             BatchManager.drawAllWorld();
+            Profiler.endCurrentSection();
             if (!usePostProcessing)
             {
                 Profiler.startSection("renderGUI");
                 BatchManager.drawAllGUI();
                 Profiler.endCurrentSection();
             }
-            Profiler.endCurrentSection();
             postRender();
         }
 

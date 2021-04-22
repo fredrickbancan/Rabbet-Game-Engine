@@ -24,11 +24,11 @@ namespace RabbetGameEngine
         /// <summary>
         /// Should be called before any rendering requests.
         /// </summary>
-        public static void preGUIRenderUpdate(World theWorld)
+        public static void preGUIRenderUpdate(bool isFrameUpdate, World theWorld)
         {
-            for (int i = 0; i < guiBatches.Count; ++i)
+            foreach(Batch b in guiBatches)
             {
-                guiBatches.ElementAt(i).preRenderUpdate(theWorld);
+                if (isFrameUpdate == b.updateEachFrame) b.preRenderUpdate(theWorld);
             }
         }
 
@@ -53,13 +53,13 @@ namespace RabbetGameEngine
         }
 
 
-        public static void postGUIRenderUpdate()
+        public static void postGUIRenderUpdate(bool isFrameUpdate)
         {
             //  Application.debugPrint("Gui Batches: " + guiBatches.Count);
             for (int i = 0; i < guiBatches.Count; ++i)
             {
                 Batch batchAt = guiBatches.ElementAt(i);
-
+                if (isFrameUpdate != batchAt.updateEachFrame) continue;
                 //if a batch has not been used, then it needs to be removed.
                 if (!batchAt.hasBeenUsedSinceLastUpdate())
                 {
@@ -76,13 +76,14 @@ namespace RabbetGameEngine
         /// Can be called to request that the provided data be added to the appropriate existing batch
         /// or, if said batch does not exist or is full, creates and adds a new batch.
         /// </summary>
-        public static void requestRender(RenderType type, Texture tex, Model theModel, int renderLayer)
+        public static void requestRender(RenderType type, Texture tex, Model theModel, int renderLayer, bool isFrameRenderUpdate = false)
         {
-            List<Batch> bl = isTypeGUI(type) ? guiBatches : batches;
+            bool isGui;
+            List<Batch> bl =(isGui = isTypeGUI(type)) ? guiBatches : batches;
 
             if (bl.Count == 0)//adding first batch
             {
-                Batch b = BatchUtil.getBatchForType(type, renderLayer);
+                Batch b = BatchUtil.getBatchForType(type, renderLayer, isFrameRenderUpdate);
                 b.tryToFitInBatchModel(theModel);
                 bl.Add(b);
                 return;
@@ -91,7 +92,7 @@ namespace RabbetGameEngine
             {
                 Batch batchAt = bl.ElementAt(i);
 
-                if (batchAt.getRenderType() == type && renderLayer == batchAt.getRenderLayer())//if there is a compatible batch, try to fit the model in.
+                if (batchAt.updateEachFrame == isFrameRenderUpdate && batchAt.getRenderType() == type && renderLayer == batchAt.getRenderLayer())//if there is a compatible batch, try to fit the model in.
                 {
                     if (batchAt.tryToFitInBatchModel(theModel, tex))
                     {
@@ -101,7 +102,7 @@ namespace RabbetGameEngine
 
                 if (i == bl.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
-                    Batch b = BatchUtil.getBatchForType(type, renderLayer);
+                    Batch b = BatchUtil.getBatchForType(type, renderLayer, isFrameRenderUpdate);
                     b.tryToFitInBatchModel(theModel, tex);
                     //ensure that all opaque batches come before transparent ones in the list.
                     if (isTypeTransparent(type))
@@ -179,7 +180,7 @@ namespace RabbetGameEngine
 
                 if (i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
-                    Batch b = BatchUtil.getBatchForType(type);
+                    Batch b = BatchUtil.getBatchForType(type, 0, false);
                     b.tryToFitInBatchPoints(pParticleModel);
 
                     //ensure that all opaque batches come before transparent ones in the list.
@@ -217,7 +218,7 @@ namespace RabbetGameEngine
                 if (i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
                     //ensure that all opaque batches come before transparent ones in the list.
-                    Batch b = BatchUtil.getBatchForType(type);
+                    Batch b = BatchUtil.getBatchForType(type, 0, false);
                     b.tryToFitInBatchSinglePoint(pParticle);
 
                     //ensure that all opaque batches come before transparent ones in the list.
@@ -254,7 +255,7 @@ namespace RabbetGameEngine
                 if (i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
                     //ensure that all opaque batches come before transparent ones in the list.
-                    Batch b = BatchUtil.getBatchForType(type);
+                    Batch b = BatchUtil.getBatchForType(type, 0, false);
                     b.tryToFitInBatchLerpPoint(pParticle, prevTickPParticle);
 
                     //ensure that all opaque batches come before transparent ones in the list.
@@ -273,7 +274,7 @@ namespace RabbetGameEngine
         {
             if (batches.Count == 0)//adding first batch
             {
-                Batch b = BatchUtil.getBatchForType(RenderType.spriteCylinder);
+                Batch b = BatchUtil.getBatchForType(RenderType.spriteCylinder, 0, false);
                 b.tryToFitInBatchSprite3D(s);
                 batches.Add(b);
                 return;
@@ -290,7 +291,7 @@ namespace RabbetGameEngine
 
                 if (i == batches.Count - 1)//if we have itterated through all batches and found no candidate, then add new batch.
                 {
-                    Batch b = BatchUtil.getBatchForType(RenderType.spriteCylinder);
+                    Batch b = BatchUtil.getBatchForType(RenderType.spriteCylinder, 0, false);
                     b.tryToFitInBatchSprite3D(s, tex);
                     batches.Insert(0, b);
                     return;
@@ -365,14 +366,14 @@ namespace RabbetGameEngine
         /// </summary>
         public static void deleteAll()
         {
-            Application.infoPrint("BatchManager deleting " + batchCount + " batches...");
+            Application.infoPrint("BatchManager deleting " + batchCount + " world batches...");
             foreach (Batch b in batches)
             {
                 b.deleteVAO();
             }
             batches.Clear();
             Application.infoPrint("Done");
-            Application.infoPrint("BatchManager deleting " + guiBatchCount + " batches...");
+            Application.infoPrint("BatchManager deleting " + guiBatchCount + " gui batches...");
             foreach (Batch b in guiBatches)
             {
                 b.deleteVAO();

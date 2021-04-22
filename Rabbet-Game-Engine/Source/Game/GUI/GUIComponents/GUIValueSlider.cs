@@ -64,7 +64,7 @@ namespace RabbetGameEngine
         private GUITransparentRectangle background;
         private GUI parentGUI;
 
-        public GUIValueSlider(GUI parentGUI, float posX, float posY, float sizeX, float sizeY, string title, FontFace font, bool isInteger = false, ComponentAnchor anchor = ComponentAnchor.CENTER, int renderLayer = 0) : base(posX, posY, renderLayer)
+        public GUIValueSlider(GUI parentGUI, float posX, float posY, float sizeX, float sizeY, string title, FontFace font, bool isInteger = false, ComponentAnchor anchor = ComponentAnchor.CENTER, int renderLayer = 0) : base(posX, posY, renderLayer, true)
         {
             this.parentGUI = parentGUI;
             this.font = font;
@@ -112,9 +112,9 @@ namespace RabbetGameEngine
             sliderKnob.updateRenderData();
         }
 
-        public override void onFrame()
+        public override void onUpdate()
         {
-            base.onFrame();
+            base.onUpdate();
             float actuateEpsilon = 0.0001F;
             float prevSliderPos = sliderPos;
             sliderKnob.onUpdate();
@@ -272,19 +272,19 @@ namespace RabbetGameEngine
             return this;
         }
 
-        public override void requestRender()
+        public override void requestRender(bool isFrameUpdate)
         {
             if (!hidden)
             {
-                background.requestRender();
-                Renderer.requestRender(RenderType.guiText, font.texture, titleTextModel, renderLayer);
-                Renderer.requestRender(RenderType.guiText, font.texture, minValTextModel, renderLayer);
-                Renderer.requestRender(RenderType.guiText, font.texture, maxValTextModel, renderLayer);
-                Renderer.requestRender(RenderType.guiText, font.texture, currentValTextModel, renderLayer);
-                middleLineRect.requestRender();
-                leftEndRect.requestRender();
-                rightEndRect.requestRender();
-                sliderKnob.requestRender();
+                background.requestRender(isFrameUpdate);
+                Renderer.requestRender(RenderType.guiText, font.texture, titleTextModel, renderLayer, isFrameUpdate);
+                Renderer.requestRender(RenderType.guiText, font.texture, minValTextModel, renderLayer, isFrameUpdate);
+                Renderer.requestRender(RenderType.guiText, font.texture, maxValTextModel, renderLayer, isFrameUpdate);
+                Renderer.requestRender(RenderType.guiText, font.texture, currentValTextModel, renderLayer, isFrameUpdate);
+                middleLineRect.requestRender(isFrameUpdate);
+                leftEndRect.requestRender(isFrameUpdate);
+                rightEndRect.requestRender(isFrameUpdate);
+                sliderKnob.requestRender(isFrameUpdate);
             }
         }
     }

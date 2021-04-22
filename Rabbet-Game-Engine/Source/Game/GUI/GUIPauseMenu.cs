@@ -30,7 +30,7 @@
 
         private void onQuitButtonClick(GUIButton g)
         {
-            GameInstance.get.Close();
+            GameInstance.get.QuitGame();
         }
 
         private void onResumeButtonClick(GUIButton g)

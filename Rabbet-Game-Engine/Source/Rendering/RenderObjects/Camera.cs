@@ -51,7 +51,7 @@ namespace RabbetGameEngine
 
         public void updateCameraWorldFrustum()
         {
-            frustum.transformPlanes(Renderer.projMatrix, viewMatrix);
+            frustum.transformPlanes(Renderer.projMatrix, viewMatrix, camPos);
         }
 
         public WorldFrustum getCameraWorldFrustum()

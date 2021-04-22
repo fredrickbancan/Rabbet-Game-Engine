@@ -21,10 +21,10 @@ namespace RabbetGameEngine
             addGuiComponent("info", infoText);
         }
 
-        public override void onUpdate()
+        public override void onUpdate(bool isFrameUpdate)
         {
-            base.onUpdate();
-            if (GameInstance.get.currentWorld != null)
+            base.onUpdate(isFrameUpdate);
+            if (!isFrameUpdate && GameInstance.get.currentWorld != null)
             {
                 profileAveragesText.clear();
                 Profiler.getFrameProfilingData(profileAveragesText.lines, profileAveragesText.lineColors);

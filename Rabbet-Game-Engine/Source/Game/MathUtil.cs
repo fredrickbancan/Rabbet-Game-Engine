@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using System;
 
 namespace RabbetGameEngine
 {
@@ -132,6 +133,21 @@ namespace RabbetGameEngine
                 return e;
             }
             return f;
+        }
+
+        public static Vector3i rightShift(Vector3i v, int n)
+        {
+            return new Vector3i(v.X >> n, v.Y >> n, v.Z >> n);
+        }
+
+        public static Vector3i leftShift(Vector3i v, int n)
+        {
+            return new Vector3i(v.X << n, v.Y << n, v.Z << n);
+        }
+
+        public static int manhattanDist(Vector3i a, Vector3i b)
+        {
+            return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) + Math.Abs(a.Z - b.Z);
         }
 
         //returns the centroid pos vector of the provided triangle

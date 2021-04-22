@@ -8,52 +8,52 @@ namespace RabbetGameEngine
         {
         }
 
-        public static Batch getBatchForType(RenderType type, int renderLayer = 0)
+        public static Batch getBatchForType(RenderType type, int renderLayer = 0, bool isFrameRenderUpdate = false)
         {
             switch (type)
             {
                 case RenderType.guiCutout:
-                    return new BatchGuiCutOut(renderLayer);
+                    return new BatchGuiCutOut(renderLayer).setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.guiLines:
-                    return new BatchGuiLines();
+                    return new BatchGuiLines().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.guiText:
-                    return new BatchGuiText();
+                    return new BatchGuiText().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.guiTransparent:
-                    return new BatchGuiTransparent();
+                    return new BatchGuiTransparent().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.iSpheresTransparent:
-                    return new BatchISpheresTransparent();
+                    return new BatchISpheresTransparent().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.trianglesTransparent:
-                    return new BatchTrianglesTransparent();
+                    return new BatchTrianglesTransparent().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.quadsTransparent:
-                    return new BatchQuadsTransparent();
+                    return new BatchQuadsTransparent().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.lerpISpheresTransparent:
-                    return new BatchLerpISpheresTransparent();
+                    return new BatchLerpISpheresTransparent().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.lerpTrianglesTransparent:
-                    return new BatchLerpTrianglesTransparent();
+                    return new BatchLerpTrianglesTransparent().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.lerpQuadsTransparent:
-                    return new BatchLerpQuadsTransparent();
+                    return new BatchLerpQuadsTransparent().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.lerpText3D:
-                    return new BatchLerpText3D();
+                    return new BatchLerpText3D().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.lerpISpheres:
-                    return new BatchLerpISpheres();
+                    return new BatchLerpISpheres().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.lerpTriangles:
-                    return new BatchLerpTriangles();
+                    return new BatchLerpTriangles().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.lerpQuads:
-                    return new BatchLerpQuads();
+                    return new BatchLerpQuads().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.lerpLines:
-                    return new BatchLerpLines();
+                    return new BatchLerpLines().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.text3D:
-                    return new BatchText3D();
+                    return new BatchText3D().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.triangles:
-                    return new BatchTriangles();
+                    return new BatchTriangles().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.quads:
-                    return new BatchQuads();
+                    return new BatchQuads().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.lines:
-                    return new BatchLines();
+                    return new BatchLines().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.iSpheres:
-                    return new BatchISpheres();
+                    return new BatchISpheres().setUpdateEachFrame(isFrameRenderUpdate);
                 case RenderType.spriteCylinder:
-                    return new BatchSpriteCylinder();
+                    return new BatchSpriteCylinder().setUpdateEachFrame(isFrameRenderUpdate);
                 default:
                     return null;
             }

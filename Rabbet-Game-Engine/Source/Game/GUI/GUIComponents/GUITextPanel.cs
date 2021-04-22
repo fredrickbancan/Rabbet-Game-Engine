@@ -96,13 +96,13 @@ namespace RabbetGameEngine
             return this;
         }
 
-        public override void requestRender()
+        public override void requestRender(bool isFrameUpdate)
         {
             if (!hidden)
             {
                 for (int i = 0; i < models.Length; i++)
                 {
-                    Renderer.requestRender(RenderType.guiText, font.texture, models[i], renderLayer);
+                    Renderer.requestRender(RenderType.guiText, font.texture, models[i], renderLayer, isFrameUpdate);
                 }
             }
         }

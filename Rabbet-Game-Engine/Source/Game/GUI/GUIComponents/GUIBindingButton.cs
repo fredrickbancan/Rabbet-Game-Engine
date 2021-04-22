@@ -52,9 +52,9 @@ namespace RabbetGameEngine
             }
         }
 
-        public override void onFrame()
+        public override void onUpdate()
         {
-            base.onFrame();
+            base.onUpdate();
             if (bindPopupEnabled)
             {
                 isHovered = false;
@@ -136,17 +136,17 @@ namespace RabbetGameEngine
             popupText.updateRenderData();
         }
 
-        public override void requestRender()
+        public override void requestRender(bool isFrameUpdate)
         {
-            backGround.requestRender();
-            base.requestRender();
+            backGround.requestRender(isFrameUpdate);
+            base.requestRender(isFrameUpdate);
             Renderer.requestRender(RenderType.guiText, parentGUI.guiFont.texture, bindTitleModel, renderLayer + 1);
 
             if (bindPopupEnabled)
             {
-                popupOverlay.requestRender();
-                popupBackground.requestRender();
-                popupText.requestRender();
+                popupOverlay.requestRender(isFrameUpdate);
+                popupBackground.requestRender(isFrameUpdate);
+                popupText.requestRender(isFrameUpdate);
             }
         }
     }

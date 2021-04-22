@@ -4,6 +4,7 @@ using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 
 using System;
+using System.ComponentModel;
 using System.Drawing;
 
 namespace RabbetGameEngine
@@ -72,7 +73,7 @@ namespace RabbetGameEngine
         {
             if (isClosing || IsExiting) return;
             this.WindowState = WindowState.Normal;
-            Close();
+            QuitGame();
         }
 
         protected override void OnMouseWheel(MouseWheelEventArgs e)
@@ -116,21 +117,21 @@ namespace RabbetGameEngine
             {
                 //This area will be called at MAXIMUM of the tick rate. Meaning it will not be called multiple times in a laggy situation.
                 //It is called after the ticks are looped.
-                Application.updateRamUsage();
-                GUIManager.doUpdate();
-                Renderer.doWorldRenderUpdate();
                 SoundManager.onUpdate();
+                Renderer.doWorldRenderUpdate();
+                Renderer.doGUIRenderUpdateTick();
                 PlayerController.resetActions();
+                Application.updateRamUsage();
             }
             Profiler.endStartSection("onFrame");
             currentWorld.onFrame(TicksAndFrames.getPercentageToNextTick());
             SoundManager.onFrame();
-            TicksAndFrames.updateFPS();
             GUIManager.onFrame();
-            Renderer.doGUIRenderUpdate();
+            Renderer.doGUIRenderUpdateFrame();
             Profiler.endStartSection("onRender");
             Renderer.renderAll();
             Profiler.endCurrentSection();
+            TicksAndFrames.updateFPS();
 
             Profiler.endRoot();
             Profiler.onFrame();
@@ -165,7 +166,8 @@ namespace RabbetGameEngine
             if (!gamePaused)
                 currentWorld.onTick(TicksAndFrames.spt);
             defaultCam.onTick(TicksAndFrames.spt);
-
+            
+            GUIManager.onTick();
             Profiler.endCurrentTickSection();
             Profiler.onTick();
             Profiler.endTick();
@@ -191,13 +193,21 @@ namespace RabbetGameEngine
             gamePaused = false;
         }
 
-        public override void Close()
+        protected override void OnClosing(CancelEventArgs e)
         {
-            isClosing = true;
-            if (currentWorld != null) currentWorld.unLoad();
-            Renderer.onClosing();
-            SoundManager.onClosing();
-            base.Close();
+            QuitGame();
+        }
+
+        public void QuitGame()
+        {
+            if (!isClosing)
+            {
+                if (currentWorld != null) currentWorld.unLoad();
+                Renderer.onClosing();
+                SoundManager.onClosing();
+                isClosing = true;
+                base.Close();
+            }
         }
 
         public static int gameWindowWidth { get => windowWidth; }

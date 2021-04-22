@@ -14,11 +14,11 @@
             addGuiComponent("crosshair", new GUICrosshair());
         }
 
-        public override void onUpdate()
+        public override void onUpdate(bool isFrameUpdate)
         {
-            base.onUpdate();
+            base.onUpdate(isFrameUpdate);
+            if (isFrameUpdate) return;
             displayFps();
-
             timePanel.clear().addLine(GameInstance.get.currentWorld.sky.get12HourTimeString());
             timePanel.updateRenderData();
         }

@@ -103,6 +103,13 @@ namespace RabbetGameEngine
             Profiler.endCurrentTickSection();
         }
 
+
+        public int getRendererName()
+        {
+            return voxelsVAO.getName();
+        }
+
+
         public void bindVAO()
         {
             voxelsVAO.bind();

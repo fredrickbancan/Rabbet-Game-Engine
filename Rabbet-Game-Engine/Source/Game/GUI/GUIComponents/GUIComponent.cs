@@ -12,6 +12,7 @@ namespace RabbetGameEngine
         protected Vector2 screenPixelSize;
         protected bool hidden = false;
         public bool paused = false;
+        public bool updateEachFrame = false;
 
         /// <summary>
         /// If this bool is true, size of this component will in pixels will be a percentage of the window HEIGHT,
@@ -24,8 +25,9 @@ namespace RabbetGameEngine
         protected Model componentQuadModel = null;
         protected Matrix4 translationAndScale = Matrix4.Identity;
         protected int renderLayer;
-        public GUIComponent(float posX, float posY, int renderLayer = 0)
+        public GUIComponent(float posX, float posY, int renderLayer = 0, bool updateOnFrame = false)
         {
+            updateEachFrame = updateOnFrame;
             screenPos = new Vector2(posX, posY);
             this.renderLayer = renderLayer;
         }
@@ -42,11 +44,6 @@ namespace RabbetGameEngine
         public virtual void setPos(Vector2 p)
         {
             screenPos = p;
-        }
-
-        public virtual void onFrame()
-        {
-
         }
 
         public virtual void onUpdate()
@@ -149,7 +146,7 @@ namespace RabbetGameEngine
             return screenPixelSize;
         }
 
-        public virtual void requestRender()
+        public virtual void requestRender(bool isFrameUpdate)
         {
 
         }
