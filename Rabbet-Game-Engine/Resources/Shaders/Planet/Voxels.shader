@@ -160,7 +160,4 @@ void main()
     fragColor.r *= lightLevel;
     fragColor.g *= lightLevel;
     fragColor.b *= lightLevel;
-   // fragColor = vec4(lightLevel, lightLevel, lightLevel, 1.0F);
-    if (fragColor.a < 0.01F)discard;
-    fragColor.a = 1;
 }

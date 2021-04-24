@@ -17,7 +17,7 @@
 
         public void setLightLevelAt(int x, int y, int z, byte l)
         {
-            int index = x << Chunk.CHUNK_X_SHIFT | z << Chunk.CHUNK_Z_SHIFT | y;
+            int index = x << Chunk.X_SHIFT | z << Chunk.Z_SHIFT | y;
             int storeIndex = index - index / 4;
             if (index != 0 && index % 3 == 0) { storeLightLevelInPreviousLeftOverBits(storeIndex - 1, l); return; }
             data[storeIndex] |= (byte)(l & 63);
@@ -25,7 +25,7 @@
 
         public byte getLightLevelAt(int x, int y, int z)
         {
-            int index = x << Chunk.CHUNK_X_SHIFT | z << Chunk.CHUNK_Z_SHIFT | y;
+            int index = x << Chunk.X_SHIFT | z << Chunk.Z_SHIFT | y;
             int storeIndex = index - index / 4;
             if (index != 0 && index % 3 == 0) return combinePreviousLeftOverBits(storeIndex - 1);
             return (byte)(data[storeIndex] & 63);

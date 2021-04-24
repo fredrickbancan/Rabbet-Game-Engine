@@ -15,7 +15,6 @@ namespace RabbetGameEngine
         {
             random = Rand.CreateJavaRandom(seed);
             terrain = new Terrain(random);
-            terrain.generateSpawnChunks();//temp, no player entity yet
             theSky = new Sky(random);
             grav = 9.807F * (0.5F + (float)random.NextDouble() * 1.5F);
             SkyboxRenderer.setSkyboxToDraw(theSky);

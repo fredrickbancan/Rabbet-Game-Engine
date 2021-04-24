@@ -144,10 +144,20 @@ namespace RabbetGameEngine
         {
             return new Vector3i(v.X << n, v.Y << n, v.Z << n);
         }
-
+        public static int manhattanDist(Vector3i a, Vector3i b, out Vector3i distances)
+        {
+            distances.X = Math.Abs(a.X - b.X);
+            distances.Y = Math.Abs(a.Y - b.Y);
+            distances.Z = Math.Abs(a.Z - b.Z);
+            return distances.X + distances.Y + distances.Z;
+        }
         public static int manhattanDist(Vector3i a, Vector3i b)
         {
             return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) + Math.Abs(a.Z - b.Z);
+        }
+        public static int manhattanDistHorizontalBias(Vector3i a, Vector3i b, int biasMultiplier)
+        {
+            return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) * biasMultiplier + Math.Abs(a.Z - b.Z);
         }
 
         //returns the centroid pos vector of the provided triangle

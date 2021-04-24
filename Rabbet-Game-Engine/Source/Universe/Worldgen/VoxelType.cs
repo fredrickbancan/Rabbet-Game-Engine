@@ -22,12 +22,12 @@
         public static readonly VoxelType brick = new VoxelType(true);
         public static readonly VoxelType tnt = new VoxelType(true);
 
-        public static VoxelType getVoxelById(byte id)
+        public static VoxelType getVoxelById(int id)
         {
             return voxelTypes[id];
         }
 
-        public static bool isVoxelOpaque(byte id)
+        public static bool isVoxelOpaque(int id)
         {
             return id == 0 ? false : voxelTypes[id].isOpaque;
         }

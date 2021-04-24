@@ -4,6 +4,7 @@ using System;
 
 namespace RabbetGameEngine
 {
+    //TODO: Implement setNewRendererPos() function for recycling renderers when player moves
     /// <summary>
     /// A class for creating mesh data / render data for rendering a chunk.
     /// Builds buffers of voxel data based on voxel states and visibility for performance.
@@ -40,18 +41,23 @@ namespace RabbetGameEngine
             VOXEL_VERTEX_IBO.delete();
         }
 
-        private Chunk parentChunk = null;
+        public Chunk parentChunk
+        { get; private set; }
+
         private VertexArrayObject voxelsVAO = null;
         private VoxelFace[] voxelFaceBuffer = null;
         private Vector3i voxelMinBounds;
         private Vector3i voxelMaxBounds;
         private AABB rendererBoundingBox;
         private int addedVoxelFaceCount = 0;
+        public bool isInFrustum = false;
+        public bool shouldRender
+        { get; private set; }
 
         public ChunkRenderer(Chunk parentChunk)
         {
             this.parentChunk = parentChunk;
-            voxelMinBounds = parentChunk.coordinate * Chunk.CHUNK_SIZE;
+            voxelMinBounds = parentChunk.coord * Chunk.CHUNK_SIZE;
             voxelMaxBounds = voxelMinBounds + new Vector3i(Chunk.CHUNK_SIZE);
             rendererBoundingBox = AABB.fromBounds((Vector3)voxelMinBounds, (Vector3)voxelMaxBounds);
             voxelFaceBuffer = new VoxelFace[MAX_CHUNK_FACE_COUNT];
@@ -66,7 +72,7 @@ namespace RabbetGameEngine
         /// Updates the voxel buffer based on visible voxels for optimisation.
         /// Should be called whenever the parent chunk's voxels change such as voxels added or removed.
         /// </summary>
-        public void updateVoxelMesh(ChunkCache voxelAccess)
+        public void onRenderUpdate(NeighborChunkColumnGroup voxelAccess)
         {
             Profiler.startTickSection("faceBuilding");
             addedVoxelFaceCount = 0;
@@ -74,22 +80,22 @@ namespace RabbetGameEngine
             Vector3i pos;
             Vector3i offset;
             VoxelType vt;
-            for (int x = voxelMinBounds.X; x < voxelMaxBounds.X; x++)
+            for (int x = 0; x < Chunk.CHUNK_SIZE; x++)
             {
                 pos.X = x;
-                for (int z = voxelMinBounds.Z; z < voxelMaxBounds.Z; z++)
+                for (int z = 0; z < Chunk.CHUNK_SIZE; z++)
                 {
                     pos.Z = z;
-                    for (int y = voxelMinBounds.Y; y < voxelMaxBounds.Y; y++)
+                    for (int y = 0; y < Chunk.CHUNK_SIZE; y++)
                     {
-                        vt = VoxelType.getVoxelById(voxelAccess.getVoxelAtVoxelCoords(x, y, z));
+                        vt = VoxelType.getVoxelById(voxelAccess.getVoxelAtLocalVoxelCoords(x, y, z));
                         if (vt == null) continue;
                         pos.Y = y;
 
                         for (i = 0; i < 6; i++)
                         {
                             offset = pos + faceDirections[i];
-                            if (!VoxelType.isVoxelOpaque(voxelAccess.getVoxelAtVoxelCoords(offset.X, offset.Y, offset.Z)))
+                            if (!VoxelType.isVoxelOpaque(voxelAccess.getVoxelAtLocalVoxelCoords(offset.X, offset.Y, offset.Z)))
                             {
                                 voxelFaceBuffer[addedVoxelFaceCount++] = new VoxelFace((byte)(x - voxelMinBounds.X), (byte)(y - voxelMinBounds.Y), (byte)(z - voxelMinBounds.Z), voxelAccess.getLightLevelAtVoxelCoords(offset.X, offset.Y, offset.Z), (byte)i, vt.id);
                             }
@@ -103,6 +109,12 @@ namespace RabbetGameEngine
             Profiler.endCurrentTickSection();
         }
 
+        public void setNewChunkParent(Chunk c)
+        {
+            parentChunk = c;
+            voxelMinBounds = parentChunk.coord * Chunk.CHUNK_SIZE;
+            voxelMaxBounds = voxelMinBounds + new Vector3i(Chunk.CHUNK_SIZE);
+        }
 
         public int getRendererName()
         {
@@ -120,12 +132,6 @@ namespace RabbetGameEngine
         {
             voxelsVAO.delete();
         }
-
-        public bool isChunkMarkedForRemoval()
-        {
-            return parentChunk.isMarkedForRemoval();
-        }
-
         public bool isChunkMarkedForRenderUpdate()
         {
             return parentChunk.isMarkedForRenderUpdate();
@@ -135,8 +141,10 @@ namespace RabbetGameEngine
         {get => rendererBoundingBox;}
 
         public Vector3i pos
-        { get => parentChunk.coordinate; }
-        
+        { get => parentChunk.coord; }
+
+        public AABB parentColumnBoundingBox
+        { get => parentChunk.parentChunkColumn.columnBounds; }
 
         public int visibleVoxelFaceCount
         { get => addedVoxelFaceCount; }

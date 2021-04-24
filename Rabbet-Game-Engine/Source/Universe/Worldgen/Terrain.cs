@@ -6,22 +6,35 @@ namespace RabbetGameEngine
 {
     public class Terrain
     {
-        //radius of chunks to initially generate around origin/spawn
-        public static readonly int spawnChunkRadius = 8;
+        public int genChunksWide
+        { get; private set; }
 
-        private Dictionary<Vector3i, Chunk> chunkMap = null;
+        public Dictionary<Vector2i, ChunkColumn> chunkMap
+        { get; private set; }
         private Random genRand;
 
         public Terrain(Random rand)
         {
             genRand = rand;
-            chunkMap = new Dictionary<Vector3i, Chunk>();
+            chunkMap = new Dictionary<Vector2i, ChunkColumn>();
             TerrainRenderer.setTerrainToRender(this);
+            int currentChunkGenDistance = (int)(GameSettings.maxDrawDistance.floatValue / Chunk.CHUNK_PHYSICAL_SIZE) + 1;// + 1 for camera middle chunk
+            if (currentChunkGenDistance != genChunksWide) { genChunksWide = currentChunkGenDistance; onChunkGenDistanceChanged(); }
         }
 
         public void onTick(float ts)
         {
+            if(GameSettings.videoSettingsChanged)
+            {
+                int currentChunkGenDistance = (int)(GameSettings.maxDrawDistance.floatValue / Chunk.CHUNK_PHYSICAL_SIZE) + 1;// + 1 for camera middle chunk
+                if(currentChunkGenDistance != genChunksWide) { genChunksWide = currentChunkGenDistance; onChunkGenDistanceChanged();}
+            }
+        }
 
+        private void onChunkGenDistanceChanged()
+        {
+            TerrainRenderer.onChunkGenDistanceChanged();
+            //do any other stuff
         }
 
         private void debugRandom(Chunk c)
@@ -37,47 +50,21 @@ namespace RabbetGameEngine
             c.markForRenderUpdate();
         }
 
-        public void generateSpawnChunks()
-        {
-            for (int x = -spawnChunkRadius; x < spawnChunkRadius; x++)
-                for (int z = -spawnChunkRadius; z < spawnChunkRadius; z++)
-                {
-                    Vector3i coord = new Vector3i(x, 0, z);
-                    loadChunk(coord, new Chunk(coord));
-                }
-        }
-
-        private void loadChunk(Vector3i coord, Chunk c)
-        {
-            debugRandom(c);
-            TerrainRenderer.addChunkToBeRendered(c);
-            chunkMap.Add(coord, c);
-        }
-
-        /// <summary>
-        /// returns true if chunk is removed from chunkmap
-        /// </summary>
-        private bool unLoadChunk(Vector3i coord, Chunk c)
-        {
-            c.markForRemoval();
-            chunkMap.Remove(coord, out Chunk c1);
-            return c1 != null && c1 == c;
-        }
-
         public Chunk getChunkAtChunkCoords(int x, int y, int z)
         {
-            chunkMap.TryGetValue(new Vector3i(x, y, z), out Chunk c);
+            chunkMap.TryGetValue(new Vector2i(x, z), out ChunkColumn c);
+            return c != null ? c.getChunkAtYChunkCoord(y) : null;
+        }
+
+        public ChunkColumn getChunkColumnAtChunkCoords(int x, int z)
+        {
+            chunkMap.TryGetValue(new Vector2i(x, z), out ChunkColumn c);
             return c;
         }
 
         public void unLoad()
         {
             TerrainRenderer.unLoad();
-        }
-
-        public Dictionary<Vector3i, Chunk> chunks
-        {
-            get => chunkMap;
         }
     }
 }
