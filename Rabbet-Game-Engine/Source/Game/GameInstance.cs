@@ -15,7 +15,6 @@ namespace RabbetGameEngine
         public static int temp = 0;
         private static GameInstance instance;
         private static Random nonCRand;
-        private static FlyCamera defaultCam;
         public static int windowWidth;
         public static int windowHeight;
         public static int screenWidth;
@@ -58,8 +57,6 @@ namespace RabbetGameEngine
                 currentWorld = new World(0xdeadbeef);
                 Input.setCursorHiddenAndGrabbed(true);
                 Input.updateInput();
-                defaultCam = new FlyCamera(new Vector3(0, 16, 0));
-                Renderer.setCamera(defaultCam);
                 Application.infoPrint("Initialized.");
             }
             catch (Exception e)
@@ -109,7 +106,6 @@ namespace RabbetGameEngine
             Profiler.startRoot();
             base.OnRenderFrame(args);
             Input.updateInput();
-            defaultCam.onFrame(TicksAndFrames.getPercentageToNextTick());
             Profiler.startSection("tickLoop");
             doneOneTick = false;
             TicksAndFrames.doOnTickUntillRealtimeSync(onTick);
@@ -165,8 +161,6 @@ namespace RabbetGameEngine
                 windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
             if (!gamePaused)
                 currentWorld.onTick(TicksAndFrames.spt);
-            defaultCam.onTick(TicksAndFrames.spt);
-            
             GUIManager.onTick();
             Profiler.endCurrentTickSection();
             Profiler.onTick();

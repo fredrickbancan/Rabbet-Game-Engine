@@ -61,7 +61,7 @@ namespace RabbetGameEngine
             4.0F
         };
         public static Setting fov = new Setting("Field of View", SettingType.FLOAT, videoSettings).setRange(60.0F, 120.0F).setDisplayRange(60.0F, 120.0F).setFloatValue(defaultFov);
-        public static Setting maxDrawDistance = new Setting("Draw Distance", SettingType.FLOAT, videoSettings).setRange(128.0F, 2048.0F).setDisplayRange(128.0F, 2048.0F).setFloatValue(defaultMaxDrawDistance);
+        public static Setting maxDrawDistance = new Setting("Draw Distance", SettingType.FLOAT, videoSettings).setRange(128.0F, 1024.0F).setDisplayRange(128.0F, 1024.0F).setFloatValue(defaultMaxDrawDistance);
         public static Setting gamma = new Setting("Gamma", SettingType.FLOAT, videoSettings).setRange(0.5F, 2.2F).setDisplayRange(0.5F, 2.2F).setFloatValue(defaultGamma);
         public static Setting exposure = new Setting("Exposure", SettingType.FLOAT, videoSettings).setRange(0.1F, 5.0F).setDisplayRange(0.1F, 5.0F).setFloatValue(defaultExposure);
         public static Setting renderScale = new Setting("Render Scale", SettingType.LIST_FLOAT, videoSettings).setListTitles(renderScaleTitles).setListFloats(superSampleFloats).setListIndex(defaultRenderScaleIndex);

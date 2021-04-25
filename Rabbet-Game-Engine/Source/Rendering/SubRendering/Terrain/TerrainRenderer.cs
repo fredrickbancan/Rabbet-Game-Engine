@@ -41,6 +41,8 @@ namespace RabbetGameEngine
 
         public static void doRenderUpdate(Camera viewer)
         {
+            if (chunkRenderers == null) return;
+            if (renderChunksDistChanged || !chunkRenderers.hasInitiallyLoaded()) loadRenderers(viewer);
             chunkRenderers.updateAndSortChunkRenderers(viewer);
         }
 
@@ -54,7 +56,7 @@ namespace RabbetGameEngine
             foreach(ChunkRenderer cr in chunkRenderers.getSortedRenderers())
             {
                 Profiler.startSection("chunkFrustumCheck");
-                if(cr.shouldRender && cr.isInFrustum)
+                if(cr.shouldRender)
                 {
                     renderChunk(cr);
                 }
@@ -73,9 +75,12 @@ namespace RabbetGameEngine
 
         public static void unLoad()
         {
-            chunkRenderers.delete();
-            chunkRenderers = null;
-            theTerrain = null;
+            if (chunkRenderers != null)
+            {
+                chunkRenderers.delete();
+                chunkRenderers = null;
+                theTerrain = null;
+            }
         }
 
         public static void onClosing()

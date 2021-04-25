@@ -28,22 +28,25 @@ namespace RabbetGameEngine
 
         private byte[] voxels;
         private LightMap lightMap = null;
-        private OpaqueVoxelMap opaqueMap = null;
         private bool removalFlag = false;
         private bool updateFlag = true;
-        private bool isEmpty = true;
+        public bool isEmpty
+        { get; private set; }
+        public bool isVisible 
+        { get; private set; }
         public ChunkColumn parentChunkColumn 
         { get; private set; }
         public Vector3i coord { get; private set; }
         public Vector3i worldCoord { get; private set; }
 
-        public Chunk(Vector3i coord)
+        public Chunk(Vector3i coord, ChunkColumn parentChunkColumn)
         {
             this.coord = coord;
+            this.parentChunkColumn = parentChunkColumn;
             worldCoord = coord * CHUNK_SIZE;
             voxels = new byte[CHUNK_SIZE_CUBED];
             lightMap = new LightMap(CHUNK_SIZE_CUBED);
-            opaqueMap = new OpaqueVoxelMap();
+            isVisible = true;
         }
 
         public void setVoxelAt(int x, int y, int z, byte id)
@@ -51,13 +54,10 @@ namespace RabbetGameEngine
             if (x < 0 || y < 0 || z < 0) return;
             int index = x << X_SHIFT | z << Z_SHIFT | y;
             if (index < CHUNK_SIZE_CUBED) voxels[index] = id;
-            if (id == 0)
+            if (id != 0)
             {
-                opaqueMap.setVoxelOpaque(x, y, z, false);
-                return;
+                isEmpty = false;
             }
-            opaqueMap.setVoxelOpaque(x, y, z, VoxelType.isVoxelOpaque(id));
-            isEmpty = false;
         }
 
         public void setLightLevelAt(int x, int y, int z, byte level)
@@ -76,12 +76,6 @@ namespace RabbetGameEngine
             int index = x << X_SHIFT | z << Z_SHIFT | y;
             return index >= CHUNK_SIZE_CUBED ? 0 : voxels[index];
         }
-
-        public bool getVoxelAtIsOpaque(int x, int y, int z)
-        {
-            return opaqueMap.isVoxelOpaque(x, y, z);
-        }
-
         public byte[] getVoxels()
         {
             return voxels;

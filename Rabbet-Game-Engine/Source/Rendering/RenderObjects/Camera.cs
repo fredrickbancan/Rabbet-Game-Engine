@@ -19,7 +19,25 @@ namespace RabbetGameEngine
         public Camera(Vector3 initialPos)
         {
             camPos = initialPos;
-            onFrame(1.0F);
+
+            /*cap yaw so cam can not flip*/
+            if (pitch >= 90.0F)
+            {
+                pitch = 89.999F;
+            }
+            else if (pitch <= -90.0F)
+            {
+                pitch = -89.999F;
+            }
+
+            camDirectionVector.X = (float)(Math.Cos(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
+            camDirectionVector.Y = (float)Math.Sin(MathUtil.radians(pitch));
+            camDirectionVector.Z = (float)(Math.Sin(MathUtil.radians(yaw)) * Math.Cos(MathUtil.radians(pitch)));
+            camFrontVector = Vector3.Normalize(camDirectionVector);
+            camRightVector = -Vector3.Normalize(Vector3.Cross(up, camDirectionVector));
+            camUpVector = Vector3.Cross(camDirectionVector, -camRightVector);
+            viewMatrix = Matrix4.LookAt(camPos, camPos + camFrontVector, camUpVector);
+            updateCameraWorldFrustum();
         }
 
         public virtual void onFrame(float ptnt)

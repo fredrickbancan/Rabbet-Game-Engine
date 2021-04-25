@@ -155,6 +155,11 @@ namespace RabbetGameEngine
         {
             return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) + Math.Abs(a.Z - b.Z);
         }
+        public static int manhattanDist(Vector2i a, Vector2i b)
+        {
+            return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
+        }
+
         public static int manhattanDistHorizontalBias(Vector3i a, Vector3i b, int biasMultiplier)
         {
             return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) * biasMultiplier + Math.Abs(a.Z - b.Z);

@@ -50,6 +50,7 @@ namespace RabbetGameEngine
         private Vector3i voxelMaxBounds;
         private AABB rendererBoundingBox;
         private int addedVoxelFaceCount = 0;
+        private bool hasCreatedVao = false;
         public bool isInFrustum = false;
         public bool shouldRender
         { get; private set; }
@@ -60,21 +61,22 @@ namespace RabbetGameEngine
             voxelMinBounds = parentChunk.coord * Chunk.CHUNK_SIZE;
             voxelMaxBounds = voxelMinBounds + new Vector3i(Chunk.CHUNK_SIZE);
             rendererBoundingBox = AABB.fromBounds((Vector3)voxelMinBounds, (Vector3)voxelMaxBounds);
-            voxelFaceBuffer = new VoxelFace[MAX_CHUNK_FACE_COUNT];
-            voxelsVAO = new VertexArrayObject();
-            voxelsVAO.beginBuilding();
-            voxelsVAO.addBufferDynamic(MAX_CHUNK_FACE_COUNT * VoxelFace.SIZE_IN_BYTES, new VertexBufferLayout());
-            GL.EnableVertexAttribArray(0);
-            GL.BindVertexBuffer(0, voxelsVAO.getVBOIDAt(0), IntPtr.Zero, 4);
+            shouldRender = true;
+            if (!parentChunk.isEmpty) createVao();
+        }
+
+        public void createVaoIfNeeded()
+        {
+            if (!hasCreatedVao && parentChunk.isMarkedForRenderUpdate() && !parentChunk.isEmpty)
+                createVao();
         }
 
         /// <summary>
         /// Updates the voxel buffer based on visible voxels for optimisation.
         /// Should be called whenever the parent chunk's voxels change such as voxels added or removed.
         /// </summary>
-        public void onRenderUpdate(NeighborChunkColumnGroup voxelAccess)
+        public void doChunkRenderUpdate(NeighborChunkColumnGroup voxelAccess)
         {
-            Profiler.startTickSection("faceBuilding");
             addedVoxelFaceCount = 0;
             int i;
             Vector3i pos;
@@ -97,7 +99,7 @@ namespace RabbetGameEngine
                             offset = pos + faceDirections[i];
                             if (!VoxelType.isVoxelOpaque(voxelAccess.getVoxelAtLocalVoxelCoords(offset.X, offset.Y, offset.Z)))
                             {
-                                voxelFaceBuffer[addedVoxelFaceCount++] = new VoxelFace((byte)(x - voxelMinBounds.X), (byte)(y - voxelMinBounds.Y), (byte)(z - voxelMinBounds.Z), voxelAccess.getLightLevelAtVoxelCoords(offset.X, offset.Y, offset.Z), (byte)i, vt.id);
+                                voxelFaceBuffer[addedVoxelFaceCount++] = new VoxelFace(x - voxelMinBounds.X, y - voxelMinBounds.Y, z - voxelMinBounds.Z, voxelAccess.getLightLevelAtVoxelCoords(offset.X, offset.Y, offset.Z), i, vt.id);
                             }
                         }
                     }
@@ -114,27 +116,41 @@ namespace RabbetGameEngine
             parentChunk = c;
             voxelMinBounds = parentChunk.coord * Chunk.CHUNK_SIZE;
             voxelMaxBounds = voxelMinBounds + new Vector3i(Chunk.CHUNK_SIZE);
+            addedVoxelFaceCount = 0;
         }
 
+        private void createVao()
+        {
+            voxelFaceBuffer = new VoxelFace[MAX_CHUNK_FACE_COUNT];
+            voxelsVAO = new VertexArrayObject();
+            voxelsVAO.beginBuilding();
+            voxelsVAO.addBufferDynamic(MAX_CHUNK_FACE_COUNT * VoxelFace.SIZE_IN_BYTES, new VertexBufferLayout());
+            GL.EnableVertexAttribArray(0);
+            GL.BindVertexBuffer(0, voxelsVAO.getVBOIDAt(0), IntPtr.Zero, 4);
+            hasCreatedVao = true;
+        }
         public int getRendererName()
         {
+            if (!hasCreatedVao) return -1;
             return voxelsVAO.getName();
         }
 
 
         public void bindVAO()
         {
+            if(hasCreatedVao)
             voxelsVAO.bind();
             VOXEL_VERTEX_IBO.bind();
         }
 
         public void delete()
         {
+            if(hasCreatedVao)
             voxelsVAO.delete();
         }
-        public bool isChunkMarkedForRenderUpdate()
+        public bool shouldDoRenderUpdate()
         {
-            return parentChunk.isMarkedForRenderUpdate();
+            return parentChunk.isMarkedForRenderUpdate() && !parentChunk.isEmpty && parentChunk.isVisible && hasCreatedVao;
         }
 
         public AABB boundingBox

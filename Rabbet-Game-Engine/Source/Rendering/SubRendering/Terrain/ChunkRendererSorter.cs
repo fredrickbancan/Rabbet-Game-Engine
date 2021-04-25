@@ -12,7 +12,7 @@ namespace RabbetGameEngine
             //y * 2 for bias towards horizontal priority
             int xDist = MathUtil.manhattanDistHorizontalBias(a.pos, centralCoordinate, 2);
             int yDist = MathUtil.manhattanDistHorizontalBias(b.pos, centralCoordinate, 2);
-            return a == null ? 1 : (b == null ? -1 : (xDist > yDist ? 1 : -1));
+            return a == null ? 1 : (b == null ? -1 : (xDist > yDist ? 1 : (xDist == yDist ? 0 : -1)));
         }
 
         public ChunkRendererSorter setCenter(Vector3i cent)

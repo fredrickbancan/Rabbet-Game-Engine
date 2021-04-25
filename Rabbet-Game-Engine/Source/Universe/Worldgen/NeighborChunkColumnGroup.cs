@@ -8,13 +8,15 @@
         private ChunkColumn[] cache = null;
         private int minChunkRangeCoordX;
         private int minChunkRangeCoordZ;
+        private int middleChunkY;
         private int maxChunkRangeCoordX;
         private int maxChunkRangeCoordZ;
-        public NeighborChunkColumnGroup(Terrain t, int middleChunkX, int middleChunkZ)
+        public NeighborChunkColumnGroup(Terrain t, int middleChunkX, int middleChunkY, int middleChunkZ)
         {
             cache = new ChunkColumn[9];
             minChunkRangeCoordX = middleChunkX - 1;
             minChunkRangeCoordZ = middleChunkZ - 1;
+            this.middleChunkY = middleChunkY;
             maxChunkRangeCoordX = middleChunkX + 1;
             maxChunkRangeCoordZ = middleChunkZ + 1;
             for (int x = minChunkRangeCoordX, locX = 0; x <= maxChunkRangeCoordX; x++, locX++)
@@ -28,7 +30,7 @@
         {
             if (y < 0 || y > ChunkColumn.NUM_VOXELS_HEIGHT) return null;
             int nx = (x >> Chunk.Z_SHIFT) + 1;
-            int ny = y >> Chunk.Z_SHIFT;
+            int ny = y >> Chunk.Z_SHIFT + middleChunkY;
             int nz = (z >> Chunk.Z_SHIFT) + 1;
             if (nx < 0 || nx > 2 || nz < 0 || nz > 2) return null;
             ChunkColumn c = cache[nx * 3 + nz];
@@ -46,13 +48,6 @@
             Chunk localC = getChunkAtLocalVoxelCoords(x, y, z);
             return localC == null ? 63 : localC.getLightLevelAt(x & Chunk.CHUNK_SIZE_MINUS_ONE, y & Chunk.CHUNK_SIZE_MINUS_ONE, z & Chunk.CHUNK_SIZE_MINUS_ONE);
         }
-
-        public bool getIsVoxelOpaqueAt(int x, int y, int z)
-        {
-            Chunk localC = getChunkAtLocalVoxelCoords(x, y, z);
-            return localC == null ? false : localC.getVoxelAtIsOpaque(x & Chunk.CHUNK_SIZE_MINUS_ONE, y & Chunk.CHUNK_SIZE_MINUS_ONE, z & Chunk.CHUNK_SIZE_MINUS_ONE);
-        }
-
         public ChunkColumn getChunkColumnAtChunkCoords(int x, int z)
         {
             x++; z++;

@@ -28,6 +28,7 @@ namespace RabbetGameEngine
         private Vector3i prevRecycleViewerVoxelPos;
         private ChunkRendererSorter distSorter = new ChunkRendererSorter();
         private bool renderersNeedSorting = false;
+        private bool hasLoaded = false;
 
         public void loadRenderers(Terrain t, int renderChunksWide, Camera viewer)
         {
@@ -44,12 +45,14 @@ namespace RabbetGameEngine
             maxChunkX = prevSortChunkpos.Z + renderChunksRadius;
             if (renderers != null) foreach (ChunkRenderer cr in renderers) cr.delete();
             renderers = new ChunkRenderer[rendererCount];
-            for (int x = -minChunkX, i = 0; x < maxChunkX; x++)
-                for (int z = -minChunkZ; z < maxChunkX; z++)
+            renderersSorted = new ChunkRenderer[rendererCount];
+            for (int x = minChunkX, i = 0; x <= maxChunkX; x++)
+                for (int z = minChunkZ; z <= maxChunkX; z++)
                     for (int y = 0; y < ChunkColumn.NUM_CHUNKS_HEIGHT; y++, i++)
                     {
                         renderersSorted[i] = renderers[i] = new ChunkRenderer(t.getChunkAtChunkCoords(x, y, z));
                     }
+            hasLoaded = true;
         }
 
         public void updateAndSortChunkRenderers(Camera viewer)
@@ -60,9 +63,11 @@ namespace RabbetGameEngine
             doFrustumCulling(viewer);
             foreach (ChunkRenderer cr in renderersSorted)
             {
-                if(cr.shouldRender && cr.parentChunk.isMarkedForRenderUpdate())
+                cr.createVaoIfNeeded();
+
+                if(cr.shouldDoRenderUpdate())
                 {
-                    cr.onRenderUpdate(new NeighborChunkColumnGroup(theTerrain, cr.parentChunk.coord.X, cr.parentChunk.coord.Z));
+                    cr.doChunkRenderUpdate(new NeighborChunkColumnGroup(theTerrain, cr.parentChunk.coord.X, cr.parentChunk.coord.Y, cr.parentChunk.coord.Z));
                     break;
                 }
             }
@@ -104,14 +109,14 @@ namespace RabbetGameEngine
             Profiler.startTickSection("recycleChunks");
             Vector3i currentViewerChunkPos = Chunk.worldToChunkPos(viewer.getCamPos());
             Vector3i currentViewerVoxelPos = Chunk.worldToVoxelPos(viewer.getCamPos());
-            if (MathUtil.manhattanDist(prevRecycleViewerVoxelPos, currentViewerVoxelPos)  > Chunk.CHUNK_SIZE)
+            if (MathUtil.manhattanDist(prevRecycleViewerVoxelPos.Xz, currentViewerVoxelPos.Xz)  > Chunk.CHUNK_SIZE)
             {
                 minChunkX = currentViewerChunkPos.X - renderChunksRadius;
                 maxChunkX = currentViewerChunkPos.X + renderChunksRadius;
                 minChunkZ = currentViewerChunkPos.Z - renderChunksRadius;
                 maxChunkX = currentViewerChunkPos.Z + renderChunksRadius;
-                for (int x = -minChunkX, i = 0; x < maxChunkX; x++)
-                    for (int z = -minChunkZ; z < maxChunkX; z++)
+                for (int x = minChunkX, i = 0; x <= maxChunkX; x++)
+                    for (int z = minChunkZ; z <= maxChunkX; z++)
                         for (int y = 0; y < ChunkColumn.NUM_CHUNKS_HEIGHT; y++, i++)
                         {
                             renderers[i].setNewChunkParent(theTerrain.getChunkAtChunkCoords(x, y, z));
@@ -129,6 +134,10 @@ namespace RabbetGameEngine
             Profiler.endCurrentTickSection();
         }
 
+        public bool hasInitiallyLoaded()
+        {
+            return hasLoaded;
+        }
         public ChunkRenderer[] getSortedRenderers()
         {
             return renderersSorted;
@@ -138,5 +147,7 @@ namespace RabbetGameEngine
         {
             if (renderers != null) foreach (ChunkRenderer cr in renderers) cr.delete();
         }
+
+        
     }
 }
