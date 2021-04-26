@@ -1,4 +1,6 @@
-﻿namespace RabbetGameEngine
+﻿using OpenTK.Mathematics;
+
+namespace RabbetGameEngine
 {
     /// <summary>
     /// Stores a chunk and its neighbor chunks for quickly accessing voxels which may be influenced by direct neighbor voxels
@@ -9,16 +11,18 @@
         private int minChunkRangeCoordX;
         private int minChunkRangeCoordZ;
         private int middleChunkY;
+        private int middleChunkYVoxels;
         private int maxChunkRangeCoordX;
         private int maxChunkRangeCoordZ;
-        public NeighborChunkColumnGroup(Terrain t, int middleChunkX, int middleChunkY, int middleChunkZ)
+        public NeighborChunkColumnGroup(Terrain t, Vector3i middleChunkPos)
         {
             cache = new ChunkColumn[9];
-            minChunkRangeCoordX = middleChunkX - 1;
-            minChunkRangeCoordZ = middleChunkZ - 1;
-            this.middleChunkY = middleChunkY;
-            maxChunkRangeCoordX = middleChunkX + 1;
-            maxChunkRangeCoordZ = middleChunkZ + 1;
+            minChunkRangeCoordX = middleChunkPos.X - 1;
+            minChunkRangeCoordZ = middleChunkPos.Z - 1;
+            this.middleChunkY = middleChunkPos.Y;
+            middleChunkYVoxels = middleChunkPos.Y * Chunk.CHUNK_SIZE;
+            maxChunkRangeCoordX = middleChunkPos.X + 1;
+            maxChunkRangeCoordZ = middleChunkPos.Z + 1;
             for (int x = minChunkRangeCoordX, locX = 0; x <= maxChunkRangeCoordX; x++, locX++)
                 for (int z = minChunkRangeCoordZ, locZ = 0; z <= maxChunkRangeCoordZ; z++, locZ++)
                 {
@@ -28,9 +32,9 @@
 
         public Chunk getChunkAtLocalVoxelCoords(int x, int y, int z)
         {
-            if (y < 0 || y > ChunkColumn.NUM_VOXELS_HEIGHT) return null;
+            if (middleChunkYVoxels + y < 0 || middleChunkYVoxels + y >= ChunkColumn.NUM_VOXELS_HEIGHT) return null;
             int nx = (x >> Chunk.Z_SHIFT) + 1;
-            int ny = y >> Chunk.Z_SHIFT + middleChunkY;
+            int ny = (y >> Chunk.Z_SHIFT) + middleChunkY;
             int nz = (z >> Chunk.Z_SHIFT) + 1;
             if (nx < 0 || nx > 2 || nz < 0 || nz > 2) return null;
             ChunkColumn c = cache[nx * 3 + nz];
@@ -40,7 +44,7 @@
         public int getVoxelAtLocalVoxelCoords(int x, int y, int z)
         {
             Chunk localC = getChunkAtLocalVoxelCoords(x, y, z);
-            return localC == null ? 0 : localC.getVoxelAt(x & Chunk.CHUNK_SIZE_MINUS_ONE, y & Chunk.CHUNK_SIZE_MINUS_ONE, z & Chunk.CHUNK_SIZE_MINUS_ONE);
+            return localC == null || localC.isEmpty ? 0 : localC.getVoxelAt(x & Chunk.CHUNK_SIZE_MINUS_ONE, y & Chunk.CHUNK_SIZE_MINUS_ONE, z & Chunk.CHUNK_SIZE_MINUS_ONE);
         }
 
         public int getLightLevelAtVoxelCoords(int x, int y, int z)

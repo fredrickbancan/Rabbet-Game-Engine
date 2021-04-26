@@ -23,30 +23,33 @@ namespace RabbetGameEngine
             return (Vector3i)(vec / Chunk.VOXEL_PHYSICAL_SIZE);
         }
 
-
-
-
-        private byte[] voxels;
+        private byte[] voxels = null;
         private LightMap lightMap = null;
-        private bool removalFlag = false;
-        private bool updateFlag = true;
+        public bool isMarkedForRemoval = false;
+        public bool isMarkedForRenderUpdate = false;
+        public bool isScheduledForPopulation = false;
         public bool isEmpty
-        { get; private set; }
-        public bool isVisible 
-        { get; private set; }
-        public ChunkColumn parentChunkColumn 
         { get; private set; }
         public Vector3i coord { get; private set; }
         public Vector3i worldCoord { get; private set; }
 
-        public Chunk(Vector3i coord, ChunkColumn parentChunkColumn)
+        public Chunk(Vector3i coord)
         {
+            this.isEmpty = true;
             this.coord = coord;
-            this.parentChunkColumn = parentChunkColumn;
             worldCoord = coord * CHUNK_SIZE;
-            voxels = new byte[CHUNK_SIZE_CUBED];
             lightMap = new LightMap(CHUNK_SIZE_CUBED);
-            isVisible = true;
+        }
+
+        /// <summary>
+        /// Should be called apon first time of adding a non-air voxel to this chunk.
+        /// Not initializing the byte buffer on construction saves memory if this chunk doesnt
+        /// contain any voxels yet anyway.
+        /// </summary>
+        public void init()
+        { 
+            voxels = new byte[CHUNK_SIZE_CUBED];
+            isEmpty = false;
         }
 
         public void setVoxelAt(int x, int y, int z, byte id)
@@ -54,12 +57,7 @@ namespace RabbetGameEngine
             if (x < 0 || y < 0 || z < 0) return;
             int index = x << X_SHIFT | z << Z_SHIFT | y;
             if (index < CHUNK_SIZE_CUBED) voxels[index] = id;
-            if (id != 0)
-            {
-                isEmpty = false;
-            }
         }
-
         public void setLightLevelAt(int x, int y, int z, byte level)
         {
             lightMap.setLightLevelAt(x, y, z, level);
@@ -79,31 +77,6 @@ namespace RabbetGameEngine
         public byte[] getVoxels()
         {
             return voxels;
-        }
-
-        public void markForRenderUpdate()
-        {
-            updateFlag = true;
-        }
-
-        public void unMarkForRenderUpdate()
-        {
-            updateFlag = false;
-        }
-
-        public bool isMarkedForRenderUpdate()
-        {
-            return updateFlag;
-        }
-
-        public void markForRemoval()
-        {
-            removalFlag = true;
-        }
-
-        public bool isMarkedForRemoval()
-        {
-            return removalFlag;
         }
     }
 }

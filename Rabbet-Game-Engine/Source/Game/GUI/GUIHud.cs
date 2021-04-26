@@ -19,7 +19,7 @@
             base.onUpdate(isFrameUpdate);
             if (isFrameUpdate) return;
             displayFps();
-            timePanel.clear().addLine(GameInstance.get.currentWorld.sky.get12HourTimeString());
+            timePanel.clear().addLine(GameInstance.get.currentWorld.theSky.get12HourTimeString());
             timePanel.updateRenderData();
         }
 

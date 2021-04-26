@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using Medallion;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,50 +8,60 @@ namespace RabbetGameEngine
 {
     public class Terrain
     {
-        public int genChunksWide
-        { get; private set; }
-
-        public int genChunksRadius
-        { get; private set; }
-
-        private Dictionary<Vector2i, ChunkColumn> chunkMap;
-
-        private int minChunkX;
-        private int minChunkZ;
-        private int maxChunkX;
-        private int maxChunkZ;
-        private Random genRand;
+        public int genChunksWide { get; private set; }
+        public int genChunksRadius{ get; private set; }
+        private Dictionary<Vector2i, ChunkColumn> chunkMap = null;
+        private Vector4i chunkRanges;//minX maxX minZ maxZ
+        private Random genRand = null;
+        private ChunkPopulator populator = null;
+        private Vector3i currentVoxelMiddlePos;
         private Vector3i currentChunkMiddlePos;
 
-        public Terrain(Random rand)
+        public Terrain(long seed)
         {
-            genRand = rand;
+            populator = new ChunkPopulator(seed);
+            genRand = Rand.CreateJavaRandom(seed);
             chunkMap = new Dictionary<Vector2i, ChunkColumn>();
+            currentChunkMiddlePos = currentVoxelMiddlePos = new Vector3i(-99999, -99999, -99999);
             TerrainRenderer.setTerrainToRender(this);
-            genChunksWide = (int)(GameSettings.maxDrawDistance.floatValue / Chunk.CHUNK_PHYSICAL_SIZE) + 1;// + 1 for camera middle chunk
-            genChunksRadius = genChunksWide / 2;
-            onChunkGenDistanceChanged(); 
         }
 
         public void onTick(Vector3 playerPos, float ts)
         {
-            if(GameSettings.videoSettingsChanged)
-            {
-                int currentChunkGenDistance = (int)(GameSettings.maxDrawDistance.floatValue / Chunk.CHUNK_PHYSICAL_SIZE) + 1;// + 1 for camera middle chunk
-                if(currentChunkGenDistance != genChunksWide) { genChunksWide = currentChunkGenDistance; onChunkGenDistanceChanged();}
-            }
-
-            if(MathUtil.manhattanDist(Chunk.worldToVoxelPos(playerPos).Xz, currentChunkMiddlePos.Xz) > Chunk.CHUNK_SIZE)
-            {
-                currentChunkMiddlePos = Chunk.worldToChunkPos(playerPos);
-                refreshAllChunkColumns();
-            }
+            checkChunkGenAreaChanged(playerPos);
+            populator.onTick(ts);
         }
 
-        private void onChunkGenDistanceChanged()
+        private void checkChunkGenAreaChanged(Vector3 playerPos)
         {
-            refreshAllChunkColumns();
-            TerrainRenderer.onChunkGenDistanceChanged();
+            bool shouldRefreshChunkArea = false;
+            bool shouldDoSorting = false;
+            int currentChunkGenDistance = (int)(GameSettings.maxDrawDistance.floatValue / Chunk.CHUNK_PHYSICAL_SIZE);
+            if (currentChunkGenDistance != genChunksRadius)
+            {
+                shouldRefreshChunkArea = true;
+                genChunksRadius = currentChunkGenDistance;
+                genChunksWide = genChunksRadius * 2;
+            }
+            if (MathUtil.manhattanDist(Chunk.worldToVoxelPos(playerPos), currentVoxelMiddlePos, out Vector3i distances) >= Chunk.CHUNK_SIZE)
+            {
+                currentVoxelMiddlePos = Chunk.worldToVoxelPos(playerPos);
+                currentChunkMiddlePos = Chunk.worldToChunkPos(playerPos);
+                populator.sortQueue(currentChunkMiddlePos);
+                shouldRefreshChunkArea = (distances.X >= Chunk.CHUNK_SIZE || distances.Z >= Chunk.CHUNK_SIZE);
+                shouldDoSorting = shouldRefreshChunkArea || distances.Y > Chunk.CHUNK_SIZE;
+            }
+            if(shouldRefreshChunkArea)
+            {
+                refreshAllChunkColumns();
+                TerrainRenderer.onChunkGenAreaChanged(genChunksRadius, chunkRanges, currentChunkMiddlePos);
+                //generation range should be greater than rendering range for population reasons
+            }
+            if(shouldDoSorting)
+            {
+                populator.sortQueue(currentChunkMiddlePos);
+                TerrainRenderer.sortRenderersByProximity(currentChunkMiddlePos);
+            }
         }
 
         /// <summary>
@@ -58,10 +69,11 @@ namespace RabbetGameEngine
         /// </summary>
         private void refreshAllChunkColumns()
         {
-            minChunkX = currentChunkMiddlePos.X - genChunksRadius;
-            maxChunkX = currentChunkMiddlePos.X + genChunksRadius;
-            minChunkZ = currentChunkMiddlePos.Z - genChunksRadius;
-            maxChunkZ = currentChunkMiddlePos.Z + genChunksRadius;
+            Profiler.startTickSection("chunkRefresh");
+            chunkRanges.X = currentChunkMiddlePos.X - genChunksRadius;
+            chunkRanges.Y = currentChunkMiddlePos.X + genChunksRadius;
+            chunkRanges.Z = currentChunkMiddlePos.Z - genChunksRadius;
+            chunkRanges.W = currentChunkMiddlePos.Z + genChunksRadius;
 
             //unload any chunks outside of the radius
             for(int i = 0; i < chunkMap.Count; i++)
@@ -73,10 +85,10 @@ namespace RabbetGameEngine
                 }
             }
             Vector2i cPos;
-            for(int x = minChunkX; x <= maxChunkX; x++)
+            for(int x = chunkRanges.X - 2; x < chunkRanges.Y + 2; x++)
             {
                 cPos.X = x;
-                for(int z = minChunkZ; z <= maxChunkZ; z++)
+                for(int z = chunkRanges.Z - 2; z < chunkRanges.W + 2; z++)
                 {
                     cPos.Y = z;
                     if(!chunkMap.ContainsKey(cPos))
@@ -87,6 +99,7 @@ namespace RabbetGameEngine
                     }
                 }
             }
+            Profiler.endCurrentTickSection();
         }
 
         /// <summary>
@@ -96,7 +109,13 @@ namespace RabbetGameEngine
         {
             //do any chunk saving and stuff here
             //like if chunk is edited save and then remove
-
+            foreach(Chunk cAt in c.getVerticalChunks())
+            {
+                if(cAt.isScheduledForPopulation)
+                {
+                    populator.unScheduleScheduledChunk(cAt);
+                }
+            }
             return chunkMap.Remove(c.coord);
         }
 
@@ -105,23 +124,11 @@ namespace RabbetGameEngine
             Chunk[] verticalChunks = cc.getVerticalChunks();
             for(int y = 0; y < ChunkColumn.NUM_CHUNKS_HEIGHT; y++)
             {
-                Chunk c = new Chunk(new Vector3i(coord.X, y, coord.Y), cc);
-                debugRandom(c);
+                Chunk c = new Chunk(new Vector3i(coord.X, y, coord.Y));
+                c.isScheduledForPopulation = true;
+                populator.scheduleChunkForPopulating(c);
                 verticalChunks[y] = c; 
             }
-        }
-
-        private void debugRandom(Chunk c)
-        {
-            for (int x = 0; x < Chunk.CHUNK_SIZE; x++)
-                for (int z = 0; z < Chunk.CHUNK_SIZE; z++)
-                    for (int y = 0; y < Chunk.CHUNK_SIZE; y++)
-                    {
-                        if (genRand.Next(2) == 0)
-                            c.setVoxelAt(x, y, z, (byte)genRand.Next(1, VoxelType.numVoxels + 1));
-                        c.setLightLevelAt(x, y, z, (byte)genRand.Next(64));
-                    }
-            c.markForRenderUpdate();
         }
 
         public Chunk getChunkAtChunkCoords(int x, int y, int z)
@@ -138,7 +145,7 @@ namespace RabbetGameEngine
 
         public void unLoad()
         {
-            TerrainRenderer.unLoad();
+
         }
     }
 }

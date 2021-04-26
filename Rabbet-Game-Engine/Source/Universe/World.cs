@@ -9,16 +9,15 @@ namespace RabbetGameEngine
         public static readonly int NUM_CHUNKS_HIGH = 16;
         private Random random;
         private Terrain terrain;
-        private Sky theSky;
-        private float grav;
-
+        public Sky theSky { get; private set; }
+        public float gravity { get; private set; }
         private FlyCamera player;//temp
         public World(long seed)
         {
             random = Rand.CreateJavaRandom(seed);
-            terrain = new Terrain(random);
+            terrain = new Terrain(seed);
             theSky = new Sky(random);
-            grav = 9.807F * (0.5F + (float)random.NextDouble() * 1.5F);
+            gravity = 9.807F * (0.5F + (float)random.NextDouble() * 1.5F);
             SkyboxRenderer.setSkyboxToDraw(theSky);
             player = new FlyCamera(new Vector3(0,128,0));
             Renderer.setCamera(player);
@@ -41,16 +40,6 @@ namespace RabbetGameEngine
         public void unLoad()
         {
             terrain.unLoad();
-        }
-
-        public Sky sky
-        {
-            get => theSky;
-        }
-
-        public float gravity
-        {
-            get => grav;
         }
     }
 }

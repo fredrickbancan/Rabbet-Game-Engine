@@ -42,7 +42,7 @@ namespace RabbetGameEngine
                 infoText.addLine("Batches: " + BatchManager.batchCount);
                 infoText.addLine("GUI Batches: " + BatchManager.guiBatchCount);
                 infoText.addLine("Draw calls: " + Renderer.totalDraws);
-                infoText.addLine("Chunk Draw calls: " + TerrainRenderer.chunkDrawCalls);
+                infoText.addLine("Chunk Draw calls: " + TerrainRenderer.NUM_DRAWCALLS);
                 infoText.addLine("FBO Draw calls: " + Renderer.totalFBODraws);
                 infoText.addLine("Resolution: " + Renderer.viewPortSize.X + " X " + Renderer.viewPortSize.Y);
                 infoText.addLine("Sounds: " + SoundManager.getPlayingSoundsCount());
