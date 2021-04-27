@@ -46,7 +46,7 @@ namespace RabbetGameEngine
             try
             {
                 nonCRand = new Random();
-                TicksAndFrames.init(30);
+                TicksAndFrames.init(60);
                 ResourceUtil.init();
                 GameSettings.loadSettings();
                 Renderer.init();

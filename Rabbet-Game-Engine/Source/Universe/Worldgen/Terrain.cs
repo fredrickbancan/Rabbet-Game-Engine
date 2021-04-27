@@ -2,7 +2,6 @@
 using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RabbetGameEngine
 {
@@ -11,9 +10,11 @@ namespace RabbetGameEngine
         public int genChunksWide { get; private set; }
         public int genChunksRadius{ get; private set; }
         private Dictionary<Vector2i, ChunkColumn> chunkMap = null;
+        public List<Chunk> sortedChunks { get; private set; }
+        private ChunkComparer sorter = new ChunkComparer();
         private Vector4i chunkRanges;//minX maxX minZ maxZ
         private Random genRand = null;
-        private ChunkPopulator populator = null;
+        public ChunkPopulator populator { get; private set; }
         private Vector3i currentVoxelMiddlePos;
         private Vector3i currentChunkMiddlePos;
 
@@ -22,14 +23,21 @@ namespace RabbetGameEngine
             populator = new ChunkPopulator(seed);
             genRand = Rand.CreateJavaRandom(seed);
             chunkMap = new Dictionary<Vector2i, ChunkColumn>();
+            sortedChunks = new List<Chunk>();
             currentChunkMiddlePos = currentVoxelMiddlePos = new Vector3i(-99999, -99999, -99999);
             TerrainRenderer.setTerrainToRender(this);
         }
 
         public void onTick(Vector3 playerPos, float ts)
         {
+            foreach (KeyValuePair<Vector2i, ChunkColumn> kvp in chunkMap)
+            {
+                if(kvp.Value.isMarkedForRemoval)
+                {
+                    if (deleteChunkColumn(kvp.Value)) break;
+                }
+            }
             checkChunkGenAreaChanged(playerPos);
-            populator.onTick(ts);
         }
 
         private void checkChunkGenAreaChanged(Vector3 playerPos)
@@ -43,24 +51,31 @@ namespace RabbetGameEngine
                 genChunksRadius = currentChunkGenDistance;
                 genChunksWide = genChunksRadius * 2;
             }
-            if (MathUtil.manhattanDist(Chunk.worldToVoxelPos(playerPos), currentVoxelMiddlePos, out Vector3i distances) >= Chunk.CHUNK_SIZE)
+               
+            Vector3i distances = MathUtil.manhattanDistances(Chunk.worldToVoxelPos(playerPos), currentVoxelMiddlePos);
+            if(distances.X >= Chunk.CHUNK_SIZE || distances.Z >= Chunk.CHUNK_SIZE)
             {
+                shouldRefreshChunkArea = true;
                 currentVoxelMiddlePos = Chunk.worldToVoxelPos(playerPos);
                 currentChunkMiddlePos = Chunk.worldToChunkPos(playerPos);
-                populator.sortQueue(currentChunkMiddlePos);
-                shouldRefreshChunkArea = (distances.X >= Chunk.CHUNK_SIZE || distances.Z >= Chunk.CHUNK_SIZE);
-                shouldDoSorting = shouldRefreshChunkArea || distances.Y > Chunk.CHUNK_SIZE;
             }
-            if(shouldRefreshChunkArea)
+
+            if(distances.Y >= Chunk.CHUNK_SIZE)
+            {
+                shouldDoSorting = true;
+                currentVoxelMiddlePos = Chunk.worldToVoxelPos(playerPos);
+                currentChunkMiddlePos = Chunk.worldToChunkPos(playerPos);
+            }
+
+            if (shouldRefreshChunkArea)
             {
                 refreshAllChunkColumns();
-                TerrainRenderer.onChunkGenAreaChanged(genChunksRadius, chunkRanges, currentChunkMiddlePos);
-                //generation range should be greater than rendering range for population reasons
             }
-            if(shouldDoSorting)
+            if(shouldDoSorting || shouldRefreshChunkArea)
             {
-                populator.sortQueue(currentChunkMiddlePos);
-                TerrainRenderer.sortRenderersByProximity(currentChunkMiddlePos);
+                Profiler.startTickSection("chunkSort");
+                sortedChunks.Sort(sorter.setCenter(currentChunkMiddlePos));
+                Profiler.endCurrentTickSection();
             }
         }
 
@@ -70,82 +85,153 @@ namespace RabbetGameEngine
         private void refreshAllChunkColumns()
         {
             Profiler.startTickSection("chunkRefresh");
-            chunkRanges.X = currentChunkMiddlePos.X - genChunksRadius;
-            chunkRanges.Y = currentChunkMiddlePos.X + genChunksRadius;
-            chunkRanges.Z = currentChunkMiddlePos.Z - genChunksRadius;
-            chunkRanges.W = currentChunkMiddlePos.Z + genChunksRadius;
+            chunkRanges.X = currentChunkMiddlePos.X - genChunksRadius - 1;
+            chunkRanges.Y = currentChunkMiddlePos.X + genChunksRadius + 1;
+            chunkRanges.Z = currentChunkMiddlePos.Z - genChunksRadius - 1;
+            chunkRanges.W = currentChunkMiddlePos.Z + genChunksRadius + 1;
 
             //unload any chunks outside of the radius
-            for(int i = 0; i < chunkMap.Count; i++)
+            foreach(ChunkColumn c in chunkMap.Values)
             {
-                ChunkColumn c = chunkMap.ElementAt(i).Value;
                 if(Math.Abs(currentChunkMiddlePos.X - c.coord.X) > genChunksRadius || Math.Abs(currentChunkMiddlePos.Z - c.coord.Y) > genChunksRadius)
                 {
-                    if (unloadChunkColumn(c)) i--;
+                    markColumnForRemoval(c);
                 }
             }
+
             Vector2i cPos;
-            for(int x = chunkRanges.X - 2; x < chunkRanges.Y + 2; x++)
+            for(int x = chunkRanges.X; x < chunkRanges.Y; x++)
             {
                 cPos.X = x;
-                for(int z = chunkRanges.Z - 2; z < chunkRanges.W + 2; z++)
+                for(int z = chunkRanges.Z; z < chunkRanges.W; z++)
                 {
                     cPos.Y = z;
-                    if(!chunkMap.ContainsKey(cPos))
+                    if(!chunkMap.TryGetValue(cPos, out ChunkColumn c))
                     {
                         ChunkColumn newChunkColumn = new ChunkColumn(cPos);
-                        populateChunkColumn(cPos, newChunkColumn);
+                        initChunkColumn(cPos, newChunkColumn);
                         chunkMap.Add(cPos, newChunkColumn);
+                        continue;
                     }
+                    //if chunkcolumn is on the edge
+                    if(cPos.X <= chunkRanges.X+1 || cPos.X >= chunkRanges.Y-1 || cPos.Y <= chunkRanges.Z+1 || cPos.Y >= chunkRanges.W-1)
+                    {
+                        foreach (Chunk cAt in c.getVerticalChunks()) cAt.isOnWorldEdge = true;
+                        continue;
+                    }
+                    foreach (Chunk cAt in c.getVerticalChunks()) cAt.isOnWorldEdge = false;
                 }
             }
             Profiler.endCurrentTickSection();
         }
 
         /// <summary>
+        /// called each frame by terrain renderer before rendering
+        /// </summary>
+        public void doFrustumCheck(Camera viewer)
+        {
+            foreach (ChunkColumn c in chunkMap.Values)
+            {
+                if(c.isInFrustum = !WorldFrustum.isBoxNotWithinFrustum(viewer.getCameraWorldFrustum(), c.columnBounds))
+                foreach (Chunk cr in c.getVerticalChunks()) cr.isInFrustum = !WorldFrustum.isBoxNotWithinFrustum(viewer.getCameraWorldFrustum(), cr.chunkBounds);
+                else foreach (Chunk cr in c.getVerticalChunks()) cr.isInFrustum = false;
+            }
+        }
+
+        /// <summary>
         /// returns true if the chunk column is found and removed from the chunk map
         /// </summary>
-        private bool unloadChunkColumn(ChunkColumn c)
+        private bool deleteChunkColumn(ChunkColumn c)
         {
             //do any chunk saving and stuff here
             //like if chunk is edited save and then remove
             foreach(Chunk cAt in c.getVerticalChunks())
             {
-                if(cAt.isScheduledForPopulation)
-                {
-                    populator.unScheduleScheduledChunk(cAt);
-                }
+                cAt.localRenderer.delete();
+                sortedChunks.Remove(cAt);
             }
             return chunkMap.Remove(c.coord);
         }
 
-        private void populateChunkColumn(Vector2i coord, ChunkColumn cc)
+        private void markColumnForRemoval(ChunkColumn c)
+        {
+            foreach (Chunk cAt in c.getVerticalChunks())
+            {
+                cAt.isMarkedForRemoval = true;
+            }
+            c.isMarkedForRemoval = true;
+        }
+
+        private void initChunkColumn(Vector2i coord, ChunkColumn cc)
         {
             Chunk[] verticalChunks = cc.getVerticalChunks();
-            for(int y = 0; y < ChunkColumn.NUM_CHUNKS_HEIGHT; y++)
+            bool isOnEdge = coord.X <= chunkRanges.X + 1 || coord.X >= chunkRanges.Y - 1 || coord.Y <= chunkRanges.Z + 1 || coord.Y >= chunkRanges.W - 1;
+            for (int y = 0; y < ChunkColumn.NUM_CHUNKS_HEIGHT; y++)
             {
                 Chunk c = new Chunk(new Vector3i(coord.X, y, coord.Y));
                 c.isScheduledForPopulation = true;
-                populator.scheduleChunkForPopulating(c);
+                c.isMarkedForRenderUpdate = true;
+                c.isOnWorldEdge = isOnEdge;
+                sortedChunks.Add(c);
                 verticalChunks[y] = c; 
             }
         }
 
         public Chunk getChunkAtChunkCoords(int x, int y, int z)
         {
+            if (y < 0 || y >= ChunkColumn.NUM_CHUNKS_HEIGHT) return null;
             chunkMap.TryGetValue(new Vector2i(x, z), out ChunkColumn c);
             return c != null ? c.getChunkAtYChunkCoord(y) : null;
         }
 
-        public ChunkColumn getChunkColumnAtChunkCoords(int x, int z)
+        public int getLocalVoxelFromChunk(Chunk c, int x, int y, int z)
         {
-            chunkMap.TryGetValue(new Vector2i(x, z), out ChunkColumn c);
-            return c;
+            if (x < 0 || x >= Chunk.CHUNK_SIZE || y < 0 || y >= Chunk.CHUNK_SIZE || z < 0 || z >= Chunk.CHUNK_SIZE)
+            {
+                int worldY = c.worldCoord.Y + y;
+                int inBoundChunkY = worldY >> Chunk.Z_SHIFT;
+                if (inBoundChunkY >= ChunkColumn.NUM_CHUNKS_HEIGHT || inBoundChunkY < 0) return 0;
+                int worldX = c.worldCoord.X + x;
+                int worldZ = c.worldCoord.Z + z;
+                int inBoundChunkX = worldX >> Chunk.Z_SHIFT;
+                int inBoundChunkZ = worldZ >> Chunk.Z_SHIFT;
+                if(chunkMap.TryGetValue(new Vector2i(inBoundChunkX, inBoundChunkZ), out ChunkColumn inBoundChunkColumn))
+                {
+                    Chunk cAt = inBoundChunkColumn.getChunkAtYChunkCoord(inBoundChunkY);
+                    if (cAt.isScheduledForPopulation) populator.populateChunk(cAt);
+                    return cAt.getVoxelAt(worldX & Chunk.CHUNK_SIZE_MINUS_ONE, worldY & Chunk.CHUNK_SIZE_MINUS_ONE, worldZ & Chunk.CHUNK_SIZE_MINUS_ONE);
+                }
+                return 0;
+            }
+            return c.getVoxelAt(x, y, z);
+        }
+
+        public int getLocalLightLevelFromChunk(Chunk c, int x, int y, int z)
+        {
+            if (x < 0 || x >= Chunk.CHUNK_SIZE || y < 0 || y >= Chunk.CHUNK_SIZE || z < 0 || z >= Chunk.CHUNK_SIZE)
+            {
+                int worldY = c.worldCoord.Y + y;
+                int inBoundChunkY = worldY >> Chunk.Z_SHIFT;
+                if (inBoundChunkY >= ChunkColumn.NUM_CHUNKS_HEIGHT || inBoundChunkY < 0) return 63;
+                int worldX = c.worldCoord.X + x;
+                int worldZ = c.worldCoord.Z + z;
+                int inBoundChunkX = worldX >> Chunk.Z_SHIFT;
+                int inBoundChunkZ = worldZ >> Chunk.Z_SHIFT;
+                if (chunkMap.TryGetValue(new Vector2i(inBoundChunkX, inBoundChunkZ), out ChunkColumn inBoundChunkColumn))
+                {
+                    Chunk cAt = inBoundChunkColumn.getChunkAtYChunkCoord(inBoundChunkY);
+                    if (cAt.isScheduledForPopulation) populator.populateChunk(cAt);
+                    return cAt.getLightLevelAt(worldX & Chunk.CHUNK_SIZE_MINUS_ONE, worldY & Chunk.CHUNK_SIZE_MINUS_ONE, worldZ & Chunk.CHUNK_SIZE_MINUS_ONE);
+                }
+                return 63;
+            }
+            return c.getLightLevelAt(x, y, z);
         }
 
         public void unLoad()
         {
-
+            foreach (ChunkColumn c in chunkMap.Values) deleteChunkColumn(c);
+            
         }
     }
 }

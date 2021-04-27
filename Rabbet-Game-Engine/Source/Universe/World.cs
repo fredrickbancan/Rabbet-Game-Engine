@@ -14,12 +14,12 @@ namespace RabbetGameEngine
         private FlyCamera player;//temp
         public World(long seed)
         {
+            player = new FlyCamera(new Vector3(0,128,0));
             random = Rand.CreateJavaRandom(seed);
             terrain = new Terrain(seed);
             theSky = new Sky(random);
             gravity = 9.807F * (0.5F + (float)random.NextDouble() * 1.5F);
             SkyboxRenderer.setSkyboxToDraw(theSky);
-            player = new FlyCamera(new Vector3(0,128,0));
             Renderer.setCamera(player);
         }
 

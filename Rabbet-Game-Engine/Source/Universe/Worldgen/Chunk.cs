@@ -23,33 +23,33 @@ namespace RabbetGameEngine
             return (Vector3i)(vec / Chunk.VOXEL_PHYSICAL_SIZE);
         }
 
+        public ChunkRenderer localRenderer
+        { get; private set; }
         private byte[] voxels = null;
         private LightMap lightMap = null;
         public bool isMarkedForRemoval = false;
         public bool isMarkedForRenderUpdate = false;
+        public bool isOnWorldEdge = false;
         public bool isScheduledForPopulation = false;
+        public bool isInFrustum = false;
         public bool isEmpty
         { get; private set; }
         public Vector3i coord { get; private set; }
         public Vector3i worldCoord { get; private set; }
+        public AABB chunkBounds { get; private set; }
+
 
         public Chunk(Vector3i coord)
         {
             this.isEmpty = true;
             this.coord = coord;
+            Vector3i voxelMinBounds = coord * CHUNK_SIZE;
+            Vector3i voxelMaxBounds = voxelMinBounds + new Vector3i(CHUNK_SIZE);
+            chunkBounds = AABB.fromBounds((Vector3)voxelMinBounds, (Vector3)voxelMaxBounds);
             worldCoord = coord * CHUNK_SIZE;
             lightMap = new LightMap(CHUNK_SIZE_CUBED);
-        }
-
-        /// <summary>
-        /// Should be called apon first time of adding a non-air voxel to this chunk.
-        /// Not initializing the byte buffer on construction saves memory if this chunk doesnt
-        /// contain any voxels yet anyway.
-        /// </summary>
-        public void init()
-        { 
             voxels = new byte[CHUNK_SIZE_CUBED];
-            isEmpty = false;
+            localRenderer = new ChunkRenderer(this);
         }
 
         public void setVoxelAt(int x, int y, int z, byte id)
@@ -57,6 +57,7 @@ namespace RabbetGameEngine
             if (x < 0 || y < 0 || z < 0) return;
             int index = x << X_SHIFT | z << Z_SHIFT | y;
             if (index < CHUNK_SIZE_CUBED) voxels[index] = id;
+            if (id != 0) isEmpty = false;
         }
         public void setLightLevelAt(int x, int y, int z, byte level)
         {
@@ -70,7 +71,6 @@ namespace RabbetGameEngine
 
         public int getVoxelAt(int x, int y, int z)
         {
-            if (x < 0 || y < 0 || z < 0) return 0;
             int index = x << X_SHIFT | z << Z_SHIFT | y;
             return index >= CHUNK_SIZE_CUBED ? 0 : voxels[index];
         }

@@ -7,6 +7,8 @@ namespace RabbetGameEngine
         public static readonly int NUM_CHUNKS_HEIGHT = 8;
         public static readonly int NUM_VOXELS_HEIGHT = NUM_CHUNKS_HEIGHT * Chunk.CHUNK_SIZE;
         private Chunk[] verticalChunks = new Chunk[NUM_CHUNKS_HEIGHT];
+        public bool isInFrustum = false;
+        public bool isMarkedForRemoval = false;
         public AABB columnBounds
         { get; private set; }
 

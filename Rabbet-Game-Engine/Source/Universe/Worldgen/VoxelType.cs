@@ -13,14 +13,20 @@
         private static VoxelType[] voxelTypes = new VoxelType[NUM_MAX_VOXEL_TYPES];
 
         //declaring all voxel types. Voxel ids are assigned based on the order they are declared here.
-        public static readonly VoxelType stone = new VoxelType(true);
+        /*public static readonly VoxelType stone = new VoxelType(true);
         public static readonly VoxelType dirt = new VoxelType(true);
         public static readonly VoxelType grass = new VoxelType(true);
         public static readonly VoxelType wood = new VoxelType(true);
         public static readonly VoxelType step = new VoxelType(true);
         public static readonly VoxelType step2 = new VoxelType(true);
         public static readonly VoxelType brick = new VoxelType(true);
-        public static readonly VoxelType tnt = new VoxelType(true);
+        public static readonly VoxelType tnt = new VoxelType(true);*/
+        private static VoxelType[] temp = new VoxelType[NUM_MAX_VOXEL_TYPES];
+        static VoxelType()
+        {
+            for (int i = 0; i < 128; i++)
+               temp[i] = new VoxelType(true);
+        }
 
         public static VoxelType getVoxelById(int id)
         {

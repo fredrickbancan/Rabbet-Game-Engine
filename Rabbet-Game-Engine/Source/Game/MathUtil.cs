@@ -151,6 +151,14 @@ namespace RabbetGameEngine
             distances.Z = Math.Abs(a.Z - b.Z);
             return distances.X + distances.Y + distances.Z;
         }
+        public static Vector3i manhattanDistances(Vector3i a, Vector3i b)
+        {
+            Vector3i distances;
+            distances.X = Math.Abs(a.X - b.X);
+            distances.Y = Math.Abs(a.Y - b.Y);
+            distances.Z = Math.Abs(a.Z - b.Z);
+            return distances;
+        }
         public static int manhattanDist(Vector3i a, Vector3i b)
         {
             return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) + Math.Abs(a.Z - b.Z);
