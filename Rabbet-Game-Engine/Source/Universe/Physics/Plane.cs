@@ -17,7 +17,12 @@ namespace RabbetGameEngine
         {
             return Vector3.Dot(vec, plane.normal) - plane.scalar;
         }
-        
+
+        public static float vectorDistanceFromPlaneRef(in Plane plane, in Vector3 vec)
+        {
+            return Vector3.Dot(vec, plane.normal) - plane.scalar;
+        }
+
         public static bool isBoxInfrontOfPlane(AABB box, Plane plane)
         {
             float r = Vector3.Dot(box.extents, MathUtil.abs(plane.normal));
@@ -28,6 +33,12 @@ namespace RabbetGameEngine
         {
             float r = Vector3.Dot(box.extents, MathUtil.abs(plane.normal));
             return vectorDistanceFromPlane(plane, box.pos) < -r;
+        }
+
+        public static bool isBoxBehindPlaneRef(in AABB box, in Plane plane)
+        {
+            float r = Vector3.Dot(box.extents, MathUtil.abs(plane.normal));
+            return vectorDistanceFromPlaneRef(in plane, in box.pos) < -r;
         }
     }
 }

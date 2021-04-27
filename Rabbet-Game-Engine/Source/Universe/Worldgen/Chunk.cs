@@ -23,7 +23,7 @@ namespace RabbetGameEngine
             return (Vector3i)(vec / Chunk.VOXEL_PHYSICAL_SIZE);
         }
 
-        public ChunkRenderer localRenderer
+        public ChunkMesh localRenderer
         { get; private set; }
         private byte[] voxels = null;
         private LightMap lightMap = null;
@@ -36,7 +36,7 @@ namespace RabbetGameEngine
         { get; private set; }
         public Vector3i coord { get; private set; }
         public Vector3i worldCoord { get; private set; }
-        public AABB chunkBounds { get; private set; }
+        private AABB chunkBounds;
 
 
         public Chunk(Vector3i coord)
@@ -49,7 +49,7 @@ namespace RabbetGameEngine
             worldCoord = coord * CHUNK_SIZE;
             lightMap = new LightMap(CHUNK_SIZE_CUBED);
             voxels = new byte[CHUNK_SIZE_CUBED];
-            localRenderer = new ChunkRenderer(this);
+            localRenderer = new ChunkMesh(this);
         }
 
         public void setVoxelAt(int x, int y, int z, byte id)
@@ -77,6 +77,17 @@ namespace RabbetGameEngine
         public byte[] getVoxels()
         {
             return voxels;
+        
+        }
+
+        public ref AABB getBoundsRef()
+        {
+            return ref chunkBounds;
+        }
+
+        public AABB getBounds()
+        {
+            return chunkBounds;
         }
     }
 }

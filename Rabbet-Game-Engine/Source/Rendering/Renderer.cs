@@ -67,7 +67,7 @@ namespace RabbetGameEngine
             Application.checkGLErrors();
             BatchUtil.init();
             Application.checkGLErrors();
-            ChunkRenderer.init();
+            ChunkMesh.init();
             Application.checkGLErrors();
             TerrainRenderer.init();
             Application.checkGLErrors();
@@ -312,7 +312,7 @@ namespace RabbetGameEngine
                 s.delete();
             }
             BatchManager.deleteAll();
-            ChunkRenderer.onClosing();
+            ChunkMesh.onClosing();
             TerrainRenderer.onClosing();
             ShaderUtil.deleteAll();
             TextureUtil.deleteAll();

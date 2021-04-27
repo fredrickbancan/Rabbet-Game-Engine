@@ -8,7 +8,7 @@ namespace RabbetGameEngine
     /// A class for creating mesh data / render data for rendering a chunk.
     /// Builds buffers of voxel data based on voxel states and visibility for performance.
     /// </summary>
-    public class ChunkRenderer
+    public class ChunkMesh
     {
         public static readonly int MAX_CHUNK_FACE_COUNT = 98304;//maximum voxel faces that can be visible in a chunk
         public static readonly int CHUNK_VERTEX_INDICES_COUNT = MAX_CHUNK_FACE_COUNT * 4;
@@ -45,7 +45,7 @@ namespace RabbetGameEngine
         public Chunk parentChunk{ get; private set; }
         public int addedVoxelFaceCount { get; private set; }
 
-        public ChunkRenderer(Chunk parentChunk)
+        public ChunkMesh(Chunk parentChunk)
         {
             this.parentChunk = parentChunk;
             voxelFaceBuffer = new VoxelFace[MAX_CHUNK_FACE_COUNT];

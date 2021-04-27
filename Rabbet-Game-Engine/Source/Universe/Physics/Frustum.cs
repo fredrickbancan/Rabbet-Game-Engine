@@ -123,6 +123,17 @@ namespace RabbetGameEngine
         }
 
 
+        public static bool isBoxNotWithinFrustumRef(in WorldFrustum f,in AABB box)
+        {
+            return
+               Plane.isBoxBehindPlaneRef(in box, in f.farPlane) ||
+               Plane.isBoxBehindPlaneRef(in box, in f.topPlane) ||
+               Plane.isBoxBehindPlaneRef(in box, in f.rightPlane) ||
+               Plane.isBoxBehindPlaneRef(in box, in f.leftPlane) ||
+               Plane.isBoxBehindPlaneRef(in box, in f.bottomPlane) ||
+               Plane.isBoxBehindPlaneRef(in box, in f.nearPlane);
+        }
+
         public static bool isBoxNotWithinFrustum(WorldFrustum f, AABB box)
         {
             return

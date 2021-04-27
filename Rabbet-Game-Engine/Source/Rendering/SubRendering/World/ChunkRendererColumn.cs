@@ -4,7 +4,7 @@ namespace RabbetGameEngine
 {
     public class ChunkRendererColumn
     {
-        private ChunkRenderer[] verticalChunkRenderers = new ChunkRenderer[ChunkColumn.NUM_CHUNKS_HEIGHT];
+        private ChunkMesh[] verticalChunkRenderers = new ChunkMesh[ChunkColumn.NUM_CHUNKS_HEIGHT];
         public AABB columnBounds
         { get; private set; }
 
@@ -18,7 +18,7 @@ namespace RabbetGameEngine
         public ChunkRendererColumn(ChunkColumn correspondingChunkColumn, int x, int z)
         {
             this.correspondingChunkColumn = correspondingChunkColumn;
-            for (int y = 0; y < ChunkColumn.NUM_CHUNKS_HEIGHT; y++) verticalChunkRenderers[y] = new ChunkRenderer(correspondingChunkColumn.getChunkAtYChunkCoord(y));
+            for (int y = 0; y < ChunkColumn.NUM_CHUNKS_HEIGHT; y++) verticalChunkRenderers[y] = new ChunkMesh(correspondingChunkColumn.getChunkAtYChunkCoord(y));
             coord = new Vector2i(x, z);
             x *= Chunk.CHUNK_SIZE;
             z *= Chunk.CHUNK_SIZE;
@@ -28,18 +28,18 @@ namespace RabbetGameEngine
         public ChunkRendererColumn(ChunkColumn correspondingChunkColumn, Vector2i pos)
         {
             this.correspondingChunkColumn = correspondingChunkColumn;
-            for (int y = 0; y < ChunkColumn.NUM_CHUNKS_HEIGHT; y++) verticalChunkRenderers[y] = new ChunkRenderer(correspondingChunkColumn.getChunkAtYChunkCoord(y));
+            for (int y = 0; y < ChunkColumn.NUM_CHUNKS_HEIGHT; y++) verticalChunkRenderers[y] = new ChunkMesh(correspondingChunkColumn.getChunkAtYChunkCoord(y));
             coord = pos;
             pos *= Chunk.CHUNK_SIZE;
             columnBounds = AABB.fromBounds(new Vector3(pos.X, 0, pos.Y), new Vector3(pos.X + Chunk.CHUNK_SIZE, ChunkColumn.NUM_VOXELS_HEIGHT, pos.Y + Chunk.CHUNK_SIZE));
         }
 
-        public ChunkRenderer getChunkRendererAtYChunkCoord(int y)
+        public ChunkMesh getChunkRendererAtYChunkCoord(int y)
         {
             return verticalChunkRenderers[y];
         }
 
-        public ChunkRenderer[] getVerticalChunkRenderers()
+        public ChunkMesh[] getVerticalChunkRenderers()
         {
             return verticalChunkRenderers;
         }

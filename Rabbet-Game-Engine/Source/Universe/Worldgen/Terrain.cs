@@ -132,8 +132,8 @@ namespace RabbetGameEngine
         {
             foreach (ChunkColumn c in chunkMap.Values)
             {
-                if(c.isInFrustum = !WorldFrustum.isBoxNotWithinFrustum(viewer.getCameraWorldFrustum(), c.columnBounds))
-                foreach (Chunk cr in c.getVerticalChunks()) cr.isInFrustum = !WorldFrustum.isBoxNotWithinFrustum(viewer.getCameraWorldFrustum(), cr.chunkBounds);
+                if(c.isInFrustum = !WorldFrustum.isBoxNotWithinFrustumRef(in viewer.getCameraWorldFrustumRef(), in c.getColumnBoundsRef()))
+                foreach (Chunk cr in c.getVerticalChunks()) cr.isInFrustum = !WorldFrustum.isBoxNotWithinFrustumRef(in viewer.getCameraWorldFrustumRef(), in cr.getBoundsRef());
                 else foreach (Chunk cr in c.getVerticalChunks()) cr.isInFrustum = false;
             }
         }

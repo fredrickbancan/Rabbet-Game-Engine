@@ -9,8 +9,7 @@ namespace RabbetGameEngine
         private Chunk[] verticalChunks = new Chunk[NUM_CHUNKS_HEIGHT];
         public bool isInFrustum = false;
         public bool isMarkedForRemoval = false;
-        public AABB columnBounds
-        { get; private set; }
+        private AABB columnBounds;
 
         public Vector2i coord
         { get; private set; }
@@ -38,6 +37,16 @@ namespace RabbetGameEngine
         public Chunk[] getVerticalChunks()
         {
             return verticalChunks;
+        }
+
+        public ref AABB getColumnBoundsRef()
+        {
+            return ref columnBounds;
+        }
+
+        public AABB getColumnBounds()
+        {
+            return columnBounds;
         }
     }
 }

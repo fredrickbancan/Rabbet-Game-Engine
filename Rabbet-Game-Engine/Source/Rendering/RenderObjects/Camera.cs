@@ -72,6 +72,11 @@ namespace RabbetGameEngine
             frustum.transformPlanes(Renderer.projMatrix, viewMatrix, camPos);
         }
 
+        public ref WorldFrustum getCameraWorldFrustumRef()
+        {
+            return ref frustum;
+        }
+
         public WorldFrustum getCameraWorldFrustum()
         {
             return frustum;
