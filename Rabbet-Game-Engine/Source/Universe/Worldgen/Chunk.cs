@@ -26,7 +26,7 @@ namespace RabbetGameEngine
         public ChunkMesh localRenderer
         { get; private set; }
         private byte[] voxels = null;
-        private LightMap lightMap = null;
+        private LightMapHeavy lightMap = null;
         public bool isMarkedForRemoval = false;
         public bool isMarkedForRenderUpdate = false;
         public bool isOnWorldEdge = false;
@@ -47,7 +47,7 @@ namespace RabbetGameEngine
             Vector3i voxelMaxBounds = voxelMinBounds + new Vector3i(CHUNK_SIZE);
             chunkBounds = AABB.fromBounds((Vector3)voxelMinBounds, (Vector3)voxelMaxBounds);
             worldCoord = coord * CHUNK_SIZE;
-            lightMap = new LightMap(CHUNK_SIZE_CUBED);
+            lightMap = new LightMapHeavy(CHUNK_SIZE_CUBED);
             voxels = new byte[CHUNK_SIZE_CUBED];
             localRenderer = new ChunkMesh(this);
         }
@@ -59,12 +59,12 @@ namespace RabbetGameEngine
             if (index < CHUNK_SIZE_CUBED) voxels[index] = id;
             if (id != 0) isEmpty = false;
         }
-        public void setLightLevelAt(int x, int y, int z, byte level)
+        public void setLightLevelAt(int x, int y, int z, int level)
         {
             lightMap.setLightLevelAt(x, y, z, level);
         }
 
-        public byte getLightLevelAt(int x, int y, int z)
+        public int getLightLevelAt(int x, int y, int z)
         {
             return lightMap.getLightLevelAt(x, y, z);
         }

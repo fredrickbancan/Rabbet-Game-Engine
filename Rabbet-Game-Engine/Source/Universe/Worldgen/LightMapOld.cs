@@ -6,16 +6,16 @@
     /// Thats 4.194 MB over 64 chunks saved!
     /// The maths used to store the data should be quite fast.
     /// </summary>
-    public class LightMap
+    public class LightMapOld
     {
         private byte[] data;
 
-        public LightMap(int size)
+        public LightMapOld(int size)
         {
             data = new byte[(int)(System.MathF.Ceiling((float)size - (float)size / 4)) + 1];
         }
 
-        public void setLightLevelAt(int x, int y, int z, byte l)
+        public void setLightLevelAt(int x, int y, int z, int l)
         {
             int index = x << Chunk.X_SHIFT | z << Chunk.Z_SHIFT | y;
             int storeIndex = index - index / 4;
@@ -36,7 +36,7 @@
             return (byte)((data[i - 2] & 192) >> 2 | (data[i - 1] & 192) >> 4 | (data[i] & 192) >> 6);
         }
 
-        private void storeLightLevelInPreviousLeftOverBits(int i, byte l)
+        private void storeLightLevelInPreviousLeftOverBits(int i, int l)
         {
             data[i - 2] |= (byte)((l & 48) << 2);
             data[i - 1] |= (byte)((l & 12) << 4);

@@ -196,7 +196,8 @@ namespace RabbetGameEngine
         {
             if (usePostProcessing)
                 PostProcessing.beforeRender();
-            GL.ClearColor(0.2F, 0.4F, 0.3F, 1.0F);
+            Color c = Color.lightSkyBlue;
+            GL.ClearColor(c.r, c.g, c.b, 1.0F);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
             privateTotalDrawCallCount = 0;
             privateTotalFBODrawCallCount = 0;
@@ -212,7 +213,7 @@ namespace RabbetGameEngine
         {
             preRender();
             Profiler.startSection("renderWorld");
-        //    SkyboxRenderer.drawSkybox(viewMatrix);
+            //SkyboxRenderer.drawSkybox(viewMatrix);
             TerrainRenderer.renderTerrain(renderCam);
             drawAllStaticRenderObjects();
             BatchManager.drawAllWorld();
