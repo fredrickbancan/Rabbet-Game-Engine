@@ -24,7 +24,7 @@
         private static VoxelType[] temp = new VoxelType[NUM_MAX_VOXEL_TYPES];
         static VoxelType()
         {
-            for (int i = 0; i < 128; i++)
+            for (int i = 0; i < 254; i++)
                temp[i] = new VoxelType(true);
         }
 
