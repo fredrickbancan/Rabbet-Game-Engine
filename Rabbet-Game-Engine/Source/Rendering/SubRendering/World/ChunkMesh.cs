@@ -44,6 +44,7 @@ namespace RabbetGameEngine
         private VoxelFace[] voxelFaceBuffer = null;
         public Chunk parentChunk{ get; private set; }
         public int addedVoxelFaceCount { get; private set; }
+        public int addedVoxelFaceIndiciesCount { get; private set; }
 
         public ChunkMesh(Chunk parentChunk)
         {
@@ -62,26 +63,20 @@ namespace RabbetGameEngine
         /// </summary>
         public void updateVoxelMesh(Terrain theTerrain)
         {
-            Profiler.startTickSection("faceBuilding");
             addedVoxelFaceCount = 0;
-            int i;
-            Vector3i pos;
-            Vector3i offset;
-            int vID;
             for (int x = 0; x < Chunk.CHUNK_SIZE; x++)
             {
-                pos.X = x;
                 for (int z = 0; z < Chunk.CHUNK_SIZE; z++)
                 {
-                    pos.Z = z;
                     for (int y = 0; y < Chunk.CHUNK_SIZE; y++)
                     {
+                        int vID = 0;
                         if ((vID = theTerrain.getLocalVoxelFromChunk(parentChunk, x,y,z)) == 0) continue;
-                        pos.Y = y;
 
-                        for (i = 0; i < 6; i++)
+                        Vector3i vPos = new Vector3i(x, y, z);
+                        for (int i = 0; i < 6; i++)
                         {
-                            offset = pos + faceDirections[i];
+                            Vector3i offset = vPos + faceDirections[i];
                             if (!VoxelType.isVoxelOpaque(theTerrain.getLocalVoxelFromChunk(parentChunk, offset.X, offset.Y, offset.Z)))
                             {
                                 int l = theTerrain.getLocalLightLevelFromChunk(parentChunk, offset.X, offset.Y, offset.Z);
@@ -91,17 +86,19 @@ namespace RabbetGameEngine
                     }
                 }
             }
-            voxelsVAO.updateBuffer(0, voxelFaceBuffer, addedVoxelFaceCount * VoxelFace.SIZE_IN_BYTES);
+            addedVoxelFaceIndiciesCount = addedVoxelFaceCount * 4;
             parentChunk.isMarkedForRenderUpdate = false;
-            Profiler.endCurrentTickSection();
         }
 
+        public void updateBuffers()
+        {
+            voxelsVAO.updateBuffer(0, voxelFaceBuffer, addedVoxelFaceCount * VoxelFace.SIZE_IN_BYTES);
+        }
 
         public int getRendererName()
         {
             return voxelsVAO.getName();
         }
-
 
         public void bindVAO()
         {

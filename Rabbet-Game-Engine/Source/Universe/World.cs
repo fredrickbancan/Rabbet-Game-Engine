@@ -37,6 +37,13 @@ namespace RabbetGameEngine
             Profiler.endCurrentTickSection();
         }
 
+        public void onRenderUpdate()
+        {
+            Profiler.startTickSection("terrainRenderUpdate");
+            terrain.onRenderUpdate();
+            Profiler.endCurrentTickSection();
+        }
+
         public void unLoad()
         {
             terrain.unLoad();

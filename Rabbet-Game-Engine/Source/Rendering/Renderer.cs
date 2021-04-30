@@ -151,15 +151,12 @@ namespace RabbetGameEngine
         public static void doWorldRenderUpdate()
         {
             Profiler.startTickSection("worldRenderUpdate");
-
+            GameInstance.get.currentWorld.onRenderUpdate();
             Profiler.startTickSection("preUpdate");
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov.floatValue), GameInstance.aspectRatio, 0.1F, 1000.0F);
             BatchManager.preWorldRenderUpdate(GameInstance.get.currentWorld);
             Profiler.endCurrentTickSection();
-
-            SkyboxRenderer.onUpdate();
-            TerrainRenderer.doRenderUpdate(renderCam);
-
+            //SkyboxRenderer.onUpdate();
             Profiler.startTickSection("postUpdate");
             BatchManager.postWorldRenderUpdate();
             Profiler.endCurrentTickSection();
