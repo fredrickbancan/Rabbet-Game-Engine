@@ -4,12 +4,12 @@ namespace RabbetGameEngine
 {
     public enum ChunkNeighborDirection
     {
-        POSX = 0,
-        POSY = 1,
-        POSZ = 2,
-        NEGZ = 5,
-        NEGY = 4,
-        NEGX = 3
+        POSX,
+        POSY,
+        POSZ,
+        NEGZ,
+        NEGY,
+        NEGX
     };
 
     public class Chunk
