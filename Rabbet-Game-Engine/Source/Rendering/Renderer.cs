@@ -45,7 +45,7 @@ namespace RabbetGameEngine
         private static int privateTotalFBODrawCallCount;
         private static Matrix4 projectionMatrix;
         private static Matrix4 orthographicMatrix;
-        private static bool usePostProcessing = false;
+        private static bool usePostProcessing = true;
         private static int lineWidthPixels = 0;
         private static bool initialized = false;
         private static Camera renderCam = null;
@@ -156,7 +156,7 @@ namespace RabbetGameEngine
             projectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathUtil.radians(GameSettings.fov.floatValue), GameInstance.aspectRatio, 0.1F, 1000.0F);
             BatchManager.preWorldRenderUpdate(GameInstance.get.currentWorld);
             Profiler.endCurrentTickSection();
-            //SkyboxRenderer.onUpdate();
+            SkyboxRenderer.onUpdate();
             Profiler.startTickSection("postUpdate");
             BatchManager.postWorldRenderUpdate();
             Profiler.endCurrentTickSection();
@@ -193,7 +193,7 @@ namespace RabbetGameEngine
         {
             if (usePostProcessing)
                 PostProcessing.beforeRender();
-            Color c = Color.lightSkyBlue;
+            Color c = Color.black;
             GL.ClearColor(c.r, c.g, c.b, 1.0F);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
             privateTotalDrawCallCount = 0;
@@ -210,7 +210,7 @@ namespace RabbetGameEngine
         {
             preRender();
             Profiler.startSection("renderWorld");
-            //SkyboxRenderer.drawSkybox(viewMatrix);
+            SkyboxRenderer.drawSkybox(viewMatrix);
             TerrainRenderer.renderTerrain(renderCam);
             drawAllStaticRenderObjects();
             BatchManager.drawAllWorld();

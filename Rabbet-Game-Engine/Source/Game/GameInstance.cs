@@ -54,7 +54,7 @@ namespace RabbetGameEngine
                 SoundManager.init();
                 windowCenter = new Vector2(this.Location.X / this.Bounds.Size.X + this.Bounds.Size.X / 2, this.Location.Y / this.Bounds.Size.Y + this.Bounds.Size.Y / 2);
                 GUIManager.addPersistentGUI(new GUIHud());
-                currentWorld = new World(0xdeadbeef);
+                currentWorld = new World(0x434343);
                 Input.setCursorHiddenAndGrabbed(true);
                 Input.updateInput();
                 Application.infoPrint("Initialized.");

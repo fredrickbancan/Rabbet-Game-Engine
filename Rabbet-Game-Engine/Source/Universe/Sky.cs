@@ -65,7 +65,7 @@ namespace RabbetGameEngine
 
         private void buildMoons(Random rand)
         {
-            totalMoons = rand.Next(1, 4);
+            totalMoons = rand.Next(8, 16);
             moons = new SkyMoon[moonCount];
             float moonColorStrength = 0.082F;
             float maxMoonRadius = 0.025F;
@@ -81,7 +81,7 @@ namespace RabbetGameEngine
                     (float)rand.NextDouble() * maxMoonRadius + minMoonRadius,
                     (float)rand.NextDouble() * 360.0F,
                     rand.Next(0, SkyMoon.totalMoonTextures),
-                    rand.Next(5, 15),
+                    rand.Next(Math.Min(1, dayNightCycleMinutes / 2), dayNightCycleMinutes * 2),
                     orbitScale);
             }
         }

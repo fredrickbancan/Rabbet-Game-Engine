@@ -8,10 +8,10 @@
         {
             fpsPanel = new GUITextPanel(0, 0, guiFont, ComponentAnchor.TOP_LEFT).addLine("0");
             timePanel = new GUITextPanel(0, 0, guiFont, ComponentAnchor.CENTER_TOP).addLine("00:00").setDefaultLineColor(Color.grey);
-            addGuiComponent("label", new GUITextPanel(0, 0.0F, guiFont, ComponentAnchor.BOTTOM_LEFT).addLine(Application.applicationName).setDefaultLineColor(Color.black));
+            //addGuiComponent("label", new GUITextPanel(0, 0.0F, guiFont, ComponentAnchor.BOTTOM_LEFT).addLine(Application.applicationName).setDefaultLineColor(Color.black));
             addGuiComponent("fps", fpsPanel);
             addGuiComponent("time", timePanel);
-            addGuiComponent("crosshair", new GUICrosshair());
+            //addGuiComponent("crosshair", new GUICrosshair());
         }
 
         public override void onUpdate(bool isFrameUpdate)

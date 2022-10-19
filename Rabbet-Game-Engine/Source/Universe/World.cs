@@ -14,7 +14,7 @@ namespace RabbetGameEngine
         private FlyCamera player;//temp
         public World(long seed)
         {
-            player = new FlyCamera(new Vector3(0,128,0));
+            player = new FlyCamera(new Vector3(0,0,0));
             random = Rand.CreateJavaRandom(seed);
             terrain = new Terrain(seed);
             theSky = new Sky(random);
@@ -33,14 +33,14 @@ namespace RabbetGameEngine
             Profiler.startTickSection("tickWorld");
             theSky.onTick(timeStep);
             player.onTick(timeStep);
-            terrain.onTick(player.getCamPos(),timeStep);// do last
+            //terrain.onTick(player.getCamPos(),timeStep);// do last
             Profiler.endCurrentTickSection();
         }
 
         public void onRenderUpdate()
         {
             Profiler.startTickSection("terrainRenderUpdate");
-            terrain.onRenderUpdate();
+            //terrain.onRenderUpdate();
             Profiler.endCurrentTickSection();
         }
 

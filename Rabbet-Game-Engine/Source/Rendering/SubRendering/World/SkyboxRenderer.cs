@@ -132,7 +132,7 @@ namespace RabbetGameEngine
                 return;
             }
             Matrix4 proj = Renderer.projMatrix;
-            Matrix4 view = viewMatrix.ClearTranslation();
+            Matrix4 view = viewMatrix;//.ClearTranslation();
 
             //drawing horizon shroud
             shroudVAO.bind();
