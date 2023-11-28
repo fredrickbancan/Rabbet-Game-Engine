@@ -50,7 +50,6 @@ namespace RabbetGameEngine
 
             BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-            bitmap.UnlockBits(data);
 
             if (trilinear)
             {
@@ -68,6 +67,7 @@ namespace RabbetGameEngine
             }
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            bitmap.UnlockBits(data);
             id = tex;
         }
 
@@ -178,7 +178,6 @@ namespace RabbetGameEngine
             GL.BindTexture(TextureTarget.Texture2D, tex);
 
             BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            bitmap.UnlockBits(data);
 
             if (trilinear)
             {
@@ -195,6 +194,7 @@ namespace RabbetGameEngine
             }
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            bitmap.UnlockBits(data);
             bitmap.Dispose();
             return tex;
         }
