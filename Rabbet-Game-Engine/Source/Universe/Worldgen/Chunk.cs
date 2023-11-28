@@ -56,6 +56,11 @@ namespace RabbetGameEngine
             get; private set;
         }
 
+        public bool isEmpty
+        {
+            get; private set;
+        }
+
         private Chunk[] neighborChunks = null;
         public bool isMarkedForRemoval = false;
         public bool isMarkedForRenderUpdate = false;
@@ -101,6 +106,7 @@ namespace RabbetGameEngine
             voxels = new uint[CHUNK_SIZE_CUBED];
             neighborChunks = new Chunk[6];
             localRenderer = new ChunkMesh(this);
+            isEmpty = true;
         }
 
         /// <summary>
@@ -146,6 +152,8 @@ namespace RabbetGameEngine
             vAt &= 0b1111_1111_1111_1111_1111_1100_0000_0000;
             vAt |= (uint)id;
             voxels[index] = vAt;
+            if (id != 0)
+                isEmpty = false;
         }
 
         public void setVoxelLightLevelAt(int x, int y, int z, int r, int g, int b)

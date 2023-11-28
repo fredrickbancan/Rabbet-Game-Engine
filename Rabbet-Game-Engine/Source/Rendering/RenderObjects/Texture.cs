@@ -13,7 +13,6 @@ namespace RabbetGameEngine
         private bool isNone = false;//is true if texture is null
         private bool disposed = false;
         private int id, width, height;
-        private Bitmap bitmap;
 
         public Texture(string path, bool filterMin = false, bool filterMag = false, bool trilinear = false)
         {
@@ -41,27 +40,17 @@ namespace RabbetGameEngine
             }
         }
 
-        public Texture(int width, int height, Color[] pixels, bool filterMin = false, bool filterMag = false, bool trilinear = false)//constructs default texture
+        public Texture(Bitmap bitmap, bool filterMin = false, bool filterMag = false, bool trilinear = false)
         {
-            fixed (float* )
-                this.bitmap = new Bitmap(width, height, sizeof(float) * 4, System.Drawing.Imaging.PixelFormat.Format32bppArgb, &pixels[0]);//creating default error texture
-            this.width = width;
-            this.height = height;
-            for (int i = 0; i < width; i++)
-            {
-                for (int j = 0; j < height; j++)
-                {//exlusive or
-                    this.bitmap.SetPixel(i, j, i % 2 == 0 ^ j % 2 != 0 ? System.Drawing.Color.Magenta : System.Drawing.Color.Black);//creating black and magenta checker board
-                }
-            }
-
+            this.width = bitmap.Width;
+            this.height = bitmap.Height;
             int tex;
             GL.GenTextures(1, out tex);
             GL.BindTexture(TextureTarget.Texture2D, tex);
 
-            BitmapData data = this.bitmap.LockBits(new System.Drawing.Rectangle(0, 0, this.bitmap.Width, this.bitmap.Height), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-            this.bitmap.UnlockBits(data);
+            bitmap.UnlockBits(data);
 
             if (trilinear)
             {
@@ -80,6 +69,19 @@ namespace RabbetGameEngine
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
             id = tex;
+        }
+
+        public static Texture createErrorTexture()
+        {
+            Bitmap bm = new Bitmap(16, 16);
+            for (int x = 0; x < 16; x++)
+            {
+                for (int y = 0; y < 16; y++)
+                {
+                    bm.SetPixel(x, y, x % 2 == 0 ^ y % 2 != 0 ? System.Drawing.Color.Magenta : System.Drawing.Color.Black);
+                }
+            }
+            return new Texture(bm);
         }
 
         public void bind(int index = 0)
@@ -116,6 +118,7 @@ namespace RabbetGameEngine
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            bitmap.Dispose();
             return tex;
         }
 
@@ -142,6 +145,7 @@ namespace RabbetGameEngine
 
         public int loadTexture(string file, TextureMinFilter minfilter, TextureMagFilter magfilter, bool trilinear = false)
         {
+            Bitmap bitmap;
             if (GL.IsTexture(id))//checks if this texture has already been loaded, if so, will replace it with a new one
             {
                 GL.DeleteTexture(id);
@@ -191,6 +195,7 @@ namespace RabbetGameEngine
             }
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
+            bitmap.Dispose();
             return tex;
         }
 
@@ -198,9 +203,6 @@ namespace RabbetGameEngine
         {
             if (!disposed)
             {
-                if (bitmap != null)
-                    bitmap.Dispose();
-
                 if (!isNone)
                     GL.DeleteTexture(id);
 
@@ -215,8 +217,6 @@ namespace RabbetGameEngine
 
         public void Dispose()
         {
-            if (bitmap != null)
-                bitmap.Dispose();
             Dispose(true);
             GC.SuppressFinalize(this);
         }

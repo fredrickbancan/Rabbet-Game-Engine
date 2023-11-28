@@ -3,10 +3,15 @@ using System;
 
 namespace RabbetGameEngine
 {
-    static class MathUtil
+    internal static class MathUtil
     {
         public static readonly Vector3 up = new Vector3(0, 1, 0);
         public static readonly Vector3 front = new Vector3(0, 0, -1);
+
+        public static int ceilToInt(float f)
+        {
+            return (int)Math.Ceiling(f);
+        }
 
         public static float rand(Vector3 xyz)//returns random float using input vector3 as seed
         {
@@ -22,6 +27,7 @@ namespace RabbetGameEngine
         {
             return (val - min) / (max - min);
         }
+
         public static float normalizeClamped(float min, float max, float val)//returns a float in between 0 and 1 representing the percentage that VAL is from Min to Max e.g: min of 0 and max of 100 with value 50 will return 0.5
         {
             return clamp((val - min) / (max - min), 0, 1);
@@ -37,10 +43,13 @@ namespace RabbetGameEngine
 
         public static float clamp(float val, float min, float max)
         {
-            if (val < min) val = min;
-            if (val > max) val = max;
+            if (val < min)
+                val = min;
+            if (val > max)
+                val = max;
             return val;
         }
+
         public static Vector3 lerp(Vector3 src, Vector3 dest, float factor)
         {
             return src + (dest - src) * factor;
@@ -50,25 +59,28 @@ namespace RabbetGameEngine
         {
             return src + (dest - src) * factor;
         }
+
         public static float lerpF(float src, float dest, float factor)
         {
             return src + (dest - src) * factor;
         }
+
         public static float radians(float degrees)
         {
             return degrees * 0.01745329251994329576923690768489F;
         }
+
         public static Vector3 radians(Vector3 degrees)
         {
             return degrees * 0.01745329251994329576923690768489F;
         }
 
         /*gives the dot product of the two provided coordinates*/
+
         public static float dotFloats(float xA, float yA, float zA, float xB, float yB, float zB)
         {
             return xA * xB + yA * yB + zA * zB;
         }
-
 
         public static float hypotenuse(float a, float b)
         {
@@ -76,6 +88,7 @@ namespace RabbetGameEngine
         }
 
         /*Takes in 3 floats and a smooth factor. Smooths the 3 values with strength of smooth factor. Smooth factor of 0 does nothing, and 1 makes each value the average.*/
+
         public static void smooth3(ref float x, ref float y, ref float z, float factor)
         {
             float avg = (x + y + z) / 3F;
@@ -144,6 +157,7 @@ namespace RabbetGameEngine
         {
             return new Vector3i(v.X << n, v.Y << n, v.Z << n);
         }
+
         public static int manhattanDist(Vector3i a, Vector3i b, out Vector3i distances)
         {
             distances.X = Math.Abs(a.X - b.X);
@@ -151,6 +165,7 @@ namespace RabbetGameEngine
             distances.Z = Math.Abs(a.Z - b.Z);
             return distances.X + distances.Y + distances.Z;
         }
+
         public static Vector3i manhattanDistances(Vector3i a, Vector3i b)
         {
             Vector3i distances;
@@ -159,10 +174,12 @@ namespace RabbetGameEngine
             distances.Z = Math.Abs(a.Z - b.Z);
             return distances;
         }
+
         public static int manhattanDist(Vector3i a, Vector3i b)
         {
             return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y) + Math.Abs(a.Z - b.Z);
         }
+
         public static int manhattanDist(Vector2i a, Vector2i b)
         {
             return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
@@ -257,6 +274,7 @@ namespace RabbetGameEngine
         }
 
         /*Scales the provided floats the same way a matrix would*/
+
         public static void scaleXYZFloats(Vector3 newScale, float x, float y, float z, out float newX, out float newY, out float newZ)
         {
             newX = x * newScale.X;
@@ -265,6 +283,7 @@ namespace RabbetGameEngine
         }
 
         /*Rotates the provided floats the same way a matrix would*/
+
         public static void rotateXYZFloats(Vector3 newRotation, float x, float y, float z, out float newX, out float newY, out float newZ)
         {
             Matrix4 rotMat = createRotation(newRotation);
@@ -274,6 +293,7 @@ namespace RabbetGameEngine
         }
 
         /*Translates the provided floats the same way a matrix would*/
+
         public static void translateXYZFloats(Vector3 translation, float x, float y, float z, out float newX, out float newY, out float newZ)
         {
             newX = x + translation.X;

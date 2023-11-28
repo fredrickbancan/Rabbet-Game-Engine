@@ -17,7 +17,7 @@ namespace RabbetGameEngine
             textures = new Dictionary<string, Texture>();
             textures.Add("none", new Texture("none", false));//first texture will be the null texture
             Application.checkGLErrors();
-            textures.Add("debug", new Texture(16, 16));//second texture will be the debug texture
+            textures.Add("debug", Texture.createErrorTexture());//second texture will be the debug texture
             Application.checkGLErrors();
             textures.Add("dither", new Texture("dither", false));//third texture will be the dithering texture
             textures.Add("white", new Texture("white", false));//fourth texture will be a flat white texture
