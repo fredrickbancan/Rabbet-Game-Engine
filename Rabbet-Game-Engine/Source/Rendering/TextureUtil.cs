@@ -7,15 +7,17 @@ namespace RabbetGameEngine
 {
     /*Class for pre-loading all textures found on file at launch so they can be used
       throughout the game without having to be re-loaded and re-allocated.*/
+
     public static class TextureUtil
     {
         private static Dictionary<string, Texture> textures = null;
+
         public static void loadAllFoundTextureFiles()
         {
             textures = new Dictionary<string, Texture>();
             textures.Add("none", new Texture("none", false));//first texture will be the null texture
             Application.checkGLErrors();
-            textures.Add("debug", new Texture());//second texture will be the debug texture
+            textures.Add("debug", new Texture(16, 16));//second texture will be the debug texture
             Application.checkGLErrors();
             textures.Add("dither", new Texture("dither", false));//third texture will be the dithering texture
             textures.Add("white", new Texture("white", false));//fourth texture will be a flat white texture
@@ -64,6 +66,7 @@ namespace RabbetGameEngine
         }
 
         /*Returns true if the requested texture was found in the global list*/
+
         public static bool tryGetTexture(string name, out Texture texture)
         {
             name = name.ToLower();
@@ -93,6 +96,7 @@ namespace RabbetGameEngine
             tryGetTexture(name, out result);
             return result;
         }
+
         public static int getTextureCount()
         {
             return textures.Count;

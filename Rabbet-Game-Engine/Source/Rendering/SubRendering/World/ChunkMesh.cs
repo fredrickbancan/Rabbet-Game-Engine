@@ -13,6 +13,7 @@ namespace RabbetGameEngine
         public static readonly int MAX_CHUNK_FACE_COUNT = 98304;//maximum voxel faces that can be visible in a chunk
         public static readonly int CHUNK_VERTEX_INDICES_COUNT = MAX_CHUNK_FACE_COUNT * 4;
         public static uint[] VOXEL_INDICES_BUFFER;//0000 1111 2222 3333 4444 5555 6666
+
         public static readonly Vector3i[] faceDirections = new Vector3i[]
         {
             new Vector3i(1,0,0),
@@ -22,6 +23,7 @@ namespace RabbetGameEngine
             new Vector3i(0,-1,0),
             new Vector3i(0,0,-1)
         };
+
         private static IndexBufferObject VOXEL_VERTEX_IBO;
 
         public static void init()
@@ -29,7 +31,8 @@ namespace RabbetGameEngine
             VOXEL_INDICES_BUFFER = new uint[CHUNK_VERTEX_INDICES_COUNT];
             for (uint i = 0; i < CHUNK_VERTEX_INDICES_COUNT; i += 4U)
             {
-                for (int j = 0; j < 4; j++) VOXEL_INDICES_BUFFER[i + j] = i / 4U;
+                for (int j = 0; j < 4; j++)
+                    VOXEL_INDICES_BUFFER[i + j] = i / 4U;
             }
             VOXEL_VERTEX_IBO = new IndexBufferObject();
             VOXEL_VERTEX_IBO.initStatic(VOXEL_INDICES_BUFFER);
@@ -42,9 +45,21 @@ namespace RabbetGameEngine
 
         private VertexArrayObject voxelsVAO = null;
         private VoxelFace[] voxelFaceBuffer = null;
-        public Chunk parentChunk{ get; private set; }
-        public int addedVoxelFaceCount { get; private set; }
-        public int addedVoxelFaceIndiciesCount { get; private set; }
+
+        public Chunk parentChunk
+        {
+            get; private set;
+        }
+
+        public int addedVoxelFaceCount
+        {
+            get; private set;
+        }
+
+        public int addedVoxelFaceIndiciesCount
+        {
+            get; private set;
+        }
 
         public ChunkMesh(Chunk parentChunk)
         {
@@ -71,7 +86,8 @@ namespace RabbetGameEngine
                     for (int y = 0; y < Chunk.CHUNK_SIZE; y++)
                     {
                         int vID = 0;
-                        if ((vID = theTerrain.getLocalVoxelFromChunk(parentChunk, x,y,z)) == 0) continue;
+                        if ((vID = theTerrain.getLocalVoxelFromChunk(parentChunk, x, y, z)) == 0)
+                            continue;
 
                         Vector3i vPos = new Vector3i(x, y, z);
                         for (int i = 0; i < 6; i++)
@@ -79,7 +95,7 @@ namespace RabbetGameEngine
                             Vector3i offset = vPos + faceDirections[i];
                             if (!VoxelType.isVoxelOpaque(theTerrain.getLocalVoxelFromChunk(parentChunk, offset.X, offset.Y, offset.Z)))
                             {
-                                int l = theTerrain.getLocalLightLevelFromChunk(parentChunk, offset.X, offset.Y, offset.Z);
+                                Vector3i l = theTerrain.getLocalVoxelLightLevelFromChunk(parentChunk, offset.X, offset.Y, offset.Z);
                                 voxelFaceBuffer[addedVoxelFaceCount++] = new VoxelFace(x, y, z, l, i, vID);
                             }
                         }

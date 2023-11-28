@@ -24,39 +24,73 @@ namespace RabbetGameEngine
         public static readonly float CHUNK_PHYSICAL_SIZE = CHUNK_SIZE * VOXEL_PHYSICAL_SIZE;
         public static readonly int X_SHIFT = 10;
         public static readonly int Z_SHIFT = 5;
+
         public static Vector3i worldToChunkPos(Vector3 vec)
         {
             return MathUtil.rightShift((Vector3i)(vec / Chunk.VOXEL_PHYSICAL_SIZE), Z_SHIFT);
         }
+
         public static Vector3i worldToVoxelPos(Vector3 vec)
         {
             return (Vector3i)(vec / Chunk.VOXEL_PHYSICAL_SIZE);
         }
-        
 
-        private byte[] voxels = null;
+        /*
+         * Voxel integer data layout is as follows:
+         *
+         * SLDD DDDB BBBB GGGG GRRR RRVV VVVV VVVV
+         *
+         * V: Voxel id 0-1023
+         * R: block light red value 0-31
+         * G: block light green value 0-31
+         * B: block light blue value 0-31
+         * D: distance field value for accelerating raytracing 0-31
+         * L: voxel lit by natural light (sun or moon) 0-1
+         * S: voxel exposed to sky (air or non-solid block above the heightmap) 0-1
+         */
+
+        private uint[] voxels = null;
+
         public ChunkMesh localRenderer
-        { get; private set; }
+        {
+            get; private set;
+        }
+
         private Chunk[] neighborChunks = null;
-        private LightMapHeavy lightMap = null;
         public bool isMarkedForRemoval = false;
         public bool isMarkedForRenderUpdate = false;
         public bool isOnWorldEdge = false;
         public bool isScheduledForPopulation = false;
-        public bool isEmpty{ get; private set; }
-        public bool allNeighborsPopulated { get; private set; }
-        public Vector3i coord { get; private set; }
-        public Vector3i worldCoord { get; private set; }
-        public Vector3 worldPhysicalCoord { get; private set; }
 
-        public Matrix4 translationMatrix { get; private set; }
+        public bool allNeighborsPopulated
+        {
+            get; private set;
+        }
+
+        public Vector3i coord
+        {
+            get; private set;
+        }
+
+        public Vector3i worldCoord
+        {
+            get; private set;
+        }
+
+        public Vector3 worldPhysicalCoord
+        {
+            get; private set;
+        }
+
+        public Matrix4 translationMatrix
+        {
+            get; private set;
+        }
 
         private AABB chunkBounds;
 
-
         public Chunk(Vector3i coord)
         {
-            this.isEmpty = true;
             this.coord = coord;
             Vector3i voxelMinBounds = coord * CHUNK_SIZE;
             Vector3i voxelMaxBounds = voxelMinBounds + new Vector3i(CHUNK_SIZE);
@@ -64,8 +98,7 @@ namespace RabbetGameEngine
             worldCoord = coord * CHUNK_SIZE;
             worldPhysicalCoord = (Vector3)coord * Chunk.CHUNK_PHYSICAL_SIZE;
             translationMatrix = Matrix4.CreateTranslation(worldPhysicalCoord);
-            lightMap = new LightMapHeavy(CHUNK_SIZE_CUBED);
-            voxels = new byte[CHUNK_SIZE_CUBED];
+            voxels = new uint[CHUNK_SIZE_CUBED];
             neighborChunks = new Chunk[6];
             localRenderer = new ChunkMesh(this);
         }
@@ -81,17 +114,19 @@ namespace RabbetGameEngine
         {
             neighborChunks[(int)dir] = neighbor;
 
-            if (!isMarkedForRenderUpdate) return;
+            if (!isMarkedForRenderUpdate)
+                return;
             if (neighbor != null && neighbor.isScheduledForPopulation)
             {
                 allNeighborsPopulated = false;
                 return;
             }
             allNeighborsPopulated = true;
-            for(int i = 0; i < 6; i++)
+            for (int i = 0; i < 6; i++)
             {
                 Chunk neighborC = neighborChunks[i];
-                if (neighborC == null) continue;
+                if (neighborC == null)
+                    continue;
                 if (neighborChunks[i].isScheduledForPopulation)
                 {
                     allNeighborsPopulated = false;
@@ -100,32 +135,50 @@ namespace RabbetGameEngine
             }
         }
 
-        public void setVoxelAt(int x, int y, int z, byte id)
+        public void setVoxelIDAt(int x, int y, int z, int id)
         {
-            if (x < 0 || y < 0 || z < 0) return;
+            if (x < 0 || y < 0 || z < 0)
+                return;
             int index = x << X_SHIFT | z << Z_SHIFT | y;
-            if (index < CHUNK_SIZE_CUBED) voxels[index] = id;
-            if (id != 0) isEmpty = false;
-        }
-        public void setLightLevelAt(int x, int y, int z, int level)
-        {
-            lightMap.setLightLevelAt(x, y, z, level);
-        }
-
-        public int getLightLevelAt(int x, int y, int z)
-        {
-            return lightMap.getLightLevelAt(x, y, z);
+            if (index >= CHUNK_SIZE_CUBED)
+                return;
+            uint vAt = voxels[index];
+            vAt &= 0b1111_1111_1111_1111_1111_1100_0000_0000;
+            vAt |= (uint)id;
+            voxels[index] = vAt;
         }
 
-        public int getVoxelAt(int x, int y, int z)
+        public void setVoxelLightLevelAt(int x, int y, int z, int r, int g, int b)
+        {
+            if (x < 0 || y < 0 || z < 0)
+                return;
+            int index = x << X_SHIFT | z << Z_SHIFT | y;
+            if (index >= CHUNK_SIZE_CUBED)
+                return;
+            uint vAt = voxels[index];
+            vAt &= 0b1111_1110_0000_0000_0000_0011_1111_1111;
+            vAt |= (uint)(r << 10 | g << 15 | b << 20);
+            voxels[index] = vAt;
+        }
+
+        public Vector3i getVoxelLightLevelAt(int x, int y, int z)
+        {
+            if (x < 0 || y < 0 || z < 0)
+                return Vector3i.Zero;
+            int index = x << X_SHIFT | z << Z_SHIFT | y;
+            if (index >= CHUNK_SIZE_CUBED)
+                return Vector3i.Zero;
+            uint vAt = voxels[index];
+            uint r = (vAt >> 10) & 0b0000_0000_0000_0000_0000_0000_0001_1111;
+            uint g = (vAt >> 15) & 0b0000_0000_0000_0000_0000_0000_0001_1111;
+            uint b = (vAt >> 20) & 0b0000_0000_0000_0000_0000_0000_0001_1111;
+            return new Vector3i((int)r, (int)g, (int)b);
+        }
+
+        public uint getVoxelAt(int x, int y, int z)
         {
             int index = x << X_SHIFT | z << Z_SHIFT | y;
             return index >= CHUNK_SIZE_CUBED ? 0 : voxels[index];
-        }
-        public byte[] getVoxels()
-        {
-            return voxels;
-        
         }
 
         public ref AABB getBoundsRef()

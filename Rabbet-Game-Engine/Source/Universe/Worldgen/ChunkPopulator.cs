@@ -6,9 +6,10 @@ namespace RabbetGameEngine
     public class ChunkPopulator
     {
         private static int valleyLevel = 95;
-        private static int peakLevel = 256- valleyLevel;
+        private static int peakLevel = 256 - valleyLevel;
         private Random genRand;
         private EarthNoise noise;
+
         public ChunkPopulator(long worldSeed)
         {
             genRand = Rand.CreateJavaRandom(worldSeed);
@@ -16,7 +17,7 @@ namespace RabbetGameEngine
         }
 
         public void populateChunk(Chunk c)
-        { 
+        {
             for (int x = 0; x < Chunk.CHUNK_SIZE; x++)
             {
                 for (int z = 0; z < Chunk.CHUNK_SIZE; z++)
@@ -29,14 +30,13 @@ namespace RabbetGameEngine
                         double noiseVal = noise.noise(chunkXVoxelPos + x, chunkZVoxelPos + z);
                         float genHillHeight = (int)(noiseVal * peakLevel) + valleyLevel;
                         if (chunkYVoxelPos + y <= genHillHeight)
-                            c.setVoxelAt(x, y, z, 145);
-                        c.setLightLevelAt(x, y, z, (int)(noiseVal * 63.0D));
+                            c.setVoxelIDAt(x, y, z, 145);
+                        c.setVoxelLightLevelAt(x, y, z, (int)(noiseVal * 63.0D), (int)(noiseVal * 63.0D), (int)(noiseVal * 63.0D));
                     }
                 }
             }
             c.isScheduledForPopulation = false;
             c.isMarkedForRenderUpdate = true;
         }
-
     }
 }

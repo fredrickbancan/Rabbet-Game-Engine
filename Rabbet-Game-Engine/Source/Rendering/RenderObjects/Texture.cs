@@ -2,15 +2,19 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace RabbetGameEngine
 {
     /*this class provides a handle on any image the game wants to load as a texture.*/
+
     public class Texture : IDisposable
     {
         private bool isNone = false;//is true if texture is null
         private bool disposed = false;
         private int id, width, height;
+        private Bitmap bitmap;
+
         public Texture(string path, bool filterMin = false, bool filterMag = false, bool trilinear = false)
         {
             if (path == "dither")
@@ -37,16 +41,17 @@ namespace RabbetGameEngine
             }
         }
 
-        public Texture(int res = 16)//constructs default texture
+        public Texture(int width, int height, Color[] pixels, bool filterMin = false, bool filterMag = false, bool trilinear = false)//constructs default texture
         {
-            Bitmap bitmap = new Bitmap(res, res);//creating default error texture
-            width = res;
-            height = res;
-            for (int i = 0; i < res; i++)
+            fixed (float* )
+                this.bitmap = new Bitmap(width, height, sizeof(float) * 4, System.Drawing.Imaging.PixelFormat.Format32bppArgb, &pixels[0]);//creating default error texture
+            this.width = width;
+            this.height = height;
+            for (int i = 0; i < width; i++)
             {
-                for (int j = 0; j < res; j++)
+                for (int j = 0; j < height; j++)
                 {//exlusive or
-                    bitmap.SetPixel(i, j, i % 2 == 0 ^ j % 2 != 0 ? System.Drawing.Color.Magenta : System.Drawing.Color.Black);//creating black and magenta checker board
+                    this.bitmap.SetPixel(i, j, i % 2 == 0 ^ j % 2 != 0 ? System.Drawing.Color.Magenta : System.Drawing.Color.Black);//creating black and magenta checker board
                 }
             }
 
@@ -54,22 +59,33 @@ namespace RabbetGameEngine
             GL.GenTextures(1, out tex);
             GL.BindTexture(TextureTarget.Texture2D, tex);
 
-            BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            BitmapData data = this.bitmap.LockBits(new System.Drawing.Rectangle(0, 0, this.bitmap.Width, this.bitmap.Height), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-            bitmap.UnlockBits(data);
+            this.bitmap.UnlockBits(data);
 
-
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
-            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Nearest);
+            if (trilinear)
+            {
+                GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
+                GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
+            }
+            else
+            {
+                TextureMinFilter minfilt = filterMin ? TextureMinFilter.Linear : TextureMinFilter.Nearest;
+                TextureMagFilter magfilt = filterMag ? TextureMagFilter.Linear : TextureMagFilter.Nearest;
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)minfilt);
+                GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)magfilt);
+            }
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
             id = tex;
         }
 
-
         public void bind(int index = 0)
         {
-            if (isNone) return;
+            if (isNone)
+                return;
             GL.ActiveTexture(TextureUnit.Texture0 + index);
             GL.BindTexture(TextureTarget.Texture2D, id);
         }
@@ -82,7 +98,7 @@ namespace RabbetGameEngine
             for (int i = 0; i < 4; i++)
             {
                 for (int j = 0; j < 4; j++)
-                {//exlusive or
+                {
                     bitmap.SetPixel(i, j, System.Drawing.Color.White);//creating black and magenta checker board
                 }
             }
@@ -130,7 +146,6 @@ namespace RabbetGameEngine
             {
                 GL.DeleteTexture(id);
             }
-            Bitmap bitmap;
             try
             {
                 bitmap = new Bitmap(file);
@@ -152,18 +167,18 @@ namespace RabbetGameEngine
                 }
             }
 
-            bitmap.RotateFlip(RotateFlipType.Rotate180FlipX);// flipping vertically because opengl starts from bottom left corner 
+            bitmap.RotateFlip(RotateFlipType.Rotate180FlipX);// flipping vertically because opengl starts from bottom left corner
 
             int tex;
             GL.GenTextures(1, out tex);
             GL.BindTexture(TextureTarget.Texture2D, tex);
 
             BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            bitmap.UnlockBits(data);
 
             if (trilinear)
             {
                 GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-                bitmap.UnlockBits(data);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.LinearMipmapLinear);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Linear);
                 GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
@@ -171,13 +186,11 @@ namespace RabbetGameEngine
             else
             {
                 GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba8, data.Width, data.Height, 0, OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, data.Scan0);
-                bitmap.UnlockBits(data);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)minfilter);
                 GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)magfilter);
             }
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Repeat);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Repeat);
-            bitmap.Dispose();
             return tex;
         }
 
@@ -185,18 +198,25 @@ namespace RabbetGameEngine
         {
             if (!disposed)
             {
+                if (bitmap != null)
+                    bitmap.Dispose();
+
                 if (!isNone)
                     GL.DeleteTexture(id);
 
                 disposed = true;
             }
         }
+
         public bool getIsNone()
         {
             return isNone;
         }
+
         public void Dispose()
         {
+            if (bitmap != null)
+                bitmap.Dispose();
             Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -210,6 +230,7 @@ namespace RabbetGameEngine
         {
             return this.id;
         }
+
         public int getWidth()
         {
             return width;

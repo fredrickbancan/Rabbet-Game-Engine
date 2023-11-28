@@ -8,17 +8,35 @@ namespace RabbetGameEngine
 {
     public class Terrain
     {
-        public int genChunksWide { get; private set; }
-        public int genChunksRadius{ get; private set; }
+        public int genChunksWide
+        {
+            get; private set;
+        }
+
+        public int genChunksRadius
+        {
+            get; private set;
+        }
+
         private Dictionary<Vector2i, ChunkColumn> chunkMap = null;
         private List<Chunk> sortedChunks = null;
         private List<Chunk> chunksNeedingPopulation = null;
         private List<Chunk> chunksToBeMeshed = null;
-        public List<Chunk> chunksRenderable { get; private set; }
+
+        public List<Chunk> chunksRenderable
+        {
+            get; private set;
+        }
+
         private ChunkComparer sorter = new ChunkComparer();
         private Vector4i chunkRanges;//minX maxX minZ maxZ
         private Random genRand = null;
-        public ChunkPopulator populator { get; private set; }
+
+        public ChunkPopulator populator
+        {
+            get; private set;
+        }
+
         private Vector3i currentVoxelMiddlePos;
         private Vector3i currentChunkMiddlePos;
 
@@ -39,9 +57,10 @@ namespace RabbetGameEngine
         {
             foreach (KeyValuePair<Vector2i, ChunkColumn> kvp in chunkMap)
             {
-                if(kvp.Value.isMarkedForRemoval)
+                if (kvp.Value.isMarkedForRemoval)
                 {
-                    if (deleteChunkColumn(kvp.Value)) break;
+                    if (deleteChunkColumn(kvp.Value))
+                        break;
                 }
             }
             checkChunkGenAreaChanged(playerPos);
@@ -54,15 +73,15 @@ namespace RabbetGameEngine
                 Chunk c = chunksNeedingPopulation.First();
                 populator.populateChunk(c);
                 notifyAllChunksNeighbors(c, c.coord);
-               
             }
-            if(chunksToBeMeshed.Count > 0)
+            if (chunksToBeMeshed.Count > 0)
             {
                 Chunk c = chunksToBeMeshed.First();
                 c.localRenderer.updateVoxelMesh(this);
                 c.localRenderer.updateBuffers();
             }
         }
+
         private void checkChunkGenAreaChanged(Vector3 playerPos)
         {
             bool shouldRefreshChunkArea = false;
@@ -74,16 +93,16 @@ namespace RabbetGameEngine
                 genChunksRadius = currentChunkGenDistance;
                 genChunksWide = genChunksRadius * 2;
             }
-               
+
             Vector3i distances = MathUtil.manhattanDistances(Chunk.worldToVoxelPos(playerPos), currentVoxelMiddlePos);
-            if(distances.X >= Chunk.CHUNK_SIZE || distances.Z >= Chunk.CHUNK_SIZE)
+            if (distances.X >= Chunk.CHUNK_SIZE || distances.Z >= Chunk.CHUNK_SIZE)
             {
                 shouldRefreshChunkArea = true;
                 currentVoxelMiddlePos = Chunk.worldToVoxelPos(playerPos);
                 currentChunkMiddlePos = Chunk.worldToChunkPos(playerPos);
             }
 
-            if(distances.Y >= Chunk.CHUNK_SIZE)
+            if (distances.Y >= Chunk.CHUNK_SIZE)
             {
                 shouldDoSorting = true;
                 currentVoxelMiddlePos.Y = Chunk.worldToVoxelPos(playerPos).Y;
@@ -94,7 +113,7 @@ namespace RabbetGameEngine
             {
                 refreshAllChunkColumns();
             }
-            if(shouldDoSorting || shouldRefreshChunkArea)
+            if (shouldDoSorting || shouldRefreshChunkArea)
             {
                 Profiler.startTickSection("chunkSort");
                 sortedChunks.Sort(sorter.setCenter(currentChunkMiddlePos));
@@ -114,17 +133,17 @@ namespace RabbetGameEngine
             chunkRanges.W = currentChunkMiddlePos.Z + genChunksRadius + 1;
 
             //unload any chunks outside of the radius
-            foreach(ChunkColumn c in chunkMap.Values)
+            foreach (ChunkColumn c in chunkMap.Values)
             {
-                if(Math.Abs(currentChunkMiddlePos.X - c.coord.X) > genChunksRadius || Math.Abs(currentChunkMiddlePos.Z - c.coord.Y) > genChunksRadius)
+                if (Math.Abs(currentChunkMiddlePos.X - c.coord.X) > genChunksRadius || Math.Abs(currentChunkMiddlePos.Z - c.coord.Y) > genChunksRadius)
                 {
                     markColumnForRemoval(c);
                 }
             }
-            
-            for(int x = chunkRanges.X; x < chunkRanges.Y; x++)
+
+            for (int x = chunkRanges.X; x < chunkRanges.Y; x++)
             {
-                for(int z = chunkRanges.Z; z < chunkRanges.W; z++)
+                for (int z = chunkRanges.Z; z < chunkRanges.W; z++)
                 {
                     Vector2i cPos = new Vector2i(x, z);
                     if (!chunkMap.TryGetValue(cPos, out ChunkColumn c))
@@ -135,12 +154,14 @@ namespace RabbetGameEngine
                         continue;
                     }
                     //if chunkcolumn is on the edge
-                    if(cPos.X <= chunkRanges.X+1 || cPos.X >= chunkRanges.Y-1 || cPos.Y <= chunkRanges.Z+1 || cPos.Y >= chunkRanges.W-1)
+                    if (cPos.X <= chunkRanges.X + 1 || cPos.X >= chunkRanges.Y - 1 || cPos.Y <= chunkRanges.Z + 1 || cPos.Y >= chunkRanges.W - 1)
                     {
-                        foreach (Chunk cAt in c.getVerticalChunks()) cAt.isOnWorldEdge = true;
+                        foreach (Chunk cAt in c.getVerticalChunks())
+                            cAt.isOnWorldEdge = true;
                         continue;
                     }
-                    foreach (Chunk cAt in c.getVerticalChunks()) cAt.isOnWorldEdge = false;
+                    foreach (Chunk cAt in c.getVerticalChunks())
+                        cAt.isOnWorldEdge = false;
                 }
             }
             Profiler.endCurrentTickSection();
@@ -156,12 +177,19 @@ namespace RabbetGameEngine
             chunksRenderable.Clear();
             foreach (Chunk c in sortedChunks)
             {
-                if (c.isMarkedForRemoval) continue;
+                if (c.isMarkedForRemoval)
+                    continue;
                 if (!WorldFrustum.isBoxNotWithinFrustumRef(in viewer.getCameraWorldFrustumRef(), in c.getBoundsRef()))
                 {
-                    if (c.isScheduledForPopulation) {chunksNeedingPopulation.Add(c); continue;}
-                    if (!c.isEmpty && !c.isOnWorldEdge && c.isMarkedForRenderUpdate && c.allNeighborsPopulated) chunksToBeMeshed.Add(c);
-                    if (c.localRenderer.addedVoxelFaceCount > 0) chunksRenderable.Add(c);
+                    if (c.isScheduledForPopulation)
+                    {
+                        chunksNeedingPopulation.Add(c);
+                        continue;
+                    }
+                    if (!c.isOnWorldEdge && c.isMarkedForRenderUpdate && c.allNeighborsPopulated)
+                        chunksToBeMeshed.Add(c);
+                    if (c.localRenderer.addedVoxelFaceCount > 0)
+                        chunksRenderable.Add(c);
                 }
             }
             return;
@@ -169,11 +197,12 @@ namespace RabbetGameEngine
 
         private void notifyAllChunksNeighbors(Chunk c, Vector3i chunkCoord)
         {
-            for(int i = 0; i < 6; i++)
+            for (int i = 0; i < 6; i++)
             {
                 Vector3i offset = chunkCoord + ChunkMesh.faceDirections[i];
                 Chunk neighbor = getChunkAtChunkCoords(offset.X, offset.Y, offset.Z);
-                if (neighbor != null) neighbor.notifyChunkOfNeighborChange(c, (ChunkNeighborDirection)(5 - i));
+                if (neighbor != null)
+                    neighbor.notifyChunkOfNeighborChange(c, (ChunkNeighborDirection)(5 - i));
             }
         }
 
@@ -184,7 +213,7 @@ namespace RabbetGameEngine
         {
             //do any chunk saving and stuff here
             //like if chunk is edited save and then remove
-            foreach(Chunk cAt in c.getVerticalChunks())
+            foreach (Chunk cAt in c.getVerticalChunks())
             {
                 notifyAllChunksNeighbors(null, cAt.coord);
                 cAt.localRenderer.delete();
@@ -220,7 +249,8 @@ namespace RabbetGameEngine
 
         public Chunk getChunkAtChunkCoords(int x, int y, int z)
         {
-            if (y < 0 || y >= ChunkColumn.NUM_CHUNKS_HEIGHT) return null;
+            if (y < 0 || y >= ChunkColumn.NUM_CHUNKS_HEIGHT)
+                return null;
             chunkMap.TryGetValue(new Vector2i(x, z), out ChunkColumn c);
             return c != null ? c.getChunkAtYChunkCoord(y) : null;
         }
@@ -231,29 +261,8 @@ namespace RabbetGameEngine
             {
                 int worldY = c.worldCoord.Y + y;
                 int inBoundChunkY = worldY >> Chunk.Z_SHIFT;
-                if (inBoundChunkY >= ChunkColumn.NUM_CHUNKS_HEIGHT || inBoundChunkY < 0) return 0;
-                int worldX = c.worldCoord.X + x;
-                int worldZ = c.worldCoord.Z + z;
-                int inBoundChunkX = worldX >> Chunk.Z_SHIFT;
-                int inBoundChunkZ = worldZ >> Chunk.Z_SHIFT;
-                if(chunkMap.TryGetValue(new Vector2i(inBoundChunkX, inBoundChunkZ), out ChunkColumn inBoundChunkColumn))
-                {
-                    Chunk cAt = inBoundChunkColumn.getChunkAtYChunkCoord(inBoundChunkY);
-                    if (cAt.isScheduledForPopulation) populator.populateChunk(cAt);
-                    return cAt.getVoxelAt(worldX & Chunk.CHUNK_SIZE_MINUS_ONE, worldY & Chunk.CHUNK_SIZE_MINUS_ONE, worldZ & Chunk.CHUNK_SIZE_MINUS_ONE);
-                }
-                return 0;
-            }
-            return c.getVoxelAt(x, y, z);
-        }
-
-        public int getLocalLightLevelFromChunk(Chunk c, int x, int y, int z)
-        {
-            if (x < 0 || x >= Chunk.CHUNK_SIZE || y < 0 || y >= Chunk.CHUNK_SIZE || z < 0 || z >= Chunk.CHUNK_SIZE)
-            {
-                int worldY = c.worldCoord.Y + y;
-                int inBoundChunkY = worldY >> Chunk.Z_SHIFT;
-                if (inBoundChunkY >= ChunkColumn.NUM_CHUNKS_HEIGHT || inBoundChunkY < 0) return 63;
+                if (inBoundChunkY >= ChunkColumn.NUM_CHUNKS_HEIGHT || inBoundChunkY < 0)
+                    return 0;
                 int worldX = c.worldCoord.X + x;
                 int worldZ = c.worldCoord.Z + z;
                 int inBoundChunkX = worldX >> Chunk.Z_SHIFT;
@@ -261,18 +270,43 @@ namespace RabbetGameEngine
                 if (chunkMap.TryGetValue(new Vector2i(inBoundChunkX, inBoundChunkZ), out ChunkColumn inBoundChunkColumn))
                 {
                     Chunk cAt = inBoundChunkColumn.getChunkAtYChunkCoord(inBoundChunkY);
-                    if (cAt.isScheduledForPopulation) populator.populateChunk(cAt);
-                    return cAt.getLightLevelAt(worldX & Chunk.CHUNK_SIZE_MINUS_ONE, worldY & Chunk.CHUNK_SIZE_MINUS_ONE, worldZ & Chunk.CHUNK_SIZE_MINUS_ONE);
+                    if (cAt.isScheduledForPopulation)
+                        populator.populateChunk(cAt);
+                    return (int)cAt.getVoxelAt(worldX & Chunk.CHUNK_SIZE_MINUS_ONE, worldY & Chunk.CHUNK_SIZE_MINUS_ONE, worldZ & Chunk.CHUNK_SIZE_MINUS_ONE);
                 }
-                return 63;
+                return 0;
             }
-            return c.getLightLevelAt(x, y, z);
+            return (int)c.getVoxelAt(x, y, z);
+        }
+
+        public Vector3i getLocalVoxelLightLevelFromChunk(Chunk c, int x, int y, int z)
+        {
+            if (x < 0 || x >= Chunk.CHUNK_SIZE || y < 0 || y >= Chunk.CHUNK_SIZE || z < 0 || z >= Chunk.CHUNK_SIZE)
+            {
+                int worldY = c.worldCoord.Y + y;
+                int inBoundChunkY = worldY >> Chunk.Z_SHIFT;
+                if (inBoundChunkY >= ChunkColumn.NUM_CHUNKS_HEIGHT || inBoundChunkY < 0)
+                    return Vector3i.Zero;
+                int worldX = c.worldCoord.X + x;
+                int worldZ = c.worldCoord.Z + z;
+                int inBoundChunkX = worldX >> Chunk.Z_SHIFT;
+                int inBoundChunkZ = worldZ >> Chunk.Z_SHIFT;
+                if (chunkMap.TryGetValue(new Vector2i(inBoundChunkX, inBoundChunkZ), out ChunkColumn inBoundChunkColumn))
+                {
+                    Chunk cAt = inBoundChunkColumn.getChunkAtYChunkCoord(inBoundChunkY);
+                    if (cAt.isScheduledForPopulation)
+                        populator.populateChunk(cAt);
+                    return cAt.getVoxelLightLevelAt(worldX & Chunk.CHUNK_SIZE_MINUS_ONE, worldY & Chunk.CHUNK_SIZE_MINUS_ONE, worldZ & Chunk.CHUNK_SIZE_MINUS_ONE);
+                }
+                return Vector3i.Zero;
+            }
+            return c.getVoxelLightLevelAt(x, y, z);
         }
 
         public void unLoad()
         {
-            foreach (ChunkColumn c in chunkMap.Values) deleteChunkColumn(c);
-            
+            foreach (ChunkColumn c in chunkMap.Values)
+                deleteChunkColumn(c);
         }
     }
 }

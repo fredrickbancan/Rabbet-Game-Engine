@@ -6,6 +6,7 @@ namespace RabbetGameEngine
 {
     /*This class is responsable for checking the input of the mouse and keyboard,
       and manipulating the games logic respectively. Checking should be done each tick.*/
+
     public static class Input
     {
         private static KeyboardState previouskeyboardState;
@@ -17,6 +18,7 @@ namespace RabbetGameEngine
         private static bool mouseGrabbed = false;
         private static Vector2 mouseDelta = new Vector2(0, 0);
         private static float prevScrollOffset = 0;
+
         /// <summary>
         /// if is true, inputs will not activate their default logic
         /// </summary>
@@ -74,7 +76,7 @@ namespace RabbetGameEngine
                 {
                     ScreenShotter.takeScreenshot();
                 }
-                PlayerController.updateInput(keyboardState, mouseState);//do player input 
+                PlayerController.updateInput(keyboardState, mouseState);//do player input
                 PlayerController.updateSinglePressInput(keyboardState);//do single button input
             }
             updateMouse();
@@ -102,6 +104,7 @@ namespace RabbetGameEngine
         {
             return keyboardState.IsKeyDown(key);
         }
+
         public static bool singleMouseButtonPress(MouseButton key)
         {
             return mouseState.IsButtonDown(key) && !previousMouseState.IsButtonDown(key);
@@ -109,8 +112,7 @@ namespace RabbetGameEngine
 
         public static void setCursorHiddenAndGrabbed(bool flag)
         {
-            GameInstance.get.CursorVisible = !flag;
-            GameInstance.get.CursorGrabbed = flag;
+            GameInstance.get.CursorState = flag ? CursorState.Grabbed : CursorState.Normal;
             if (!flag)
             {
                 GameInstance.get.MousePosition = GameInstance.gameWindowCenter;
@@ -134,15 +136,18 @@ namespace RabbetGameEngine
         {
             GUIManager.onKeyDown(e);
         }
+
         public static void onMouseDown(MouseButtonEventArgs e)
         {
             GUIManager.onMouseDown(e);
         }
+
         public static void onMouseWheel(MouseWheelEventArgs e)
         {
             GUIManager.onMouseWheel(e.OffsetY - prevScrollOffset);
             prevScrollOffset = e.OffsetY;
         }
+
         public static bool mouseleftButtonDown()
         {
             return mouseState.IsButtonDown(MouseButton.Left);
